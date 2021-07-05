@@ -1,0 +1,48 @@
+{
+  "Authors": [],
+  "BIDSVersion": "1.1.0",
+  "Curators": [
+    "Esteban O"
+  ],
+  "Identifier": "fsaverage",
+  "License": "See LICENSE file",
+  "Name": "FreeSurfer's fsaverage template",
+  "ReferencesAndLinks": [],
+  "TemplateFlowVersion": "1.0.0",
+  "res": {
+    "01": {
+      "origin": [
+        -128.0,
+        -128.0,
+        -128.0
+      ],
+      "shape": [
+        256,
+        256,
+        256
+      ],
+      "zooms": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "02": {
+      "origin": [
+        -2.0,
+        -16.0,
+        9.0
+      ],
+      "shape": [
+        76,
+        76,
+        93
+      ],
+      "zooms": [
+        2.0,
+        2.0,
+        2.0
+      ]
+    }
+  }
+}

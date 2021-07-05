@@ -1,0 +1,140 @@
+{
+  "Authors": [
+    "Fonov V",
+    "Evans AC",
+    "Botteron K",
+    "Almli CR",
+    "McKinstry RC",
+    "Collins DL"
+  ],
+  "BIDSVersion": "1.1.0",
+  "Curators": [
+    "Ciric R",
+    "Markiewicz CJ",
+    "Esteban O"
+  ],
+  "Identifier": "MNIInfant",
+  "License": "See LICENSE file",
+  "Name": "MNI Unbiased nonlinear Infant Atlases 0-4.5yr.",
+  "RRID": "SCR_008796",
+  "ReferencesAndLinks": [
+    "https://doi.org/10.1016/S1053-8119(09)70884-5",
+    "http://nist.mni.mcgill.ca/?p=1005"
+  ],
+  "TemplateFlowVersion": "1.0.0",
+  "cohort": {
+    "1": {
+      "age": [
+        0.0,
+        2.0
+      ],
+      "units": "months"
+    },
+    "10": {
+      "age": [
+        33.0,
+        44.0
+      ],
+      "units": "months"
+    },
+    "11": {
+      "age": [
+        44.0,
+        60.0
+      ],
+      "units": "months"
+    },
+    "2": {
+      "age": [
+        2.0,
+        5.0
+      ],
+      "units": "months"
+    },
+    "3": {
+      "age": [
+        5.0,
+        8.0
+      ],
+      "units": "months"
+    },
+    "4": {
+      "age": [
+        8.0,
+        11.0
+      ],
+      "units": "months"
+    },
+    "5": {
+      "age": [
+        11.0,
+        14.0
+      ],
+      "units": "months"
+    },
+    "6": {
+      "age": [
+        14.0,
+        17.0
+      ],
+      "units": "months"
+    },
+    "7": {
+      "age": [
+        17.0,
+        21.0
+      ],
+      "units": "months"
+    },
+    "8": {
+      "age": [
+        21.0,
+        27.0
+      ],
+      "units": "months"
+    },
+    "9": {
+      "age": [
+        27.0,
+        33.0
+      ],
+      "units": "months"
+    }
+  },
+  "res": {
+    "1": {
+      "origin": [
+        -96.0,
+        -134.0,
+        -72.0
+      ],
+      "shape": [
+        195,
+        233,
+        159
+      ],
+      "zooms": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "2": {
+      "origin": [
+        -96.5,
+        -134.5,
+        -72.5
+      ],
+      "shape": [
+        98,
+        117,
+        80
+      ],
+      "zooms": [
+        2.0,
+        2.0,
+        2.0
+      ]
+    }
+  }
+}

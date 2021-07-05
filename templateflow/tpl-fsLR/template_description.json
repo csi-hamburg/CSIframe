@@ -1,0 +1,21 @@
+{
+  "Authors": [
+    "Tim Coalson",
+    "Matt Glasser",
+    "Mike Harms",
+    "David Van Essen"
+  ],
+  "BIDSVersion": "1.1.0",
+  "Curators": [
+    "Esteban O"
+  ],
+  "Identifier": "fsLR",
+  "License": "See LICENSE file",
+  "Name": "HCP Pipelines' fsLR template",
+  "ReferencesAndLinks": [
+    "https://doi.org/10.1093/cercor/bhr291",
+    "https://github.com/Washington-University/HCPpipelines/tree/master/global/templates"
+  ],
+  "TemplateFlowVersion": "1.0.0",
+  "res": {}
+}

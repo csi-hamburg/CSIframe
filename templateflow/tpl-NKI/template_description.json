@@ -1,0 +1,43 @@
+{
+  "Authors": [
+    "Avants BB",
+    "Tustison NJ",
+    "Song G",
+    "Cook PA",
+    "Klein A",
+    "Gee JC"
+  ],
+  "BIDSVersion": "1.1.0",
+  "Curators": [
+    "Esteban O",
+    "Ciric R"
+  ],
+  "Identifier": "NKI",
+  "License": "CC BY 4.0",
+  "Name": "ANTs' NKI-1 template",
+  "ReferencesAndLinks": [
+    "https://doi.org/10.1016/j.neuroimage.2010.09.025",
+    "https://doi.org/10.3389/fnins.2012.00152",
+    "https://figshare.com/articles/ANTs_ANTsR_Brain_Templates/915436"
+  ],
+  "TemplateFlowVersion": "1.0.0",
+  "res": {
+    "01": {
+      "origin": [
+        -95.5,
+        -100.76028442382812,
+        -131.95883178710938
+      ],
+      "shape": [
+        192,
+        256,
+        256
+      ],
+      "zooms": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  }
+}

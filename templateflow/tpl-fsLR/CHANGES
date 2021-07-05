@@ -1,0 +1,8 @@
+1.0.2 2020-03-10
+ - Renamed "midthickness" files to convey files as vertex-area averages.
+ - Moved pure "fsaverage" files to separate template "tpl-fsaverage"
+  - Left fsLR deformations to fsaverage alone since they may collide with fsaverage files
+
+1.0.1 2019-11-22
+ - Removed MNI152NLin6Asym atlases
+ - Renamed "nomedialwall" files to more accurately show their intention as labels

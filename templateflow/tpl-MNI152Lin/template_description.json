@@ -1,0 +1,81 @@
+{
+  "Authors": [
+    "Evans AC",
+    "Fox PT",
+    "Lancaster J",
+    "Zilles K",
+    "Woods R",
+    "Paus T",
+    "Simpson G",
+    "Pike B",
+    "Holmes C",
+    "Collins DL",
+    "Thompson P",
+    "MacDonald D",
+    "Iacoboni M",
+    "Schormann T",
+    "Amunts K",
+    "Palomero-Gallagher N",
+    "Geyer S",
+    "Parsons L",
+    "Narr K",
+    "Kabani N",
+    "LeGoualher G",
+    "Boomsma D",
+    "Cannon T",
+    "Kawashima R",
+    "Mazoyer B"
+  ],
+  "BIDSVersion": "1.1.0",
+  "Curators": [
+    "Ciric R",
+    "Markiewicz CJ",
+    "Esteban O"
+  ],
+  "Identifier": "MNI152Lin",
+  "License": "See LICENSE file",
+  "Name": "Linear ICBM Average Brain (ICBM152) Stereotaxic Registration Model",
+  "ReferencesAndLinks": [
+    "https://doi.org/10.1006/nimg.1995.1012",
+    "https://doi.org/10.1098/rstb.2001.0915",
+    "https://doi.org/10.1136/jamia.2001.0080401",
+    "http://nist.mni.mcgill.ca/?p=798"
+  ],
+  "TemplateFlowVersion": "1.0.0",
+  "res": {
+    "01": {
+      "origin": [
+        -90.0,
+        -126.0,
+        -72.0
+      ],
+      "shape": [
+        181,
+        217,
+        181
+      ],
+      "zooms": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "02": {
+      "origin": [
+        -90.5,
+        -126.5,
+        -72.5
+      ],
+      "shape": [
+        91,
+        109,
+        91
+      ],
+      "zooms": [
+        2.0,
+        2.0,
+        2.0
+      ]
+    }
+  }
+}

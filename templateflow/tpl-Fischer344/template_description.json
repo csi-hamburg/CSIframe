@@ -1,0 +1,24 @@
+{
+  "Authors": [
+    "Goerzen, D", 
+    "Fowler, C",
+    "Devenyi, GA",
+    "Germann, J",
+    "Madularu, D",
+    "Chakravarty, MM",
+    "Near, J"
+  ],
+  "BIDSVersion": "1.1.0",
+  "Curators": [
+    "MacNicol E",
+    "Esteban O"
+  ],
+  "Identifier": "Fischer344",
+  "License": "CC-by-nc-sa-4.0 International",
+  "Name": "MRI-Derived Neuroanatomical Atlas of the Fischer 344 Rat Brain",
+  "ReferencesAndLinks": [
+    "https://doi.org/10.5281/zenodo.3555555",
+    "https://doi.org/10.1038/s41598-020-63965-x"
+  ],
+  "TemplateFlowVersion": "1.0.0"
+}

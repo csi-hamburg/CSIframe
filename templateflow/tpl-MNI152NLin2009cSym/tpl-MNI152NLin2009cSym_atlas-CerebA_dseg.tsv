@@ -1,0 +1,103 @@
+label	name	hemi	mindboggle mapping	dice/kappa	notes
+80	Third Ventricle	L	14	0.68	n/a
+29	Third Ventricle	R	14	0.68	n/a
+88	Fourth Ventricle	L	15	0.39	Missing label. Manually delimited using CSF threshold.  
+37	Fourth Ventricle	R	15	0.39	Missing label. Manually delimited using CSF threshold.  
+62	Brainstem	L	16	0.65	Completed filling, removed labelled voxels out of actual brainstem and removed CWM labels in brainstem area. 
+11	Brainstem	R	16	0.65	Completed filling, removed labelled voxels out of actual brainstem and removed CWM labels in brainstem area. 
+92	Lateral Ventricle	L	43	0.89	Improved continuity of labelled voxels
+41	Lateral Ventricle	R	43	0.89	Improved continuity of labelled voxels
+56	Inferior Lateral Ventricle	L	44	0.12	n/a
+5	Inferior Lateral Ventricle	R	44	0.12	n/a
+97	Cerebellum Gray Matter	L	45	0.83	Completed filling using threshold for CGM, removed cerebellum labels out of area (within brainstem and vermis area)
+46	Cerebellum Gray Matter	R	45	0.83	Completed filling using threshold for CGM, removed cerebellum labels out of area (within brainstem and vermis area)
+90	Cerebellum White Matter	L	46	0.73	Improved according threshold for CWM, removed labels in brainstem and vermis. 
+39	Cerebellum White Matter	R	46	0.73	Improved according threshold for CWM, removed labels in brainstem and vermis. 
+91	Thalamus	L	49	0.97	n/a
+40	Thalamus	R	49	0.97	n/a
+100	Caudate	L	50	0.84	Completed filling using threshold 
+49	Caudate	R	50	0.84	Completed filling using threshold 
+72	Putamen	L	51	0.87	Corrected uniformity using threshold
+21	Putamen	R	51	0.87	Corrected uniformity using threshold
+78	Pallidum	L	52	0.83	Improved delimitation between putamen and pallidum
+27	Pallidum	R	52	0.83	Improved delimitation between putamen and pallidum
+99	Hippocampus	L	53	0.69	n/a
+48	Hippocampus	R	53	0.69	n/a
+70	Amygdala	L	54	0.64	n/a
+19	Amygdala	R	54	0.64	n/a
+55	Accumbens Area	L	58	0.76	n/a
+4	Accumbens Area	R	58	0.76	n/a
+77	Ventral Diencephalon	L	60	0.93	n/a
+26	Ventral Diencephalon	R	60	0.93	n/a
+68	Optic Chiasm	L	85	0.0	Almost inexistent label and out of place in original labelling  Completed OC and tracts (originally labelled as Ventral Diencephalon)
+17	Optic Chiasm	R	85	0.0	Almost inexistent label and out of place in original labelling  Completed OC and tracts (originally labelled as Ventral Diencephalon)
+76	Basal Forebrain	L	92	0.82	n/a
+25	Basal Forebrain	R	92	0.82	n/a
+101	Vermal lobules I-V	L	630	0.66	Improved delimitation with other vermal lobules and cerebellar hemispheres
+50	Vermal lobules I-V	R	630	0.66	Improved delimitation with other vermal lobules and cerebellar hemispheres
+53	Vermal lobules VI-VII	L	631	0.38	Improved delimitation with other vermal lobules and cerebellar hemispheres
+2	Vermal lobules VI-VII	R	631	0.38	Improved delimitation with other vermal lobules and cerebellar hemispheres
+71	Vermal lobules VIII-X	L	632	0.44	Improved delimitation with other vermal lobules and cerebellar hemispheres
+20	Vermal lobules VIII-X	R	632	0.44	Improved delimitation with other vermal lobules and cerebellar hemispheres
+81	Caudal Anterior Cingulate	L	2002	0.79	n/a
+30	Caudal Anterior Cingulate	R	2002	0.79	n/a
+93	Caudal Middle Frontal	L	2003	0.73	Improved distinction from Precentral 
+42	Caudal Middle Frontal	R	2003	0.73	Improved distinction from Precentral 
+94	Cuneus	L	2005	0.67	n/a
+43	Cuneus	R	2005	0.67	n/a
+87	Entorhinal	L	2006	0.78	Improved delimitation 
+36	Entorhinal	R	2006	0.78	Improved delimitation 
+75	Fusiform	L	2007	0.77	n/a
+24	Fusiform	R	2007	0.77	n/a
+61	Inferior Parietal	L	2008	0.75	n/a
+10	Inferior Parietal	R	2008	0.75	n/a
+54	Inferior temporal	L	2009	0.72	Removed dorsal part MT
+3	Inferior temporal	R	2009	0.72	Removed dorsal part MT
+84	Isthmus Cingulate	L	2010	0.79	n/a
+33	Isthmus Cingulate	R	2010	0.79	n/a
+85	Lateral Occipital	L	2011	0.76	n/a
+34	Lateral Occipital	R	2011	0.76	n/a
+58	Lateral Orbitofrontal	L	2012	0.8	n/a
+7	Lateral Orbitofrontal	R	2012	0.8	n/a
+63	Lingual	L	2013	0.75	n/a
+12	Lingual	R	2013	0.75	n/a
+66	Medial Orbitofrontal	L	2014	0.72	n/a
+15	Medial Orbitofrontal	R	2014	0.72	n/a
+79	Middle Temporal	L	2015	0.72	Added dorsal part
+28	Middle Temporal	R	2015	0.72	Added dorsal part
+69	Parahippocampal	L	2016	0.86	n/a
+18	Parahippocampal	R	2016	0.86	n/a
+67	Paracentral	L	2017	0.77	n/a
+16	Paracentral	R	2017	0.77	n/a
+83	Pars Opercularis	L	2018	0.77	n/a
+32	Pars Opercularis	R	2018	0.77	n/a
+95	Pars Orbitalis	L	2019	0.8	n/a
+44	Pars Orbitalis	R	2019	0.8	n/a
+73	Pars Triangularis	L	2020	0.76	n/a
+22	Pars Triangularis	R	2020	0.76	n/a
+57	Pericalcarine	L	2021	0.6	n/a
+6	Pericalcarine	R	2021	0.6	n/a
+64	Postcentral	L	2022	0.82	n/a
+13	Postcentral	R	2022	0.82	n/a
+98	Posterior Cingulate	L	2023	0.8	n/a
+47	Posterior Cingulate	R	2023	0.8	n/a
+86	Precentral	L	2024	0.84	n/a
+35	Precentral	R	2024	0.84	n/a
+82	Precuneus	L	2025	0.8	n/a
+31	Precuneus	R	2025	0.8	n/a
+59	Rostral Anterior Cingulate	L	2026	0.72	n/a
+8	Rostral Anterior Cingulate	R	2026	0.72	n/a
+52	Rostral Middle Frontal	L	2027	0.74	Improved delimitation from CMF
+1	Rostral Middle Frontal	R	2027	0.74	Improved delimitation from CMF
+89	Superior Frontal	L	2028	0.82	n/a
+38	Superior Frontal	R	2028	0.82	n/a
+60	Superior Parietal	L	2029	0.72	Improved delimitation from Precuneus and IP
+9	Superior Parietal	R	2029	0.72	Improved delimitation from Precuneus and IP
+96	Superior Temporal	L	2030	0.87	Added dorsal part limiting with IP and Supramarginal
+45	Superior Temporal	R	2030	0.87	Added dorsal part limiting with IP and Supramarginal
+102	Supramarginal	L	2031	0.81	n/a
+51	Supramarginal	R	2031	0.81	n/a
+65	Transverse Temporal	L	2034	0.85	n/a
+14	Transverse Temporal	R	2034	0.85	n/a
+74	Insula	L	2035	0.88	n/a
+23	Insula	R	2035	0.88	n/a
