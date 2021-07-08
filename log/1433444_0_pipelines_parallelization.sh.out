@@ -1,0 +1,669 @@
+starting processing with bidsify from index: 0 ...
+for n=10 subjects
+subjects to process: ewgenia001 ewgenia002 ewgenia003 ewgenia004 ewgenia005
+submission script directory: /work/fatx405/projects/CSI_TEST/code
+current TMPDIR: /scratch/fatx405.1433444
+ITERator: 0
+running:
+ parallel --ungroup --progress --delay 0.2 -j10 --joblog /work/fatx405/projects/CSI_TEST/code/log/parallel_runtask.log srun --label --exclusive -N1 -n1 --cpus-per-task 3 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh ::: ewgenia001 ewgenia002 ewgenia003 ewgenia004 ewgenia005
+0: allexport      	off
+0: braceexpand    	on
+0: emacs          	off
+0: errexit        	on
+0: errtrace       	off
+0: functrace      	off
+0: hashall        	on
+0: histexpand     	off
+0: history        	off
+0: ignoreeof      	off
+0: interactive-comments	on
+0: keyword        	off
+0: monitor        	off
+0: noclobber      	off
+0: noexec         	off
+0: noglob         	off
+0: nolog          	off
+0: notify         	off
+0: nounset        	off
+0: onecmd         	off
+0: physical       	off
+0: pipefail       	off
+0: posix          	off
+0: privileged     	off
+0: verbose        	off
+0: vi             	off
+0: xtrace         	off
+0: allexport      	off
+0: braceexpand    	on
+0: emacs          	off
+0: errexit        	on
+0: errtrace       	off
+0: functrace      	off
+0: hashall        	on
+0: histexpand     	off
+0: history        	off
+0: ignoreeof      	off
+0: interactive-comments	on
+0: keyword        	off
+0: monitor        	off
+0: noclobber      	off
+0: noexec         	off
+0: noglob         	off
+0: nolog          	off
+0: notify         	off
+0: nounset        	off
+0: onecmd         	off
+0: physical       	off
+0: pipefail       	off
+0: posix          	off
+0: privileged     	off
+0: verbose        	off
+0: vi             	off
+0: xtrace         	off
+0: allexport      	off
+0: braceexpand    	on
+0: emacs          	off
+0: errexit        	on
+0: errtrace       	off
+0: functrace      	off
+0: hashall        	on
+0: histexpand     	off
+0: history        	off
+0: ignoreeof      	off
+0: interactive-comments	on
+0: keyword        	off
+0: monitor        	off
+0: noclobber      	off
+0: noexec         	off
+0: noglob         	off
+0: nolog          	off
+0: notify         	off
+0: nounset        	off
+0: onecmd         	off
+0: physical       	off
+0: pipefail       	off
+0: posix          	off
+0: privileged     	off
+0: verbose        	off
+0: vi             	off
+0: ###################################
+0: xtrace         	off
+0: ###################################
+0: Started processing of ewgenia001
+0: ###################################
+0: Started processing of ewgenia002
+0: ###################################
+0: hostname: node141
+0: hostname: node141
+0: singularity version 3.5.2
+0: TMPDIR: /scratch/fatx405.1433444
+0: RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433444
+0: SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
+0: SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
+0: DSLOCKFILE: /scratch/fatx405.1433444/ewgenia001/bidsify.lock
+0: DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433444/ewgenia001/sockets
+0: singularity version 3.5.2
+0: TMPDIR: /scratch/fatx405.1433444
+0: RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433444
+0: SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
+0: SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
+0: DSLOCKFILE: /scratch/fatx405.1433444/ewgenia002/bidsify.lock
+0: DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433444/ewgenia002/sockets
+0: allexport      	off
+0: braceexpand    	on
+0: emacs          	off
+0: errexit        	on
+0: errtrace       	off
+0: functrace      	off
+0: hashall        	on
+0: histexpand     	off
+0: history        	off
+0: ignoreeof      	off
+0: interactive-comments	on
+0: keyword        	off
+0: monitor        	off
+0: noclobber      	off
+0: noexec         	off
+0: noglob         	off
+0: nolog          	off
+0: notify         	off
+0: nounset        	off
+0: onecmd         	off
+0: physical       	off
+0: pipefail       	off
+0: posix          	off
+0: privileged     	off
+0: verbose        	off
+0: vi             	off
+0: xtrace         	off
+0: allexport      	off
+0: braceexpand    	on
+0: emacs          	off
+0: errexit        	on
+0: errtrace       	off
+0: functrace      	off
+0: hashall        	on
+0: histexpand     	off
+0: history        	off
+0: ignoreeof      	off
+0: interactive-comments	on
+0: keyword        	off
+0: monitor        	off
+0: noclobber      	off
+0: noexec         	off
+0: noglob         	off
+0: nolog          	off
+0: notify         	off
+0: nounset        	off
+0: onecmd         	off
+0: physical       	off
+0: pipefail       	off
+0: posix          	off
+0: privileged     	off
+0: verbose        	off
+0: vi             	off
+0: xtrace         	off
+0: ###################################
+0: Started processing of ewgenia003
+0: ###################################
+0: hostname: node141
+0: singularity version 3.5.2
+0: TMPDIR: /scratch/fatx405.1433444
+0: RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433444
+0: SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
+0: SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
+0: DSLOCKFILE: /scratch/fatx405.1433444/ewgenia003/bidsify.lock
+0: DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433444/ewgenia003/sockets
+0: ###################################
+0: Started processing of ewgenia004
+0: ###################################
+0: ###################################
+0: Started processing of ewgenia005
+0: ###################################
+0: hostname: node141
+0: hostname: node141
+0: singularity version 3.5.2
+0: TMPDIR: /scratch/fatx405.1433444
+0: singularity version 3.5.2
+0: RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433444
+0: TMPDIR: /scratch/fatx405.1433444
+0: SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
+0: RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433444
+0: SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
+0: SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
+0: DSLOCKFILE: /scratch/fatx405.1433444/ewgenia005/bidsify.lock
+0: SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
+0: DSLOCKFILE: /scratch/fatx405.1433444/ewgenia004/bidsify.lock
+0: DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433444/ewgenia005/sockets
+0: DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433444/ewgenia004/sockets
+0: install(ok): /scratch/fatx405.1433444/ewgenia001/clone (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia005/clone (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia003/clone (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia004/clone (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia002/clone (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia005/clone/envs (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia005/clone/envs/freesurfer_license.txt]
+0: install(ok): /scratch/fatx405.1433444/ewgenia001/clone/envs (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia001/clone/envs/freesurfer_license.txt]
+0: install(ok): /scratch/fatx405.1433444/ewgenia003/clone/envs (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia003/clone/envs/freesurfer_license.txt]
+0: install(ok): /scratch/fatx405.1433444/ewgenia002/clone/envs (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia002/clone/envs/freesurfer_license.txt]
+0: get(ok): envs/freesurfer_license.txt (file) [from origin...]
+0: action summary:
+0: get(ok): envs/freesurfer_license.txt (file) [from origin...]
+0: get(ok): envs/freesurfer_license.txt (file) [from origin...]
+0: get(ok): envs/freesurfer_license.txt (file) [from origin...]
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: action summary:
+0: action summary:
+0: action summary:
+0:   get (ok: 1)
+0:   get (ok: 1)
+0: install(ok): /scratch/fatx405.1433444/ewgenia004/clone/envs (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia004/clone/envs/freesurfer_license.txt]
+0:   get (ok: 1)
+0:   install (ok: 1)
+0:   install (ok: 1)
+0:   install (ok: 1)
+0: get(ok): envs/freesurfer_license.txt (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: install(ok): /scratch/fatx405.1433444/ewgenia001/clone/data/raw_bids (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia001/clone/data/raw_bids/dataset_description.json]
+0: get(ok): data/raw_bids/dataset_description.json (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: install(ok): /scratch/fatx405.1433444/ewgenia004/clone/data/raw_bids (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia004/clone/data/raw_bids/dataset_description.json]
+0: install(ok): /scratch/fatx405.1433444/ewgenia003/clone/data/raw_bids (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia003/clone/data/raw_bids/dataset_description.json]
+0: get(ok): data/raw_bids/dataset_description.json (file) [from origin...]
+0: get(ok): data/raw_bids/dataset_description.json (file) [from origin...]
+0: action summary:
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: Entering 'data/raw_bids'
+0: Entering 'data/raw_bids'
+0: Entering 'data/raw_bids'
+0: dead here (recording state in git...)
+0: dead here (recording state in git...)
+0: dead here (recording state in git...)
+0: ok
+0: ok
+0: ok
+0: (recording state in git...)
+0: (recording state in git...)
+0: (recording state in git...)
+0: Entering 'envs'
+0: Entering 'envs'
+0: Entering 'envs'
+0: dead here (recording state in git...)
+0: dead here (recording state in git...)
+0: dead here (recording state in git...)
+0: ok
+0: ok
+0: ok
+0: (recording state in git...)
+0: (recording state in git...)
+0: (recording state in git...)
+0: ls BIDS root: CHANGELOG.md code data envs README.md
+0: ls BIDS root: CHANGELOG.md code data envs README.md
+0: ls BIDS root: CHANGELOG.md code data envs README.md
+0: install(ok): /scratch/fatx405.1433444/ewgenia005/clone/data/raw_bids (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia005/clone/data/raw_bids/dataset_description.json]
+0: get(ok): data/raw_bids/dataset_description.json (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: Entering 'data/raw_bids'
+0: install(ok): /scratch/fatx405.1433444/ewgenia002/clone/data/raw_bids (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia002/clone/data/raw_bids/dataset_description.json]
+0: get(ok): data/raw_bids/dataset_description.json (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: dead here (recording state in git...)
+0: ok
+0: Entering 'data/raw_bids'
+0: (recording state in git...)
+0: Entering 'envs'
+0: dead here (recording state in git...)
+0: dead here (recording state in git...)
+0: ok
+0: (recording state in git...)
+0: ok
+0: (recording state in git...)
+0: Entering 'envs'
+0: ls BIDS root: CHANGELOG.md code data envs README.md
+0: dead here (recording state in git...)
+0: ok
+0: (recording state in git...)
+0: ls BIDS root: CHANGELOG.md code data envs README.md
+0: install(ok): /scratch/fatx405.1433444/ewgenia004/clone/data/dicoms (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia004/clone/data/dicoms]
+0: install(ok): /scratch/fatx405.1433444/ewgenia001/clone/data/dicoms (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia001/clone/data/dicoms]
+0: install(ok): /scratch/fatx405.1433444/ewgenia003/clone/data/dicoms (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia003/clone/data/dicoms]
+0: install(ok): /scratch/fatx405.1433444/ewgenia005/clone/data/dicoms (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia005/clone/data/dicoms]
+0: install(ok): /scratch/fatx405.1433444/ewgenia002/clone/data/dicoms (dataset) [Installed subdataset in order to get /scratch/fatx405.1433444/ewgenia002/clone/data/dicoms]
+0: install(ok): /scratch/fatx405.1433444/ewgenia003/clone/data/raw_bids/sub-ewgenia002 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia003/clone/data/raw_bids/sub-ewgenia001 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia003/clone/data/raw_bids/sub-ewgenia003 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia003/clone/data/raw_bids/sub-ewgenia004 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia003/clone/data/raw_bids/sub-ewgenia005 (dataset)
+0: update(ok): . (dataset)
+0: configure-sibling(ok): . (sibling)
+0: install(ok): /scratch/fatx405.1433444/ewgenia003/clone/data/raw_bids/sourcedata/dicoms (dataset)
+0: action summary:
+0:   configure-sibling (ok: 1)
+0:   get (notneeded: 1)
+0:   install (ok: 6)
+0:   update (ok: 1)
+0: install(ok): /scratch/fatx405.1433444/ewgenia001/clone/data/raw_bids/sub-ewgenia002 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia004/clone/data/raw_bids/sub-ewgenia002 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia001/clone/data/raw_bids/sub-ewgenia001 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia004/clone/data/raw_bids/sub-ewgenia001 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia004/clone/data/raw_bids/sub-ewgenia004 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia005/clone/data/raw_bids/sub-ewgenia002 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia001/clone/data/raw_bids/sub-ewgenia003 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia004/clone/data/raw_bids/sub-ewgenia003 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia004/clone/data/raw_bids/sub-ewgenia005 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia005/clone/data/raw_bids/sub-ewgenia001 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia001/clone/data/raw_bids/sub-ewgenia004 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia001/clone/data/raw_bids/sub-ewgenia005 (dataset)
+0: update(ok): . (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia005/clone/data/raw_bids/sub-ewgenia004 (dataset)
+0: update(ok): . (dataset)
+0: configure-sibling(ok): . (sibling)
+0: install(ok): /scratch/fatx405.1433444/ewgenia005/clone/data/raw_bids/sub-ewgenia003 (dataset)
+0: configure-sibling(ok): . (sibling)
+0: install(ok): /scratch/fatx405.1433444/ewgenia004/clone/data/raw_bids/sourcedata/dicoms (dataset)
+0: update(ok): . (dataset)
+0: configure-sibling(ok): . (sibling)
+0: install(ok): /scratch/fatx405.1433444/ewgenia001/clone/data/raw_bids/sourcedata/dicoms (dataset)
+0: action summary:
+0: install(ok): /scratch/fatx405.1433444/ewgenia005/clone/data/raw_bids/sub-ewgenia005 (dataset)
+0: action summary:
+0:   configure-sibling (ok: 1)
+0: install(ok): /scratch/fatx405.1433444/ewgenia005/clone/data/raw_bids/sourcedata/dicoms (dataset)
+0: action summary:
+0:   configure-sibling (ok: 1)
+0:   get (notneeded: 1)
+0:   configure-sibling (ok: 1)
+0:   get (notneeded: 1)
+0:   get (notneeded: 1)
+0:   install (ok: 6)
+0:   install (ok: 6)
+0:   update (ok: 1)
+0:   install (ok: 6)
+0:   update (ok: 1)
+0:   update (ok: 1)
+0: install(ok): /scratch/fatx405.1433444/ewgenia002/clone/data/raw_bids/sub-ewgenia002 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia002/clone/data/raw_bids/sub-ewgenia001 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia002/clone/data/raw_bids/sub-ewgenia003 (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia002/clone/data/raw_bids/sub-ewgenia004 (dataset)
+0: update(ok): . (dataset)
+0: configure-sibling(ok): . (sibling)
+0: install(ok): /scratch/fatx405.1433444/ewgenia002/clone/data/raw_bids/sourcedata/dicoms (dataset)
+0: install(ok): /scratch/fatx405.1433444/ewgenia002/clone/data/raw_bids/sub-ewgenia005 (dataset)
+0: action summary:
+0:   configure-sibling (ok: 1)
+0:   get (notneeded: 1)
+0:   install (ok: 6)
+0:   update (ok: 1)
+0: 210707-01:31:49,629 nipype.workflow INFO:
+0: 	 [Node] Setting-up "convert" in "/tmp/dcm2niixhtoux7po/convert".
+0: 210707-01:31:49,746 nipype.workflow INFO:
+0: 	 [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
+0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia004_ses-1_FLAIR_heudiconv875 -o /bids/sub-ewgenia004/ses-1/anat -s n -v n /tmp/dcm2niixhtoux7po/convert
+0: 210707-01:31:50,419 nipype.workflow INFO:
+0: 	 [Node] Setting-up "convert" in "/tmp/dcm2niixe_42760d/convert".
+0: 210707-01:31:50,458 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:50.457250:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
+0: 210707-01:31:50,460 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:50.457250:Found 384 DICOM file(s)
+0: 210707-01:31:50,460 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:50.457250:192 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
+0: 210707-01:31:50,460 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:50.457250:Convert 192 DICOM as /bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR_heudiconv875 (320x320x192x1)
+0: 210707-01:31:50,503 nipype.workflow INFO:
+0: 	 [Node] Setting-up "convert" in "/tmp/dcm2niixtmbp68qx/convert".
+0: 210707-01:31:50,539 nipype.workflow INFO:
+0: 	 [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
+0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia003_ses-1_FLAIR_heudiconv699 -o /bids/sub-ewgenia003/ses-1/anat -s n -v n /tmp/dcm2niixe_42760d/convert
+0: 210707-01:31:50,619 nipype.workflow INFO:
+0: 	 [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
+0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia001_ses-1_FLAIR_heudiconv031 -o /bids/sub-ewgenia001/ses-1/anat -s n -v n /tmp/dcm2niixtmbp68qx/convert
+0: 210707-01:31:51,243 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:51.242506:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
+0: 210707-01:31:51,245 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:51.242506:Found 384 DICOM file(s)
+0: 210707-01:31:51,245 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:51.242506:192 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
+0: 210707-01:31:51,245 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:51.242506:Convert 192 DICOM as /bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR_heudiconv699 (320x320x192x1)
+0: 210707-01:31:51,335 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:51.333965:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
+0: 210707-01:31:51,337 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:51.333965:Found 384 DICOM file(s)
+0: 210707-01:31:51,337 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:51.333965:192 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
+0: 210707-01:31:51,337 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:51.333965:Convert 192 DICOM as /bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR_heudiconv031 (320x320x192x1)
+0: 210707-01:31:52,225 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:52.224023:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR_heudiconv875.nii"
+0: 210707-01:31:52,226 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:52.224023:Conversion required 2.059373 seconds (0.453147 for core code).
+0: 210707-01:31:52,738 nipype.workflow INFO:
+0: 	 [Node] Setting-up "convert" in "/tmp/dcm2niix71rhryki/convert".
+0: 210707-01:31:52,860 nipype.workflow INFO:
+0: 	 [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
+0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia005_ses-1_FLAIR_heudiconv752 -o /bids/sub-ewgenia005/ses-1/anat -s n -v n /tmp/dcm2niix71rhryki/convert
+0: 210707-01:31:53,23 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:53.023034:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR_heudiconv699.nii"
+0: 210707-01:31:53,25 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:53.023034:Conversion required 2.078869 seconds (0.461738 for core code).
+0: 210707-01:31:53,102 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:53.101305:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR_heudiconv031.nii"
+0: 210707-01:31:53,103 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:53.101305:Conversion required 2.068065 seconds (0.461781 for core code).
+0: 210707-01:31:53,401 nipype.workflow INFO:
+0: 	 [Node] Finished "convert".
+0: 210707-01:31:53,623 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:53.622812:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
+0: 210707-01:31:53,625 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:53.622812:Found 384 DICOM file(s)
+0: 210707-01:31:53,625 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:53.622812:192 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
+0: 210707-01:31:53,625 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:53.622812:Convert 192 DICOM as /bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR_heudiconv752 (320x320x192x1)
+0: 210707-01:31:53,774 nipype.workflow INFO:
+0: 	 [Node] Finished "convert".
+0: 210707-01:31:54,117 nipype.workflow INFO:
+0: 	 [Node] Finished "convert".
+0: 210707-01:31:57,576 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:57.575348:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR_heudiconv752.nii"
+0: 210707-01:31:57,579 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:31:57.575348:Conversion required 4.243066 seconds (0.461150 for core code).
+0: 210707-01:31:58,102 nipype.workflow INFO:
+0: 	 [Node] Finished "convert".
+0: 210707-01:32:06,238 nipype.workflow INFO:
+0: 	 [Node] Setting-up "convert" in "/tmp/dcm2niixlv1_w9uu/convert".
+0: 210707-01:32:06,366 nipype.workflow INFO:
+0: 	 [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
+0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia002_ses-1_FLAIR_heudiconv318 -o /bids/sub-ewgenia002/ses-1/anat -s n -v n /tmp/dcm2niixlv1_w9uu/convert
+0: 210707-01:32:07,110 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:32:07.109550:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
+0: 210707-01:32:07,112 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:32:07.109550:Found 384 DICOM file(s)
+0: 210707-01:32:07,112 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:32:07.109550:192 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
+0: 210707-01:32:07,112 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:32:07.109550:Convert 192 DICOM as /bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR_heudiconv318 (320x320x192x1)
+0: 210707-01:32:08,945 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:32:08.944994:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR_heudiconv318.nii"
+0: 210707-01:32:08,947 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:32:08.944994:Conversion required 2.169941 seconds (0.505767 for core code).
+0: 210707-01:32:09,182 nipype.workflow INFO:
+0: 	 [Node] Finished "convert".
+0: get(ok): data/dicoms/ewgenia004/ses-1/3D_FLAIR_0005.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia004/ses-1/EP2D_DIFF_96DIR_7B0_3SHELL_ORIG_0015.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia004/ses-1/EP2D_RESTINGSTATE_0012.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia004/ses-1/T1_MPRAGE_COR_ND_0008.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia004 (directory)
+0: remove(ok): participants.tsv
+0: unlock(ok): data/raw_bids/dataset_description.json (file)
+0: get(ok): data/dicoms/ewgenia003/ses-1/3D_FLAIR_0005.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia003/ses-1/EP2D_DIFF_96DIR_7B0_3SHELL_ORIG_0015.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia003/ses-1/EP2D_RESTINGSTATE_0012.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia003/ses-1/T1_MPRAGE_COR_ND_0008.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia003 (directory)
+0: remove(ok): participants.tsv
+0: unlock(ok): data/raw_bids/dataset_description.json (file)
+0: get(ok): data/dicoms/ewgenia005/ses-1/3D_FLAIR_0005.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia005/ses-1/EP2D_DIFF_96DIR_7B0_3SHELL_ORIG_0015.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia005/ses-1/EP2D_RESTINGSTATE_0012.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia005/ses-1/T1_MPRAGE_COR_ND_0008.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia005 (directory)
+0: remove(ok): participants.tsv
+0: unlock(ok): data/raw_bids/dataset_description.json (file)
+0: get(ok): data/dicoms/ewgenia002/ses-1/3D_FLAIR_0005.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia002/ses-1/EP2D_DIFF_96DIR_7B0_3SHELL_ORIG_0015.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia002/ses-1/EP2D_RESTINGSTATE_0012.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia002/ses-1/T1_MPRAGE_COR_ND_0008.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia002 (directory)
+0: remove(ok): participants.tsv
+0: unlock(ok): data/raw_bids/dataset_description.json (file)
+0: 210707-01:33:43,872 nipype.workflow INFO:
+0: 	 [Node] Setting-up "convert" in "/tmp/dcm2niixwor6as7i/convert".
+0: 210707-01:33:49,184 nipype.workflow INFO:
+0: 	 [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
+0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia001_ses-1_dir-AP_dwi_heudiconv921 -o /bids/sub-ewgenia001/ses-1/dwi -s n -v n /tmp/dcm2niixwor6as7i/convert
+0: 210707-01:34:00,427 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:00.426487:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
+0: 210707-01:34:00,429 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:00.426487:Found 17618 DICOM file(s)
+0: 210707-01:34:00,429 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:00.426487:slices stacked despite varying acquisition numbers (if this is not desired recompile with 'mySegmentByAcq')
+0: 210707-01:34:00,430 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:00.426487:6288 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
+0: 210707-01:34:00,430 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:00.426487:Saving 103 DTI gradients. Validate vectors.
+0: 210707-01:34:00,430 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:00.426487:Convert 11330 DICOM as /bids/sub-ewgenia001/ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi_heudiconv921 (144x144x110x103)
+0: 210707-01:34:16,539 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:16.538154:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia001/ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi_heudiconv921.nii"
+0: 210707-01:34:16,541 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:16.538154:Conversion required 27.062259 seconds (11.238066 for core code).
+0: 210707-01:34:17,263 nipype.workflow INFO:
+0: 	 [Node] Finished "convert".
+0: 210707-01:34:21,507 nipype.workflow INFO:
+0: 	 [Node] Setting-up "convert" in "/tmp/dcm2niix8d65gi2b/convert".
+0: 210707-01:34:21,620 nipype.workflow INFO:
+0: 	 [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
+0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia001_ses-1_task-rest_bold_heudiconv025 -o /bids/sub-ewgenia001/ses-1/func -s n -v n /tmp/dcm2niix8d65gi2b/convert
+0: 210707-01:34:22,245 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:22.244110:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
+0: 210707-01:34:22,247 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:22.244110:Found 400 DICOM file(s)
+0: 210707-01:34:22,247 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:22.244110:slices stacked despite varying acquisition numbers (if this is not desired recompile with 'mySegmentByAcq')
+0: 210707-01:34:22,247 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:22.244110:200 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
+0: 210707-01:34:22,247 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:22.244110:Convert 200 DICOM as /bids/sub-ewgenia001/ses-1/func/sub-ewgenia001_ses-1_task-rest_bold_heudiconv025 (72x72x40x200)
+0: 210707-01:34:25,370 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:25.368855:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia001/ses-1/func/sub-ewgenia001_ses-1_task-rest_bold_heudiconv025.nii"
+0: 210707-01:34:25,371 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:25.368855:Conversion required 3.493965 seconds (0.412552 for core code).
+0: 210707-01:34:25,409 nipype.workflow INFO:
+0: 	 [Node] Finished "convert".
+0: 210707-01:34:28,357 nipype.workflow INFO:
+0: 	 [Node] Setting-up "convert" in "/tmp/dcm2niix_wbr6n7k/convert".
+0: 210707-01:34:28,501 nipype.workflow INFO:
+0: 	 [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
+0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia001_ses-1_T1w_heudiconv837 -o /bids/sub-ewgenia001/ses-1/anat -s n -v n /tmp/dcm2niix_wbr6n7k/convert
+0: 210707-01:34:29,109 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:29.108697:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
+0: 210707-01:34:29,112 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:29.108697:Found 512 DICOM file(s)
+0: 210707-01:34:29,112 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:29.108697:256 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
+0: 210707-01:34:29,112 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:29.108697:Convert 256 DICOM as /bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w_heudiconv837 (232x288x256x1)
+0: 210707-01:34:30,556 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:30.555045:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w_heudiconv837.nii"
+0: 210707-01:34:30,558 nipype.interface INFO:
+0: 	 stdout 2021-07-07T01:34:30.555045:Conversion required 1.796749 seconds (0.454284 for core code).
+0: 210707-01:34:30,601 nipype.workflow INFO:
+0: 	 [Node] Finished "convert".
+0: get(ok): data/dicoms/ewgenia001/ses-1/3D_FLAIR_0005.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia001/ses-1/EP2D_DIFF_96DIR_7B0_3SHELL_ORIG_0015.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia001/ses-1/EP2D_RESTINGSTATE_0012.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia001/ses-1/T1_MPRAGE_COR_ND_0008.tar.gz (file) [from origin...]
+0: get(ok): data/dicoms/ewgenia001 (directory)
+0: remove(ok): participants.tsv
+0: unlock(ok): data/raw_bids/dataset_description.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia001_ses-1_FLAIR.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz (file)
+0: add(ok): ses-1/anat/sub-ewgenia001_ses-1_T1w.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz (file)
+0: add(ok): ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.bval (file)
+0: add(ok): ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.bvec (file)
+0: add(ok): ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.json (file)
+0: add(ok): ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.nii.gz (file)
+0: add(ok): ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.json (file)
+0: add(ok): ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.nii.gz (file)
+0: add(ok): ses-1/func/sub-ewgenia001_ses-1_task-rest_events.tsv (file)
+0: add(ok): ses-1/sub-ewgenia001_ses-1_scans.json (file)
+0: add(ok): ses-1/sub-ewgenia001_ses-1_scans.tsv (file)
+0: save(ok): data/raw_bids/sub-ewgenia001 (dataset)
+0: add(ok): sub-ewgenia001 (file)
+0: add(ok): participants.tsv (file)
+0: add(ok): dataset_description.json (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 17)
+0:   get (notneeded: 5, ok: 5)
+0:   remove (ok: 1)
+0:   save (ok: 3)
+0:   unlock (ok: 1)
+0: Some packages in this Docker container are non-free
+0: If you are considering commercial use of this container, please consult the relevant license:
+0: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence
+0: --------------
+0: pydeface 2.0.0
+0: --------------
+0: Previous output will be overwritten.
+0: Temporary files:
+0:   /tmp/tmpls_1lmd9.mat
+0:   /tmp/tmpdzmtgmis.nii.gz
+0: Defacing...
+0:   /scratch/fatx405.1433444/ewgenia001/clone/data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz
+0: Defaced image saved as:
+0:   /scratch/fatx405.1433444/ewgenia001/clone/data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz
+0: Cleaning up...
+0: Finished.
+0: get(ok): .datalad/environments/pydeface/image (file) [from origin...]
+0: unlock(ok): data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz (file)
+0: add(ok): ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz (file)
+0: save(ok): data/raw_bids/sub-ewgenia001 (dataset)
+0: add(ok): sub-ewgenia001 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 3)
+0:   get (notneeded: 2, ok: 1)
+0:   save (ok: 3)
+0:   unlock (ok: 1)
+0: Some packages in this Docker container are non-free
+0: If you are considering commercial use of this container, please consult the relevant license:
+0: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence
+0: --------------
+0: pydeface 2.0.0
+0: --------------
+0: Previous output will be overwritten.
+0: Temporary files:
+0:   /tmp/tmpo9ol441s.mat
+0:   /tmp/tmp9jfo6xgx.nii.gz
+0: Defacing...
+0:   /scratch/fatx405.1433444/ewgenia001/clone/data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz
+0: Defaced image saved as:
+0:   /scratch/fatx405.1433444/ewgenia001/clone/data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz
+0: Cleaning up...
+0: Finished.
+0: unlock(ok): data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz (file)
+0: add(ok): ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz (file)
+0: save(ok): data/raw_bids/sub-ewgenia001 (dataset)
+0: add(ok): sub-ewgenia001 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 3)
+0:   get (notneeded: 3)
+0:   save (ok: 3)
+0:   unlock (ok: 1)
+0: Amending json metadata of: []
+0: unlock(ok): data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia001/ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia001/ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia001_ses-1_FLAIR.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia001_ses-1_T1w.json (file)
+0: add(ok): ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.json (file)
+0: add(ok): ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.json (file)
+0: add(ok): sub-ewgenia001 (file)
+0: add(ok): data/raw_bids (file)
+0: action summary:
+0:   add (ok: 6)
+0:   get (notneeded: 5)
+0:   save (notneeded: 3)
+0:   unlock (ok: 4)
+0: copy(ok): ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.nii.gz (file) [to origin...]
+0: publish(ok): . (dataset) [refs/heads/git-annex->origin:refs/heads/git-annex a146b3c..cfdb05a]
+0: publish(ok): . (dataset) [refs/heads/job-1433444-bidsify-ewgenia001->origin:refs/heads/job-1433444-bidsify-ewgenia001 [new branch]]
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda2        92G   55G   37G  60% /scratch
+script runtime: 00:34:58 hours

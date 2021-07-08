@@ -1,0 +1,176 @@
+starting processing with mriqc from index: 0 ...
+for n=2 subjects
+subjects to process: sub-ewgenia001 sub-ewgenia002
+submission script directory: /work/fatx405/projects/CSI_TEST/code
+current TMPDIR: /scratch/fatx405.1433190
+ITERator: 0
+running:
+ parallel --ungroup --progress --delay 0.2 -j2 --joblog /work/fatx405/projects/CSI_TEST/code/log/parallel_runtask.log srun --label --exclusive -N1 -n1 --cpus-per-task 15 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh ::: sub-ewgenia001 sub-ewgenia002
+0: allexport      	off
+0: braceexpand    	on
+0: emacs          	off
+0: errexit        	on
+0: errtrace       	off
+0: functrace      	off
+0: hashall        	on
+0: histexpand     	off
+0: history        	off
+0: ignoreeof      	off
+0: interactive-comments	on
+0: keyword        	off
+0: monitor        	off
+0: noclobber      	off
+0: noexec         	off
+0: noglob         	off
+0: nolog          	off
+0: notify         	off
+0: nounset        	off
+0: onecmd         	off
+0: physical       	off
+0: pipefail       	off
+0: posix          	off
+0: privileged     	off
+0: verbose        	off
+0: vi             	off
+0: xtrace         	off
+0: allexport      	off
+0: braceexpand    	on
+0: emacs          	off
+0: errexit        	on
+0: errtrace       	off
+0: functrace      	off
+0: hashall        	on
+0: histexpand     	off
+0: history        	off
+0: ignoreeof      	off
+0: interactive-comments	on
+0: keyword        	off
+0: monitor        	off
+0: noclobber      	off
+0: noexec         	off
+0: noglob         	off
+0: nolog          	off
+0: notify         	off
+0: nounset        	off
+0: onecmd         	off
+0: physical       	off
+0: pipefail       	off
+0: posix          	off
+0: privileged     	off
+0: verbose        	off
+0: vi             	off
+0: xtrace         	off
+0: ###################################
+0: Started processing of sub-ewgenia001
+0: ###################################
+0: ###################################
+0: Started processing of sub-ewgenia002
+0: ###################################
+0: hostname: node008
+0: hostname: node008
+0: singularity version 3.5.2
+0: singularity version 3.5.2
+0: TMPDIR: /scratch/fatx405.1433190
+0: TMPDIR: /scratch/fatx405.1433190
+0: RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433190
+0: RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433190
+0: SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
+0: SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
+0: SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
+0: SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
+0: DSLOCKFILE: /scratch/fatx405.1433190/sub-ewgenia002/mriqc.lock
+0: DSLOCKFILE: /scratch/fatx405.1433190/sub-ewgenia001/mriqc.lock
+0: DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433190/sub-ewgenia001/sockets
+0: DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433190/sub-ewgenia002/sockets
+0: install(ok): /scratch/fatx405.1433190/sub-ewgenia002/clone (dataset)
+0: install(ok): /scratch/fatx405.1433190/sub-ewgenia001/clone (dataset)
+0: install(ok): /scratch/fatx405.1433190/sub-ewgenia001/clone/envs (dataset) [Installed subdataset in order to get /scratch/fatx405.1433190/sub-ewgenia001/clone/envs/freesurfer_license.txt]
+0: get(ok): envs/freesurfer_license.txt (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: install(ok): /scratch/fatx405.1433190/sub-ewgenia002/clone/envs (dataset) [Installed subdataset in order to get /scratch/fatx405.1433190/sub-ewgenia002/clone/envs/freesurfer_license.txt]
+0: get(ok): envs/freesurfer_license.txt (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: install(ok): /scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids (dataset) [Installed subdataset in order to get /scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids/dataset_description.json]
+0: get(ok): data/raw_bids/dataset_description.json (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: install(ok): /scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids (dataset) [Installed subdataset in order to get /scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids/dataset_description.json]
+0: get(ok): data/raw_bids/dataset_description.json (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: Entering 'data/raw_bids'
+0: Entering 'data/raw_bids'
+0: dead here (recording state in git...)
+0: dead here (recording state in git...)
+0: ok
+0: ok
+0: (recording state in git...)
+0: (recording state in git...)
+0: Entering 'envs'
+0: Entering 'envs'
+0: dead here (recording state in git...)
+0: dead here (recording state in git...)
+0: ok
+0: ok
+0: (recording state in git...)
+0: (recording state in git...)
+0: ls BIDS root: CHANGELOG.md code data envs README.md
+0: ls BIDS root: CHANGELOG.md code data envs README.md
+0: install(ok): /scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids/sub-ewgenia002 (dataset) [Installed subdataset in order to get /scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids/sub-ewgenia002]
+0: install(ok): /scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids/sub-ewgenia001 (dataset) [Installed subdataset in order to get /scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids/sub-ewgenia001]
+0: install(ok): /scratch/fatx405.1433190/sub-ewgenia001/clone/data/mriqc (dataset) [Installed subdataset in order to get /scratch/fatx405.1433190/sub-ewgenia001/clone/data/mriqc]
+0: install(ok): /scratch/fatx405.1433190/sub-ewgenia002/clone/data/mriqc (dataset) [Installed subdataset in order to get /scratch/fatx405.1433190/sub-ewgenia002/clone/data/mriqc]
+0: 210706-18:17:50,332 cli IMPORTANT:
+0: 	 
+0:     Running MRIQC version 0.16.1:
+0:       * BIDS dataset path: /scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids.
+0:       * Output folder: /scratch/fatx405.1433190/sub-ewgenia001/clone/data/mriqc.
+0:       * Analysis levels: ['participant'].
+0: 
+0: get(ok): .datalad/environments/mriqc/image (file) [from origin...]
+0: 210706-18:35:53,21 cli WARNING:
+0: 	 Building bold report: no exclude index was found
+0: 210706-18:39:45,453 cli IMPORTANT:
+0: 	 Participant level finished successfully.
+0: get(ok): data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.json (file) [from origin...]
+0: get(ok): data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz (file) [from origin...]
+0: get(ok): data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.json (file) [from origin...]
+0: get(ok): data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz (file) [from origin...]
+0: get(ok): data/raw_bids/sub-ewgenia001/ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.bval (file) [from origin...]
+0: get(ok): data/raw_bids/sub-ewgenia001/ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.bvec (file) [from origin...]
+0: get(ok): data/raw_bids/sub-ewgenia001/ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.json (file) [from origin...]
+0: get(ok): data/raw_bids/sub-ewgenia001/ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.nii.gz (file) [from origin...]
+0: get(ok): data/raw_bids/sub-ewgenia001/ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.json (file) [from origin...]
+0: get(ok): data/raw_bids/sub-ewgenia001/ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.nii.gz (file) [from origin...]
+0: get(ok): data/raw_bids/sub-ewgenia001/ses-1/func/sub-ewgenia001_ses-1_task-rest_events.tsv (file) [from origin...]
+0: get(ok): data/raw_bids/sub-ewgenia001/ses-1/sub-ewgenia001_ses-1_scans.json (file) [from origin...]
+0: get(ok): data/raw_bids/sub-ewgenia001/ses-1/sub-ewgenia001_ses-1_scans.tsv (file) [from origin...]
+0: get(ok): .datalad/environments/mriqc/image (file) [from origin...]
+0: add(ok): .bidsignore (file)
+0: add(ok): dataset_description.json (file)
+0: add(ok): sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.json (file)
+0: add(ok): sub-ewgenia001/ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.json (file)
+0: add(ok): sub-ewgenia001_ses-1_T1w.html (file)
+0: add(ok): sub-ewgenia001_ses-1_task-rest_bold.html (file)
+0: save(ok): data/mriqc (dataset)
+0: add(ok): data/mriqc (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 7)
+0:   get (notneeded: 4, ok: 14)
+0:   save (ok: 2)
+0: copy(ok): sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.json (file) [to origin...]
+0: copy(ok): sub-ewgenia001/ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.json (file) [to origin...]
+0: copy(ok): sub-ewgenia001_ses-1_T1w.html (file) [to origin...]
+0: copy(ok): sub-ewgenia001_ses-1_task-rest_bold.html (file) [to origin...]
+0: publish(ok): . (dataset) [refs/heads/git-annex->origin:refs/heads/git-annex 699fb4c..c4f2a16]
+0: publish(ok): . (dataset) [refs/heads/job-1433190-mriqc-sub-ewgenia001->origin:refs/heads/job-1433190-mriqc-sub-ewgenia001 [new branch]]
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda2        92G   24G   68G  27% /scratch
+script runtime: 00:36:58 hours

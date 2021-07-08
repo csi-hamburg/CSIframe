@@ -7,7 +7,7 @@ PROJ_DIR=$SCRIPT_DIR/../.
 CODE_DIR=$SCRIPT_DIR
 
 
-export TEMPLATEFLOW_HOME=$PROJ_DIR/code/templateflow
+export TEMPLATEFLOW_HOME=$PROJ_DIR/.templateflow
 mkdir -p $TEMPLATEFLOW_HOME
 
 python -c "from templateflow.api import get; get(['MNI152NLin2009cAsym', 'MNI152NLin6Asym', 'OASIS30ANTs', 'MNIPediatricAsym', 'MNIInfant'])"

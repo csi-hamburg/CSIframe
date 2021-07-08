@@ -1,0 +1,396 @@
+starting processing with bidsify from index: 0 ...
+for n=10 subjects
+subjects to process: ewgenia001 ewgenia002 ewgenia003 ewgenia004 ewgenia005
+submission script directory: /work/fatx405/projects/CSI_TEST/code
+current TMPDIR: /scratch/fatx405.1433703
+ITERator: 0
+running:
+ parallel --ungroup --progress --delay 0.2 -j10 --joblog /work/fatx405/projects/CSI_TEST/code/log/parallel_runtask.log srun --label --exclusive -N1 -n1 --cpus-per-task 3 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh ::: ewgenia001 ewgenia002 ewgenia003 ewgenia004 ewgenia005
+0: allexport      	off
+0: braceexpand    	on
+0: emacs          	off
+0: errexit        	on
+0: errtrace       	off
+0: functrace      	off
+0: hashall        	on
+0: histexpand     	off
+0: history        	off
+0: ignoreeof      	off
+0: interactive-comments	on
+0: keyword        	off
+0: monitor        	off
+0: noclobber      	off
+0: noexec         	off
+0: noglob         	off
+0: nolog          	off
+0: notify         	off
+0: nounset        	off
+0: onecmd         	off
+0: physical       	off
+0: pipefail       	off
+0: posix          	off
+0: privileged     	off
+0: verbose        	off
+0: vi             	off
+0: xtrace         	off
+0: allexport      	off
+0: braceexpand    	on
+0: emacs          	off
+0: errexit        	on
+0: errtrace       	off
+0: functrace      	off
+0: hashall        	on
+0: histexpand     	off
+0: history        	off
+0: ignoreeof      	off
+0: interactive-comments	on
+0: keyword        	off
+0: monitor        	off
+0: noclobber      	off
+0: noexec         	off
+0: noglob         	off
+0: nolog          	off
+0: notify         	off
+0: nounset        	off
+0: onecmd         	off
+0: physical       	off
+0: pipefail       	off
+0: posix          	off
+0: privileged     	off
+0: verbose        	off
+0: vi             	off
+0: xtrace         	off
+0: ###################################
+0: Started processing of ewgenia001
+0: ###################################
+0: hostname: node108
+0: singularity version 3.5.2
+0: TMPDIR: /scratch/fatx405.1433703
+0: RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433703
+0: SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
+0: SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
+0: DSLOCKFILE: /scratch/fatx405.1433703/ewgenia001/bidsify.lock
+0: DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433703/ewgenia001/sockets
+0: ###################################
+0: Started processing of ewgenia002
+0: ###################################
+0: hostname: node108
+0: allexport      	off
+0: braceexpand    	on
+0: emacs          	off
+0: errexit        	on
+0: errtrace       	off
+0: functrace      	off
+0: hashall        	on
+0: histexpand     	off
+0: history        	off
+0: ignoreeof      	off
+0: interactive-comments	on
+0: keyword        	off
+0: monitor        	off
+0: noclobber      	off
+0: noexec         	off
+0: singularity version 3.5.2
+0: noglob         	off
+0: nolog          	off
+0: allexport      	off
+0: braceexpand    	on
+0: TMPDIR: /scratch/fatx405.1433703
+0: notify         	off
+0: emacs          	off
+0: errexit        	on
+0: RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433703
+0: nounset        	off
+0: errtrace       	off
+0: functrace      	off
+0: onecmd         	off
+0: SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
+0: hashall        	on
+0: physical       	off
+0: SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
+0: histexpand     	off
+0: pipefail       	off
+0: history        	off
+0: DSLOCKFILE: /scratch/fatx405.1433703/ewgenia002/bidsify.lock
+0: posix          	off
+0: privileged     	off
+0: ignoreeof      	off
+0: verbose        	off
+0: DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433703/ewgenia002/sockets
+0: interactive-comments	on
+0: vi             	off
+0: keyword        	off
+0: monitor        	off
+0: xtrace         	off
+0: noclobber      	off
+0: noexec         	off
+0: noglob         	off
+0: nolog          	off
+0: notify         	off
+0: nounset        	off
+0: onecmd         	off
+0: physical       	off
+0: pipefail       	off
+0: posix          	off
+0: privileged     	off
+0: verbose        	off
+0: vi             	off
+0: xtrace         	off
+0: ###################################
+0: ###################################
+0: Started processing of ewgenia003
+0: Started processing of ewgenia004
+0: ###################################
+0: ###################################
+0: allexport      	off
+0: braceexpand    	on
+0: emacs          	off
+0: errexit        	on
+0: errtrace       	off
+0: functrace      	off
+0: hashall        	on
+0: histexpand     	off
+0: hostname: node108
+0: history        	off
+0: ignoreeof      	off
+0: interactive-comments	on
+0: keyword        	off
+0: hostname: node108
+0: singularity version 3.5.2
+0: monitor        	off
+0: noclobber      	off
+0: noexec         	off
+0: TMPDIR: /scratch/fatx405.1433703
+0: singularity version 3.5.2
+0: noglob         	off
+0: nolog          	off
+0: RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433703
+0: TMPDIR: /scratch/fatx405.1433703
+0: notify         	off
+0: SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
+0: RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433703
+0: nounset        	off
+0: onecmd         	off
+0: SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
+0: SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
+0: physical       	off
+0: DSLOCKFILE: /scratch/fatx405.1433703/ewgenia003/bidsify.lock
+0: pipefail       	off
+0: posix          	off
+0: SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
+0: DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433703/ewgenia003/sockets
+0: privileged     	off
+0: verbose        	off
+0: DSLOCKFILE: /scratch/fatx405.1433703/ewgenia004/bidsify.lock
+0: vi             	off
+0: xtrace         	off
+0: DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433703/ewgenia004/sockets
+0: ###################################
+0: Started processing of ewgenia005
+0: ###################################
+0: hostname: node108
+0: singularity version 3.5.2
+0: TMPDIR: /scratch/fatx405.1433703
+0: RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433703
+0: SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
+0: SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
+0: DSLOCKFILE: /scratch/fatx405.1433703/ewgenia005/bidsify.lock
+0: DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433703/ewgenia005/sockets
+0: install(ok): /scratch/fatx405.1433703/ewgenia004/clone (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia001/clone (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia002/clone (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia005/clone (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia003/clone (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia002/clone/envs (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia002/clone/envs/freesurfer_license.txt]
+0: install(ok): /scratch/fatx405.1433703/ewgenia001/clone/envs (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia001/clone/envs/freesurfer_license.txt]
+0: install(ok): /scratch/fatx405.1433703/ewgenia003/clone/envs (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia003/clone/envs/freesurfer_license.txt]
+0: get(ok): envs/freesurfer_license.txt (file) [from origin...]
+0: install(ok): /scratch/fatx405.1433703/ewgenia005/clone/envs (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia005/clone/envs/freesurfer_license.txt]
+0: get(ok): envs/freesurfer_license.txt (file) [from origin...]
+0: get(ok): envs/freesurfer_license.txt (file) [from origin...]
+0: action summary:
+0: get(ok): envs/freesurfer_license.txt (file) [from origin...]
+0: action summary:
+0: action summary:
+0:   get (ok: 1)
+0: action summary:
+0:   get (ok: 1)
+0:   get (ok: 1)
+0:   install (ok: 1)
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: install(ok): /scratch/fatx405.1433703/ewgenia004/clone/envs (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia004/clone/envs/freesurfer_license.txt]
+0:   install (ok: 1)
+0:   install (ok: 1)
+0: get(ok): envs/freesurfer_license.txt (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: install(ok): /scratch/fatx405.1433703/ewgenia003/clone/data/raw_bids (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia003/clone/data/raw_bids/dataset_description.json]
+0: get(ok): data/raw_bids/dataset_description.json (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: Entering 'data/raw_bids'
+0: install(ok): /scratch/fatx405.1433703/ewgenia002/clone/data/raw_bids (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia002/clone/data/raw_bids/dataset_description.json]
+0: get(ok): data/raw_bids/dataset_description.json (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: Entering 'data/raw_bids'
+0: dead here (recording state in git...)
+0: install(ok): /scratch/fatx405.1433703/ewgenia004/clone/data/raw_bids (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia004/clone/data/raw_bids/dataset_description.json]
+0: get(ok): data/raw_bids/dataset_description.json (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: ok
+0: (recording state in git...)
+0: dead here (recording state in git...)
+0: Entering 'data/raw_bids'
+0: Entering 'envs'
+0: ok
+0: (recording state in git...)
+0: Entering 'envs'
+0: dead here (recording state in git...)
+0: dead here (recording state in git...)
+0: dead here (recording state in git...)
+0: ok
+0: ok
+0: ok
+0: (recording state in git...)
+0: (recording state in git...)
+0: (recording state in git...)
+0: Entering 'envs'
+0: ls BIDS root: CHANGELOG.md code data envs README.md
+0: ls BIDS root: CHANGELOG.md code data envs README.md
+0: dead here (recording state in git...)
+0: ok
+0: (recording state in git...)
+0: install(ok): /scratch/fatx405.1433703/ewgenia001/clone/data/raw_bids (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia001/clone/data/raw_bids/dataset_description.json]
+0: get(ok): data/raw_bids/dataset_description.json (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: ls BIDS root: CHANGELOG.md code data envs README.md
+0: Entering 'data/raw_bids'
+0: dead here (recording state in git...)
+0: ok
+0: (recording state in git...)
+0: Entering 'envs'
+0: install(ok): /scratch/fatx405.1433703/ewgenia005/clone/data/raw_bids (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia005/clone/data/raw_bids/dataset_description.json]
+0: get(ok): data/raw_bids/dataset_description.json (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: Entering 'data/raw_bids'
+0: dead here (recording state in git...)
+0: dead here (recording state in git...)
+0: ok
+0: (recording state in git...)
+0: ok
+0: (recording state in git...)
+0: ls BIDS root: CHANGELOG.md code data envs README.md
+0: Entering 'envs'
+0: dead here (recording state in git...)
+0: ok
+0: (recording state in git...)
+0: ls BIDS root: CHANGELOG.md code data envs README.md
+0: install(ok): /scratch/fatx405.1433703/ewgenia003/clone/data/dicoms (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia003/clone/data/dicoms]
+0: install(ok): /scratch/fatx405.1433703/ewgenia002/clone/data/dicoms (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia002/clone/data/dicoms]
+0: install(ok): /scratch/fatx405.1433703/ewgenia004/clone/data/dicoms (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia004/clone/data/dicoms]
+0: install(ok): /scratch/fatx405.1433703/ewgenia001/clone/data/dicoms (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia001/clone/data/dicoms]
+0: install(ok): /scratch/fatx405.1433703/ewgenia005/clone/data/dicoms (dataset) [Installed subdataset in order to get /scratch/fatx405.1433703/ewgenia005/clone/data/dicoms]
+0: install(ok): /scratch/fatx405.1433703/ewgenia004/clone/data/raw_bids/sub-ewgenia002 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia002/clone/data/raw_bids/sub-ewgenia001 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia003/clone/data/raw_bids/sub-ewgenia001 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia004/clone/data/raw_bids/sub-ewgenia001 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia002/clone/data/raw_bids/sub-ewgenia002 (dataset)
+0: update(ok): . (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia003/clone/data/raw_bids/sub-ewgenia002 (dataset)
+0: update(ok): . (dataset)
+0: configure-sibling(ok): . (sibling)
+0: configure-sibling(ok): . (sibling)
+0: install(ok): /scratch/fatx405.1433703/ewgenia002/clone/data/raw_bids/sub-ewgenia004 (dataset)
+0: update(ok): . (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia004/clone/data/raw_bids/sourcedata/dicoms (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia002/clone/data/raw_bids/sub-ewgenia003 (dataset)
+0: configure-sibling(ok): . (sibling)
+0: install(ok): /scratch/fatx405.1433703/ewgenia004/clone/data/raw_bids/sub-ewgenia004 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia002/clone/data/raw_bids/sourcedata/dicoms (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia003/clone/data/raw_bids/sub-ewgenia003 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia004/clone/data/raw_bids/sub-ewgenia003 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia002/clone/data/raw_bids/sub-ewgenia005 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia003/clone/data/raw_bids/sub-ewgenia004 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia004/clone/data/raw_bids/sub-ewgenia005 (dataset)
+0: action summary:
+0: install(ok): /scratch/fatx405.1433703/ewgenia003/clone/data/raw_bids/sourcedata/dicoms (dataset)
+0: action summary:
+0:   configure-sibling (ok: 1)
+0: install(ok): /scratch/fatx405.1433703/ewgenia003/clone/data/raw_bids/sub-ewgenia005 (dataset)
+0:   configure-sibling (ok: 1)
+0:   get (notneeded: 1)
+0: action summary:
+0:   get (notneeded: 1)
+0:   install (ok: 6)
+0:   configure-sibling (ok: 1)
+0:   install (ok: 6)
+0:   update (ok: 1)
+0:   update (ok: 1)
+0:   get (notneeded: 1)
+0:   install (ok: 6)
+0:   update (ok: 1)
+0: /scratch/fatx405.1433703/ewgenia004/clone/data/raw_bids /scratch/fatx405.1433703/ewgenia004/clone
+0: /scratch/fatx405.1433703/ewgenia003/clone/data/raw_bids /scratch/fatx405.1433703/ewgenia003/clone
+0: /scratch/fatx405.1433703/ewgenia002/clone/data/raw_bids /scratch/fatx405.1433703/ewgenia002/clone
+0: install(ok): /scratch/fatx405.1433703/ewgenia001/clone/data/raw_bids/sub-ewgenia001 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia001/clone/data/raw_bids/sub-ewgenia002 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia001/clone/data/raw_bids/sub-ewgenia004 (dataset)
+0: update(ok): . (dataset)
+0: configure-sibling(ok): . (sibling)
+0: install(ok): /scratch/fatx405.1433703/ewgenia001/clone/data/raw_bids/sub-ewgenia003 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia001/clone/data/raw_bids/sourcedata/dicoms (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia001/clone/data/raw_bids/sub-ewgenia005 (dataset)
+0: action summary:
+0:   configure-sibling (ok: 1)
+0:   get (notneeded: 1)
+0:   install (ok: 6)
+0:   update (ok: 1)
+0: install(ok): /scratch/fatx405.1433703/ewgenia005/clone/data/raw_bids/sub-ewgenia002 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia005/clone/data/raw_bids/sub-ewgenia001 (dataset)
+0: update(ok): . (dataset)
+0: configure-sibling(ok): . (sibling)
+0: install(ok): /scratch/fatx405.1433703/ewgenia005/clone/data/raw_bids/sub-ewgenia004 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia005/clone/data/raw_bids/sourcedata/dicoms (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia005/clone/data/raw_bids/sub-ewgenia003 (dataset)
+0: install(ok): /scratch/fatx405.1433703/ewgenia005/clone/data/raw_bids/sub-ewgenia005 (dataset)
+0: action summary:
+0:   configure-sibling (ok: 1)
+0:   get (notneeded: 1)
+0:   install (ok: 6)
+0:   update (ok: 1)
+0: /scratch/fatx405.1433703/ewgenia001/clone/data/raw_bids /scratch/fatx405.1433703/ewgenia001/clone
+0: /scratch/fatx405.1433703/ewgenia005/clone/data/raw_bids /scratch/fatx405.1433703/ewgenia005/clone
+0: get(error): ../dicoms [path not associated with dataset Dataset(/scratch/fatx405.1433703/ewgenia004/clone/data/raw_bids)]
+0: get(error): /scratch/fatx405.1433703/ewgenia004/clone/data/dicoms/ewgenia004 [path not associated with dataset Dataset(/scratch/fatx405.1433703/ewgenia004/clone/data/raw_bids)]
+0: remove(ok): participants.tsv
+0: unlock(ok): dataset_description.json (file)
+0: get(error): ../dicoms [path not associated with dataset Dataset(/scratch/fatx405.1433703/ewgenia003/clone/data/raw_bids)]
+0: get(error): ../dicoms [path not associated with dataset Dataset(/scratch/fatx405.1433703/ewgenia002/clone/data/raw_bids)]
+0: get(error): /scratch/fatx405.1433703/ewgenia003/clone/data/dicoms/ewgenia003 [path not associated with dataset Dataset(/scratch/fatx405.1433703/ewgenia003/clone/data/raw_bids)]
+0: remove(ok): participants.tsv
+0: get(error): /scratch/fatx405.1433703/ewgenia002/clone/data/dicoms/ewgenia002 [path not associated with dataset Dataset(/scratch/fatx405.1433703/ewgenia002/clone/data/raw_bids)]
+0: unlock(ok): dataset_description.json (file)
+0: remove(ok): participants.tsv
+0: unlock(ok): dataset_description.json (file)
+0: get(error): ../dicoms [path not associated with dataset Dataset(/scratch/fatx405.1433703/ewgenia001/clone/data/raw_bids)]
+0: get(error): /scratch/fatx405.1433703/ewgenia001/clone/data/dicoms/ewgenia001 [path not associated with dataset Dataset(/scratch/fatx405.1433703/ewgenia001/clone/data/raw_bids)]
+0: remove(ok): participants.tsv
+0: unlock(ok): dataset_description.json (file)
+0: get(error): ../dicoms [path not associated with dataset Dataset(/scratch/fatx405.1433703/ewgenia005/clone/data/raw_bids)]
+0: get(error): /scratch/fatx405.1433703/ewgenia005/clone/data/dicoms/ewgenia005 [path not associated with dataset Dataset(/scratch/fatx405.1433703/ewgenia005/clone/data/raw_bids)]
+0: remove(ok): participants.tsv
+0: unlock(ok): dataset_description.json (file)
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda2        92G   45G   47G  49% /scratch
+script runtime: 00:09:44 hours

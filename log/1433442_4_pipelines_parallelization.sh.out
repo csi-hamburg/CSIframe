@@ -1,0 +1,85 @@
+starting processing with fmriprep from index: 4 ...
+for n=4 subjects
+subjects to process: sub-ewgenia005
+submission script directory: /work/fatx405/projects/CSI_TEST/code
+current TMPDIR: /scratch/fatx405.1433442
+ITERator: 0
+running:
+ parallel --ungroup --progress --delay 0.2 -j4 --joblog /work/fatx405/projects/CSI_TEST/code/log/parallel_runtask.log srun --label --exclusive -N1 -n1 --cpus-per-task 7 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh ::: sub-ewgenia005
+0: allexport      	off
+0: braceexpand    	on
+0: emacs          	off
+0: errexit        	on
+0: errtrace       	off
+0: functrace      	off
+0: hashall        	on
+0: histexpand     	off
+0: history        	off
+0: ignoreeof      	off
+0: interactive-comments	on
+0: keyword        	off
+0: monitor        	off
+0: noclobber      	off
+0: noexec         	off
+0: noglob         	off
+0: nolog          	off
+0: notify         	off
+0: nounset        	off
+0: onecmd         	off
+0: physical       	off
+0: pipefail       	off
+0: posix          	off
+0: privileged     	off
+0: verbose        	off
+0: vi             	off
+0: xtrace         	off
+0: ###################################
+0: Started processing of sub-ewgenia005
+0: ###################################
+0: hostname: node140
+0: singularity version 3.5.2
+0: TMPDIR: /scratch/fatx405.1433442
+0: RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433442
+0: SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
+0: SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
+0: DSLOCKFILE: /scratch/fatx405.1433442/sub-ewgenia005/fmriprep.lock
+0: DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433442/sub-ewgenia005/sockets
+0: install(ok): /scratch/fatx405.1433442/sub-ewgenia005/clone (dataset)
+0: install(ok): /scratch/fatx405.1433442/sub-ewgenia005/clone/envs (dataset) [Installed subdataset in order to get /scratch/fatx405.1433442/sub-ewgenia005/clone/envs/freesurfer_license.txt]
+0: get(ok): envs/freesurfer_license.txt (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: install(ok): /scratch/fatx405.1433442/sub-ewgenia005/clone/data/raw_bids (dataset) [Installed subdataset in order to get /scratch/fatx405.1433442/sub-ewgenia005/clone/data/raw_bids/dataset_description.json]
+0: get(ok): data/raw_bids/dataset_description.json (file) [from origin...]
+0: action summary:
+0:   get (ok: 1)
+0:   install (ok: 1)
+0: Entering 'data/raw_bids'
+0: dead here (recording state in git...)
+0: ok
+0: (recording state in git...)
+0: Entering 'envs'
+0: dead here (recording state in git...)
+0: ok
+0: (recording state in git...)
+0: ls BIDS root: CHANGELOG.md code data envs README.md
+0: install(ok): /scratch/fatx405.1433442/sub-ewgenia005/clone/data/raw_bids/sub-ewgenia005 (dataset) [Installed subdataset in order to get /scratch/fatx405.1433442/sub-ewgenia005/clone/data/raw_bids/sub-ewgenia005]
+0: install(ok): /scratch/fatx405.1433442/sub-ewgenia005/clone/data/fmriprep (dataset) [Installed subdataset in order to get /scratch/fatx405.1433442/sub-ewgenia005/clone/data/fmriprep]
+0: install(ok): /scratch/fatx405.1433442/sub-ewgenia005/clone/data/smriprep (dataset) [Installed subdataset in order to get /scratch/fatx405.1433442/sub-ewgenia005/clone/data/smriprep]
+0: install(ok): /scratch/fatx405.1433442/sub-ewgenia005/clone/data/freesurfer (dataset) [Installed subdataset in order to get /scratch/fatx405.1433442/sub-ewgenia005/clone/data/freesurfer]
+0: 210707-01:30:09,426 nipype.workflow IMPORTANT:
+0: 	 
+0:     Running fMRIPREP version 20.2.1:
+0:       * BIDS dataset path: /scratch/fatx405.1433442/sub-ewgenia005/clone/data/raw_bids.
+0:       * Participant list: ['ewgenia005'].
+0:       * Run identifier: 20210707-012955_1a23a2ec-541a-4b7f-8909-853039011f82.
+0:       * Output spaces: fsnative fsaverage:den-164k MNI152NLin6Asym:res-native.
+0:       * Anatomical derivatives: /scratch/fatx405.1433442/sub-ewgenia005/clone/data/smriprep.
+0:       * Pre-run FreeSurfer's SUBJECTS_DIR: /scratch/fatx405.1433442/sub-ewgenia005/clone/data/freesurfer.
+0: run(error): /scratch/fatx405.1433442/sub-ewgenia005/clone (dataset) [Input did not match existing file: data/smriprep/sub-ewgenia005]
+0: run(error): /scratch/fatx405.1433442/sub-ewgenia005/clone (dataset) [Input did not match existing file: data/freesurfer/sub-ewgenia005]
+0: get(ok): .datalad/environments/fmriprep/image (file) [from origin...]
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda2        92G   14G   78G  15% /scratch
+script runtime: 00:12:17 hours

@@ -3,18 +3,25 @@
 ####################
 # submission script for distributed parallelism
 # subjects are submitted in batches depending on pipeline choice
-# provide pipeline name as argument (heudiconv, qsiprep, smriprep, fmriprep, mriqc, xcpengine, wmhprep, bianca_train, bianca_predict)
+# provide pipeline name as argument (bidsify, qsiprep, smriprep, fmriprep, mriqc, xcpengine, wmhprep, bianca_train, bianca_predict)
 ####################
 
 set -x
 
 # export project env variables
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-source $SCRIPT_DIR/.projectrc
+export PROJ_DIR=$(realpath $SCRIPT_DIR/..) # project root; should be 1 level above code
+export CODE_DIR=$PROJ_DIR/code
+export ENV_DIR=$PROJ_DIR/envs
+export DATA_DIR=$PROJ_DIR/data
+export DCM_DIR=$PROJ_DIR/data/dicoms
+export BIDS_DIR=$PROJ_DIR/data/raw_bids
+
+#source $SCRIPT_DIR/.projectrc
 export PIPELINE=$1
 
 # define subjects
-subjs=($(ls $PROJ_DIR/sub-* -d -1)) 
+subjs=($(ls $BIDS_DIR/sub-* -d -1)) 
 subj_array_length=$(expr ${#subjs[@]} - 1)
 
 # define batch script
@@ -27,7 +34,7 @@ if [ $PIPELINE == "bidsify" ];then
 	batch_time="02:00:00"
 	partition="std"
 	at_once=
-	subjs=($(ls $DCM_DIR/* -d -1)) # subjects in sourcedata
+	subjs=($(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata)) # subjects in data/dicoms
 elif [ $PIPELINE == "qsiprep" ];then
 	export SUBJS_PER_NODE=2
 	batch_time="12:00:00"
@@ -89,8 +96,8 @@ for i in $(seq $times_1000);do
         --time ${batch_time} \
         --partition $partition \
 	--tasks-per-node=$SUBJS_PER_NODE \
-        --output $CODE_DIR/slurm_output/"%A_%a_${script_name}.out" \
-        --error $CODE_DIR/slurm_output/"%A_%a_${script_name}.err" \
+        --output $CODE_DIR/log/"%A_%a_${script_name}.out" \
+        --error $CODE_DIR/log/"%A_%a_${script_name}.err" \
     $script_path "${subjs[@]}""
     ${CMD}
 done

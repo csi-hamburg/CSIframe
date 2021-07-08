@@ -14,27 +14,32 @@ start=$(date +%s)
 # -x to get verbose logfiles
 set -x
 
-# subjs passed from submission script
-subjs=($@)
-
-# load HPC environment modules
+# Load HPC environment modules
 module unload singularity
 module switch singularity/3.5.2-overlayfix
 module load parallel
 
-# source project environment
-SCRIPT_DIR=${SLURM_SUBMIT_DIR-$(dirname "$0")} # "$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"}
-source $SCRIPT_DIR/.projectrc
+# Source project environment
+export SCRIPT_DIR=${SLURM_SUBMIT_DIR-$(dirname "$0")} # should be code
+export PROJ_DIR=$(realpath $SCRIPT_DIR/..) # project root; should be 1 level above code
+export CODE_DIR=$PROJ_DIR/code
+export ENV_DIR=$PROJ_DIR/envs
+export DATA_DIR=$PROJ_DIR/data
+export DCM_DIR=$PROJ_DIR/data/dicoms
+export BIDS_DIR=$PROJ_DIR/data/raw_bids
+
+#source $SCRIPT_DIR/.projectrc
 source $WORK/set_envs/miniconda
 source activate datalad # env with python>=3.8, datalad, pybids
 
-# define subarray of subjects to process
-SUBJS_PER_NODE=${SUBJS_PER_NODE-2}
-ITER=${ITER-0}
+# Define subarray of subjects to process
+subjs=($@)
+SUBJS_PER_NODE=${SUBJS_PER_NODE-5}
+export ITER=${ITER-0}
 subjs_start_idx=$(expr $ITER \* 1000 + ${SLURM_ARRAY_TASK_ID-0})
 
 if [ $PIPELINE == bidsify ];then
-	subjs=(${subjs[@]-$(ls $DCM_DIR/* -d -1)})
+	subjs=(${subjs[@]-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata)})
 else
 	subjs=(${subjs[@]-$(ls $PROJ_DIR/sub-* -d -1)})
 fi
@@ -49,9 +54,9 @@ echo current TMPDIR: $TMPDIR
 echo ITERator: $ITER
 
 #################################################################
-# usage notes for parallelization with srun and GNU parallel
+# Usage notes for parallelization with srun and GNU parallel
 #
-# command example: "parallel --delay 0.2 -j2 'srun --exclusive -N1 -n1 
+# Command example: "parallel --delay 0.2 -j2 'srun --exclusive -N1 -n1 
 # --cpus-per-task 16 script.sh' ::: ${input_array[@]}"
 #
 # parallel -jX -> X tasks that GNU parallel invokes in parallel
@@ -60,7 +65,7 @@ echo ITERator: $ITER
 # srun -nY -cpus-per-task Z -> Y tasks that slurm spawns, Z threads per task
 # $parallel_script gets executed Y times with same!! array element
 #
-# to achieve across subject parallelization X = number of subjects
+# To achieve across subject parallelization X = number of subjects
 # to process per node, Y = 1 (execute script once per subject),
 # Z = number of available threads / X -> drop floating point
 #################################################################
@@ -71,15 +76,15 @@ mem_per_sub=$(awk "BEGIN {print int(64000/$SUBJS_PER_NODE); exit}")
 
 srun="srun --label --exclusive -N1 -n1 --cpus-per-task $threads_per_sub --mem-per-cpu=16000" 
 
-parallel="parallel --ungroup --progress --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/slurm_output/parallel_runtask.log"
+parallel="parallel --ungroup --progress --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/log/parallel_runtask.log"
 
-proc_script=$CODE_DIR/05_2_pipeline_processing.sh
+proc_script=$CODE_DIR/pipelines_processing.sh
 echo -e "running:\n $parallel $srun $proc_script ::: ${subjs_subarr[@]}"
 $parallel "$srun $proc_script" ::: ${subjs_subarr[@]}
 
-# monitor usage of /scratch partition
+# Monitor usage of /scratch partition
 df -h /scratch
 
-# output script runtime
+# Output script runtime
 runtime_s=$(expr $(expr $(date +%s) - $start))
 echo "script runtime: $(date -d@$runtime_s -u +%H:%M:%S) hours"
