@@ -12,7 +12,7 @@
 # xcpengine version 1.2.3
 ####################
 
-set -eoux
+set -oux
 source /sw/batch/init.sh
 
 echo '###################################'
@@ -27,14 +27,13 @@ export ENV_DIR=$PROJ_DIR/envs
 export DATA_DIR=$PROJ_DIR/data
 export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
-#source $SCRIPT_DIR/.projectrc
 
 export SLURM_CPUS_PER_TASK=${SLURM_CPUS_PER_TASK-10}
 export SCRATCH_DIR=/scratch/fatx405.${SLURM_JOBID}/$1 
 [ ! -d $SCRATCH_DIR ] && mkdir $SCRATCH_DIR
 export SINGULARITY_CACHEDIR=$WORK/tmp/singularity  #$SCRATCH_DIR 
 export SINGULARITY_TMPDIR=$WORK/tmp/singularity  #$SCRATCH_DIR
-export DSLOCKFILE=$SCRATCH_DIR/${PIPELINE}.lock
+export DSLOCKFILE=$WORK/tmp/pipeline.lock
 export DATALAD_LOCATIONS_SOCKETS=$SCRATCH_DIR/sockets
 
 echo hostname: $(hostname)
@@ -54,7 +53,7 @@ CLONE_BIDS_DIR=$CLONE/data/raw_bids
 CLONE_DCM_DIR=$CLONE/data/dicoms
 CLONE_CODE_DIR=$CLONE/code/
 CLONE_ENV_DIR=$CLONE/envs/
-CLONE_TMP_DIR=$SCRATCH_DIR/tmp/ # $CLONE_DERIV_DIR/.git/tmp/wdir
+CLONE_TMP_DIR=$SCRATCH_DIR/tmp/ # $CLONE_DATA_DIR/.git/tmp/wdir
 
 # Create temporary clone working directory
 mkdir -p $CLONE_TMP_DIR 
@@ -87,9 +86,9 @@ git checkout -b "job-$SLURM_JOBID-$1"
 export TEMPLATEFLOW_HOME=$CODE_DIR/templateflow
 export SINGULARITYENV_TEMPLATEFLOW_HOME=$TEMPLATEFLOW_HOME
 
-# Remove other participants than $1 in clone (pybids gets angry when it sees dangling symlinks)
+# Remove other participants than $1 in bids (pybids gets angry when it sees dangling symlinks)
 find data/raw_bids -maxdepth 1 -name 'sub-*' -type d -a ! -name '*'"$1"'*' -exec rm -rv {} +
-echo ls BIDS root: $(ls .)
+echo ls BIDS root: $(ls data/raw_bids)
 
 # Run pipeline; paths relative to project root and push back the results.
 
@@ -98,9 +97,9 @@ export PIPE_ID="job-$SLURM_JOBID-$PIPELINE-$1-$(date +%d%m%Y)"
 if [ $PIPELINE == "bidsify" ];then
 
 	# Get symlink tree of sourcedata
-	datalad get -n -r -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/dicoms
-	datalad get -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/dicoms/${1}
-	datalad get -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/raw_bids/sub-${1}
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/dicoms
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/dicoms/${1}
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/raw_bids/sub-${1}
 	
 	# Checkout new branch in bids subject directory dataset
 	git -C data/raw_bids/ checkout -b "${PIPE_ID}"
@@ -131,6 +130,7 @@ if [ $PIPELINE == "bidsify" ];then
 	datalad run -m "${PIPE_ID} heudiconv" \
 	   --explicit \
 	   --output $CLONE_BIDS_DIR/sub-${1} -o $CLONE_BIDS_DIR/participants.tsv -o $CLONE_BIDS_DIR/participants.json -o $CLONE_BIDS_DIR/dataset_description.json \
+	   --input $CLONE_DCM_DIR/$1 \
 	   $CMD
        
 	# Deface T1	
@@ -173,24 +173,42 @@ if [ $PIPELINE == "bidsify" ];then
 
 elif [ $PIPELINE == "qsiprep" ];then
 
+	#CHANGES
+	# Added subject subdatasets to data/qsiprep
+	# Added checkouts of subds and subds/$1 and corresponding pushes
+	# Added -R1 to datalad get qsiprep
+	# Removed --output from containers-run since prior file deletion should suffice
+	# --output $CLONE_DATA_DIR/qsiprep -o $CLONE_DATA_DIR/qsirecon \
+	# Add /$1 to --recon-input path
+
 	# Set specific environment for pipeline
 	export MRTRIX_TMPFILE_DIR=$SCRATCH_DIR
 
 	# Get input and output dataset directory trees
-	datalad get -n -r -J $SLURM_CPUS_PER_TASK $CLONE_BIDS_DIR/$1
-	datalad get -n -r -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/qsiprep 
-	datalad get -n -r -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/qsirecon
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_BIDS_DIR/$1
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/qsiprep 
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/qsiprep/$1 
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/qsirecon
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/qsirecon/$1
+
+	# Remove other participants than $1 in qsiprep output (otherwise qsirecon confuses subjects)
+	find data/qsiprep -maxdepth 1 -name 'sub-*' -type d -a ! -name '*'"$1"'*' -exec rm -rv {} +
+	echo ls qsiprep directory: $(ls data/qsiprep)
 
 	# Checkout unique branches (names derived from jobIDs) of result subdatasets
 	# to enable pushing the results without interference from other jobs.
 	# In a setup with no subdatasets, "-C <subds-name>" would be stripped,
 	# and a new branch would be checked out in the superdataset instead.
+	git -C $CLONE_DATA_DIR/qsiprep/$1 checkout -b "$PIPE_ID"
 	git -C $CLONE_DATA_DIR/qsiprep checkout -b "$PIPE_ID"
+	git -C $CLONE_DATA_DIR/qsirecon/$1 checkout -b "$PIPE_ID"
 	git -C $CLONE_DATA_DIR/qsirecon checkout -b "$PIPE_ID"
 
+
 	# Remove job outputs in dataset clone to prevent issues when rerunning
-	(cd $CLONE_DATA_DIR/qsiprep && rm -rf logs "$1" "${1}.html" dwiqc.json dataset_description.json .bidsignore)
-	(cd $CLONE_DATA_DIR/qsirecon && rm -rf logs "$1" "${1}.html" dwiqc.json dataset_description.json .bidsignore)
+	# $1/* matches all content in subject subdataset but dotfiles (.git, .datalad, .gitattributes)
+	(cd $CLONE_DATA_DIR/qsiprep && rm -rf logs $1/* "${1}.html" dwiqc.json dataset_description.json .bidsignore)
+	(cd $CLONE_DATA_DIR/qsirecon && rm -rf logs $1/* "${1}.html" dwiqc.json dataset_description.json .bidsignore)
 
 	cd $CLONE
 
@@ -198,13 +216,13 @@ elif [ $PIPELINE == "qsiprep" ];then
 	datalad containers-run \
 	   -m "$PIPE_ID" \
 	   --explicit \
-	   --output $CLONE_DATA_DIR/qsiprep -o $CLONE_DATA_DIR/qsirecon \
 	   --input "$CLONE_BIDS_DIR/$1" \
+	   --output $CLONE_DATA_DIR/qsiprep -o $CLONE_DATA_DIR/qsiprep/$1 -o $CLONE_DATA_DIR/qsirecon -o $CLONE_DATA_DIR/qsirecon/$1 \
 	   --container-name qsiprep \
 	    data/raw_bids data participant \
 	    -w .git/tmp/wdir \
 	    --participant-label $1 \
-	    --recon_input data/qsiprep \
+	    --recon_input data/qsiprep/$1 \
 	    --recon_spec mrtrix_multishell_msmt \
 	    --nthreads $SLURM_CPUS_PER_TASK \
 	    --skip-bids-validation \
@@ -217,33 +235,45 @@ elif [ $PIPELINE == "qsiprep" ];then
 	    --stop-on-first-crash \
 	    --fs-license-file envs/freesurfer_license.txt
 	
+	echo $(ls -lah $CLONE_DATA_DIR/qsiprep)
+	echo $(ls -lah $CLONE_DATA_DIR/qsiprep/$1)
+	echo $(ls -lah $CLONE_DATA_DIR/qsirecon)
+	echo $(ls -lah $CLONE_DATA_DIR/qsirecon/$1)
+
 	# Push results from clone to original dataset
 	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/qsiprep --to origin
+	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/qsiprep/$1 --to origin
 	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/qsirecon --to origin
+	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/qsirecon/$1 --to origin
 
 elif [ $PIPELINE == 'smriprep' ];then
 
 	# Get input and output dataset directory trees
-	datalad get -n -r -J $SLURM_CPUS_PER_TASK $CLONE_BIDS_DIR/$1
-	datalad get -n -r -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freesurfer
-	datalad get -n -r -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/smriprep
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_BIDS_DIR/$1
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freesurfer
+	#datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freesurfer/$1
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/smriprep
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/smriprep/$1
 
 	# Checkout unique branches (names derived from jobIDs) of result subdatasets
 	# to enable pushing the results without interference from other jobs.
 	# In a setup with no subdatasets, "-C <subds-name>" would be stripped,
 	# and a new branch would be checked out in the superdataset instead.
 	git -C $CLONE_DATA_DIR/freesurfer checkout -b "job-$SLURM_JOBID-freesurfer-$1"
+	#git -C $CLONE_DATA_DIR/freesurfer/$1 checkout -b "job-$SLURM_JOBID-freesurfer-$1"
 	git -C $CLONE_DATA_DIR/smriprep checkout -b "job-$SLURM_JOBID-smriprep-$1"
+	git -C $CLONE_DATA_DIR/smriprep/$1 checkout -b "job-$SLURM_JOBID-smriprep-$1"
 
 	# Remove job outputs in dataset clone to prevent issues when rerunning
-	(cd $CLONE_DATA_DIR/freesurfer && rm -rf fsaverage "${1}" .bidsignore)
-	(cd $CLONE_DATA_DIR/smriprep && rm -rf logs "$1" "${1}.html" dataset_description.json desc-aparcaseg_dseg.tsv desc-aseg_dseg.tsv .bidsignore)
+	# Freesurfer requires removal of output subject directory before processing, hence no subdataset structure only directories in data/freesurfer
+	(cd $CLONE_DATA_DIR/freesurfer && rm -rf fsaverage $1 .bidsignore)
+	(cd $CLONE_DATA_DIR/smriprep && rm -rf logs $1/* "${1}.html" dataset_description.json desc-aparcaseg_dseg.tsv desc-aseg_dseg.tsv .bidsignore)
 
 	datalad containers-run \
 	   -m "$PIPE_ID" \
 	   --explicit \
-	   --output $CLONE_DATA_DIR/freesurfer -o $CLONE_DATA_DIR/smriprep \
-	   --input "$CLONE_BIDS_DIR/$1" -i "$CLONE/.templateflow"\
+	   --output $CLONE_DATA_DIR/freesurfer -o $CLONE_DATA_DIR/smriprep -o $CLONE_DATA_DIR/smriprep/$1 \
+	   --input "$CLONE_BIDS_DIR/$1"\
 	   --container-name smriprep \
 	    data/raw_bids data participant \
 	    -w .git/tmp/wdir \
@@ -254,31 +284,41 @@ elif [ $PIPELINE == 'smriprep' ];then
 	    --stop-on-first-crash \
 	    --fs-license-file envs/freesurfer_license.txt
 
+	echo $(ls -lah $CLONE_DATA_DIR/smriprep)
+	echo $(ls -lah $CLONE_DATA_DIR/smriprep/$1)
+	echo $(ls -lah $CLONE_DATA_DIR/freesurfer)
+	echo $(ls -lah $CLONE_DATA_DIR/freesurfer/$1)
+
+	#flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freesurfer/$1 --to origin
 	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freesurfer --to origin
+	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/smriprep/$1 --to origin
 	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/smriprep --to origin
 
 elif [ $PIPELINE == 'mriqc' ];then
 
 	# Get input and output dataset directory trees
-	datalad get -n -r -J $SLURM_CPUS_PER_TASK $CLONE_BIDS_DIR/$1
-	datalad get -n -r -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/mriqc
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_BIDS_DIR/$1
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/mriqc
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/mriqc/$1
 
 	# Checkout unique branches (names derived from jobIDs) of result subdatasets
 	# to enable pushing the results without interference from other jobs.
 	# In a setup with no subdatasets, "-C <subds-name>" would be stripped,
 	# and a new branch would be checked out in the superdataset instead.
 	git -C $CLONE_DATA_DIR/mriqc checkout -b "$PIPE_ID"
+	git -C $CLONE_DATA_DIR/mriqc/$1 checkout -b "$PIPE_ID"
 
 	# Remove job outputs in dataset clone to prevent issues when rerunning
-	(cd $CLONE_DATA_DIR/mriqc && rm -rf "${1}" ${1}*.html dataset_description.json .bidsignore)
+	# $1/* matches all content in subject subdataset but dotfiles (.git, .datalad, .gitattributes)
+	(cd $CLONE_DATA_DIR/mriqc && rm -rf $1/* ${1}*.html dataset_description.json .bidsignore)
 
 	cd $CLONE
 
 	datalad containers-run \
 	   -m "$PIPE_ID" \
 	   --explicit \
-	   --output $CLONE_DATA_DIR/mriqc \
 	   --input "$CLONE_BIDS_DIR/$1" --input "$CLONE_BIDS_DIR/dataset_description.json" \
+	   --output $CLONE_DATA_DIR/mriqc -o $CLONE_DATA_DIR/mriqc/$1 \
 	   --container-name mriqc \
 	    data/raw_bids data/mriqc participant \
 	    -w .git/tmp/wdir \
@@ -287,34 +327,45 @@ elif [ $PIPELINE == 'mriqc' ];then
 	    --no-sub \
 	    --ica \
 	    --float32 \
-	    --nprocs $SLURM_CPUS_PER_TASK \
-	    --work-dir /tmp
+	    --nprocs $SLURM_CPUS_PER_TASK 
+
+	echo $(ls -lah $CLONE_DATA_DIR/mriqc)
+	echo $(ls -lah $CLONE_DATA_DIR/mriqc/$1)
+
+	datalad save -m "$PIPE_ID output" $CLONE_DATA_DIR/mriqc/
+	datalad save -m "$PIPE_ID output" $CLONE_DATA_DIR/mriqc/$1/
 
 	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/mriqc --to origin
+	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/mriqc/$1 --to origin
 
 elif [ $PIPELINE == 'fmriprep' ];then
 
 	# Get input and output dataset directory trees
-	datalad get -n -r -J $SLURM_CPUS_PER_TASK $CLONE_BIDS_DIR/${1}
-	datalad get -n -r -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/smriprep
-	datalad get -n -r -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freesurfer
-	datalad get -n -r -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/fmriprep
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_BIDS_DIR/${1}
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/smriprep
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/smriprep/$1
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freesurfer
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freesurfer/$1
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/fmriprep
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/fmriprep/$1
 
 	# Checkout unique branches (names derived from jobIDs) of result subdatasets
 	# to enable pushing the results without interference from other jobs.
 	# In a setup with no subdatasets, "-C <subds-name>" would be stripped,
 	# and a new branch would be checked out in the superdataset instead.
 	git -C $CLONE_DATA_DIR/fmriprep checkout -b "$PIPE_ID"
+	git -C $CLONE_DATA_DIR/fmriprep/$1 checkout -b "$PIPE_ID"
 
 	# Remove job outputs in dataset clone to prevent issues when rerunning
-	(cd $CLONE_DATA_DIR/fmriprep && rm -rf dataset_description.json desc-aseg_dseg.tsv desc-aparcaseg_dseg.tsv logs "${1}")
+	# $1/* matches all content in subject subdataset but dotfiles (.git, .datalad, .gitattributes)
+	(cd $CLONE_DATA_DIR/fmriprep && rm -rf dataset_description.json desc-aseg_dseg.tsv desc-aparcaseg_dseg.tsv logs $1/*)
 	cd $CLONE
 	
 	datalad containers-run \
 	   -m "$PIPE_ID" \
 	   --explicit \
-	   --output $CLONE_DATA_DIR/fmriprep \
-	   --input "$CLONE_BIDS_DIR/$1" --input "$CLONE_DATA_DIR/smriprep/$1" --input "$CLONE_DATA_DIR/freesurfer/$1" \
+	   --input "$CLONE_BIDS_DIR/$1" -i "$CLONE_DATA_DIR/smriprep/$1" -i "$CLONE_DATA_DIR/freesurfer/$1" \
+	   --output $CLONE_DATA_DIR/fmriprep -o $CLONE_DATA_DIR/fmriprep/$1 \
 	   --container-name fmriprep \
 	    data/raw_bids data participant \
 	    -w /tmp \
@@ -333,44 +384,50 @@ elif [ $PIPELINE == 'fmriprep' ];then
 	    --use-syn-sdc \
 	    --fs-license-file envs/freesurfer_license.txt
 
+	echo $(ls -lah $CLONE_DATA_DIR/fmriprep)
+	echo $(ls -lah $CLONE_DATA_DIR/fmriprep/$1)
+
 	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/fmriprep --to origin
+	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/fmriprep/$1 --to origin
  
 elif [ $PIPELINE == 'xcpengine' ];then
 
-	echo $PIPELINE
+	echo $PIPELINrE
 
 elif [ $PIPELINE == 'wmhprep' ];then
 	
 	# Get input and output dataset directory trees
-	datalad get -n -r -J $SLURM_CPUS_PER_TASK ${1}
-	datalad get -n -r -R1 -J $SLURM_CPUS_PER_TASK derivatives
-	datalad -l debug get -n -r -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/wmhprep
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/$1
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/wmhprep
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/wmhprep/$1
 
 	# Checkout unique branches (names derived from jobIDs) of result subdatasets
 	# to enable pushing the results without interference from other jobs.
 	# In a setup with no subdatasets, "-C <subds-name>" would be stripped,
 	# and a new branch would be checked out in the superdataset instead.
-	git -C $CLONE_DATA_DIR/wmhprep checkout -b "$PIPE_ID"
+	git -C $CLONE_DATA_DIR/wmhprep/$1 checkout -b "$PIPE_ID"
 
 	# Remove job outputs in dataset clone to prevent issues when rerunning
-	(cd $CLONE_DATA_DIR/wmhprep && rm -rf "${1}")
+	(cd $CLONE_DATA_DIR/wmhprep && rm -rf $1/*)
 
 	cd $CLONE
 
-	source $WORK/set_envs/mrtrix3
-	source $WORK/set_envs/fsl
+	#source $WORK/set_envs/mrtrix3
+	#source $WORK/set_envs/fsl
+
+	python -c "from templateflow.api import get; get(['OASIS30ANTs'])"
 
 	T1_OASIS=$TEMPLATEFLOW_HOME/tpl-OASIS30ANTs/tpl-OASIS30ANTs_res-01_T1w-nii.gz
 	PRIOR_OASIS=$TEMPLATEFLOW_HOME/tpl-OASIS30ANTs/tpl-OASIS30ANTs_res-01_desc-BrainCerebellumExtraction_mask.nii.gz
 
-	# Set pipeline variables as
-	# As relative paths since datalad doesn't like absolute paths in eph. clone
+	# Set pipeline variables as relative paths since datalad doesn't like absolute paths in eph. clone
 	OUT_DIR=data/wmhprep/$1/ses-1/anat/
 	[ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
 
 	T1=data/smriprep/$1/ses-1/anat/${1}_ses-1_desc-preproc_T1w.nii.gz
 	T1_MASK=data/smriprep/$1/ses-1/anat/${1}_ses-1_desc-brain_mask.nii.gz
 	FLAIR=$1/ses-1/anat/${1}_ses-1_FLAIR.nii.gz
+
 	T1_IN_FLAIR=$OUT_DIR/${1}_ses-1_space-FLAIR_desc-preproc_T1w.nii.gz
 	T1_TO_FLAIR_WARP=$OUT_DIR/${1}_ses-1_from-T1w_to-FLAIR_mode-image_xfm.txt
 	T1_MASK_IN_FLAIR=.git/tmp/wdir/${1}_ses-1_space-FLAIR_desc-brain_mask.nii.gz
@@ -379,23 +436,43 @@ elif [ $PIPELINE == 'wmhprep' ];then
 	FLAIR_BRAIN=$OUT_DIR/${1}_ses-1_desc-brainex_FLAIR.nii.gz
 
 	# Define commands
-	CMD_T1_TO_FLAIR="flirt -in $T1 -ref $FLAIR -omat $T1_TO_FLAIR_WARP -out $T1_IN_FLAIR"
-	CMD_T1_MASK_TO_FLAIR="flirt -in $T1_MASK -ref $FLAIR -init $T1_TO_FLAIR_WARP -out $T1_MASK_IN_FLAIR"
-	CMD_MASK_THRESH="mrthreshold $T1_MASK_IN_FLAIR -abs 95 $T1_MASK_IN_FLAIR_THR"
-	CMD_MASKING_T1_IN_FLAIR="mrcalc $T1_MASK_IN_FLAIR_THR $T1_IN_FLAIR -mult $T1_BRAIN_IN_FLAIR"
-	CMD_MASKING_FLAIR="mrcalc $T1_MASK_IN_FLAIR_THR $FLAIR -mult $FLAIR_BRAIN"
+#	CMD_T1_TO_FLAIR="flirt -in $T1 -ref $FLAIR -omat $T1_TO_FLAIR_WARP -out $T1_IN_FLAIR"
+#	CMD_T1_MASK_TO_FLAIR="flirt -in $T1_MASK -ref $FLAIR -init $T1_TO_FLAIR_WARP -out $T1_MASK_IN_FLAIR"
+#	CMD_MASK_THRESH="mrthreshold $T1_MASK_IN_FLAIR -abs 95 $T1_MASK_IN_FLAIR_THR"
+#	CMD_MASKING_T1_IN_FLAIR="mrcalc $T1_MASK_IN_FLAIR_THR $T1_IN_FLAIR -mult $T1_BRAIN_IN_FLAIR"
+#	CMD_MASKING_FLAIR="mrcalc $T1_MASK_IN_FLAIR_THR $FLAIR -mult $FLAIR_BRAIN"
 #	CMD="antsBrainExtraction.sh -d 3 -a $FLAIR -e $T1_OASIS -m $PRIOR_OASIS -o $CLONE_TMP_DIR/FLAIR"
 	
-	# Execute commands with datalad
-	datalad -l debug run --explicit -m "Preprocessed T1w from smriprep output to FLAIR space $1 $SLURM_JOBID" \
-	--input $T1 -i $FLAIR \
-	--output $T1_IN_FLAIR -o $T1_TO_FLAIR_WARP \
+	# Define commands
+
+	CMD_T1_TO_FLAIR="flirt -in $T1 -ref $FLAIR -omat $T1_TO_FLAIR_WARP -out $T1_IN_FLAIR; flirt -in $T1_MASK -ref $FLAIR -init $T1_TO_FLAIR_WARP -out $T1_MASK_IN_FLAIR"
+
+	datalad containers-run	\
+	 -m "Preprocessed T1w + mask from smriprep output to FLAIR space $1 $SLURM_JOBID" \
+	--explicit \
+	--input $T1 -i $FLAIR -i $T1_MASK \
+	--output $T1_IN_FLAIR -o $T1_TO_FLAIR_WARP -o $T1_MASK_IN_FLAIR  \
+	--container-name fsl
 	$CMD_T1_TO_FLAIR
 
-	datalad run --explicit -m "T1w mask to FLAIR $1 $SLURM_JOBID" \
+	CMD_MASKING="mrthreshold $T1_MASK_IN_FLAIR -abs 95 $T1_MASK_IN_FLAIR_THR; mrcalc $T1_MASK_IN_FLAIR_THR $T1_IN_FLAIR -mult $T1_BRAIN_IN_FLAIR; mrcalc $T1_MASK_IN_FLAIR_THR $FLAIR -mult $FLAIR_BRAIN"
+	# Execute commands with datalad
+
+	datalad containers-run	\
+	 -m "Preprocessed T1w + mask from smriprep output to FLAIR space $1 $SLURM_JOBID" \
+	--explicit \
+	--input $T1 -i $FLAIR -i $T1_MASK \
+	--output $T1_IN_FLAIR -o $T1_TO_FLAIR_WARP -o $T1_MASK_IN_FLAIR  \
+	--container-name mrtrix
+	$CMD_MASKING
+
+	datalad containers-run \
+	-m "T1w mask to FLAIR $1 $SLURM_JOBID" \
+	--explicit \
 	--input $T1_MASK -i $FLAIR -i $T1_TO_FLAIR_WARP \
 	--output $T1_MASK_IN_FLAIR \
-	$CMD_T1_MASK_TO_FLAIR
+	--container-name mrtrix \
+	$CMD_MASKING
 
 	datalad run --explicit -m "Masking T1 in FLAIR $1 $SLURM_JOBID" \
 	--input $T1_MASK_IN_FLAIR_THR -i $T1_IN_FLAIR \
@@ -413,6 +490,7 @@ elif [ $PIPELINE == 'wmhprep' ];then
 	$CMD_MASKING_FLAIR
 
 	#flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/wmhprep --to origin
+
 
 fi
 

@@ -17,11 +17,11 @@ export DATA_DIR=$PROJ_DIR/data
 export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
 
-#source $SCRIPT_DIR/.projectrc
-export PIPELINE=$1
-
+export PIPELINE=$1;shift
+input_subject_array=($@)
+echo ${input_subject_array[@]}
 # define subjects
-subjs=($(ls $BIDS_DIR/sub-* -d -1)) 
+subjs=(${input_subject_array[@]-$(ls $BIDS_DIR/sub-* -d -1)}) 
 subj_array_length=$(expr ${#subjs[@]} - 1)
 
 # define batch script
@@ -30,29 +30,29 @@ script_path=$CODE_DIR/$script_name
 
 # empirical job config
 if [ $PIPELINE == "bidsify" ];then
-	export SUBJS_PER_NODE=10
+	export SUBJS_PER_NODE=6
 	batch_time="02:00:00"
 	partition="std"
 	at_once=
-	subjs=($(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata)) # subjects in data/dicoms
+	subjs=(${input_subject_array[@]-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata)}) # subjects in data/dicoms
 elif [ $PIPELINE == "qsiprep" ];then
-	export SUBJS_PER_NODE=2
-	batch_time="12:00:00"
+	export SUBJS_PER_NODE=1
+	batch_time="10:00:00"
 	partition="std" # ponder usage of gpu for eddy speed up
 	at_once=
 elif [ $PIPELINE == "smriprep" ];then
-	export SUBJS_PER_NODE=2
+	export SUBJS_PER_NODE=4
 	batch_time="15:00:00"
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "mriqc" ];then
-	export SUBJS_PER_NODE=2
-	batch_time="08:00:00"
+	export SUBJS_PER_NODE=8
+	batch_time="02:00:00"
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "fmriprep" ];then
 	export SUBJS_PER_NODE=4
-	batch_time="16:00:00"
+	batch_time="8:00:00"
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "xcpengine" ];then

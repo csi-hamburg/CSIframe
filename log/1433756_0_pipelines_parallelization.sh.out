@@ -929,3 +929,438 @@ running:
 0:   get (notneeded: 1)
 0:   save (ok: 3)
 0:   unlock (ok: 2)
+0: Some packages in this Docker container are non-free
+0: If you are considering commercial use of this container, please consult the relevant license:
+0: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence
+0: Some packages in this Docker container are non-free
+0: If you are considering commercial use of this container, please consult the relevant license:
+0: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence
+0: Some packages in this Docker container are non-free
+0: If you are considering commercial use of this container, please consult the relevant license:
+0: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence
+0: Some packages in this Docker container are non-free
+0: If you are considering commercial use of this container, please consult the relevant license:
+0: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence
+0: Some packages in this Docker container are non-free
+0: If you are considering commercial use of this container, please consult the relevant license:
+0: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence
+0: --------------
+0: pydeface 2.0.0
+0: --------------
+0: Previous output will be overwritten.
+0: Temporary files:
+0:   /tmp/tmp5scdqnd9.mat
+0:   /tmp/tmpwg5y2rzs.nii.gz
+0: Defacing...
+0:   /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_T1w.nii.gz
+0: Defaced image saved as:
+0:   /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_T1w.nii.gz
+0: Cleaning up...
+0: Finished.
+0: get(ok): .datalad/environments/pydeface/image (file) [from origin...]
+0: unlock(ok): data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_T1w.nii.gz (file)
+0: add(ok): ses-1/anat/sub-ewgenia004_ses-1_T1w.nii.gz (file)
+0: save(ok): data/raw_bids/sub-ewgenia004 (dataset)
+0: add(ok): sub-ewgenia004 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 3)
+0:   get (notneeded: 2, ok: 1)
+0:   save (ok: 3)
+0:   unlock (ok: 1)
+0: --------------
+0: pydeface 2.0.0
+0: --------------
+0: Previous output will be overwritten.
+0: Temporary files:
+0:   /tmp/tmpnxax5285.mat
+0:   /tmp/tmpt9daev0f.nii.gz
+0: Defacing...
+0:   /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz
+0: Defaced image saved as:
+0:   /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz
+0: Cleaning up...
+0: Finished.
+0: --------------
+0: pydeface 2.0.0
+0: --------------
+0: Previous output will be overwritten.
+0: Temporary files:
+0:   /tmp/tmp0d0msyps.mat
+0:   /tmp/tmpe1invzjf.nii.gz
+0: Defacing...
+0:   /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_T1w.nii.gz
+0: Defaced image saved as:
+0:   /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_T1w.nii.gz
+0: Cleaning up...
+0: Finished.
+0: get(ok): .datalad/environments/pydeface/image (file) [from origin...]
+0: unlock(ok): data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz (file)
+0: add(ok): ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz (file)
+0: save(ok): data/raw_bids/sub-ewgenia001 (dataset)
+0: add(ok): sub-ewgenia001 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 3)
+0:   get (notneeded: 2, ok: 1)
+0:   save (ok: 3)
+0:   unlock (ok: 1)
+0: --------------
+0: pydeface 2.0.0
+0: --------------
+0: Previous output will be overwritten.
+0: Temporary files:
+0:   /tmp/tmpsbjpkeqo.mat
+0:   /tmp/tmph9_vrxj2.nii.gz
+0: Defacing...
+0:   /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_T1w.nii.gz
+0: Defaced image saved as:
+0:   /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_T1w.nii.gz
+0: Cleaning up...
+0: Finished.
+0: --------------
+0: pydeface 2.0.0
+0: --------------
+0: Previous output will be overwritten.
+0: Temporary files:
+0:   /tmp/tmph26ucn4x.mat
+0:   /tmp/tmp9qmri3d3.nii.gz
+0: Defacing...
+0:   /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_T1w.nii.gz
+0: Defaced image saved as:
+0:   /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_T1w.nii.gz
+0: Cleaning up...
+0: Finished.
+0: get(ok): .datalad/environments/pydeface/image (file) [from origin...]
+0: unlock(ok): data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_T1w.nii.gz (file)
+0: add(ok): ses-1/anat/sub-ewgenia002_ses-1_T1w.nii.gz (file)
+0: save(ok): data/raw_bids/sub-ewgenia002 (dataset)
+0: add(ok): sub-ewgenia002 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 3)
+0:   get (notneeded: 2, ok: 1)
+0:   save (ok: 3)
+0:   unlock (ok: 1)
+0: get(ok): .datalad/environments/pydeface/image (file) [from origin...]
+0: unlock(ok): data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_T1w.nii.gz (file)
+0: add(ok): ses-1/anat/sub-ewgenia003_ses-1_T1w.nii.gz (file)
+0: save(ok): data/raw_bids/sub-ewgenia003 (dataset)
+0: add(ok): sub-ewgenia003 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 3)
+0:   get (notneeded: 2, ok: 1)
+0:   save (ok: 3)
+0:   unlock (ok: 1)
+0: get(ok): .datalad/environments/pydeface/image (file) [from origin...]
+0: unlock(ok): data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_T1w.nii.gz (file)
+0: add(ok): ses-1/anat/sub-ewgenia005_ses-1_T1w.nii.gz (file)
+0: save(ok): data/raw_bids/sub-ewgenia005 (dataset)
+0: add(ok): sub-ewgenia005 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 3)
+0:   get (notneeded: 2, ok: 1)
+0:   save (ok: 3)
+0:   unlock (ok: 1)
+0: Some packages in this Docker container are non-free
+0: If you are considering commercial use of this container, please consult the relevant license:
+0: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence
+0: Some packages in this Docker container are non-free
+0: If you are considering commercial use of this container, please consult the relevant license:
+0: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence
+0: Some packages in this Docker container are non-free
+0: If you are considering commercial use of this container, please consult the relevant license:
+0: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence
+0: Some packages in this Docker container are non-free
+0: If you are considering commercial use of this container, please consult the relevant license:
+0: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence
+0: Some packages in this Docker container are non-free
+0: If you are considering commercial use of this container, please consult the relevant license:
+0: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence
+0: --------------
+0: pydeface 2.0.0
+0: --------------
+0: Previous output will be overwritten.
+0: Temporary files:
+0:   /tmp/tmp13is3tih.mat
+0:   /tmp/tmpw8i4jm1b.nii.gz
+0: Defacing...
+0:   /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR.nii.gz
+0: Defaced image saved as:
+0:   /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR.nii.gz
+0: Cleaning up...
+0: Finished.
+0: unlock(ok): data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR.nii.gz (file)
+0: add(ok): ses-1/anat/sub-ewgenia004_ses-1_FLAIR.nii.gz (file)
+0: save(ok): data/raw_bids/sub-ewgenia004 (dataset)
+0: add(ok): sub-ewgenia004 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 3)
+0:   get (notneeded: 3)
+0:   save (ok: 3)
+0:   unlock (ok: 1)
+0: Amending json metadata of: ['data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR.json', 'data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_T1w.json', 'data/raw_bids/sub-ewgenia004/ses-1/dwi/sub-ewgenia004_ses-1_dir-AP_dwi.json', 'data/raw_bids/sub-ewgenia004/ses-1/func/sub-ewgenia004_ses-1_task-rest_bold.json']
+0: unlock(ok): data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_T1w.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia004/ses-1/dwi/sub-ewgenia004_ses-1_dir-AP_dwi.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia004/ses-1/func/sub-ewgenia004_ses-1_task-rest_bold.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia004_ses-1_FLAIR.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia004_ses-1_T1w.json (file)
+0: add(ok): ses-1/dwi/sub-ewgenia004_ses-1_dir-AP_dwi.json (file)
+0: add(ok): ses-1/func/sub-ewgenia004_ses-1_task-rest_bold.json (file)
+0: save(ok): data/raw_bids/sub-ewgenia004 (dataset)
+0: add(ok): sub-ewgenia004 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 6)
+0:   get (notneeded: 5)
+0:   save (ok: 3)
+0:   unlock (ok: 4)
+0: publish(ok): . (dataset) [refs/heads/git-annex->origin:refs/heads/git-annex 4fc2d18..1d378e4]
+0: publish(ok): . (dataset) [refs/heads/job-1433756-bidsify-ewgenia004-08072021->origin:refs/heads/job-1433756-bidsify-ewgenia004-08072021 [new branch]]
+0: copy(ok): ses-1/anat/sub-ewgenia004_ses-1_FLAIR.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/anat/sub-ewgenia004_ses-1_T1w.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/dwi/sub-ewgenia004_ses-1_dir-AP_dwi.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/func/sub-ewgenia004_ses-1_task-rest_bold.nii.gz (file) [to origin...]
+0: publish(ok): . (dataset) [refs/heads/git-annex->origin:refs/heads/git-annex 97f446b..b42a442]
+0: publish(ok): . (dataset) [refs/heads/job-1433756-bidsify-ewgenia004-08072021->origin:refs/heads/job-1433756-bidsify-ewgenia004-08072021 [new branch]]
+0: --------------
+0: pydeface 2.0.0
+0: --------------
+0: Previous output will be overwritten.
+0: Temporary files:
+0:   /tmp/tmpxl6sjt6u.mat
+0:   /tmp/tmpvxn7gtje.nii.gz
+0: Defacing...
+0:   /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz
+0: Defaced image saved as:
+0:   /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz
+0: Cleaning up...
+0: Finished.
+0: --------------
+0: pydeface 2.0.0
+0: --------------
+0: Previous output will be overwritten.
+0: Temporary files:
+0:   /tmp/tmpne63oaoh.mat
+0:   /tmp/tmpyyxkjm1k.nii.gz
+0: Defacing...
+0:   /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR.nii.gz
+0: Defaced image saved as:
+0:   /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR.nii.gz
+0: Cleaning up...
+0: Finished.
+0: unlock(ok): data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz (file)
+0: add(ok): ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz (file)
+0: save(ok): data/raw_bids/sub-ewgenia001 (dataset)
+0: add(ok): sub-ewgenia001 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 3)
+0:   get (notneeded: 3)
+0:   save (ok: 3)
+0:   unlock (ok: 1)
+0: Amending json metadata of: ['data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.json', 'data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.json', 'data/raw_bids/sub-ewgenia001/ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.json', 'data/raw_bids/sub-ewgenia001/ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.json']
+0: --------------
+0: pydeface 2.0.0
+0: --------------
+0: Previous output will be overwritten.
+0: Temporary files:
+0:   /tmp/tmpry8orfmr.mat
+0:   /tmp/tmpc8cbksq4.nii.gz
+0: Defacing...
+0:   /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR.nii.gz
+0: Defaced image saved as:
+0:   /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR.nii.gz
+0: Cleaning up...
+0: Finished.
+0: --------------
+0: pydeface 2.0.0
+0: --------------
+0: Previous output will be overwritten.
+0: Temporary files:
+0:   /tmp/tmp2fs7tkkx.mat
+0:   /tmp/tmpjktrsmp3.nii.gz
+0: Defacing...
+0:   /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR.nii.gz
+0: Defaced image saved as:
+0:   /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR.nii.gz
+0: Cleaning up...
+0: Finished.
+0: unlock(ok): data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR.nii.gz (file)
+0: add(ok): ses-1/anat/sub-ewgenia002_ses-1_FLAIR.nii.gz (file)
+0: save(ok): data/raw_bids/sub-ewgenia002 (dataset)
+0: add(ok): sub-ewgenia002 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 3)
+0:   get (notneeded: 3)
+0:   save (ok: 3)
+0:   unlock (ok: 1)
+0: unlock(ok): data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia001/ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia001/ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia001_ses-1_FLAIR.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia001_ses-1_T1w.json (file)
+0: add(ok): ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.json (file)
+0: add(ok): ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.json (file)
+0: save(ok): data/raw_bids/sub-ewgenia001 (dataset)
+0: add(ok): sub-ewgenia001 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 6)
+0:   get (notneeded: 5)
+0:   save (ok: 3)
+0:   unlock (ok: 4)
+0: Amending json metadata of: ['data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR.json', 'data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_T1w.json', 'data/raw_bids/sub-ewgenia002/ses-1/dwi/sub-ewgenia002_ses-1_dir-AP_dwi.json', 'data/raw_bids/sub-ewgenia002/ses-1/func/sub-ewgenia002_ses-1_task-rest_bold.json']
+0: publish(ok): . (dataset) [refs/heads/git-annex->origin:refs/heads/git-annex 1d378e4..b15e398]
+0: publish(ok): . (dataset) [refs/heads/job-1433756-bidsify-ewgenia001-08072021->origin:refs/heads/job-1433756-bidsify-ewgenia001-08072021 [new branch]]
+0: unlock(ok): data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR.nii.gz (file)
+0: add(ok): ses-1/anat/sub-ewgenia003_ses-1_FLAIR.nii.gz (file)
+0: save(ok): data/raw_bids/sub-ewgenia003 (dataset)
+0: add(ok): sub-ewgenia003 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 3)
+0:   get (notneeded: 3)
+0:   save (ok: 3)
+0:   unlock (ok: 1)
+0: unlock(ok): data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR.nii.gz (file)
+0: add(ok): ses-1/anat/sub-ewgenia005_ses-1_FLAIR.nii.gz (file)
+0: save(ok): data/raw_bids/sub-ewgenia005 (dataset)
+0: add(ok): sub-ewgenia005 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 3)
+0:   get (notneeded: 3)
+0:   save (ok: 3)
+0:   unlock (ok: 1)
+0: unlock(ok): data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_T1w.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia002/ses-1/dwi/sub-ewgenia002_ses-1_dir-AP_dwi.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia002/ses-1/func/sub-ewgenia002_ses-1_task-rest_bold.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia002_ses-1_FLAIR.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia002_ses-1_T1w.json (file)
+0: add(ok): ses-1/dwi/sub-ewgenia002_ses-1_dir-AP_dwi.json (file)
+0: add(ok): ses-1/func/sub-ewgenia002_ses-1_task-rest_bold.json (file)
+0: save(ok): data/raw_bids/sub-ewgenia002 (dataset)
+0: add(ok): sub-ewgenia002 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 6)
+0:   get (notneeded: 5)
+0:   save (ok: 3)
+0:   unlock (ok: 4)
+0: Amending json metadata of: ['data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR.json', 'data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_T1w.json', 'data/raw_bids/sub-ewgenia003/ses-1/dwi/sub-ewgenia003_ses-1_dir-AP_dwi.json', 'data/raw_bids/sub-ewgenia003/ses-1/func/sub-ewgenia003_ses-1_task-rest_bold.json']
+0: copy(ok): ses-1/anat/sub-ewgenia001_ses-1_FLAIR.json (file) [to origin...]
+0: copy(ok): ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/anat/sub-ewgenia001_ses-1_T1w.json (file) [to origin...]
+0: copy(ok): ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.json (file) [to origin...]
+0: copy(ok): ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.json (file) [to origin...]
+0: copy(ok): ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.nii.gz (file) [to origin...]
+0: publish(ok): . (dataset) [refs/heads/git-annex->origin:refs/heads/git-annex bb4c2ee..22ceb75]
+0: publish(ok): . (dataset) [refs/heads/job-1433756-bidsify-ewgenia001-08072021->origin:refs/heads/job-1433756-bidsify-ewgenia001-08072021 [new branch]]
+0: Amending json metadata of: ['data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR.json', 'data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_T1w.json', 'data/raw_bids/sub-ewgenia005/ses-1/dwi/sub-ewgenia005_ses-1_dir-AP_dwi.json', 'data/raw_bids/sub-ewgenia005/ses-1/func/sub-ewgenia005_ses-1_task-rest_bold.json']
+0: publish(ok): . (dataset) [refs/heads/git-annex->origin:refs/heads/git-annex b15e398..1d53848]
+0: publish(ok): . (dataset) [refs/heads/job-1433756-bidsify-ewgenia002-08072021->origin:refs/heads/job-1433756-bidsify-ewgenia002-08072021 [new branch]]
+0: unlock(ok): data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_T1w.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia003/ses-1/dwi/sub-ewgenia003_ses-1_dir-AP_dwi.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia003/ses-1/func/sub-ewgenia003_ses-1_task-rest_bold.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia003_ses-1_FLAIR.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia003_ses-1_T1w.json (file)
+0: add(ok): ses-1/dwi/sub-ewgenia003_ses-1_dir-AP_dwi.json (file)
+0: add(ok): ses-1/func/sub-ewgenia003_ses-1_task-rest_bold.json (file)
+0: save(ok): data/raw_bids/sub-ewgenia003 (dataset)
+0: add(ok): sub-ewgenia003 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 6)
+0:   get (notneeded: 5)
+0:   save (ok: 3)
+0:   unlock (ok: 4)
+0: unlock(ok): data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_T1w.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia005/ses-1/dwi/sub-ewgenia005_ses-1_dir-AP_dwi.json (file)
+0: unlock(ok): data/raw_bids/sub-ewgenia005/ses-1/func/sub-ewgenia005_ses-1_task-rest_bold.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia005_ses-1_FLAIR.json (file)
+0: add(ok): ses-1/anat/sub-ewgenia005_ses-1_T1w.json (file)
+0: add(ok): ses-1/dwi/sub-ewgenia005_ses-1_dir-AP_dwi.json (file)
+0: add(ok): ses-1/func/sub-ewgenia005_ses-1_task-rest_bold.json (file)
+0: save(ok): data/raw_bids/sub-ewgenia005 (dataset)
+0: add(ok): sub-ewgenia005 (file)
+0: save(ok): data/raw_bids (dataset)
+0: add(ok): data/raw_bids (file)
+0: save(ok): . (dataset)
+0: action summary:
+0:   add (ok: 6)
+0:   get (notneeded: 5)
+0:   save (ok: 3)
+0:   unlock (ok: 4)
+0: copy(ok): ses-1/anat/sub-ewgenia002_ses-1_FLAIR.json (file) [to origin...]
+0: copy(ok): ses-1/anat/sub-ewgenia002_ses-1_FLAIR.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/anat/sub-ewgenia002_ses-1_T1w.json (file) [to origin...]
+0: copy(ok): ses-1/anat/sub-ewgenia002_ses-1_T1w.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/dwi/sub-ewgenia002_ses-1_dir-AP_dwi.json (file) [to origin...]
+0: copy(ok): ses-1/dwi/sub-ewgenia002_ses-1_dir-AP_dwi.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/func/sub-ewgenia002_ses-1_task-rest_bold.json (file) [to origin...]
+0: copy(ok): ses-1/func/sub-ewgenia002_ses-1_task-rest_bold.nii.gz (file) [to origin...]
+0: publish(ok): . (dataset) [refs/heads/git-annex->origin:refs/heads/git-annex eed2a60..5593c1c]
+0: publish(ok): . (dataset) [refs/heads/job-1433756-bidsify-ewgenia002-08072021->origin:refs/heads/job-1433756-bidsify-ewgenia002-08072021 [new branch]]
+0: publish(ok): . (dataset) [refs/heads/git-annex->origin:refs/heads/git-annex 1d53848..e186c76]
+0: publish(ok): . (dataset) [refs/heads/job-1433756-bidsify-ewgenia003-08072021->origin:refs/heads/job-1433756-bidsify-ewgenia003-08072021 [new branch]]
+0: publish(ok): . (dataset) [refs/heads/git-annex->origin:refs/heads/git-annex e186c76..bd02ec5]
+0: publish(ok): . (dataset) [refs/heads/job-1433756-bidsify-ewgenia005-08072021->origin:refs/heads/job-1433756-bidsify-ewgenia005-08072021 [new branch]]
+0: copy(ok): ses-1/anat/sub-ewgenia003_ses-1_FLAIR.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/anat/sub-ewgenia003_ses-1_T1w.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/dwi/sub-ewgenia003_ses-1_dir-AP_dwi.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/func/sub-ewgenia003_ses-1_task-rest_bold.nii.gz (file) [to origin...]
+0: publish(ok): . (dataset) [refs/heads/git-annex->origin:refs/heads/git-annex 117799c..93932f2]
+0: publish(ok): . (dataset) [refs/heads/job-1433756-bidsify-ewgenia003-08072021->origin:refs/heads/job-1433756-bidsify-ewgenia003-08072021 [new branch]]
+0: copy(ok): ses-1/anat/sub-ewgenia005_ses-1_FLAIR.json (file) [to origin...]
+0: copy(ok): ses-1/anat/sub-ewgenia005_ses-1_FLAIR.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/anat/sub-ewgenia005_ses-1_T1w.json (file) [to origin...]
+0: copy(ok): ses-1/anat/sub-ewgenia005_ses-1_T1w.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/dwi/sub-ewgenia005_ses-1_dir-AP_dwi.json (file) [to origin...]
+0: copy(ok): ses-1/dwi/sub-ewgenia005_ses-1_dir-AP_dwi.nii.gz (file) [to origin...]
+0: copy(ok): ses-1/func/sub-ewgenia005_ses-1_task-rest_bold.json (file) [to origin...]
+0: copy(ok): ses-1/func/sub-ewgenia005_ses-1_task-rest_bold.nii.gz (file) [to origin...]
+0: publish(ok): . (dataset) [refs/heads/git-annex->origin:refs/heads/git-annex 1c3a073..09f4013]
+0: publish(ok): . (dataset) [refs/heads/job-1433756-bidsify-ewgenia005-08072021->origin:refs/heads/job-1433756-bidsify-ewgenia005-08072021 [new branch]]
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda2        92G   73G   19G  80% /scratch
+script runtime: 00:41:38 hours
