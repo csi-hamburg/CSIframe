@@ -1,5 +1,5 @@
 Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
-1	:	1626217991.846	 39468.032	0	0	1	0	srun --label --exclusive -N1 -n1 --cpus-per-task 7 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh sub-ewgenia005
+5	:	1626217456.632	 47619.720	0	0	1	0	srun --label --exclusive -N1 -n1 --cpus-per-task 3 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh sub-ewgenia010
 2	:	1626217626.638	 39666.637	0	0	1	0	srun --label --exclusive -N1 -n1 --cpus-per-task 7 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh sub-ewgenia002
 1	:	1626217626.417	 40345.787	0	0	1	0	srun --label --exclusive -N1 -n1 --cpus-per-task 7 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh sub-ewgenia001
 4	:	1626217627.079	 40842.369	0	0	1	0	srun --label --exclusive -N1 -n1 --cpus-per-task 7 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh sub-ewgenia004
