@@ -91,6 +91,7 @@ for i in $(seq $times_1000);do
         batchsize=$(expr $subj_array_length - $ITER \* $batchsize)
     fi
 
+
     CMD="sbatch --job-name $PIPELINE \
         --array=[0-$batchsize:$SUBJS_PER_NODE]${at_once} \
         --time ${batch_time} \

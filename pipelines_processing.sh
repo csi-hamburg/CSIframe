@@ -29,7 +29,7 @@ export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
 
 export SLURM_CPUS_PER_TASK=${SLURM_CPUS_PER_TASK-10}
-export SCRATCH_DIR=/scratch/fatx405.${SLURM_JOBID}/$1 
+export SCRATCH_DIR=/scratch/${USER}.${SLURM_JOBID}/$1 
 [ ! -d $SCRATCH_DIR ] && mkdir $SCRATCH_DIR
 export SINGULARITY_CACHEDIR=$WORK/tmp/singularity  #$SCRATCH_DIR 
 export SINGULARITY_TMPDIR=$WORK/tmp/singularity  #$SCRATCH_DIR
