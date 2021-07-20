@@ -29,7 +29,7 @@ export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
 
 #source $SCRIPT_DIR/.projectrc
-source $WORK/set_envs/miniconda
+source /work/fatx405/set_envs/miniconda
 source activate datalad # env with python>=3.8, datalad, pybids
 
 # Define subarray of subjects to process
