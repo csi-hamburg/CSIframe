@@ -46,13 +46,13 @@ elif [ $PIPELINE == "smriprep" ];then
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "mriqc" ];then
-	export SUBJS_PER_NODE=8
+	export SUBJS_PER_NODE=6
 	batch_time="02:00:00"
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "fmriprep" ];then
 	export SUBJS_PER_NODE=4
-	batch_time="8:00:00"
+	batch_time="15:00:00"
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "xcpengine" ];then
@@ -61,7 +61,7 @@ elif [ $PIPELINE == "xcpengine" ];then
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "wmhprep" ];then
-	export SUBJS_PER_NODE=16
+	export SUBJS_PER_NODE=6
 	batch_time="04:00:00"
 	partition="std"
 else

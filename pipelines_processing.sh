@@ -355,6 +355,7 @@ elif [ $PIPELINE == 'fmriprep' ];then
 	# and a new branch would be checked out in the superdataset instead.
 	git -C $CLONE_DATA_DIR/fmriprep checkout -b "$PIPE_ID"
 	git -C $CLONE_DATA_DIR/fmriprep/$1 checkout -b "$PIPE_ID"
+	git -C $CLONE_DATA_DIR/freesurfer checkout -b "$PIPE_ID"
 
 	# Remove job outputs in dataset clone to prevent issues when rerunning
 	# $1/* matches all content in subject subdataset but dotfiles (.git, .datalad, .gitattributes)
@@ -376,28 +377,32 @@ elif [ $PIPELINE == 'fmriprep' ];then
 	    --ignore t2w \
 	    --skip-bids-validation \
 	    --fs-subjects-dir data/freesurfer \
-	    --anat-derivatives data/smriprep \
-	    --fs-subjects-dir data/freesurfer \
-	    --fs-no-reconall \
 	    --use-aroma \
 	    --random-seed 12345 \
 	    --use-syn-sdc \
 	    --fs-license-file envs/freesurfer_license.txt
+
+#	    --anat-derivatives data/smriprep \
+# 
+#	    --fs-no-reconall \
 
 	echo $(ls -lah $CLONE_DATA_DIR/fmriprep)
 	echo $(ls -lah $CLONE_DATA_DIR/fmriprep/$1)
 
 	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/fmriprep --to origin
 	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/fmriprep/$1 --to origin
+	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freesurfer --to origin
  
 elif [ $PIPELINE == 'xcpengine' ];then
 
-	echo $PIPELINrE
+	echo $PIPELINE
 
 elif [ $PIPELINE == 'wmhprep' ];then
 	
 	# Get input and output dataset directory trees
 	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/$1
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/smriprep
+	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/smriprep/$1
 	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/wmhprep
 	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/wmhprep/$1
 
@@ -415,81 +420,54 @@ elif [ $PIPELINE == 'wmhprep' ];then
 	#source $WORK/set_envs/mrtrix3
 	#source $WORK/set_envs/fsl
 
-	python -c "from templateflow.api import get; get(['OASIS30ANTs'])"
+	#python -c "from templateflow.api import get; get(['OASIS30ANTs'])"
 
-	T1_OASIS=$TEMPLATEFLOW_HOME/tpl-OASIS30ANTs/tpl-OASIS30ANTs_res-01_T1w-nii.gz
-	PRIOR_OASIS=$TEMPLATEFLOW_HOME/tpl-OASIS30ANTs/tpl-OASIS30ANTs_res-01_desc-BrainCerebellumExtraction_mask.nii.gz
+	#T1_OASIS=$TEMPLATEFLOW_HOME/tpl-OASIS30ANTs/tpl-OASIS30ANTs_res-01_T1w-nii.gz
+	#PRIOR_OASIS=$TEMPLATEFLOW_HOME/tpl-OASIS30ANTs/tpl-OASIS30ANTs_res-01_desc-BrainCerebellumExtraction_mask.nii.gz
 
 	# Set pipeline variables as relative paths since datalad doesn't like absolute paths in eph. clone
 	OUT_DIR=data/wmhprep/$1/ses-1/anat/
 	[ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
 
+	# Define inputs
 	T1=data/smriprep/$1/ses-1/anat/${1}_ses-1_desc-preproc_T1w.nii.gz
 	T1_MASK=data/smriprep/$1/ses-1/anat/${1}_ses-1_desc-brain_mask.nii.gz
-	FLAIR=$1/ses-1/anat/${1}_ses-1_FLAIR.nii.gz
+	FLAIR=data/raw_bids/$1/ses-1/anat/${1}_ses-1_FLAIR.nii.gz
 
+	# Define outputs
 	T1_IN_FLAIR=$OUT_DIR/${1}_ses-1_space-FLAIR_desc-preproc_T1w.nii.gz
 	T1_TO_FLAIR_WARP=$OUT_DIR/${1}_ses-1_from-T1w_to-FLAIR_mode-image_xfm.txt
-	T1_MASK_IN_FLAIR=.git/tmp/wdir/${1}_ses-1_space-FLAIR_desc-brain_mask.nii.gz
+	T1_MASK_IN_FLAIR=$OUT_DIR/${1}_ses-1_space-FLAIR_desc-brainmask_T1w.nii.gz
 	T1_BRAIN_IN_FLAIR=$OUT_DIR/${1}_ses-1_space-FLAIR_desc-brainex_T1w.nii.gz
-	T1_MASK_IN_FLAIR_THR=$OUT_DIR/${1}_ses-1_space-FLAIR_desc-brain_mask.nii.gz
+	T1_MASK_IN_FLAIR_THR=$OUT_DIR/${1}_ses-1_space-FLAIR_desc-brainmaskthresh_T1w.nii.gz
 	FLAIR_BRAIN=$OUT_DIR/${1}_ses-1_desc-brainex_FLAIR.nii.gz
 
 	# Define commands
-#	CMD_T1_TO_FLAIR="flirt -in $T1 -ref $FLAIR -omat $T1_TO_FLAIR_WARP -out $T1_IN_FLAIR"
-#	CMD_T1_MASK_TO_FLAIR="flirt -in $T1_MASK -ref $FLAIR -init $T1_TO_FLAIR_WARP -out $T1_MASK_IN_FLAIR"
-#	CMD_MASK_THRESH="mrthreshold $T1_MASK_IN_FLAIR -abs 95 $T1_MASK_IN_FLAIR_THR"
-#	CMD_MASKING_T1_IN_FLAIR="mrcalc $T1_MASK_IN_FLAIR_THR $T1_IN_FLAIR -mult $T1_BRAIN_IN_FLAIR"
-#	CMD_MASKING_FLAIR="mrcalc $T1_MASK_IN_FLAIR_THR $FLAIR -mult $FLAIR_BRAIN"
-#	CMD="antsBrainExtraction.sh -d 3 -a $FLAIR -e $T1_OASIS -m $PRIOR_OASIS -o $CLONE_TMP_DIR/FLAIR"
+	CMD_T1_TO_FLAIR="flirt -in $T1 -ref $FLAIR -omat $T1_TO_FLAIR_WARP -out $T1_IN_FLAIR -v"
+	CMD_T1_MASK_TO_FLAIR="flirt -in $T1_MASK -ref $FLAIR -init $T1_TO_FLAIR_WARP -out $T1_MASK_IN_FLAIR -v -applyxfm"
+	CMD_MASK_THRESH="mrthreshold $T1_MASK_IN_FLAIR -abs 95 $T1_MASK_IN_FLAIR_THR --force"
+	CMD_MASKING_T1_IN_FLAIR="mrcalc $T1_MASK_IN_FLAIR_THR $T1_IN_FLAIR -mult $T1_BRAIN_IN_FLAIR --force"
+	CMD_MASKING_FLAIR="mrcalc $T1_MASK_IN_FLAIR_THR $FLAIR -mult $FLAIR_BRAIN --force"
+	#CMD="antsBrainExtraction.sh -d 3 -a $FLAIR -e $T1_OASIS -m $PRIOR_OASIS -o $CLONE_TMP_DIR/FLAIR"
 	
-	# Define commands
-
-	CMD_T1_TO_FLAIR="flirt -in $T1 -ref $FLAIR -omat $T1_TO_FLAIR_WARP -out $T1_IN_FLAIR; flirt -in $T1_MASK -ref $FLAIR -init $T1_TO_FLAIR_WARP -out $T1_MASK_IN_FLAIR"
-
+	# Execute with datalad
 	datalad containers-run	\
-	 -m "Preprocessed T1w + mask from smriprep output to FLAIR space $1 $SLURM_JOBID" \
+	-m "Warp preprocessed T1w + mask from smriprep output to FLAIR space; $1 $SLURM_JOBID" \
 	--explicit \
 	--input $T1 -i $FLAIR -i $T1_MASK \
 	--output $T1_IN_FLAIR -o $T1_TO_FLAIR_WARP -o $T1_MASK_IN_FLAIR  \
-	--container-name fsl
-	$CMD_T1_TO_FLAIR
-
-	CMD_MASKING="mrthreshold $T1_MASK_IN_FLAIR -abs 95 $T1_MASK_IN_FLAIR_THR; mrcalc $T1_MASK_IN_FLAIR_THR $T1_IN_FLAIR -mult $T1_BRAIN_IN_FLAIR; mrcalc $T1_MASK_IN_FLAIR_THR $FLAIR -mult $FLAIR_BRAIN"
-	# Execute commands with datalad
+	--container-name fsl \
+	"$CMD_T1_TO_FLAIR ; $CMD_T1_MASK_TO_FLAIR"
 
 	datalad containers-run	\
-	 -m "Preprocessed T1w + mask from smriprep output to FLAIR space $1 $SLURM_JOBID" \
+	-m "Threshold T1_mask_in_FLAIR, Mask T1_in_FLAIR, Mask FLAIR;  $1 $SLURM_JOBID" \
 	--explicit \
-	--input $T1 -i $FLAIR -i $T1_MASK \
-	--output $T1_IN_FLAIR -o $T1_TO_FLAIR_WARP -o $T1_MASK_IN_FLAIR  \
-	--container-name mrtrix
-	$CMD_MASKING
-
-	datalad containers-run \
-	-m "T1w mask to FLAIR $1 $SLURM_JOBID" \
-	--explicit \
-	--input $T1_MASK -i $FLAIR -i $T1_TO_FLAIR_WARP \
-	--output $T1_MASK_IN_FLAIR \
+	--input $T1_MASK_IN_FLAIR -i $T1_IN_FLAIR -i $FLAIR \
+	--output $T1_MASK_IN_FLAIR_THR -o $T1_BRAIN_IN_FLAIR -o $FLAIR_BRAIN  \
 	--container-name mrtrix \
-	$CMD_MASKING
+	"$CMD_MASK_THRESH ; $CMD_MASKING_T1_IN_FLAIR ; $CMD_MASKING_FLAIR"
 
-	datalad run --explicit -m "Masking T1 in FLAIR $1 $SLURM_JOBID" \
-	--input $T1_MASK_IN_FLAIR_THR -i $T1_IN_FLAIR \
-	--output $T1_BRAIN_IN_FLAIR \
-	$CMD_MASKING_T1_IN_FLAIR
-
-	datalad run --explicit -m "Masking T1 in FLAIR $1 $SLURM_JOBID" \
-	--input $T1_MASK_IN_FLAIR_THR -i $T1_IN_FLAIR \
-	--output $T1_BRAIN_IN_FLAIR \
-	$CMD_MASKING_T1_IN_FLAIR
-
-	datalad run --explicit -m "Masking FLAIR with T1-derived mask $1 $SLURM_JOBID" \
-	--input $T1_MASK_IN_FLAIR_THR -i $FLAIR \
-	--output $FLAIR_BRAIN \
-	$CMD_MASKING_FLAIR
-
-	#flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/wmhprep --to origin
+	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/wmhprep/$1 --to origin
 
 
 fi
