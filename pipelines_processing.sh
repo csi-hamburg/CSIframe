@@ -445,11 +445,10 @@ elif [ $PIPELINE == 'wmhprep' ];then
 	# Define commands
 	CMD_T1_TO_FLAIR="flirt -in $T1 -ref $FLAIR -omat $T1_TO_FLAIR_WARP -out $T1_IN_FLAIR -v"
 	CMD_T1_MASK_TO_FLAIR="flirt -in $T1_MASK -ref $FLAIR -init $T1_TO_FLAIR_WARP -out $T1_MASK_IN_FLAIR -v -applyxfm"
-	CMD_MASK_THRESH="mrthreshold $T1_MASK_IN_FLAIR -abs 95 $T1_MASK_IN_FLAIR_THR --force"
+	CMD_MASK_THRESH="mrthreshold $T1_MASK_IN_FLAIR -abs 0.95 $T1_MASK_IN_FLAIR_THR --force"
 	CMD_MASKING_T1_IN_FLAIR="mrcalc $T1_MASK_IN_FLAIR_THR $T1_IN_FLAIR -mult $T1_BRAIN_IN_FLAIR --force"
 	CMD_MASKING_FLAIR="mrcalc $T1_MASK_IN_FLAIR_THR $FLAIR -mult $FLAIR_BRAIN --force"
-	#CMD="antsBrainExtraction.sh -d 3 -a $FLAIR -e $T1_OASIS -m $PRIOR_OASIS -o $CLONE_TMP_DIR/FLAIR"
-	
+
 	# Execute with datalad
 	datalad containers-run	\
 	-m "Warp preprocessed T1w + mask from smriprep output to FLAIR space; $1 $SLURM_JOBID" \

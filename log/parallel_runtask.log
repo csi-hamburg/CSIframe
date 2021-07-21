@@ -1,7 +1,7 @@
 Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
-1	:	1626693042.496	     1.461	0	0	0	0	srun --label --exclusive -N1 -n1 --cpus-per-task 5 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh ewgenia001
-2	:	1626693042.708	     1.820	0	0	0	0	srun --label --exclusive -N1 -n1 --cpus-per-task 5 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh ewgenia002
-4	:	1626693043.139	     1.848	0	0	0	0	srun --label --exclusive -N1 -n1 --cpus-per-task 5 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh ewgenia004
-5	:	1626693043.352	     1.635	0	0	0	0	srun --label --exclusive -N1 -n1 --cpus-per-task 5 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh ewgenia005
-3	:	1626693042.925	     2.183	0	0	0	0	srun --label --exclusive -N1 -n1 --cpus-per-task 5 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh ewgenia003
-6	:	1626693043.580	     1.877	0	0	0	0	srun --label --exclusive -N1 -n1 --cpus-per-task 5 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh ewgenia006
+2	:	1626792287.436	 48911.411	0	0	0	0	srun --label --exclusive -N1 -n1 --cpus-per-task 7 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh sub-ewgenia010
+1	:	1626792287.210	 49689.335	0	0	0	0	srun --label --exclusive -N1 -n1 --cpus-per-task 7 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh sub-ewgenia009
+2	:	1626792288.314	 48273.286	0	0	0	0	srun --label --exclusive -N1 -n1 --cpus-per-task 7 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh sub-ewgenia002
+2	:	1626792288.263	 48810.917	0	0	0	0	srun --label --exclusive -N1 -n1 --cpus-per-task 7 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh sub-ewgenia006
+3	:	1626804971.270	  1199.131	0	0	0	0	srun --label --exclusive -N1 -n1 --cpus-per-task 5 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh sub-ewgenia003
+6	:	1626804971.935	  1226.468	0	0	0	0	srun --label --exclusive -N1 -n1 --cpus-per-task 5 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh sub-ewgenia006
