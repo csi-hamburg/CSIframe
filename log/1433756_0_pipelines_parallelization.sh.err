@@ -1,1429 +1,0 @@
-module: loaded site/slurm
-module: loaded site/tmpdir
-module: loaded site/hummel
-module: loaded env/system-gcc
-+ module unload singularity
-++ /work/fatx405/miniconda3/bin/tclsh /sw/modules/tcl/modulecmd.tcl sh unload singularity
-+ eval
-+ module switch singularity/3.5.2-overlayfix
-++ /work/fatx405/miniconda3/bin/tclsh /sw/modules/tcl/modulecmd.tcl sh switch singularity/3.5.2-overlayfix
-module: loaded singularity/3.5.2-overlayfix
-+ eval '_LMFILES__modshare=/sw/BASE/env/system-gcc:1:/sw/BASE/site/slurm:1:/sw/BASE/site/hummel:1:/sw/BASE/site/tmpdir:1:/sw/TOOL/singularity/3.5.2-overlayfix:1;' export '_LMFILES__modshare;' 'LOADEDMODULES_modshare=site/hummel:1:site/tmpdir:1:singularity/3.5.2-overlayfix:1:env/system-gcc:1:site/slurm:1;' export 'LOADEDMODULES_modshare;' 'SINGULARITY_CACHEDIR=/scratch/fatx405.1433756/singularity;' export 'SINGULARITY_CACHEDIR;' 'PATH=/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin;' export 'PATH;' '_LMFILES_=/sw/BASE/site/slurm:/sw/BASE/site/tmpdir:/sw/BASE/site/hummel:/sw/BASE/env/system-gcc:/sw/TOOL/singularity/3.5.2-overlayfix;' export '_LMFILES_;' 'LOADEDMODULES=site/slurm:site/tmpdir:site/hummel:env/system-gcc:singularity/3.5.2-overlayfix;' export 'LOADEDMODULES;' 'PATH_modshare=/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:1:/sw/batch/slurm/19.05.6/bin:1:/bin:1:/usr/sbin:1:/work/fatx405/miniconda3/bin:1:/usr/bin:1:/sw/rrz/bin:1:/usr/local/sbin:1:/usr/local/bin:1;' export 'PATH_modshare;'
-++ _LMFILES__modshare=/sw/BASE/env/system-gcc:1:/sw/BASE/site/slurm:1:/sw/BASE/site/hummel:1:/sw/BASE/site/tmpdir:1:/sw/TOOL/singularity/3.5.2-overlayfix:1
-++ export _LMFILES__modshare
-++ LOADEDMODULES_modshare=site/hummel:1:site/tmpdir:1:singularity/3.5.2-overlayfix:1:env/system-gcc:1:site/slurm:1
-++ export LOADEDMODULES_modshare
-++ SINGULARITY_CACHEDIR=/scratch/fatx405.1433756/singularity
-++ export SINGULARITY_CACHEDIR
-++ PATH=/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ export PATH
-++ _LMFILES_=/sw/BASE/site/slurm:/sw/BASE/site/tmpdir:/sw/BASE/site/hummel:/sw/BASE/env/system-gcc:/sw/TOOL/singularity/3.5.2-overlayfix
-++ export _LMFILES_
-++ LOADEDMODULES=site/slurm:site/tmpdir:site/hummel:env/system-gcc:singularity/3.5.2-overlayfix
-++ export LOADEDMODULES
-++ PATH_modshare=/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:1:/sw/batch/slurm/19.05.6/bin:1:/bin:1:/usr/sbin:1:/work/fatx405/miniconda3/bin:1:/usr/bin:1:/sw/rrz/bin:1:/usr/local/sbin:1:/usr/local/bin:1
-++ export PATH_modshare
-+ module load parallel
-++ /work/fatx405/miniconda3/bin/tclsh /sw/modules/tcl/modulecmd.tcl sh load parallel
-module: loaded parallel/20180322
-+ eval '_LMFILES__modshare=/sw/BASE/env/system-gcc:1:/sw/BASE/site/slurm:1:/sw/BASE/site/hummel:1:/sw/BASE/site/tmpdir:1:/sw/TOOL/parallel/20180322:1:/sw/TOOL/singularity/3.5.2-overlayfix:1;' export '_LMFILES__modshare;' 'LOADEDMODULES_modshare=site/hummel:1:site/tmpdir:1:parallel/20180322:1:singularity/3.5.2-overlayfix:1:env/system-gcc:1:site/slurm:1;' export 'LOADEDMODULES_modshare;' 'MANPATH=/sw/env/system-gcc/parallel/20180322/share/man:/sw/batch/slurm/19.05.6/share/man:/sw/rrz/share/man:/sw/modules/man:/usr/share/man;' export 'MANPATH;' 'PATH=/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin;' export 'PATH;' '_LMFILES_=/sw/BASE/site/slurm:/sw/BASE/site/tmpdir:/sw/BASE/site/hummel:/sw/BASE/env/system-gcc:/sw/TOOL/singularity/3.5.2-overlayfix:/sw/TOOL/parallel/20180322;' export '_LMFILES_;' 'LOADEDMODULES=site/slurm:site/tmpdir:site/hummel:env/system-gcc:singularity/3.5.2-overlayfix:parallel/20180322;' export 'LOADEDMODULES;' 'MANPATH_modshare=/sw/modules/man:1:/sw/env/system-gcc/parallel/20180322/share/man:1:/sw/batch/slurm/19.05.6/share/man:1:/usr/share/man:1:/sw/rrz/share/man:1;' export 'MANPATH_modshare;' 'PATH_modshare=/sw/env/system-gcc/parallel/20180322/bin:1:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:1:/sw/batch/slurm/19.05.6/bin:1:/bin:1:/usr/sbin:1:/work/fatx405/miniconda3/bin:1:/usr/bin:1:/sw/rrz/bin:1:/usr/local/sbin:1:/usr/local/bin:1;' export 'PATH_modshare;'
-++ _LMFILES__modshare=/sw/BASE/env/system-gcc:1:/sw/BASE/site/slurm:1:/sw/BASE/site/hummel:1:/sw/BASE/site/tmpdir:1:/sw/TOOL/parallel/20180322:1:/sw/TOOL/singularity/3.5.2-overlayfix:1
-++ export _LMFILES__modshare
-++ LOADEDMODULES_modshare=site/hummel:1:site/tmpdir:1:parallel/20180322:1:singularity/3.5.2-overlayfix:1:env/system-gcc:1:site/slurm:1
-++ export LOADEDMODULES_modshare
-++ MANPATH=/sw/env/system-gcc/parallel/20180322/share/man:/sw/batch/slurm/19.05.6/share/man:/sw/rrz/share/man:/sw/modules/man:/usr/share/man
-++ export MANPATH
-++ PATH=/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ export PATH
-++ _LMFILES_=/sw/BASE/site/slurm:/sw/BASE/site/tmpdir:/sw/BASE/site/hummel:/sw/BASE/env/system-gcc:/sw/TOOL/singularity/3.5.2-overlayfix:/sw/TOOL/parallel/20180322
-++ export _LMFILES_
-++ LOADEDMODULES=site/slurm:site/tmpdir:site/hummel:env/system-gcc:singularity/3.5.2-overlayfix:parallel/20180322
-++ export LOADEDMODULES
-++ MANPATH_modshare=/sw/modules/man:1:/sw/env/system-gcc/parallel/20180322/share/man:1:/sw/batch/slurm/19.05.6/share/man:1:/usr/share/man:1:/sw/rrz/share/man:1
-++ export MANPATH_modshare
-++ PATH_modshare=/sw/env/system-gcc/parallel/20180322/bin:1:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:1:/sw/batch/slurm/19.05.6/bin:1:/bin:1:/usr/sbin:1:/work/fatx405/miniconda3/bin:1:/usr/bin:1:/sw/rrz/bin:1:/usr/local/sbin:1:/usr/local/bin:1
-++ export PATH_modshare
-+ export SCRIPT_DIR=/work/fatx405/projects/CSI_TEST/code
-+ SCRIPT_DIR=/work/fatx405/projects/CSI_TEST/code
-++ realpath /work/fatx405/projects/CSI_TEST/code/..
-+ export PROJ_DIR=/work/fatx405/projects/CSI_TEST
-+ PROJ_DIR=/work/fatx405/projects/CSI_TEST
-+ export CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-+ CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-+ export ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-+ ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-+ export DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-+ DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-+ export DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-+ DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-+ export BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-+ BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-+ source /work/fatx405/set_envs/miniconda
-++ export PATH=/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ PATH=/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-+ source activate datalad
-++ _CONDA_ROOT=/work/fatx405/miniconda3
-++ . /work/fatx405/miniconda3/etc/profile.d/conda.sh
-+++ export CONDA_EXE=/work/fatx405/miniconda3/bin/conda
-+++ CONDA_EXE=/work/fatx405/miniconda3/bin/conda
-+++ export _CE_M=
-+++ _CE_M=
-+++ export _CE_CONDA=
-+++ _CE_CONDA=
-+++ export CONDA_PYTHON_EXE=/work/fatx405/miniconda3/bin/python
-+++ CONDA_PYTHON_EXE=/work/fatx405/miniconda3/bin/python
-+++ '[' -z '' ']'
-+++ export CONDA_SHLVL=0
-+++ CONDA_SHLVL=0
-+++ '[' -n '' ']'
-+++++ dirname /work/fatx405/miniconda3/bin/conda
-++++ dirname /work/fatx405/miniconda3/bin
-+++ PATH=/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-+++ export PATH
-+++ '[' -z '' ']'
-+++ PS1=
-++ conda activate datalad
-++ '[' 2 -lt 1 ']'
-++ local cmd=activate
-++ shift
-++ case "$cmd" in
-++ __conda_activate activate datalad
-++ '[' -n '' ']'
-++ local cmd=activate
-++ shift
-++ local ask_conda
-++ CONDA_INTERNAL_OLDPATH=/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ __add_sys_prefix_to_path
-++ '[' -n '' ']'
-+++ dirname /work/fatx405/miniconda3/bin/conda
-++ SYSP=/work/fatx405/miniconda3/bin
-+++ dirname /work/fatx405/miniconda3/bin
-++ SYSP=/work/fatx405/miniconda3
-++ '[' -n '' ']'
-++ PATH=/work/fatx405/miniconda3/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ export PATH
-+++ PS1=
-+++ /work/fatx405/miniconda3/bin/conda shell.posix activate datalad
-++ ask_conda='PS1='\''(datalad) '\''
-export PATH='\''/work/fatx405/miniconda3/envs/datalad/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin'\''
-export CONDA_PREFIX='\''/work/fatx405/miniconda3/envs/datalad'\''
-export CONDA_SHLVL='\''1'\''
-export CONDA_DEFAULT_ENV='\''datalad'\''
-export CONDA_PROMPT_MODIFIER='\''(datalad) '\''
-export CONDA_EXE='\''/work/fatx405/miniconda3/bin/conda'\''
-export _CE_M='\'''\''
-export _CE_CONDA='\'''\''
-export CONDA_PYTHON_EXE='\''/work/fatx405/miniconda3/bin/python'\'''
-++ rc=0
-++ PATH=/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ eval 'PS1='\''(datalad) '\''
-export PATH='\''/work/fatx405/miniconda3/envs/datalad/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin'\''
-export CONDA_PREFIX='\''/work/fatx405/miniconda3/envs/datalad'\''
-export CONDA_SHLVL='\''1'\''
-export CONDA_DEFAULT_ENV='\''datalad'\''
-export CONDA_PROMPT_MODIFIER='\''(datalad) '\''
-export CONDA_EXE='\''/work/fatx405/miniconda3/bin/conda'\''
-export _CE_M='\'''\''
-export _CE_CONDA='\'''\''
-export CONDA_PYTHON_EXE='\''/work/fatx405/miniconda3/bin/python'\'''
-+++ PS1='(datalad) '
-+++ export PATH=/work/fatx405/miniconda3/envs/datalad/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-+++ PATH=/work/fatx405/miniconda3/envs/datalad/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-+++ export CONDA_PREFIX=/work/fatx405/miniconda3/envs/datalad
-+++ CONDA_PREFIX=/work/fatx405/miniconda3/envs/datalad
-+++ export CONDA_SHLVL=1
-+++ CONDA_SHLVL=1
-+++ export CONDA_DEFAULT_ENV=datalad
-+++ CONDA_DEFAULT_ENV=datalad
-+++ export 'CONDA_PROMPT_MODIFIER=(datalad) '
-+++ CONDA_PROMPT_MODIFIER='(datalad) '
-+++ export CONDA_EXE=/work/fatx405/miniconda3/bin/conda
-+++ CONDA_EXE=/work/fatx405/miniconda3/bin/conda
-+++ export _CE_M=
-+++ _CE_M=
-+++ export _CE_CONDA=
-+++ _CE_CONDA=
-+++ export CONDA_PYTHON_EXE=/work/fatx405/miniconda3/bin/python
-+++ CONDA_PYTHON_EXE=/work/fatx405/miniconda3/bin/python
-++ '[' 0 '!=' 0 ']'
-++ __conda_hashr
-++ '[' -n '' ']'
-++ '[' -n '' ']'
-++ hash -r
-+ subjs=($@)
-+ SUBJS_PER_NODE=10
-+ export ITER=0
-+ ITER=0
-++ expr 0 '*' 1000 + 0
-+ subjs_start_idx=0
-+ '[' bidsify == bidsify ']'
-+ subjs=(${subjs[@]-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata)})
-+ subjs_subarr=($(basename -a ${subjs[@]:$subjs_start_idx:$SUBJS_PER_NODE}))
-++ basename -a /work/fatx405/projects/CSI_TEST/data/dicoms/ewgenia001 /work/fatx405/projects/CSI_TEST/data/dicoms/ewgenia002 /work/fatx405/projects/CSI_TEST/data/dicoms/ewgenia003 /work/fatx405/projects/CSI_TEST/data/dicoms/ewgenia004 /work/fatx405/projects/CSI_TEST/data/dicoms/ewgenia005
-+ echo starting processing with bidsify from index: 0 ...
-+ echo for n=10 subjects
-+ echo subjects to process: ewgenia001 ewgenia002 ewgenia003 ewgenia004 ewgenia005
-+ echo submission script directory: /work/fatx405/projects/CSI_TEST/code
-+ echo current TMPDIR: /scratch/fatx405.1433756
-+ echo ITERator: 0
-++ awk 'BEGIN {print int(30/10); exit}'
-+ threads_per_sub=3
-++ awk 'BEGIN {print int(64000/10); exit}'
-+ mem_per_sub=6400
-+ srun='srun --label --exclusive -N1 -n1 --cpus-per-task 3 --mem-per-cpu=16000'
-+ parallel='parallel --ungroup --progress --delay 0.2 -j10 --joblog /work/fatx405/projects/CSI_TEST/code/log/parallel_runtask.log'
-+ proc_script=/work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh
-+ echo -e 'running:\n parallel --ungroup --progress --delay 0.2 -j10 --joblog /work/fatx405/projects/CSI_TEST/code/log/parallel_runtask.log srun --label --exclusive -N1 -n1 --cpus-per-task 3 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh ::: ewgenia001' ewgenia002 ewgenia003 ewgenia004 ewgenia005
-+ parallel --ungroup --progress --delay 0.2 -j10 --joblog /work/fatx405/projects/CSI_TEST/code/log/parallel_runtask.log 'srun --label --exclusive -N1 -n1 --cpus-per-task 3 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh' ::: ewgenia001 ewgenia002 ewgenia003 ewgenia004 ewgenia005
-
-Computers / CPU cores / Max jobs to run
-1:local / 32 / 5
-
-Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
-local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s 0: + source /sw/batch/init.sh
-0: ++ . /sw/profile/init.sh
-0: +++ case $(/sw/batch/bin/rrz-run-env) in
-0: ++++ /sw/batch/bin/rrz-run-env
-local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s 0: +++ . /sw/modules/rrz-modules.sh
-local:1/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: ++++ test -z 1
-0: ++++ echo 'RRZ: re-using existing module setup (RRZ_SW_INIT present)'
-0: RRZ: re-using existing module setup (RRZ_SW_INIT present)
-0: ++++ . /sw/modules/init.sh
-0: ++++++ tclsh /sw/modules/tcl/modulecmd.tcl sh autoinit
-local:2/0/100%/0.0s 0: + source /sw/batch/init.sh
-0: ++ . /sw/profile/init.sh
-0: +++ case $(/sw/batch/bin/rrz-run-env) in
-0: ++++ /sw/batch/bin/rrz-run-env
-local:2/0/100%/0.0s 0: +++++ eval module '()' '{' eval '`'\''/work/fatx405/miniconda3/envs/datalad/bin/tclsh'\''' ''\''/sw/modules/tcl/modulecmd.tcl'\''' ''\''sh'\''' '$*`;' '}' ';' 'MODULESHOME=/sw/modules/tcl;' export 'MODULESHOME;'
-0: ++++++ MODULESHOME=/sw/modules/tcl
-0: ++++++ export MODULESHOME
-0: ++ unset SLURM_EXPORT_ENV
-0: ++ /sw/rrz/bin/rrz-quota --dirs=/work --check=90
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: +++ . /sw/modules/rrz-modules.sh
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: ++++ test -z 1
-0: ++++ echo 'RRZ: re-using existing module setup (RRZ_SW_INIT present)'
-0: RRZ: re-using existing module setup (RRZ_SW_INIT present)
-0: ++++ . /sw/modules/init.sh
-0: ++++++ tclsh /sw/modules/tcl/modulecmd.tcl sh autoinit
-0: + echo '###################################'
-0: + echo Started processing of ewgenia001
-0: + echo '###################################'
-0: + SCRIPT_DIR=/work/fatx405/projects/CSI_TEST/code
-local:2/0/100%/0.0s 0: ++ realpath /work/fatx405/projects/CSI_TEST/code/..
-0: + export PROJ_DIR=/work/fatx405/projects/CSI_TEST
-0: + PROJ_DIR=/work/fatx405/projects/CSI_TEST
-0: + export CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + export ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-0: + ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-0: + export DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-0: + DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-0: + export DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-0: + DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-0: + export BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-0: + BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-0: + export SLURM_CPUS_PER_TASK=3
-0: + SLURM_CPUS_PER_TASK=3
-0: + export SCRATCH_DIR=/scratch/fatx405.1433756/ewgenia001
-0: + SCRATCH_DIR=/scratch/fatx405.1433756/ewgenia001
-0: + '[' '!' -d /scratch/fatx405.1433756/ewgenia001 ']'
-0: + mkdir /scratch/fatx405.1433756/ewgenia001
-0: + export SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + export SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + export DSLOCKFILE=/scratch/fatx405.1433756/ewgenia001/bidsify.lock
-0: + DSLOCKFILE=/scratch/fatx405.1433756/ewgenia001/bidsify.lock
-0: + export DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433756/ewgenia001/sockets
-0: + DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433756/ewgenia001/sockets
-0: ++ hostname
-0: + echo hostname: node247
-0: ++ singularity --version
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:3/0/100%/0.0s local:3/0/100%/0.0s local:3/0/100%/0.0s 0: +++++ eval module '()' '{' eval '`'\''/work/fatx405/miniconda3/envs/datalad/bin/tclsh'\''' ''\''/sw/modules/tcl/modulecmd.tcl'\''' ''\''sh'\''' '$*`;' '}' ';' 'MODULESHOME=/sw/modules/tcl;' export 'MODULESHOME;'
-0: ++++++ MODULESHOME=/sw/modules/tcl
-0: ++++++ export MODULESHOME
-0: ++ unset SLURM_EXPORT_ENV
-0: ++ /sw/rrz/bin/rrz-quota --dirs=/work --check=90
-local:3/0/100%/0.0s local:3/0/100%/0.0s local:3/0/100%/0.0s local:3/0/100%/0.0s local:3/0/100%/0.0s local:3/0/100%/0.0s local:3/0/100%/0.0s local:3/0/100%/0.0s local:4/0/100%/0.0s 0: + echo singularity version 3.5.2
-0: + echo TMPDIR: /scratch/fatx405.1433756
-0: + echo RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433756
-0: + echo SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
-0: + echo SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
-local:4/0/100%/0.0s 0: + echo DSLOCKFILE: /scratch/fatx405.1433756/ewgenia001/bidsify.lock
-0: + mkdir -p /scratch/fatx405.1433756/ewgenia001/sockets
-0: + echo DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433756/ewgenia001/sockets
-0: + cd /scratch/fatx405.1433756/ewgenia001
-0: + CLONE=/scratch/fatx405.1433756/ewgenia001/clone
-0: + CLONE_DATA_DIR=/scratch/fatx405.1433756/ewgenia001/clone/data
-0: + CLONE_BIDS_DIR=/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids
-0: + CLONE_DCM_DIR=/scratch/fatx405.1433756/ewgenia001/clone/data/dicoms
-0: + CLONE_CODE_DIR=/scratch/fatx405.1433756/ewgenia001/clone/code/
-0: + CLONE_ENV_DIR=/scratch/fatx405.1433756/ewgenia001/clone/envs/
-0: + CLONE_TMP_DIR=/scratch/fatx405.1433756/ewgenia001/tmp/
-0: + mkdir -p /scratch/fatx405.1433756/ewgenia001/tmp/
-0: + '[' -d /scratch/fatx405.1433756/ewgenia001/clone ']'
-0: + flock /scratch/fatx405.1433756/ewgenia001/bidsify.lock datalad clone /work/fatx405/projects/CSI_TEST /scratch/fatx405.1433756/ewgenia001/clone
-local:4/0/100%/0.0s 0: + echo '###################################'
-0: + echo Started processing of ewgenia002
-0: + echo '###################################'
-0: + SCRIPT_DIR=/work/fatx405/projects/CSI_TEST/code
-0: ++ realpath /work/fatx405/projects/CSI_TEST/code/..
-0: + export PROJ_DIR=/work/fatx405/projects/CSI_TEST
-0: + PROJ_DIR=/work/fatx405/projects/CSI_TEST
-0: + export CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + export ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-0: + ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-0: + export DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-0: + DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-0: + export DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-0: + DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-0: + export BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-0: + BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-0: + export SLURM_CPUS_PER_TASK=3
-0: + SLURM_CPUS_PER_TASK=3
-0: + export SCRATCH_DIR=/scratch/fatx405.1433756/ewgenia002
-0: + SCRATCH_DIR=/scratch/fatx405.1433756/ewgenia002
-0: + source /sw/batch/init.sh
-local:4/0/100%/0.0s 0: + '[' '!' -d /scratch/fatx405.1433756/ewgenia002 ']'
-0: ++ . /sw/profile/init.sh
-0: + mkdir /scratch/fatx405.1433756/ewgenia002
-0: +++ case $(/sw/batch/bin/rrz-run-env) in
-0: + export SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: ++++ /sw/batch/bin/rrz-run-env
-0: + SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + export SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + export DSLOCKFILE=/scratch/fatx405.1433756/ewgenia002/bidsify.lock
-0: + DSLOCKFILE=/scratch/fatx405.1433756/ewgenia002/bidsify.lock
-0: + export DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433756/ewgenia002/sockets
-0: + DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433756/ewgenia002/sockets
-0: ++ hostname
-0: + echo hostname: node247
-0: ++ singularity --version
-0: + echo singularity version 3.5.2
-0: + echo TMPDIR: /scratch/fatx405.1433756
-0: + echo RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433756
-0: + echo SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
-0: + echo SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
-0: + source /sw/batch/init.sh
-0: + echo DSLOCKFILE: /scratch/fatx405.1433756/ewgenia002/bidsify.lock
-0: ++ . /sw/profile/init.sh
-0: +++ case $(/sw/batch/bin/rrz-run-env) in
-0: + mkdir -p /scratch/fatx405.1433756/ewgenia002/sockets
-0: ++++ /sw/batch/bin/rrz-run-env
-0: + echo DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433756/ewgenia002/sockets
-0: + cd /scratch/fatx405.1433756/ewgenia002
-0: + CLONE=/scratch/fatx405.1433756/ewgenia002/clone
-0: + CLONE_DATA_DIR=/scratch/fatx405.1433756/ewgenia002/clone/data
-0: + CLONE_BIDS_DIR=/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids
-0: + CLONE_DCM_DIR=/scratch/fatx405.1433756/ewgenia002/clone/data/dicoms
-0: + CLONE_CODE_DIR=/scratch/fatx405.1433756/ewgenia002/clone/code/
-0: + CLONE_ENV_DIR=/scratch/fatx405.1433756/ewgenia002/clone/envs/
-0: + CLONE_TMP_DIR=/scratch/fatx405.1433756/ewgenia002/tmp/
-0: + mkdir -p /scratch/fatx405.1433756/ewgenia002/tmp/
-0: + '[' -d /scratch/fatx405.1433756/ewgenia002/clone ']'
-0: + flock /scratch/fatx405.1433756/ewgenia002/bidsify.lock datalad clone /work/fatx405/projects/CSI_TEST /scratch/fatx405.1433756/ewgenia002/clone
-local:4/0/100%/0.0s 0: +++ . /sw/modules/rrz-modules.sh
-0: +++ . /sw/modules/rrz-modules.sh
-local:4/0/100%/0.0s 0: ++++ test -z 1
-0: ++++ test -z 1
-0: ++++ echo 'RRZ: re-using existing module setup (RRZ_SW_INIT present)'
-0: ++++ echo 'RRZ: re-using existing module setup (RRZ_SW_INIT present)'
-0: RRZ: re-using existing module setup (RRZ_SW_INIT present)
-0: RRZ: re-using existing module setup (RRZ_SW_INIT present)
-local:4/0/100%/0.0s 0: ++++ . /sw/modules/init.sh
-0: ++++ . /sw/modules/init.sh
-0: ++++++ tclsh /sw/modules/tcl/modulecmd.tcl sh autoinit
-0: ++++++ tclsh /sw/modules/tcl/modulecmd.tcl sh autoinit
-0: +++++ eval module '()' '{' eval '`'\''/work/fatx405/miniconda3/envs/datalad/bin/tclsh'\''' ''\''/sw/modules/tcl/modulecmd.tcl'\''' ''\''sh'\''' '$*`;' '}' ';' 'MODULESHOME=/sw/modules/tcl;' export 'MODULESHOME;'
-0: ++++++ MODULESHOME=/sw/modules/tcl
-0: ++++++ export MODULESHOME
-0: ++ unset SLURM_EXPORT_ENV
-0: +++++ eval module '()' '{' eval '`'\''/work/fatx405/miniconda3/envs/datalad/bin/tclsh'\''' ''\''/sw/modules/tcl/modulecmd.tcl'\''' ''\''sh'\''' '$*`;' '}' ';' 'MODULESHOME=/sw/modules/tcl;' export 'MODULESHOME;'
-0: ++ /sw/rrz/bin/rrz-quota --dirs=/work --check=90
-0: ++++++ MODULESHOME=/sw/modules/tcl
-0: ++++++ export MODULESHOME
-0: ++ unset SLURM_EXPORT_ENV
-0: ++ /sw/rrz/bin/rrz-quota --dirs=/work --check=90
-local:4/0/100%/0.0s local:4/0/100%/0.0s 0: + echo '###################################'
-0: + echo '###################################'
-local:5/0/100%/0.0s 0: + echo Started processing of ewgenia004
-0: + echo Started processing of ewgenia003
-0: + echo '###################################'
-0: + echo '###################################'
-0: + SCRIPT_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + SCRIPT_DIR=/work/fatx405/projects/CSI_TEST/code
-0: ++ realpath /work/fatx405/projects/CSI_TEST/code/..
-0: ++ realpath /work/fatx405/projects/CSI_TEST/code/..
-0: + export PROJ_DIR=/work/fatx405/projects/CSI_TEST
-0: + export PROJ_DIR=/work/fatx405/projects/CSI_TEST
-0: + PROJ_DIR=/work/fatx405/projects/CSI_TEST
-0: + PROJ_DIR=/work/fatx405/projects/CSI_TEST
-0: + export CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + export CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + export ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-0: + export ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-0: + ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-0: + ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-0: + export DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-0: + export DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-0: + DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-0: + DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-0: + export DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-0: + export DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-0: + DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-0: + DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-0: + export BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-0: + export BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-0: + BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-0: + BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-0: + export SLURM_CPUS_PER_TASK=3
-0: + export SLURM_CPUS_PER_TASK=3
-0: + SLURM_CPUS_PER_TASK=3
-0: + SLURM_CPUS_PER_TASK=3
-0: + export SCRATCH_DIR=/scratch/fatx405.1433756/ewgenia004
-0: + export SCRATCH_DIR=/scratch/fatx405.1433756/ewgenia003
-0: + SCRATCH_DIR=/scratch/fatx405.1433756/ewgenia004
-0: + SCRATCH_DIR=/scratch/fatx405.1433756/ewgenia003
-0: + '[' '!' -d /scratch/fatx405.1433756/ewgenia004 ']'
-0: + '[' '!' -d /scratch/fatx405.1433756/ewgenia003 ']'
-0: + mkdir /scratch/fatx405.1433756/ewgenia004
-0: + mkdir /scratch/fatx405.1433756/ewgenia003
-0: + export SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + export SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + export SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + export SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + export DSLOCKFILE=/scratch/fatx405.1433756/ewgenia004/bidsify.lock
-local:5/0/100%/0.0s 0: + SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + DSLOCKFILE=/scratch/fatx405.1433756/ewgenia004/bidsify.lock
-0: + export DSLOCKFILE=/scratch/fatx405.1433756/ewgenia003/bidsify.lock
-0: + export DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433756/ewgenia004/sockets
-0: + DSLOCKFILE=/scratch/fatx405.1433756/ewgenia003/bidsify.lock
-0: + DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433756/ewgenia004/sockets
-0: + export DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433756/ewgenia003/sockets
-0: ++ hostname
-0: + DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433756/ewgenia003/sockets
-0: + echo hostname: node247
-0: ++ hostname
-0: ++ singularity --version
-0: + echo hostname: node247
-0: + echo singularity version 3.5.2
-0: ++ singularity --version
-0: + echo TMPDIR: /scratch/fatx405.1433756
-0: + echo singularity version 3.5.2
-0: + echo RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433756
-0: + echo TMPDIR: /scratch/fatx405.1433756
-0: + echo SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
-0: + echo RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433756
-0: + echo SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
-0: + echo SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
-0: + echo DSLOCKFILE: /scratch/fatx405.1433756/ewgenia004/bidsify.lock
-0: + echo SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
-0: + mkdir -p /scratch/fatx405.1433756/ewgenia004/sockets
-0: + echo DSLOCKFILE: /scratch/fatx405.1433756/ewgenia003/bidsify.lock
-0: + echo DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433756/ewgenia004/sockets
-0: + mkdir -p /scratch/fatx405.1433756/ewgenia003/sockets
-0: + echo DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433756/ewgenia003/sockets
-0: + cd /scratch/fatx405.1433756/ewgenia004
-0: + CLONE=/scratch/fatx405.1433756/ewgenia004/clone
-0: + CLONE_DATA_DIR=/scratch/fatx405.1433756/ewgenia004/clone/data
-0: + cd /scratch/fatx405.1433756/ewgenia003
-0: + CLONE_BIDS_DIR=/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids
-0: + CLONE=/scratch/fatx405.1433756/ewgenia003/clone
-0: + CLONE_DCM_DIR=/scratch/fatx405.1433756/ewgenia004/clone/data/dicoms
-0: + CLONE_DATA_DIR=/scratch/fatx405.1433756/ewgenia003/clone/data
-0: + CLONE_CODE_DIR=/scratch/fatx405.1433756/ewgenia004/clone/code/
-0: + CLONE_BIDS_DIR=/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids
-0: + CLONE_ENV_DIR=/scratch/fatx405.1433756/ewgenia004/clone/envs/
-0: + CLONE_DCM_DIR=/scratch/fatx405.1433756/ewgenia003/clone/data/dicoms
-0: + CLONE_TMP_DIR=/scratch/fatx405.1433756/ewgenia004/tmp/
-0: + CLONE_CODE_DIR=/scratch/fatx405.1433756/ewgenia003/clone/code/
-0: + source /sw/batch/init.sh
-0: + mkdir -p /scratch/fatx405.1433756/ewgenia004/tmp/
-0: + CLONE_ENV_DIR=/scratch/fatx405.1433756/ewgenia003/clone/envs/
-0: ++ . /sw/profile/init.sh
-0: + '[' -d /scratch/fatx405.1433756/ewgenia004/clone ']'
-0: + CLONE_TMP_DIR=/scratch/fatx405.1433756/ewgenia003/tmp/
-0: +++ case $(/sw/batch/bin/rrz-run-env) in
-0: + flock /scratch/fatx405.1433756/ewgenia004/bidsify.lock datalad clone /work/fatx405/projects/CSI_TEST /scratch/fatx405.1433756/ewgenia004/clone
-0: + mkdir -p /scratch/fatx405.1433756/ewgenia003/tmp/
-0: ++++ /sw/batch/bin/rrz-run-env
-0: + '[' -d /scratch/fatx405.1433756/ewgenia003/clone ']'
-0: + flock /scratch/fatx405.1433756/ewgenia003/bidsify.lock datalad clone /work/fatx405/projects/CSI_TEST /scratch/fatx405.1433756/ewgenia003/clone
-local:5/0/100%/0.0s 0: +++ . /sw/modules/rrz-modules.sh
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: ++++ test -z 1
-0: ++++ echo 'RRZ: re-using existing module setup (RRZ_SW_INIT present)'
-0: RRZ: re-using existing module setup (RRZ_SW_INIT present)
-0: ++++ . /sw/modules/init.sh
-0: ++++++ tclsh /sw/modules/tcl/modulecmd.tcl sh autoinit
-local:5/0/100%/0.0s 0: +++++ eval module '()' '{' eval '`'\''/work/fatx405/miniconda3/envs/datalad/bin/tclsh'\''' ''\''/sw/modules/tcl/modulecmd.tcl'\''' ''\''sh'\''' '$*`;' '}' ';' 'MODULESHOME=/sw/modules/tcl;' export 'MODULESHOME;'
-0: ++++++ MODULESHOME=/sw/modules/tcl
-0: ++++++ export MODULESHOME
-0: ++ unset SLURM_EXPORT_ENV
-0: ++ /sw/rrz/bin/rrz-quota --dirs=/work --check=90
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + echo '###################################'
-0: + echo Started processing of ewgenia005
-0: + echo '###################################'
-0: + SCRIPT_DIR=/work/fatx405/projects/CSI_TEST/code
-0: ++ realpath /work/fatx405/projects/CSI_TEST/code/..
-0: + export PROJ_DIR=/work/fatx405/projects/CSI_TEST
-0: + PROJ_DIR=/work/fatx405/projects/CSI_TEST
-0: + export CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + export ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-0: + ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-0: + export DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-0: + DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-0: + export DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-0: + DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-0: + export BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-0: + BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-0: + export SLURM_CPUS_PER_TASK=3
-0: + SLURM_CPUS_PER_TASK=3
-0: + export SCRATCH_DIR=/scratch/fatx405.1433756/ewgenia005
-0: + SCRATCH_DIR=/scratch/fatx405.1433756/ewgenia005
-0: + '[' '!' -d /scratch/fatx405.1433756/ewgenia005 ']'
-0: + mkdir /scratch/fatx405.1433756/ewgenia005
-0: + export SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + export SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + export DSLOCKFILE=/scratch/fatx405.1433756/ewgenia005/bidsify.lock
-0: + DSLOCKFILE=/scratch/fatx405.1433756/ewgenia005/bidsify.lock
-0: + export DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433756/ewgenia005/sockets
-0: + DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433756/ewgenia005/sockets
-0: ++ hostname
-0: + echo hostname: node247
-0: ++ singularity --version
-0: + echo singularity version 3.5.2
-0: + echo TMPDIR: /scratch/fatx405.1433756
-0: + echo RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433756
-0: + echo SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
-0: + echo SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
-0: + echo DSLOCKFILE: /scratch/fatx405.1433756/ewgenia005/bidsify.lock
-0: + mkdir -p /scratch/fatx405.1433756/ewgenia005/sockets
-0: + echo DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433756/ewgenia005/sockets
-0: + cd /scratch/fatx405.1433756/ewgenia005
-local:5/0/100%/0.0s 0: + CLONE=/scratch/fatx405.1433756/ewgenia005/clone
-0: + CLONE_DATA_DIR=/scratch/fatx405.1433756/ewgenia005/clone/data
-0: + CLONE_BIDS_DIR=/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids
-0: + CLONE_DCM_DIR=/scratch/fatx405.1433756/ewgenia005/clone/data/dicoms
-0: + CLONE_CODE_DIR=/scratch/fatx405.1433756/ewgenia005/clone/code/
-0: + CLONE_ENV_DIR=/scratch/fatx405.1433756/ewgenia005/clone/envs/
-0: + CLONE_TMP_DIR=/scratch/fatx405.1433756/ewgenia005/tmp/
-0: + mkdir -p /scratch/fatx405.1433756/ewgenia005/tmp/
-0: + '[' -d /scratch/fatx405.1433756/ewgenia005/clone ']'
-0: + flock /scratch/fatx405.1433756/ewgenia005/bidsify.lock datalad clone /work/fatx405/projects/CSI_TEST /scratch/fatx405.1433756/ewgenia005/clone
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia002/clone) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST to /scratch/fatx405.1433756/ewgenia002/clone 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia001/clone) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST to /scratch/fatx405.1433756/ewgenia001/clone 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia003/clone) 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia004/clone) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST to /scratch/fatx405.1433756/ewgenia003/clone 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST to /scratch/fatx405.1433756/ewgenia004/clone 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia005/clone) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST to /scratch/fatx405.1433756/ewgenia005/clone 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia004/clone) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia001/clone) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia003/clone) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia002/clone) 
-local:5/0/100%/0.0s 0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia005/clone) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + cd /scratch/fatx405.1433756/ewgenia005/clone
-0: + datalad get envs/freesurfer_license.txt
-0: + cd /scratch/fatx405.1433756/ewgenia003/clone
-0: + cd /scratch/fatx405.1433756/ewgenia004/clone
-0: + cd /scratch/fatx405.1433756/ewgenia002/clone
-0: + datalad get envs/freesurfer_license.txt
-0: + datalad get envs/freesurfer_license.txt
-0: + datalad get envs/freesurfer_license.txt
-0: + cd /scratch/fatx405.1433756/ewgenia001/clone
-0: + datalad get envs/freesurfer_license.txt
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia001/clone/envs) 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia005/clone/envs) 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia004/clone/envs) 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia003/clone/envs) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/envs to /scratch/fatx405.1433756/ewgenia001/clone/envs 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/envs to /scratch/fatx405.1433756/ewgenia005/clone/envs 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/envs to /scratch/fatx405.1433756/ewgenia004/clone/envs 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/envs to /scratch/fatx405.1433756/ewgenia003/clone/envs 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia002/clone/envs) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/envs to /scratch/fatx405.1433756/ewgenia002/clone/envs 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia005/clone/envs) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia003/clone/envs) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia004/clone/envs) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia001/clone/envs) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia002/clone/envs) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + datalad get -n -r -R0 data/raw_bids
-0: + datalad get -n -r -R0 data/raw_bids
-0: + datalad get -n -r -R0 data/raw_bids
-0: + datalad get -n -r -R0 data/raw_bids
-0: + datalad get -n -r -R0 data/raw_bids
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids) 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids) 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids) 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids to /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids to /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids to /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids to /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids to /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-local:5/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Installing Dataset(/scratch/fatx405.1433756/ewgenia002/clone) to get /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids recursively 
-0: [INFO] Installing Dataset(/scratch/fatx405.1433756/ewgenia003/clone) to get /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids recursively 
-0: + datalad get data/raw_bids/dataset_description.json
-local:5/0/100%/0.0s 0: + datalad get data/raw_bids/dataset_description.json
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-local:5/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-local:5/0/100%/0.0s 0: + datalad get data/raw_bids/participants.tsv
-0: + datalad get data/raw_bids/participants.tsv
-0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] Installing Dataset(/scratch/fatx405.1433756/ewgenia005/clone) to get /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids recursively 
-0: + datalad get data/raw_bids/dataset_description.json
-local:5/0/100%/0.0s 0: [INFO] Installing Dataset(/scratch/fatx405.1433756/ewgenia001/clone) to get /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids recursively 
-local:5/0/100%/0.0s 0: + datalad get data/raw_bids/dataset_description.json
-0: [INFO] Installing Dataset(/scratch/fatx405.1433756/ewgenia004/clone) to get /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids recursively 
-local:5/0/100%/0.0s 0: + datalad get data/raw_bids/dataset_description.json
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + git submodule foreach --recursive git annex dead here
-0: + git submodule foreach --recursive git annex dead here
-local:5/0/100%/0.0s 0: + datalad get data/raw_bids/participants.tsv
-local:5/0/100%/0.0s 0: + datalad get data/raw_bids/participants.tsv
-0: + datalad get data/raw_bids/participants.tsv
-local:5/0/100%/0.0s 0: + git checkout -b job-1433756-ewgenia002
-0: + git checkout -b job-1433756-ewgenia003
-0: Switched to a new branch 'job-1433756-ewgenia003'
-0: Switched to a new branch 'job-1433756-ewgenia002'
-0: + export TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + export SINGULARITYENV_TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + SINGULARITYENV_TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + find data/raw_bids -maxdepth 1 -name 'sub-*' -type d -a '!' -name '*ewgenia003*' -exec rm -rv '{}' +
-0: + export TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: ++ ls .
-0: + export SINGULARITYENV_TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + echo ls BIDS root: CHANGELOG.md code data envs README.md
-0: + SINGULARITYENV_TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: ++ date +%d%m%Y
-0: + find data/raw_bids -maxdepth 1 -name 'sub-*' -type d -a '!' -name '*ewgenia002*' -exec rm -rv '{}' +
-0: + export PIPE_ID=job-1433756-bidsify-ewgenia003-08072021
-0: + PIPE_ID=job-1433756-bidsify-ewgenia003-08072021
-0: + '[' bidsify == bidsify ']'
-0: + datalad get -n -r -J 3 /scratch/fatx405.1433756/ewgenia003/clone/data/dicoms
-0: ++ ls .
-0: + echo ls BIDS root: CHANGELOG.md code data envs README.md
-0: ++ date +%d%m%Y
-0: + export PIPE_ID=job-1433756-bidsify-ewgenia002-08072021
-0: + PIPE_ID=job-1433756-bidsify-ewgenia002-08072021
-0: + '[' bidsify == bidsify ']'
-0: + datalad get -n -r -J 3 /scratch/fatx405.1433756/ewgenia002/clone/data/dicoms
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia002/clone/data/dicoms) 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia003/clone/data/dicoms) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/dicoms to /scratch/fatx405.1433756/ewgenia002/clone/data/dicoms 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/dicoms to /scratch/fatx405.1433756/ewgenia003/clone/data/dicoms 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia003/clone/data/dicoms) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia002/clone/data/dicoms) 
-local:5/0/100%/0.0s 0: + git submodule foreach --recursive git annex dead here
-0: + git submodule foreach --recursive git annex dead here
-local:5/0/100%/0.0s 0: + git submodule foreach --recursive git annex dead here
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-local:5/0/100%/0.0s 0: + git checkout -b job-1433756-ewgenia005
-0: + git checkout -b job-1433756-ewgenia001
-0: Switched to a new branch 'job-1433756-ewgenia005'
-0: Switched to a new branch 'job-1433756-ewgenia001'
-0: + export TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + export TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + export SINGULARITYENV_TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + SINGULARITYENV_TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + find data/raw_bids -maxdepth 1 -name 'sub-*' -type d -a '!' -name '*ewgenia001*' -exec rm -rv '{}' +
-0: + export SINGULARITYENV_TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + SINGULARITYENV_TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + find data/raw_bids -maxdepth 1 -name 'sub-*' -type d -a '!' -name '*ewgenia005*' -exec rm -rv '{}' +
-0: ++ ls .
-0: + echo ls BIDS root: CHANGELOG.md code data envs README.md
-0: ++ ls .
-0: + echo ls BIDS root: CHANGELOG.md code data envs README.md
-0: ++ date +%d%m%Y
-0: ++ date +%d%m%Y
-0: + export PIPE_ID=job-1433756-bidsify-ewgenia001-08072021
-0: + export PIPE_ID=job-1433756-bidsify-ewgenia005-08072021
-0: + PIPE_ID=job-1433756-bidsify-ewgenia001-08072021
-0: + PIPE_ID=job-1433756-bidsify-ewgenia005-08072021
-0: + '[' bidsify == bidsify ']'
-0: + '[' bidsify == bidsify ']'
-0: + datalad get -n -r -J 3 /scratch/fatx405.1433756/ewgenia001/clone/data/dicoms
-0: + datalad get -n -r -J 3 /scratch/fatx405.1433756/ewgenia005/clone/data/dicoms
-0: + git checkout -b job-1433756-ewgenia004
-0: Switched to a new branch 'job-1433756-ewgenia004'
-0: + export TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + export SINGULARITYENV_TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + SINGULARITYENV_TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/code/templateflow
-0: + find data/raw_bids -maxdepth 1 -name 'sub-*' -type d -a '!' -name '*ewgenia004*' -exec rm -rv '{}' +
-0: ++ ls .
-0: + echo ls BIDS root: CHANGELOG.md code data envs README.md
-0: ++ date +%d%m%Y
-0: + export PIPE_ID=job-1433756-bidsify-ewgenia004-08072021
-0: + PIPE_ID=job-1433756-bidsify-ewgenia004-08072021
-0: + '[' bidsify == bidsify ']'
-0: + datalad get -n -r -J 3 /scratch/fatx405.1433756/ewgenia004/clone/data/dicoms
-local:5/0/100%/0.0s 0: [INFO] Installing Dataset(/scratch/fatx405.1433756/ewgenia003/clone) to get /scratch/fatx405.1433756/ewgenia003/clone/data/dicoms recursively 
-0: [INFO] Installing Dataset(/scratch/fatx405.1433756/ewgenia002/clone) to get /scratch/fatx405.1433756/ewgenia002/clone/data/dicoms recursively 
-local:5/0/100%/0.0s 0: + datalad get -J 3 /scratch/fatx405.1433756/ewgenia003/clone/data/dicoms/ewgenia003
-0: + datalad get -J 3 /scratch/fatx405.1433756/ewgenia002/clone/data/dicoms/ewgenia002
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia005/clone/data/dicoms) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/dicoms to /scratch/fatx405.1433756/ewgenia005/clone/data/dicoms 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia001/clone/data/dicoms) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/dicoms to /scratch/fatx405.1433756/ewgenia001/clone/data/dicoms 
-local:5/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia004/clone/data/dicoms) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/dicoms to /scratch/fatx405.1433756/ewgenia004/clone/data/dicoms 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia001/clone/data/dicoms) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia005/clone/data/dicoms) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia004/clone/data/dicoms) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Installing Dataset(/scratch/fatx405.1433756/ewgenia004/clone) to get /scratch/fatx405.1433756/ewgenia004/clone/data/dicoms recursively 
-0: [INFO] Installing Dataset(/scratch/fatx405.1433756/ewgenia005/clone) to get /scratch/fatx405.1433756/ewgenia005/clone/data/dicoms recursively 
-0: [INFO] Installing Dataset(/scratch/fatx405.1433756/ewgenia001/clone) to get /scratch/fatx405.1433756/ewgenia001/clone/data/dicoms recursively 
-0: + datalad get -J 3 /scratch/fatx405.1433756/ewgenia005/clone/data/dicoms/ewgenia005
-0: + datalad get -J 3 /scratch/fatx405.1433756/ewgenia004/clone/data/dicoms/ewgenia004
-0: + datalad get -J 3 /scratch/fatx405.1433756/ewgenia001/clone/data/dicoms/ewgenia001
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + datalad get -J 3 /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002
-0: + datalad get -J 3 /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003
-local:5/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003) 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids/sub-ewgenia003 to /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids/sub-ewgenia002 to /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + datalad get -J 3 /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001
-0: [INFO] Reset branch 'master' to 04de0d0b (from 87279dc3) to avoid a detached HEAD 
-0: [INFO] scanning for unlocked files (this may take some time) 
-local:5/0/100%/0.0s 0: + datalad get -J 3 /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004
-local:5/0/100%/0.0s 0: + datalad get -J 3 /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005
-0: + git -C data/raw_bids/ checkout -b job-1433756-bidsify-ewgenia002-08072021
-0: Switched to a new branch 'job-1433756-bidsify-ewgenia002-08072021'
-local:5/0/100%/0.0s 0: + git -C data/raw_bids/sub-ewgenia002 checkout -b job-1433756-bidsify-ewgenia002-08072021
-0: Switched to a new branch 'job-1433756-bidsify-ewgenia002-08072021'
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids/sub-ewgenia001 to /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001 
-0: + rm -rf 'data/raw_bids/sub-ewgenia002/ses-*'
-0: + CMD='
-0: 	    singularity run --cleanenv --userns	    --home /scratch/fatx405.1433756/ewgenia002/clone 	    -B /work/fatx405/projects/CSI_TEST/code:/code 	    -B /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids:/bids 	    -B /scratch/fatx405.1433756/ewgenia002/clone/data/dicoms:/dcm 	    -B /scratch/fatx405.1433756/ewgenia002/tmp/:/tmp 	    /work/fatx405/projects/CSI_TEST/envs/heudiconv-0.9.0.sif	    -d /dcm/{{subject}}/ses-1/*	    -s ewgenia002 	    --bids notop 	    -f /code/heudiconv_heuristic.py	    -c dcm2niix 	    --overwrite	    --minmeta 	    --grouping accession_number 	    -o /bids'
-0: + datalad run -m 'job-1433756-bidsify-ewgenia002-08072021 heudiconv' --explicit --output /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002 -o /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/participants.tsv -o /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/participants.json -o /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/dataset_description.json singularity run --cleanenv --userns --home /scratch/fatx405.1433756/ewgenia002/clone -B /work/fatx405/projects/CSI_TEST/code:/code -B /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids:/bids -B /scratch/fatx405.1433756/ewgenia002/clone/data/dicoms:/dcm -B /scratch/fatx405.1433756/ewgenia002/tmp/:/tmp /work/fatx405/projects/CSI_TEST/envs/heudiconv-0.9.0.sif -d '/dcm/{{subject}}/ses-1/*' -s ewgenia002 --bids notop -f /code/heudiconv_heuristic.py -c dcm2niix --overwrite --minmeta --grouping accession_number -o /bids
-0: [INFO] Reset branch 'master' to 7c67e2e5 (from db2813e1) to avoid a detached HEAD 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001) 
-local:5/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids/sub-ewgenia004 to /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004) 
-local:5/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids/sub-ewgenia005 to /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005 
-0: + git -C data/raw_bids/ checkout -b job-1433756-bidsify-ewgenia003-08072021
-0: Switched to a new branch 'job-1433756-bidsify-ewgenia003-08072021'
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005) 
-0: + git -C data/raw_bids/sub-ewgenia003 checkout -b job-1433756-bidsify-ewgenia003-08072021
-0: Switched to a new branch 'job-1433756-bidsify-ewgenia003-08072021'
-0: + rm -rf 'data/raw_bids/sub-ewgenia003/ses-*'
-0: + CMD='
-0: 	    singularity run --cleanenv --userns	    --home /scratch/fatx405.1433756/ewgenia003/clone 	    -B /work/fatx405/projects/CSI_TEST/code:/code 	    -B /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids:/bids 	    -B /scratch/fatx405.1433756/ewgenia003/clone/data/dicoms:/dcm 	    -B /scratch/fatx405.1433756/ewgenia003/tmp/:/tmp 	    /work/fatx405/projects/CSI_TEST/envs/heudiconv-0.9.0.sif	    -d /dcm/{{subject}}/ses-1/*	    -s ewgenia003 	    --bids notop 	    -f /code/heudiconv_heuristic.py	    -c dcm2niix 	    --overwrite	    --minmeta 	    --grouping accession_number 	    -o /bids'
-0: + datalad run -m 'job-1433756-bidsify-ewgenia003-08072021 heudiconv' --explicit --output /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003 -o /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/participants.tsv -o /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/participants.json -o /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/dataset_description.json singularity run --cleanenv --userns --home /scratch/fatx405.1433756/ewgenia003/clone -B /work/fatx405/projects/CSI_TEST/code:/code -B /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids:/bids -B /scratch/fatx405.1433756/ewgenia003/clone/data/dicoms:/dcm -B /scratch/fatx405.1433756/ewgenia003/tmp/:/tmp /work/fatx405/projects/CSI_TEST/envs/heudiconv-0.9.0.sif -d '/dcm/{{subject}}/ses-1/*' -s ewgenia003 --bids notop -f /code/heudiconv_heuristic.py -c dcm2niix --overwrite --minmeta --grouping accession_number -o /bids
-local:5/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-local:5/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-local:5/0/100%/0.0s 0: [INFO] Reset branch 'master' to 2281f66c (from 633dfb7d) to avoid a detached HEAD 
-local:5/0/100%/0.0s 0: [INFO] Reset branch 'master' to ab372e01 (from 87c31e87) to avoid a detached HEAD 
-0: + git -C data/raw_bids/ checkout -b job-1433756-bidsify-ewgenia004-08072021
-0: Switched to a new branch 'job-1433756-bidsify-ewgenia004-08072021'
-local:5/0/100%/0.0s 0: + git -C data/raw_bids/sub-ewgenia004 checkout -b job-1433756-bidsify-ewgenia004-08072021
-0: Switched to a new branch 'job-1433756-bidsify-ewgenia004-08072021'
-0: + rm -rf 'data/raw_bids/sub-ewgenia004/ses-*'
-0: + CMD='
-0: 	    singularity run --cleanenv --userns	    --home /scratch/fatx405.1433756/ewgenia004/clone 	    -B /work/fatx405/projects/CSI_TEST/code:/code 	    -B /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids:/bids 	    -B /scratch/fatx405.1433756/ewgenia004/clone/data/dicoms:/dcm 	    -B /scratch/fatx405.1433756/ewgenia004/tmp/:/tmp 	    /work/fatx405/projects/CSI_TEST/envs/heudiconv-0.9.0.sif	    -d /dcm/{{subject}}/ses-1/*	    -s ewgenia004 	    --bids notop 	    -f /code/heudiconv_heuristic.py	    -c dcm2niix 	    --overwrite	    --minmeta 	    --grouping accession_number 	    -o /bids'
-0: + datalad run -m 'job-1433756-bidsify-ewgenia004-08072021 heudiconv' --explicit --output /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004 -o /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/participants.tsv -o /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/participants.json -o /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/dataset_description.json singularity run --cleanenv --userns --home /scratch/fatx405.1433756/ewgenia004/clone -B /work/fatx405/projects/CSI_TEST/code:/code -B /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids:/bids -B /scratch/fatx405.1433756/ewgenia004/clone/data/dicoms:/dcm -B /scratch/fatx405.1433756/ewgenia004/tmp/:/tmp /work/fatx405/projects/CSI_TEST/envs/heudiconv-0.9.0.sif -d '/dcm/{{subject}}/ses-1/*' -s ewgenia004 --bids notop -f /code/heudiconv_heuristic.py -c dcm2niix --overwrite --minmeta --grouping accession_number -o /bids
-local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: + git -C data/raw_bids/ checkout -b job-1433756-bidsify-ewgenia005-08072021
-0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-0: Switched to a new branch 'job-1433756-bidsify-ewgenia005-08072021'
-0: + git -C data/raw_bids/sub-ewgenia005 checkout -b job-1433756-bidsify-ewgenia005-08072021
-0: Switched to a new branch 'job-1433756-bidsify-ewgenia005-08072021'
-0: + rm -rf 'data/raw_bids/sub-ewgenia005/ses-*'
-0: + CMD='
-0: 	    singularity run --cleanenv --userns	    --home /scratch/fatx405.1433756/ewgenia005/clone 	    -B /work/fatx405/projects/CSI_TEST/code:/code 	    -B /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids:/bids 	    -B /scratch/fatx405.1433756/ewgenia005/clone/data/dicoms:/dcm 	    -B /scratch/fatx405.1433756/ewgenia005/tmp/:/tmp 	    /work/fatx405/projects/CSI_TEST/envs/heudiconv-0.9.0.sif	    -d /dcm/{{subject}}/ses-1/*	    -s ewgenia005 	    --bids notop 	    -f /code/heudiconv_heuristic.py	    -c dcm2niix 	    --overwrite	    --minmeta 	    --grouping accession_number 	    -o /bids'
-0: + datalad run -m 'job-1433756-bidsify-ewgenia005-08072021 heudiconv' --explicit --output /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005 -o /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/participants.tsv -o /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/participants.json -o /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/dataset_description.json singularity run --cleanenv --userns --home /scratch/fatx405.1433756/ewgenia005/clone -B /work/fatx405/projects/CSI_TEST/code:/code -B /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids:/bids -B /scratch/fatx405.1433756/ewgenia005/clone/data/dicoms:/dcm -B /scratch/fatx405.1433756/ewgenia005/tmp/:/tmp /work/fatx405/projects/CSI_TEST/envs/heudiconv-0.9.0.sif -d '/dcm/{{subject}}/ses-1/*' -s ewgenia005 --bids notop -f /code/heudiconv_heuristic.py -c dcm2niix --overwrite --minmeta --grouping accession_number -o /bids
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + git -C data/raw_bids/ checkout -b job-1433756-bidsify-ewgenia001-08072021
-0: Switched to a new branch 'job-1433756-bidsify-ewgenia001-08072021'
-local:5/0/100%/0.0s 0: + git -C data/raw_bids/sub-ewgenia001 checkout -b job-1433756-bidsify-ewgenia001-08072021
-0: Switched to a new branch 'job-1433756-bidsify-ewgenia001-08072021'
-0: + rm -rf data/raw_bids/sub-ewgenia001/ses-1
-0: + CMD='
-0: 	    singularity run --cleanenv --userns	    --home /scratch/fatx405.1433756/ewgenia001/clone 	    -B /work/fatx405/projects/CSI_TEST/code:/code 	    -B /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids:/bids 	    -B /scratch/fatx405.1433756/ewgenia001/clone/data/dicoms:/dcm 	    -B /scratch/fatx405.1433756/ewgenia001/tmp/:/tmp 	    /work/fatx405/projects/CSI_TEST/envs/heudiconv-0.9.0.sif	    -d /dcm/{{subject}}/ses-1/*	    -s ewgenia001 	    --bids notop 	    -f /code/heudiconv_heuristic.py	    -c dcm2niix 	    --overwrite	    --minmeta 	    --grouping accession_number 	    -o /bids'
-0: + datalad run -m 'job-1433756-bidsify-ewgenia001-08072021 heudiconv' --explicit --output /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001 -o /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/participants.tsv -o /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/participants.json -o /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/dataset_description.json singularity run --cleanenv --userns --home /scratch/fatx405.1433756/ewgenia001/clone -B /work/fatx405/projects/CSI_TEST/code:/code -B /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids:/bids -B /scratch/fatx405.1433756/ewgenia001/clone/data/dicoms:/dcm -B /scratch/fatx405.1433756/ewgenia001/tmp/:/tmp /work/fatx405/projects/CSI_TEST/envs/heudiconv-0.9.0.sif -d '/dcm/{{subject}}/ses-1/*' -s ewgenia001 --bids notop -f /code/heudiconv_heuristic.py -c dcm2niix --overwrite --minmeta --grouping accession_number -o /bids
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Running heudiconv version 0.9.0 latest 0.9.0
-local:5/0/100%/0.0s 0: INFO: Running heudiconv version 0.9.0 latest 0.9.0
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Running heudiconv version 0.9.0 latest 0.9.0
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Running heudiconv version 0.9.0 latest 0.9.0
-local:5/0/100%/0.0s 0: INFO: Running heudiconv version 0.9.0 latest 0.9.0
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Need to process 4 study sessions
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia003', 'outdir': '/bids/', 'session': 0}
-0: INFO: Processing 384 dicoms
-0: INFO: Analyzing 384 dicoms
-local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 384 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR (384 DICOMs) -> /bids/sub-ewgenia003/ses-1/anat . Converter: dcm2niix . Output types: ('nii.gz',)
-local:5/0/100%/0.0s 0: INFO: Need to process 4 study sessions
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia002', 'outdir': '/bids/', 'session': 0}
-0: INFO: Processing 384 dicoms
-0: INFO: Analyzing 384 dicoms
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niix7mkr7k27/convert".
-0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia003_ses-1_FLAIR_heudiconv839 -o /bids/sub-ewgenia003/ses-1/anat -s n -v n /tmp/dcm2niix7mkr7k27/convert
-0: INFO: stdout 2021-07-08T14:43:59.179008:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:43:59.179008:Found 384 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:43:59.179008:192 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:43:59.179008:Convert 192 DICOM as /bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR_heudiconv839 (320x320x192x1)
-local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 384 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR (384 DICOMs) -> /bids/sub-ewgenia002/ses-1/anat . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niix8mq43dkx/convert".
-0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia002_ses-1_FLAIR_heudiconv384 -o /bids/sub-ewgenia002/ses-1/anat -s n -v n /tmp/dcm2niix8mq43dkx/convert
-0: INFO: stdout 2021-07-08T14:44:01.427373:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR_heudiconv839.nii"
-0: INFO: stdout 2021-07-08T14:44:01.427373:Conversion required 2.549966 seconds (0.478110 for core code).
-0: INFO: stdout 2021-07-08T14:44:01.562112:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:44:01.562112:Found 384 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:44:01.562112:192 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:44:01.562112:Convert 192 DICOM as /bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR_heudiconv384 (320x320x192x1)
-local:5/0/100%/0.0s 0: INFO: [Node] Finished "convert".
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:44:03.782233:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR_heudiconv384.nii"
-0: INFO: stdout 2021-07-08T14:44:03.782233:Conversion required 2.520328 seconds (0.478135 for core code).
-0: INFO: [Node] Finished "convert".
-local:5/0/100%/0.0s 0: WARNING: Failed to find task field in /bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR.json.
-0: INFO: Post-treating /bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia003', 'outdir': '/bids/', 'session': 0}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia003', 'outdir': '/bids/', 'session': 1}
-0: INFO: Processing 17618 dicoms
-0: INFO: Analyzing 17618 dicoms
-0: WARNING: Failed to find task field in /bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR.json.
-0: INFO: Post-treating /bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia002', 'outdir': '/bids/', 'session': 0}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia002', 'outdir': '/bids/', 'session': 1}
-0: INFO: Processing 17618 dicoms
-0: INFO: Analyzing 17618 dicoms
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Need to process 4 study sessions
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia004', 'outdir': '/bids/', 'session': 0}
-0: INFO: Processing 384 dicoms
-0: INFO: Analyzing 384 dicoms
-0: INFO: Generated sequence info for 1 accession numbers with 384 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR (384 DICOMs) -> /bids/sub-ewgenia004/ses-1/anat . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixefaw366j/convert".
-0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia004_ses-1_FLAIR_heudiconv617 -o /bids/sub-ewgenia004/ses-1/anat -s n -v n /tmp/dcm2niixefaw366j/convert
-0: INFO: stdout 2021-07-08T14:44:29.165034:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:44:29.165034:Found 384 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:44:29.165034:192 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:44:29.165034:Convert 192 DICOM as /bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR_heudiconv617 (320x320x192x1)
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:44:31.129251:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR_heudiconv617.nii"
-0: INFO: stdout 2021-07-08T14:44:31.129251:Conversion required 2.259050 seconds (0.456472 for core code).
-0: INFO: [Node] Finished "convert".
-0: WARNING: Failed to find task field in /bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR.json.
-0: INFO: Post-treating /bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia004', 'outdir': '/bids/', 'session': 0}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia004', 'outdir': '/bids/', 'session': 1}
-0: INFO: Processing 17618 dicoms
-0: INFO: Analyzing 17618 dicoms
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Need to process 4 study sessions
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia001', 'outdir': '/bids/', 'session': 0}
-0: INFO: Processing 384 dicoms
-0: INFO: Analyzing 384 dicoms
-local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 384 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR (384 DICOMs) -> /bids/sub-ewgenia001/ses-1/anat . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixgsq0tydm/convert".
-0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia001_ses-1_FLAIR_heudiconv259 -o /bids/sub-ewgenia001/ses-1/anat -s n -v n /tmp/dcm2niixgsq0tydm/convert
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:44:50.405614:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:44:50.405614:Found 384 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:44:50.405614:192 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:44:50.405614:Convert 192 DICOM as /bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR_heudiconv259 (320x320x192x1)
-0: INFO: stdout 2021-07-08T14:44:52.074086:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR_heudiconv259.nii"
-0: INFO: stdout 2021-07-08T14:44:52.074086:Conversion required 1.987811 seconds (0.551808 for core code).
-0: INFO: [Node] Finished "convert".
-0: WARNING: Failed to find task field in /bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.json.
-0: INFO: Post-treating /bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia001', 'outdir': '/bids/', 'session': 0}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia001', 'outdir': '/bids/', 'session': 1}
-0: INFO: Processing 17618 dicoms
-0: INFO: Analyzing 17618 dicoms
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Need to process 4 study sessions
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia005', 'outdir': '/bids/', 'session': 0}
-0: INFO: Processing 384 dicoms
-0: INFO: Analyzing 384 dicoms
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 384 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR (384 DICOMs) -> /bids/sub-ewgenia005/ses-1/anat . Converter: dcm2niix . Output types: ('nii.gz',)
-local:5/0/100%/0.0s 0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niix457h0arr/convert".
-0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia005_ses-1_FLAIR_heudiconv903 -o /bids/sub-ewgenia005/ses-1/anat -s n -v n /tmp/dcm2niix457h0arr/convert
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:45:07.436055:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:45:07.436055:Found 384 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:45:07.436055:192 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:45:07.436055:Convert 192 DICOM as /bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR_heudiconv903 (320x320x192x1)
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:45:09.061962:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR_heudiconv903.nii"
-0: INFO: stdout 2021-07-08T14:45:09.061962:Conversion required 1.913006 seconds (0.447884 for core code).
-0: INFO: [Node] Finished "convert".
-0: WARNING: Failed to find task field in /bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR.json.
-0: INFO: Post-treating /bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia005', 'outdir': '/bids/', 'session': 0}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia005', 'outdir': '/bids/', 'session': 1}
-0: INFO: Processing 17618 dicoms
-0: INFO: Analyzing 17618 dicoms
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 17618 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia004/ses-1/dwi/sub-ewgenia004_ses-1_dir-AP_dwi (17618 DICOMs) -> /bids/sub-ewgenia004/ses-1/dwi . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixoqj9996y/convert".
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia004_ses-1_dir-AP_dwi_heudiconv945 -o /bids/sub-ewgenia004/ses-1/dwi -s n -v n /tmp/dcm2niixoqj9996y/convert
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:46:33.742744:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:46:33.742744:Found 17618 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:46:33.742744:slices stacked despite varying acquisition numbers (if this is not desired recompile with 'mySegmentByAcq')
-0: INFO: stdout 2021-07-08T14:46:33.742744:6288 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:46:33.742744:Saving 103 DTI gradients. Validate vectors.
-0: INFO: stdout 2021-07-08T14:46:33.742744:Convert 11330 DICOM as /bids/sub-ewgenia004/ses-1/dwi/sub-ewgenia004_ses-1_dir-AP_dwi_heudiconv945 (144x144x110x103)
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 17618 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia001/ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi (17618 DICOMs) -> /bids/sub-ewgenia001/ses-1/dwi . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixzcq25r7y/convert".
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 17618 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia002/ses-1/dwi/sub-ewgenia002_ses-1_dir-AP_dwi (17618 DICOMs) -> /bids/sub-ewgenia002/ses-1/dwi . Converter: dcm2niix . Output types: ('nii.gz',)
-local:5/0/100%/0.0s 0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixldf7tw2z/convert".
-0: INFO: Generated sequence info for 1 accession numbers with 17618 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia003/ses-1/dwi/sub-ewgenia003_ses-1_dir-AP_dwi (17618 DICOMs) -> /bids/sub-ewgenia003/ses-1/dwi . Converter: dcm2niix . Output types: ('nii.gz',)
-local:5/0/100%/0.0s 0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixomkq4nle/convert".
-local:5/0/100%/0.0s 0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia001_ses-1_dir-AP_dwi_heudiconv160 -o /bids/sub-ewgenia001/ses-1/dwi -s n -v n /tmp/dcm2niixzcq25r7y/convert
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia002_ses-1_dir-AP_dwi_heudiconv939 -o /bids/sub-ewgenia002/ses-1/dwi -s n -v n /tmp/dcm2niixldf7tw2z/convert
-local:5/0/100%/0.0s 0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia003_ses-1_dir-AP_dwi_heudiconv850 -o /bids/sub-ewgenia003/ses-1/dwi -s n -v n /tmp/dcm2niixomkq4nle/convert
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:46:50.051279:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia004/ses-1/dwi/sub-ewgenia004_ses-1_dir-AP_dwi_heudiconv945.nii"
-0: INFO: stdout 2021-07-08T14:46:50.051279:Conversion required 27.296254 seconds (11.370495 for core code).
-local:5/0/100%/0.0s 0: INFO: [Node] Finished "convert".
-0: WARNING: Failed to find task field in /bids/sub-ewgenia004/ses-1/dwi/sub-ewgenia004_ses-1_dir-AP_dwi.json.
-0: INFO: Post-treating /bids/sub-ewgenia004/ses-1/dwi/sub-ewgenia004_ses-1_dir-AP_dwi.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia004', 'outdir': '/bids/', 'session': 1}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia004', 'outdir': '/bids/', 'session': 2}
-0: INFO: Processing 400 dicoms
-0: INFO: Analyzing 400 dicoms
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 400 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia004/ses-1/func/sub-ewgenia004_ses-1_task-rest_bold (400 DICOMs) -> /bids/sub-ewgenia004/ses-1/func . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixhvjrg2sg/convert".
-local:5/0/100%/0.0s 0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia004_ses-1_task-rest_bold_heudiconv779 -o /bids/sub-ewgenia004/ses-1/func -s n -v n /tmp/dcm2niixhvjrg2sg/convert
-0: INFO: stdout 2021-07-08T14:46:55.976516:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:46:55.976516:Found 17618 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:46:55.976516:slices stacked despite varying acquisition numbers (if this is not desired recompile with 'mySegmentByAcq')
-0: INFO: stdout 2021-07-08T14:46:55.976516:6288 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:46:55.976516:Saving 103 DTI gradients. Validate vectors.
-0: INFO: stdout 2021-07-08T14:46:55.976516:Convert 11330 DICOM as /bids/sub-ewgenia001/ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi_heudiconv160 (144x144x110x103)
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:46:56.764140:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:46:56.764140:Found 400 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:46:56.764140:slices stacked despite varying acquisition numbers (if this is not desired recompile with 'mySegmentByAcq')
-0: INFO: stdout 2021-07-08T14:46:56.764140:200 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:46:56.764140:Convert 200 DICOM as /bids/sub-ewgenia004/ses-1/func/sub-ewgenia004_ses-1_task-rest_bold_heudiconv779 (72x72x40x200)
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:46:59.778483:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia004/ses-1/func/sub-ewgenia004_ses-1_task-rest_bold_heudiconv779.nii"
-0: INFO: stdout 2021-07-08T14:46:59.778483:Conversion required 3.920608 seconds (0.974357 for core code).
-0: INFO: [Node] Finished "convert".
-0: INFO: Post-treating /bids/sub-ewgenia004/ses-1/func/sub-ewgenia004_ses-1_task-rest_bold.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia004', 'outdir': '/bids/', 'session': 2}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia004', 'outdir': '/bids/', 'session': 3}
-0: INFO: Processing 512 dicoms
-0: INFO: Analyzing 512 dicoms
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:47:00.701421:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:47:00.701421:Found 17618 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:47:00.701421:slices stacked despite varying acquisition numbers (if this is not desired recompile with 'mySegmentByAcq')
-0: INFO: stdout 2021-07-08T14:47:00.701421:6288 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:47:00.701421:Saving 103 DTI gradients. Validate vectors.
-0: INFO: stdout 2021-07-08T14:47:00.701421:Convert 11330 DICOM as /bids/sub-ewgenia002/ses-1/dwi/sub-ewgenia002_ses-1_dir-AP_dwi_heudiconv939 (144x144x110x103)
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:47:01.217930:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:47:01.217930:Found 17618 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:47:01.217930:slices stacked despite varying acquisition numbers (if this is not desired recompile with 'mySegmentByAcq')
-0: INFO: stdout 2021-07-08T14:47:01.217930:6288 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:47:01.217930:Saving 103 DTI gradients. Validate vectors.
-0: INFO: stdout 2021-07-08T14:47:01.217930:Convert 11330 DICOM as /bids/sub-ewgenia003/ses-1/dwi/sub-ewgenia003_ses-1_dir-AP_dwi_heudiconv850 (144x144x110x103)
-local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 512 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_T1w (512 DICOMs) -> /bids/sub-ewgenia004/ses-1/anat . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixewusf6r3/convert".
-0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia004_ses-1_T1w_heudiconv423 -o /bids/sub-ewgenia004/ses-1/anat -s n -v n /tmp/dcm2niixewusf6r3/convert
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:47:03.534191:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:47:03.534191:Found 512 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:47:03.534191:256 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:47:03.534191:Convert 256 DICOM as /bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_T1w_heudiconv423 (232x288x256x1)
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:47:04.950602:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_T1w_heudiconv423.nii"
-0: INFO: stdout 2021-07-08T14:47:04.950602:Conversion required 1.769552 seconds (0.469674 for core code).
-local:5/0/100%/0.0s 0: INFO: [Node] Finished "convert".
-0: WARNING: Failed to find task field in /bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_T1w.json.
-0: INFO: Post-treating /bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_T1w.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia004', 'outdir': '/bids/', 'session': 3}
-local:5/0/100%/0.0s 0: [34mINFO:   [0m Cleaning up image...
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 17618 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia005/ses-1/dwi/sub-ewgenia005_ses-1_dir-AP_dwi (17618 DICOMs) -> /bids/sub-ewgenia005/ses-1/dwi . Converter: dcm2niix . Output types: ('nii.gz',)
-local:5/0/100%/0.0s 0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niix_ijupeu_/convert".
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:47:14.515190:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia001/ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi_heudiconv160.nii"
-0: INFO: stdout 2021-07-08T14:47:14.515190:Conversion required 30.256910 seconds (12.258957 for core code).
-0: INFO: [Node] Finished "convert".
-local:5/0/100%/0.0s 0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia005_ses-1_dir-AP_dwi_heudiconv073 -o /bids/sub-ewgenia005/ses-1/dwi -s n -v n /tmp/dcm2niix_ijupeu_/convert
-0: WARNING: Failed to find task field in /bids/sub-ewgenia001/ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.json.
-0: INFO: Post-treating /bids/sub-ewgenia001/ses-1/dwi/sub-ewgenia001_ses-1_dir-AP_dwi.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia001', 'outdir': '/bids/', 'session': 1}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia001', 'outdir': '/bids/', 'session': 2}
-0: INFO: Processing 400 dicoms
-0: INFO: Analyzing 400 dicoms
-0: INFO: stdout 2021-07-08T14:47:18.072015:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia003/ses-1/dwi/sub-ewgenia003_ses-1_dir-AP_dwi_heudiconv850.nii"
-0: INFO: stdout 2021-07-08T14:47:18.072015:Conversion required 29.001042 seconds (12.552573 for core code).
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:47:18.482180:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia002/ses-1/dwi/sub-ewgenia002_ses-1_dir-AP_dwi_heudiconv939.nii"
-0: INFO: stdout 2021-07-08T14:47:18.482180:Conversion required 30.534366 seconds (13.213931 for core code).
-0: INFO: [Node] Finished "convert".
-0: WARNING: Failed to find task field in /bids/sub-ewgenia003/ses-1/dwi/sub-ewgenia003_ses-1_dir-AP_dwi.json.
-0: INFO: Post-treating /bids/sub-ewgenia003/ses-1/dwi/sub-ewgenia003_ses-1_dir-AP_dwi.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia003', 'outdir': '/bids/', 'session': 1}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia003', 'outdir': '/bids/', 'session': 2}
-0: INFO: Processing 400 dicoms
-0: INFO: Analyzing 400 dicoms
-0: INFO: [Node] Finished "convert".
-0: WARNING: Failed to find task field in /bids/sub-ewgenia002/ses-1/dwi/sub-ewgenia002_ses-1_dir-AP_dwi.json.
-0: INFO: Post-treating /bids/sub-ewgenia002/ses-1/dwi/sub-ewgenia002_ses-1_dir-AP_dwi.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia002', 'outdir': '/bids/', 'session': 1}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia002', 'outdir': '/bids/', 'session': 2}
-0: INFO: Processing 400 dicoms
-0: INFO: Analyzing 400 dicoms
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 400 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia001/ses-1/func/sub-ewgenia001_ses-1_task-rest_bold (400 DICOMs) -> /bids/sub-ewgenia001/ses-1/func . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixtdzs22_b/convert".
-0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia001_ses-1_task-rest_bold_heudiconv404 -o /bids/sub-ewgenia001/ses-1/func -s n -v n /tmp/dcm2niixtdzs22_b/convert
-local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 400 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia003/ses-1/func/sub-ewgenia003_ses-1_task-rest_bold (400 DICOMs) -> /bids/sub-ewgenia003/ses-1/func . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixha8gp3fs/convert".
-0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia003_ses-1_task-rest_bold_heudiconv658 -o /bids/sub-ewgenia003/ses-1/func -s n -v n /tmp/dcm2niixha8gp3fs/convert
-0: INFO: stdout 2021-07-08T14:47:23.209771:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:47:23.209771:Found 400 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:47:23.209771:slices stacked despite varying acquisition numbers (if this is not desired recompile with 'mySegmentByAcq')
-0: INFO: stdout 2021-07-08T14:47:23.209771:200 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:47:23.209771:Convert 200 DICOM as /bids/sub-ewgenia001/ses-1/func/sub-ewgenia001_ses-1_task-rest_bold_heudiconv404 (72x72x40x200)
-0: INFO: Generated sequence info for 1 accession numbers with 400 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia002/ses-1/func/sub-ewgenia002_ses-1_task-rest_bold (400 DICOMs) -> /bids/sub-ewgenia002/ses-1/func . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixwoi0nfpn/convert".
-0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia002_ses-1_task-rest_bold_heudiconv712 -o /bids/sub-ewgenia002/ses-1/func -s n -v n /tmp/dcm2niixwoi0nfpn/convert
-0: [INFO] == Command exit (modification check follows) ===== 
-0: INFO: stdout 2021-07-08T14:47:23.725153:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:47:23.725153:Found 400 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:47:23.725153:slices stacked despite varying acquisition numbers (if this is not desired recompile with 'mySegmentByAcq')
-0: INFO: stdout 2021-07-08T14:47:23.725153:200 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:47:23.725153:Convert 200 DICOM as /bids/sub-ewgenia003/ses-1/func/sub-ewgenia003_ses-1_task-rest_bold_heudiconv658 (72x72x40x200)
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:47:24.142039:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:47:24.142039:Found 400 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:47:24.142039:slices stacked despite varying acquisition numbers (if this is not desired recompile with 'mySegmentByAcq')
-0: INFO: stdout 2021-07-08T14:47:24.142039:200 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:47:24.142039:Convert 200 DICOM as /bids/sub-ewgenia002/ses-1/func/sub-ewgenia002_ses-1_task-rest_bold_heudiconv712 (72x72x40x200)
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:47:26.298963:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia001/ses-1/func/sub-ewgenia001_ses-1_task-rest_bold_heudiconv404.nii"
-0: INFO: stdout 2021-07-08T14:47:26.298963:Conversion required 3.462675 seconds (0.429947 for core code).
-0: INFO: [Node] Finished "convert".
-0: INFO: Post-treating /bids/sub-ewgenia001/ses-1/func/sub-ewgenia001_ses-1_task-rest_bold.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia001', 'outdir': '/bids/', 'session': 2}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia001', 'outdir': '/bids/', 'session': 3}
-0: INFO: Processing 512 dicoms
-0: INFO: Analyzing 512 dicoms
-0: INFO: stdout 2021-07-08T14:47:26.722089:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia003/ses-1/func/sub-ewgenia003_ses-1_task-rest_bold_heudiconv658.nii"
-0: INFO: stdout 2021-07-08T14:47:26.722089:Conversion required 3.362604 seconds (0.408684 for core code).
-0: INFO: [Node] Finished "convert".
-0: INFO: Post-treating /bids/sub-ewgenia003/ses-1/func/sub-ewgenia003_ses-1_task-rest_bold.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia003', 'outdir': '/bids/', 'session': 2}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia003', 'outdir': '/bids/', 'session': 3}
-0: INFO: Processing 512 dicoms
-0: INFO: Analyzing 512 dicoms
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:47:27.533403:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia002/ses-1/func/sub-ewgenia002_ses-1_task-rest_bold_heudiconv712.nii"
-0: INFO: stdout 2021-07-08T14:47:27.533403:Conversion required 3.758973 seconds (0.409056 for core code).
-0: INFO: [Node] Finished "convert".
-0: INFO: Post-treating /bids/sub-ewgenia002/ses-1/func/sub-ewgenia002_ses-1_task-rest_bold.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia002', 'outdir': '/bids/', 'session': 2}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia002', 'outdir': '/bids/', 'session': 3}
-0: INFO: Processing 512 dicoms
-0: INFO: Analyzing 512 dicoms
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:47:28.859997:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:47:28.859997:Found 17618 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:47:28.859997:slices stacked despite varying acquisition numbers (if this is not desired recompile with 'mySegmentByAcq')
-0: INFO: stdout 2021-07-08T14:47:28.859997:6288 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:47:28.859997:Saving 103 DTI gradients. Validate vectors.
-0: INFO: stdout 2021-07-08T14:47:28.859997:Convert 11330 DICOM as /bids/sub-ewgenia005/ses-1/dwi/sub-ewgenia005_ses-1_dir-AP_dwi_heudiconv073 (144x144x110x103)
-local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 512 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w (512 DICOMs) -> /bids/sub-ewgenia001/ses-1/anat . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixen_p7gg6/convert".
-0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia001_ses-1_T1w_heudiconv502 -o /bids/sub-ewgenia001/ses-1/anat -s n -v n /tmp/dcm2niixen_p7gg6/convert
-0: INFO: Generated sequence info for 1 accession numbers with 512 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_T1w (512 DICOMs) -> /bids/sub-ewgenia003/ses-1/anat . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixpsfgrt_4/convert".
-0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia003_ses-1_T1w_heudiconv034 -o /bids/sub-ewgenia003/ses-1/anat -s n -v n /tmp/dcm2niixpsfgrt_4/convert
-0: INFO: stdout 2021-07-08T14:47:29.924498:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:47:29.924498:Found 512 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:47:29.924498:256 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:47:29.924498:Convert 256 DICOM as /bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w_heudiconv502 (232x288x256x1)
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:47:30.399882:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: Generated sequence info for 1 accession numbers with 512 entries total
-local:5/0/100%/0.0s 0: INFO: Doing conversion using dcm2niix
-0: INFO: stdout 2021-07-08T14:47:30.399882:Found 512 DICOM file(s)
-0: INFO: Converting /bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_T1w (512 DICOMs) -> /bids/sub-ewgenia002/ses-1/anat . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: stdout 2021-07-08T14:47:30.399882:256 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixm03_grum/convert".
-0: INFO: stdout 2021-07-08T14:47:30.399882:Convert 256 DICOM as /bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_T1w_heudiconv034 (232x288x256x1)
-0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia002_ses-1_T1w_heudiconv704 -o /bids/sub-ewgenia002/ses-1/anat -s n -v n /tmp/dcm2niixm03_grum/convert
-0: INFO: stdout 2021-07-08T14:47:32.401222:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w_heudiconv502.nii"
-0: INFO: stdout 2021-07-08T14:47:32.401222:Conversion required 2.821732 seconds (0.448966 for core code).
-0: INFO: [Node] Finished "convert".
-0: INFO: stdout 2021-07-08T14:47:32.848558:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: WARNING: Failed to find task field in /bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.json.
-0: INFO: Post-treating /bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.json file
-0: INFO: stdout 2021-07-08T14:47:32.848558:Found 512 DICOM file(s)
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia001', 'outdir': '/bids/', 'session': 3}
-0: INFO: stdout 2021-07-08T14:47:32.848558:256 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:47:32.848558:Convert 256 DICOM as /bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_T1w_heudiconv704 (232x288x256x1)
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:47:33.657211:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_T1w_heudiconv034.nii"
-0: INFO: stdout 2021-07-08T14:47:33.657211:Conversion required 3.605062 seconds (0.447786 for core code).
-0: INFO: [Node] Finished "convert".
-0: WARNING: Failed to find task field in /bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_T1w.json.
-0: INFO: Post-treating /bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_T1w.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia003', 'outdir': '/bids/', 'session': 3}
-0: INFO: stdout 2021-07-08T14:47:34.217790:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_T1w_heudiconv704.nii"
-0: INFO: stdout 2021-07-08T14:47:34.217790:Conversion required 1.719044 seconds (0.449000 for core code).
-0: INFO: [Node] Finished "convert".
-0: WARNING: Failed to find task field in /bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_T1w.json.
-0: INFO: Post-treating /bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_T1w.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia002', 'outdir': '/bids/', 'session': 3}
-local:5/0/100%/0.0s 0: [34mINFO:   [0m Cleaning up image...
-0: [34mINFO:   [0m Cleaning up image...
-local:5/0/100%/0.0s 0: [34mINFO:   [0m Cleaning up image...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + T1=/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_T1w.nii.gz
-0: + datalad containers-run -m 'job-1433756-bidsify-ewgenia004-08072021 pydeface T1w' --explicit --output '/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/*/*/*T1w.nii.gz' --input '/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/*/*/*T1w.nii.gz' --container-name pydeface pydeface /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_T1w.nii.gz --outfile /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_T1w.nii.gz --force
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:47:44.798300:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia005/ses-1/dwi/sub-ewgenia005_ses-1_dir-AP_dwi_heudiconv073.nii"
-0: INFO: stdout 2021-07-08T14:47:44.798300:Conversion required 26.713077 seconds (11.035566 for core code).
-local:5/0/100%/0.0s 0: INFO: [Node] Finished "convert".
-0: WARNING: Failed to find task field in /bids/sub-ewgenia005/ses-1/dwi/sub-ewgenia005_ses-1_dir-AP_dwi.json.
-0: INFO: Post-treating /bids/sub-ewgenia005/ses-1/dwi/sub-ewgenia005_ses-1_dir-AP_dwi.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia005', 'outdir': '/bids/', 'session': 1}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia005', 'outdir': '/bids/', 'session': 2}
-0: INFO: Processing 400 dicoms
-0: INFO: Analyzing 400 dicoms
-0: [INFO] Making sure inputs are available (this may take some time) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 400 entries total
-0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia005/ses-1/func/sub-ewgenia005_ses-1_task-rest_bold (400 DICOMs) -> /bids/sub-ewgenia005/ses-1/func . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixe2j087bc/convert".
-0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia005_ses-1_task-rest_bold_heudiconv900 -o /bids/sub-ewgenia005/ses-1/func -s n -v n /tmp/dcm2niixe2j087bc/convert
-0: INFO: stdout 2021-07-08T14:47:50.447434:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:47:50.447434:Found 400 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:47:50.447434:slices stacked despite varying acquisition numbers (if this is not desired recompile with 'mySegmentByAcq')
-0: INFO: stdout 2021-07-08T14:47:50.447434:200 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:47:50.447434:Convert 200 DICOM as /bids/sub-ewgenia005/ses-1/func/sub-ewgenia005_ses-1_task-rest_bold_heudiconv900 (72x72x40x200)
-local:5/0/100%/0.0s 0: [INFO] == Command exit (modification check follows) ===== 
-0: [INFO] == Command exit (modification check follows) ===== 
-local:5/0/100%/0.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:47:53.534490:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia005/ses-1/func/sub-ewgenia005_ses-1_task-rest_bold_heudiconv900.nii"
-0: INFO: stdout 2021-07-08T14:47:53.534490:Conversion required 3.448848 seconds (0.407069 for core code).
-0: INFO: [Node] Finished "convert".
-0: INFO: Post-treating /bids/sub-ewgenia005/ses-1/func/sub-ewgenia005_ses-1_task-rest_bold.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia005', 'outdir': '/bids/', 'session': 2}
-0: INFO: PROCESSING STARTS: {'subject': 'ewgenia005', 'outdir': '/bids/', 'session': 3}
-0: INFO: Processing 512 dicoms
-0: INFO: Analyzing 512 dicoms
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: Generated sequence info for 1 accession numbers with 512 entries total
-local:5/0/100%/0.0s 0: INFO: Doing conversion using dcm2niix
-0: INFO: Converting /bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_T1w (512 DICOMs) -> /bids/sub-ewgenia005/ses-1/anat . Converter: dcm2niix . Output types: ('nii.gz',)
-0: INFO: [Node] Setting-up "convert" in "/tmp/dcm2niixloiudu8h/convert".
-0: INFO: [Node] Running "convert" ("nipype.interfaces.dcm2nii.Dcm2niix"), a CommandLine Interface with command:
-0: dcm2niix -b y -z y -x n -t n -m n -f sub-ewgenia005_ses-1_T1w_heudiconv023 -o /bids/sub-ewgenia005/ses-1/anat -s n -v n /tmp/dcm2niixloiudu8h/convert
-0: INFO: stdout 2021-07-08T14:47:57.424784:Chris Rorden's dcm2niiX version v1.0.20190410  GCC6.3.0 (64-bit Linux)
-0: INFO: stdout 2021-07-08T14:47:57.424784:Found 512 DICOM file(s)
-0: INFO: stdout 2021-07-08T14:47:57.424784:256 images have identical time, series, acquisition and instance values. DUPLICATES REMOVED.
-0: INFO: stdout 2021-07-08T14:47:57.424784:Convert 256 DICOM as /bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_T1w_heudiconv023 (232x288x256x1)
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: INFO: stdout 2021-07-08T14:48:06.503824:Compress: "/usr/bin/pigz" -b 960 -n -f -6 "/bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_T1w_heudiconv023.nii"
-0: INFO: stdout 2021-07-08T14:48:06.503824:Conversion required 9.425249 seconds (0.447400 for core code).
-0: INFO: [Node] Finished "convert".
-0: WARNING: Failed to find task field in /bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_T1w.json.
-0: INFO: Post-treating /bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_T1w.json file
-0: INFO: PROCESSING DONE: {'subject': 'ewgenia005', 'outdir': '/bids/', 'session': 3}
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [34mINFO:   [0m Cleaning up image...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + T1=/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz
-0: + datalad containers-run -m 'job-1433756-bidsify-ewgenia001-08072021 pydeface T1w' --explicit --output '/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/*/*/*T1w.nii.gz' --input '/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/*/*/*T1w.nii.gz' --container-name pydeface pydeface /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz --outfile /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_T1w.nii.gz --force
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + T1=/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_T1w.nii.gz
-0: + datalad containers-run -m 'job-1433756-bidsify-ewgenia003-08072021 pydeface T1w' --explicit --output '/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/*/*/*T1w.nii.gz' --input '/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/*/*/*T1w.nii.gz' --container-name pydeface pydeface /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_T1w.nii.gz --outfile /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_T1w.nii.gz --force
-0: [INFO] Making sure inputs are available (this may take some time) 
-0: + T1=/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_T1w.nii.gz
-0: + datalad containers-run -m 'job-1433756-bidsify-ewgenia002-08072021 pydeface T1w' --explicit --output '/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/*/*/*T1w.nii.gz' --input '/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/*/*/*T1w.nii.gz' --container-name pydeface pydeface /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_T1w.nii.gz --outfile /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_T1w.nii.gz --force
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Making sure inputs are available (this may take some time) 
-0: [INFO] Making sure inputs are available (this may take some time) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:5/0/100%/0.0s 0: + T1=/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_T1w.nii.gz
-0: + datalad containers-run -m 'job-1433756-bidsify-ewgenia005-08072021 pydeface T1w' --explicit --output '/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/*/*/*T1w.nii.gz' --input '/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/*/*/*T1w.nii.gz' --container-name pydeface pydeface /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_T1w.nii.gz --outfile /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_T1w.nii.gz --force
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Making sure inputs are available (this may take some time) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [34mINFO:   [0m Cleaning up image...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + FLAIR=/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR.nii.gz
-0: + datalad containers-run -m 'job-1433756-bidsify-ewgenia004-08072021 pydeface FLAIR' --explicit --output '/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/*/*/*FLAIR.nii.gz' --input '/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/*/*/*FLAIR.nii.gz' --container-name pydeface pydeface /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR.nii.gz --outfile /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/ses-1/anat/sub-ewgenia004_ses-1_FLAIR.nii.gz --force
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Making sure inputs are available (this may take some time) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [34mINFO:   [0m Cleaning up image...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [34mINFO:   [0m Cleaning up image...
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + FLAIR=/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz
-0: + datalad containers-run -m 'job-1433756-bidsify-ewgenia001-08072021 pydeface FLAIR' --explicit --output '/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/*/*/*FLAIR.nii.gz' --input '/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/*/*/*FLAIR.nii.gz' --container-name pydeface pydeface /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz --outfile /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/ses-1/anat/sub-ewgenia001_ses-1_FLAIR.nii.gz --force
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Making sure inputs are available (this may take some time) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command exit (modification check follows) ===== 
-0: [34mINFO:   [0m Cleaning up image...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [34mINFO:   [0m Cleaning up image...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + FLAIR=/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR.nii.gz
-0: + datalad containers-run -m 'job-1433756-bidsify-ewgenia002-08072021 pydeface FLAIR' --explicit --output '/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/*/*/*FLAIR.nii.gz' --input '/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/*/*/*FLAIR.nii.gz' --container-name pydeface pydeface /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR.nii.gz --outfile /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/ses-1/anat/sub-ewgenia002_ses-1_FLAIR.nii.gz --force
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Making sure inputs are available (this may take some time) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + FLAIR=/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR.nii.gz
-0: + datalad containers-run -m 'job-1433756-bidsify-ewgenia003-08072021 pydeface FLAIR' --explicit --output '/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/*/*/*FLAIR.nii.gz' --input '/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/*/*/*FLAIR.nii.gz' --container-name pydeface pydeface /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR.nii.gz --outfile /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/ses-1/anat/sub-ewgenia003_ses-1_FLAIR.nii.gz --force
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Making sure inputs are available (this may take some time) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + FLAIR=/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR.nii.gz
-0: + datalad containers-run -m 'job-1433756-bidsify-ewgenia005-08072021 pydeface FLAIR' --explicit --output '/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/*/*/*FLAIR.nii.gz' --input '/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/*/*/*FLAIR.nii.gz' --container-name pydeface pydeface /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR.nii.gz --outfile /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/ses-1/anat/sub-ewgenia005_ses-1_FLAIR.nii.gz --force
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Making sure inputs are available (this may take some time) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [34mINFO:   [0m Cleaning up image...
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + CMD='python /work/fatx405/projects/CSI_TEST/code/handle_metadata.py ewgenia004'
-0: + datalad run -m '${PIPE_ID} handle metadata' --explicit --output '/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/*/*/*.json' --input '/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004/*/*/*.json' python /work/fatx405/projects/CSI_TEST/code/handle_metadata.py ewgenia004
-local:5/0/100%/0.0s 0: [INFO] Making sure inputs are available (this may take some time) 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: + rm -rf /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/.heudiconv
-0: + flock /scratch/fatx405.1433756/ewgenia004/bidsify.lock datalad push -d /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/ --to origin
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Determine push target 
-0: [INFO] Push refspecs 
-0: [INFO] Transfer data 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Update availability information 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Start enumerating objects 
-0: [INFO] Start counting objects 
-0: [INFO] Start compressing objects 
-0: [INFO] Start writing objects 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Finished push of Dataset(/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids) 
-0: + flock /scratch/fatx405.1433756/ewgenia004/bidsify.lock datalad push -d /scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004 --to origin
-local:5/0/100%/0.0s 0: [INFO] Determine push target 
-0: [INFO] Push refspecs 
-local:5/0/100%/0.0s 0: [INFO] Transfer data 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Update availability information 
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s 0: [INFO] Start enumerating objects 
-0: [INFO] Start counting objects 
-0: [INFO] Start compressing objects 
-0: [INFO] Start writing objects 
-local:5/0/100%/0.0s 0: [INFO] Start resolving deltas 
-0: [INFO] Finished 
-0: [INFO] Finished push of Dataset(/scratch/fatx405.1433756/ewgenia004/clone/data/raw_bids/sub-ewgenia004) 
-0: + exit 0
-local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:5/0/100%/0.0s local:4/1/100%/2271.0s local:4/1/100%/2271.0s local:4/1/100%/2271.0s local:4/1/100%/2272.0s local:4/1/100%/2273.0s local:4/1/100%/2273.0s local:4/1/100%/2274.0s local:4/1/100%/2275.0s local:4/1/100%/2276.0s local:4/1/100%/2277.0s local:4/1/100%/2278.0s local:4/1/100%/2279.0s local:4/1/100%/2280.0s local:4/1/100%/2281.0s local:4/1/100%/2282.0s local:4/1/100%/2283.0s local:4/1/100%/2284.0s local:4/1/100%/2285.0s local:4/1/100%/2286.0s 0: [34mINFO:   [0m Cleaning up image...
-local:4/1/100%/2287.0s local:4/1/100%/2288.0s local:4/1/100%/2289.0s local:4/1/100%/2290.0s local:4/1/100%/2291.0s local:4/1/100%/2292.0s local:4/1/100%/2293.0s local:4/1/100%/2294.0s local:4/1/100%/2296.0s local:4/1/100%/2297.0s local:4/1/100%/2298.0s local:4/1/100%/2299.0s local:4/1/100%/2300.0s local:4/1/100%/2301.0s local:4/1/100%/2302.0s local:4/1/100%/2303.0s local:4/1/100%/2304.0s local:4/1/100%/2305.0s local:4/1/100%/2306.0s local:4/1/100%/2307.0s local:4/1/100%/2308.0s local:4/1/100%/2309.0s local:4/1/100%/2310.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:4/1/100%/2311.0s local:4/1/100%/2312.0s 0: [34mINFO:   [0m Cleaning up image...
-local:4/1/100%/2313.0s local:4/1/100%/2314.0s local:4/1/100%/2315.0s local:4/1/100%/2316.0s local:4/1/100%/2317.0s local:4/1/100%/2318.0s local:4/1/100%/2319.0s local:4/1/100%/2320.0s local:4/1/100%/2321.0s 0: + CMD='python /work/fatx405/projects/CSI_TEST/code/handle_metadata.py ewgenia001'
-0: + datalad run -m '${PIPE_ID} handle metadata' --explicit --output '/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/*/*/*.json' --input '/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001/*/*/*.json' python /work/fatx405/projects/CSI_TEST/code/handle_metadata.py ewgenia001
-local:4/1/100%/2322.0s local:4/1/100%/2324.0s 0: [INFO] Making sure inputs are available (this may take some time) 
-local:4/1/100%/2325.0s local:4/1/100%/2326.0s local:4/1/100%/2327.0s local:4/1/100%/2328.0s local:4/1/100%/2329.0s local:4/1/100%/2330.0s 0: [INFO] == Command start (output follows) ===== 
-local:4/1/100%/2331.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:4/1/100%/2332.0s local:4/1/100%/2333.0s 0: [34mINFO:   [0m Cleaning up image...
-local:4/1/100%/2334.0s local:4/1/100%/2335.0s local:4/1/100%/2336.0s local:4/1/100%/2337.0s local:4/1/100%/2338.0s local:4/1/100%/2340.0s local:4/1/100%/2341.0s local:4/1/100%/2342.0s local:4/1/100%/2343.0s local:4/1/100%/2344.0s local:4/1/100%/2346.0s 0: [34mINFO:   [0m Cleaning up image...
-local:4/1/100%/2347.0s local:4/1/100%/2348.0s local:4/1/100%/2349.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:4/1/100%/2350.0s local:4/1/100%/2351.0s local:4/1/100%/2353.0s local:4/1/100%/2354.0s local:4/1/100%/2355.0s local:4/1/100%/2356.0s local:4/1/100%/2357.0s local:4/1/100%/2358.0s local:4/1/100%/2359.0s local:4/1/100%/2360.0s local:4/1/100%/2362.0s local:4/1/100%/2363.0s local:4/1/100%/2365.0s local:4/1/100%/2366.0s local:4/1/100%/2368.0s local:4/1/100%/2369.0s local:4/1/100%/2370.0s local:4/1/100%/2371.0s local:4/1/100%/2372.0s local:4/1/100%/2374.0s local:4/1/100%/2375.0s local:4/1/100%/2377.0s local:4/1/100%/2378.0s local:4/1/100%/2379.0s local:4/1/100%/2381.0s local:4/1/100%/2382.0s 0: + CMD='python /work/fatx405/projects/CSI_TEST/code/handle_metadata.py ewgenia002'
-0: + datalad run -m '${PIPE_ID} handle metadata' --explicit --output '/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/*/*/*.json' --input '/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002/*/*/*.json' python /work/fatx405/projects/CSI_TEST/code/handle_metadata.py ewgenia002
-local:4/1/100%/2383.0s 0: + rm -rf /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/.heudiconv
-0: + flock /scratch/fatx405.1433756/ewgenia001/bidsify.lock datalad push -d /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/ --to origin
-local:4/1/100%/2384.0s 0: [INFO] Making sure inputs are available (this may take some time) 
-local:4/1/100%/2385.0s 0: [INFO] Determine push target 
-0: [INFO] Push refspecs 
-0: [INFO] Transfer data 
-local:4/1/100%/2386.0s local:4/1/100%/2387.0s local:4/1/100%/2388.0s 0: [INFO] Update availability information 
-local:4/1/100%/2389.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:4/1/100%/2390.0s 0: [INFO] == Command start (output follows) ===== 
-local:4/1/100%/2392.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:4/1/100%/2393.0s local:4/1/100%/2394.0s 0: [INFO] Start enumerating objects 
-0: [INFO] Start counting objects 
-0: [INFO] Start compressing objects 
-0: [INFO] Start writing objects 
-local:4/1/100%/2395.0s local:4/1/100%/2396.0s local:4/1/100%/2398.0s local:4/1/100%/2401.0s local:4/1/100%/2402.0s local:4/1/100%/2403.0s local:4/1/100%/2405.0s local:4/1/100%/2407.0s local:4/1/100%/2408.0s 0: [INFO] Finished push of Dataset(/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids) 
-0: + flock /scratch/fatx405.1433756/ewgenia001/bidsify.lock datalad push -d /scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001 --to origin
-0: [INFO] == Command exit (modification check follows) ===== 
-local:4/1/100%/2409.0s local:4/1/100%/2410.0s local:4/1/100%/2411.0s 0: [INFO] Determine push target 
-0: [INFO] Push refspecs 
-0: [INFO] Transfer data 
-local:4/1/100%/2412.0s local:4/1/100%/2413.0s local:4/1/100%/2414.0s local:4/1/100%/2415.0s local:4/1/100%/2416.0s 0: + CMD='python /work/fatx405/projects/CSI_TEST/code/handle_metadata.py ewgenia003'
-local:4/1/100%/2417.0s 0: + datalad run -m '${PIPE_ID} handle metadata' --explicit --output '/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/*/*/*.json' --input '/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003/*/*/*.json' python /work/fatx405/projects/CSI_TEST/code/handle_metadata.py ewgenia003
-local:4/1/100%/2419.0s 0: [INFO] Making sure inputs are available (this may take some time) 
-local:4/1/100%/2420.0s 0: + CMD='python /work/fatx405/projects/CSI_TEST/code/handle_metadata.py ewgenia005'
-0: + datalad run -m '${PIPE_ID} handle metadata' --explicit --output '/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/*/*/*.json' --input '/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005/*/*/*.json' python /work/fatx405/projects/CSI_TEST/code/handle_metadata.py ewgenia005
-local:4/1/100%/2421.0s local:4/1/100%/2422.0s local:4/1/100%/2423.0s local:4/1/100%/2424.0s local:4/1/100%/2425.0s local:4/1/100%/2426.0s local:4/1/100%/2427.0s 0: + rm -rf /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/.heudiconv
-0: + flock /scratch/fatx405.1433756/ewgenia002/bidsify.lock datalad push -d /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/ --to origin
-0: [INFO] Making sure inputs are available (this may take some time) 
-local:4/1/100%/2428.0s 0: [INFO] Determine push target 
-0: [INFO] Push refspecs 
-local:4/1/100%/2430.0s 0: [INFO] Transfer data 
-0: [INFO] Update availability information 
-local:4/1/100%/2431.0s 0: [INFO] == Command start (output follows) ===== 
-local:4/1/100%/2432.0s local:4/1/100%/2433.0s local:4/1/100%/2434.0s 0: [INFO] Update availability information 
-0: [INFO] Start enumerating objects 
-0: [INFO] Start counting objects 
-local:4/1/100%/2435.0s 0: [INFO] Start compressing objects 
-0: [INFO] == Command exit (modification check follows) ===== 
-0: [INFO] Start writing objects 
-0: [INFO] Start resolving deltas 
-local:4/1/100%/2437.0s 0: [INFO] Finished 
-0: [INFO] Finished push of Dataset(/scratch/fatx405.1433756/ewgenia001/clone/data/raw_bids/sub-ewgenia001) 
-0: + exit 0
-local:4/1/100%/2438.0s 0: [INFO] == Command start (output follows) ===== 
-local:4/1/100%/2439.0s local:4/1/100%/2440.0s local:4/1/100%/2440.0s local:3/2/100%/1220.0s local:3/2/100%/1220.0s local:3/2/100%/1220.5s local:3/2/100%/1220.5s local:3/2/100%/1221.0s local:3/2/100%/1221.5s 0: [INFO] Start enumerating objects 
-0: [INFO] Start counting objects 
-0: [INFO] Start compressing objects 
-0: [INFO] Start writing objects 
-local:3/2/100%/1221.5s local:3/2/100%/1222.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:3/2/100%/1222.5s local:3/2/100%/1223.0s 0: [INFO] Finished push of Dataset(/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids) 
-0: + flock /scratch/fatx405.1433756/ewgenia002/bidsify.lock datalad push -d /scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002 --to origin
-local:3/2/100%/1223.5s local:3/2/100%/1224.0s local:3/2/100%/1224.5s local:3/2/100%/1225.0s 0: [INFO] Determine push target 
-0: [INFO] Push refspecs 
-0: [INFO] Transfer data 
-local:3/2/100%/1225.5s local:3/2/100%/1226.0s local:3/2/100%/1226.5s local:3/2/100%/1227.0s local:3/2/100%/1227.5s local:3/2/100%/1228.0s local:3/2/100%/1228.5s local:3/2/100%/1229.5s local:3/2/100%/1230.0s local:3/2/100%/1230.5s local:3/2/100%/1231.0s local:3/2/100%/1231.5s 0: + rm -rf /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/.heudiconv
-0: + flock /scratch/fatx405.1433756/ewgenia003/bidsify.lock datalad push -d /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/ --to origin
-local:3/2/100%/1232.0s 0: [INFO] Update availability information 
-local:3/2/100%/1232.5s 0: [INFO] Determine push target 
-0: [INFO] Push refspecs 
-0: [INFO] Transfer data 
-local:3/2/100%/1233.0s local:3/2/100%/1233.5s 0: [INFO] Start enumerating objects 
-0: [INFO] Start counting objects 
-0: [INFO] Start compressing objects 
-0: [INFO] Start writing objects 
-0: [INFO] Start resolving deltas 
-local:3/2/100%/1234.0s local:3/2/100%/1234.5s 0: + rm -rf /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/.heudiconv
-0: + flock /scratch/fatx405.1433756/ewgenia005/bidsify.lock datalad push -d /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/ --to origin
-0: [INFO] Finished 
-0: [INFO] Finished push of Dataset(/scratch/fatx405.1433756/ewgenia002/clone/data/raw_bids/sub-ewgenia002) 
-0: + exit 0
-local:3/2/100%/1235.0s 0: [INFO] Update availability information 
-local:3/2/100%/1235.5s 0: [INFO] Determine push target 
-0: [INFO] Push refspecs 
-0: [INFO] Transfer data 
-local:3/2/100%/1236.0s local:3/2/100%/1236.0s local:2/3/100%/824.0s local:2/3/100%/824.0s local:2/3/100%/824.0s local:2/3/100%/824.3s 0: [INFO] Start enumerating objects 
-0: [INFO] Start counting objects 
-0: [INFO] Start compressing objects 
-0: [INFO] Start writing objects 
-local:2/3/100%/824.3s local:2/3/100%/824.7s 0: [INFO] Finished push of Dataset(/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids) 
-0: + flock /scratch/fatx405.1433756/ewgenia003/bidsify.lock datalad push -d /scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003 --to origin
-local:2/3/100%/825.0s 0: [INFO] Update availability information 
-local:2/3/100%/825.3s 0: [INFO] Determine push target 
-0: [INFO] Push refspecs 
-0: [INFO] Transfer data 
-local:2/3/100%/825.7s local:2/3/100%/826.0s 0: [INFO] Start enumerating objects 
-0: [INFO] Start counting objects 
-0: [INFO] Start compressing objects 
-0: [INFO] Start writing objects 
-local:2/3/100%/826.3s 0: [INFO] Finished push of Dataset(/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids) 
-0: + flock /scratch/fatx405.1433756/ewgenia005/bidsify.lock datalad push -d /scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005 --to origin
-local:2/3/100%/826.7s local:2/3/100%/827.0s 0: [INFO] Determine push target 
-0: [INFO] Push refspecs 
-0: [INFO] Transfer data 
-local:2/3/100%/827.3s local:2/3/100%/827.7s 0: [INFO] Update availability information 
-local:2/3/100%/828.0s local:2/3/100%/828.3s local:2/3/100%/828.7s 0: [INFO] Start enumerating objects 
-0: [INFO] Start counting objects 
-0: [INFO] Start compressing objects 
-0: [INFO] Start writing objects 
-0: [INFO] Start resolving deltas 
-0: [INFO] Finished 
-0: [INFO] Finished push of Dataset(/scratch/fatx405.1433756/ewgenia003/clone/data/raw_bids/sub-ewgenia003) 
-0: + exit 0
-local:2/3/100%/829.0s local:2/3/100%/829.3s local:2/3/100%/829.7s local:1/4/100%/622.2s local:1/4/100%/622.2s local:1/4/100%/622.5s 0: [INFO] Update availability information 
-local:1/4/100%/622.8s local:1/4/100%/622.8s local:1/4/100%/623.0s local:1/4/100%/623.2s 0: [INFO] Start enumerating objects 
-0: [INFO] Start counting objects 
-0: [INFO] Start compressing objects 
-0: [INFO] Start writing objects 
-0: [INFO] Start resolving deltas 
-local:1/4/100%/623.5s 0: [INFO] Finished 
-0: [INFO] Finished push of Dataset(/scratch/fatx405.1433756/ewgenia005/clone/data/raw_bids/sub-ewgenia005) 
-0: + exit 0
-local:1/4/100%/623.8s local:1/4/100%/624.0s local:1/4/100%/624.0s local:0/5/100%/499.4s local:0/5/100%/499.4s 
-+ df -h /scratch
-++++ date +%s
-+++ expr 1625750029 - 1625747531
-++ expr 2498
-+ runtime_s=2498
-++ date -d@2498 -u +%H:%M:%S
-+ echo 'script runtime: 00:41:38 hours'

@@ -1,474 +1,0 @@
-module: loaded site/slurm
-module: loaded site/tmpdir
-module: loaded site/hummel
-module: loaded env/system-gcc
-+ module unload singularity
-++ /work/fatx405/miniconda3/bin/tclsh /sw/modules/tcl/modulecmd.tcl sh unload singularity
-+ eval
-+ module switch singularity/3.5.2-overlayfix
-++ /work/fatx405/miniconda3/bin/tclsh /sw/modules/tcl/modulecmd.tcl sh switch singularity/3.5.2-overlayfix
-module: loaded singularity/3.5.2-overlayfix
-+ eval '_LMFILES__modshare=/sw/BASE/env/system-gcc:1:/sw/BASE/site/slurm:1:/sw/BASE/site/hummel:1:/sw/BASE/site/tmpdir:1:/sw/TOOL/singularity/3.5.2-overlayfix:1;' export '_LMFILES__modshare;' 'LOADEDMODULES_modshare=site/hummel:1:site/tmpdir:1:singularity/3.5.2-overlayfix:1:env/system-gcc:1:site/slurm:1;' export 'LOADEDMODULES_modshare;' 'SINGULARITY_CACHEDIR=/scratch/fatx405.1433190/singularity;' export 'SINGULARITY_CACHEDIR;' 'PATH=/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin;' export 'PATH;' '_LMFILES_=/sw/BASE/site/slurm:/sw/BASE/site/tmpdir:/sw/BASE/site/hummel:/sw/BASE/env/system-gcc:/sw/TOOL/singularity/3.5.2-overlayfix;' export '_LMFILES_;' 'LOADEDMODULES=site/slurm:site/tmpdir:site/hummel:env/system-gcc:singularity/3.5.2-overlayfix;' export 'LOADEDMODULES;' 'PATH_modshare=/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:1:/sw/batch/slurm/19.05.6/bin:1:/bin:1:/usr/sbin:1:/work/fatx405/miniconda3/bin:1:/usr/bin:1:/sw/rrz/bin:1:/usr/local/sbin:1:/usr/local/bin:1;' export 'PATH_modshare;'
-++ _LMFILES__modshare=/sw/BASE/env/system-gcc:1:/sw/BASE/site/slurm:1:/sw/BASE/site/hummel:1:/sw/BASE/site/tmpdir:1:/sw/TOOL/singularity/3.5.2-overlayfix:1
-++ export _LMFILES__modshare
-++ LOADEDMODULES_modshare=site/hummel:1:site/tmpdir:1:singularity/3.5.2-overlayfix:1:env/system-gcc:1:site/slurm:1
-++ export LOADEDMODULES_modshare
-++ SINGULARITY_CACHEDIR=/scratch/fatx405.1433190/singularity
-++ export SINGULARITY_CACHEDIR
-++ PATH=/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ export PATH
-++ _LMFILES_=/sw/BASE/site/slurm:/sw/BASE/site/tmpdir:/sw/BASE/site/hummel:/sw/BASE/env/system-gcc:/sw/TOOL/singularity/3.5.2-overlayfix
-++ export _LMFILES_
-++ LOADEDMODULES=site/slurm:site/tmpdir:site/hummel:env/system-gcc:singularity/3.5.2-overlayfix
-++ export LOADEDMODULES
-++ PATH_modshare=/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:1:/sw/batch/slurm/19.05.6/bin:1:/bin:1:/usr/sbin:1:/work/fatx405/miniconda3/bin:1:/usr/bin:1:/sw/rrz/bin:1:/usr/local/sbin:1:/usr/local/bin:1
-++ export PATH_modshare
-+ module load parallel
-++ /work/fatx405/miniconda3/bin/tclsh /sw/modules/tcl/modulecmd.tcl sh load parallel
-module: loaded parallel/20180322
-+ eval '_LMFILES__modshare=/sw/BASE/env/system-gcc:1:/sw/BASE/site/slurm:1:/sw/BASE/site/hummel:1:/sw/BASE/site/tmpdir:1:/sw/TOOL/parallel/20180322:1:/sw/TOOL/singularity/3.5.2-overlayfix:1;' export '_LMFILES__modshare;' 'LOADEDMODULES_modshare=site/hummel:1:site/tmpdir:1:parallel/20180322:1:singularity/3.5.2-overlayfix:1:env/system-gcc:1:site/slurm:1;' export 'LOADEDMODULES_modshare;' 'MANPATH=/sw/env/system-gcc/parallel/20180322/share/man:/sw/batch/slurm/19.05.6/share/man:/sw/rrz/share/man:/sw/modules/man:/usr/share/man;' export 'MANPATH;' 'PATH=/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin;' export 'PATH;' '_LMFILES_=/sw/BASE/site/slurm:/sw/BASE/site/tmpdir:/sw/BASE/site/hummel:/sw/BASE/env/system-gcc:/sw/TOOL/singularity/3.5.2-overlayfix:/sw/TOOL/parallel/20180322;' export '_LMFILES_;' 'LOADEDMODULES=site/slurm:site/tmpdir:site/hummel:env/system-gcc:singularity/3.5.2-overlayfix:parallel/20180322;' export 'LOADEDMODULES;' 'MANPATH_modshare=/sw/modules/man:1:/sw/env/system-gcc/parallel/20180322/share/man:1:/sw/batch/slurm/19.05.6/share/man:1:/usr/share/man:1:/sw/rrz/share/man:1;' export 'MANPATH_modshare;' 'PATH_modshare=/sw/env/system-gcc/parallel/20180322/bin:1:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:1:/sw/batch/slurm/19.05.6/bin:1:/bin:1:/usr/sbin:1:/work/fatx405/miniconda3/bin:1:/usr/bin:1:/sw/rrz/bin:1:/usr/local/sbin:1:/usr/local/bin:1;' export 'PATH_modshare;'
-++ _LMFILES__modshare=/sw/BASE/env/system-gcc:1:/sw/BASE/site/slurm:1:/sw/BASE/site/hummel:1:/sw/BASE/site/tmpdir:1:/sw/TOOL/parallel/20180322:1:/sw/TOOL/singularity/3.5.2-overlayfix:1
-++ export _LMFILES__modshare
-++ LOADEDMODULES_modshare=site/hummel:1:site/tmpdir:1:parallel/20180322:1:singularity/3.5.2-overlayfix:1:env/system-gcc:1:site/slurm:1
-++ export LOADEDMODULES_modshare
-++ MANPATH=/sw/env/system-gcc/parallel/20180322/share/man:/sw/batch/slurm/19.05.6/share/man:/sw/rrz/share/man:/sw/modules/man:/usr/share/man
-++ export MANPATH
-++ PATH=/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ export PATH
-++ _LMFILES_=/sw/BASE/site/slurm:/sw/BASE/site/tmpdir:/sw/BASE/site/hummel:/sw/BASE/env/system-gcc:/sw/TOOL/singularity/3.5.2-overlayfix:/sw/TOOL/parallel/20180322
-++ export _LMFILES_
-++ LOADEDMODULES=site/slurm:site/tmpdir:site/hummel:env/system-gcc:singularity/3.5.2-overlayfix:parallel/20180322
-++ export LOADEDMODULES
-++ MANPATH_modshare=/sw/modules/man:1:/sw/env/system-gcc/parallel/20180322/share/man:1:/sw/batch/slurm/19.05.6/share/man:1:/usr/share/man:1:/sw/rrz/share/man:1
-++ export MANPATH_modshare
-++ PATH_modshare=/sw/env/system-gcc/parallel/20180322/bin:1:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:1:/sw/batch/slurm/19.05.6/bin:1:/bin:1:/usr/sbin:1:/work/fatx405/miniconda3/bin:1:/usr/bin:1:/sw/rrz/bin:1:/usr/local/sbin:1:/usr/local/bin:1
-++ export PATH_modshare
-+ SCRIPT_DIR=/work/fatx405/projects/CSI_TEST/code
-+ source /work/fatx405/projects/CSI_TEST/code/.projectrc
-++ PROJ_DIR=/work/fatx405/projects/CSI_TEST
-++ DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-++ DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-++ BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-++ CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-++ ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-+ source /work/fatx405/set_envs/miniconda
-++ export PATH=/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ PATH=/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-+ source activate datalad
-++ _CONDA_ROOT=/work/fatx405/miniconda3
-++ . /work/fatx405/miniconda3/etc/profile.d/conda.sh
-+++ export CONDA_EXE=/work/fatx405/miniconda3/bin/conda
-+++ CONDA_EXE=/work/fatx405/miniconda3/bin/conda
-+++ export _CE_M=
-+++ _CE_M=
-+++ export _CE_CONDA=
-+++ _CE_CONDA=
-+++ export CONDA_PYTHON_EXE=/work/fatx405/miniconda3/bin/python
-+++ CONDA_PYTHON_EXE=/work/fatx405/miniconda3/bin/python
-+++ '[' -z '' ']'
-+++ export CONDA_SHLVL=0
-+++ CONDA_SHLVL=0
-+++ '[' -n '' ']'
-+++++ dirname /work/fatx405/miniconda3/bin/conda
-++++ dirname /work/fatx405/miniconda3/bin
-+++ PATH=/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-+++ export PATH
-+++ '[' -z '' ']'
-+++ PS1=
-++ conda activate datalad
-++ '[' 2 -lt 1 ']'
-++ local cmd=activate
-++ shift
-++ case "$cmd" in
-++ __conda_activate activate datalad
-++ '[' -n '' ']'
-++ local cmd=activate
-++ shift
-++ local ask_conda
-++ CONDA_INTERNAL_OLDPATH=/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ __add_sys_prefix_to_path
-++ '[' -n '' ']'
-+++ dirname /work/fatx405/miniconda3/bin/conda
-++ SYSP=/work/fatx405/miniconda3/bin
-+++ dirname /work/fatx405/miniconda3/bin
-++ SYSP=/work/fatx405/miniconda3
-++ '[' -n '' ']'
-++ PATH=/work/fatx405/miniconda3/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ export PATH
-+++ PS1=
-+++ /work/fatx405/miniconda3/bin/conda shell.posix activate datalad
-++ ask_conda='PS1='\''(datalad) '\''
-export PATH='\''/work/fatx405/miniconda3/envs/datalad/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin'\''
-export CONDA_PREFIX='\''/work/fatx405/miniconda3/envs/datalad'\''
-export CONDA_SHLVL='\''1'\''
-export CONDA_DEFAULT_ENV='\''datalad'\''
-export CONDA_PROMPT_MODIFIER='\''(datalad) '\''
-export CONDA_EXE='\''/work/fatx405/miniconda3/bin/conda'\''
-export _CE_M='\'''\''
-export _CE_CONDA='\'''\''
-export CONDA_PYTHON_EXE='\''/work/fatx405/miniconda3/bin/python'\'''
-++ rc=0
-++ PATH=/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ eval 'PS1='\''(datalad) '\''
-export PATH='\''/work/fatx405/miniconda3/envs/datalad/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin'\''
-export CONDA_PREFIX='\''/work/fatx405/miniconda3/envs/datalad'\''
-export CONDA_SHLVL='\''1'\''
-export CONDA_DEFAULT_ENV='\''datalad'\''
-export CONDA_PROMPT_MODIFIER='\''(datalad) '\''
-export CONDA_EXE='\''/work/fatx405/miniconda3/bin/conda'\''
-export _CE_M='\'''\''
-export _CE_CONDA='\'''\''
-export CONDA_PYTHON_EXE='\''/work/fatx405/miniconda3/bin/python'\'''
-+++ PS1='(datalad) '
-+++ export PATH=/work/fatx405/miniconda3/envs/datalad/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-+++ PATH=/work/fatx405/miniconda3/envs/datalad/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-+++ export CONDA_PREFIX=/work/fatx405/miniconda3/envs/datalad
-+++ CONDA_PREFIX=/work/fatx405/miniconda3/envs/datalad
-+++ export CONDA_SHLVL=1
-+++ CONDA_SHLVL=1
-+++ export CONDA_DEFAULT_ENV=datalad
-+++ CONDA_DEFAULT_ENV=datalad
-+++ export 'CONDA_PROMPT_MODIFIER=(datalad) '
-+++ CONDA_PROMPT_MODIFIER='(datalad) '
-+++ export CONDA_EXE=/work/fatx405/miniconda3/bin/conda
-+++ CONDA_EXE=/work/fatx405/miniconda3/bin/conda
-+++ export _CE_M=
-+++ _CE_M=
-+++ export _CE_CONDA=
-+++ _CE_CONDA=
-+++ export CONDA_PYTHON_EXE=/work/fatx405/miniconda3/bin/python
-+++ CONDA_PYTHON_EXE=/work/fatx405/miniconda3/bin/python
-++ '[' 0 '!=' 0 ']'
-++ __conda_hashr
-++ '[' -n '' ']'
-++ '[' -n '' ']'
-++ hash -r
-+ subjs=($@)
-+ SUBJS_PER_NODE=2
-+ export ITER=0
-+ ITER=0
-++ expr 0 '*' 1000 + 0
-+ subjs_start_idx=0
-+ '[' mriqc == bidsify ']'
-+ subjs=(${subjs[@]-$(ls $PROJ_DIR/sub-* -d -1)})
-+ subjs_subarr=($(basename -a ${subjs[@]:$subjs_start_idx:$SUBJS_PER_NODE}))
-++ basename -a /work/fatx405/projects/CSI_TEST/data/raw_bids/sub-ewgenia001 /work/fatx405/projects/CSI_TEST/data/raw_bids/sub-ewgenia002
-+ echo starting processing with mriqc from index: 0 ...
-+ echo for n=2 subjects
-+ echo subjects to process: sub-ewgenia001 sub-ewgenia002
-+ echo submission script directory: /work/fatx405/projects/CSI_TEST/code
-+ echo current TMPDIR: /scratch/fatx405.1433190
-+ echo ITERator: 0
-++ awk 'BEGIN {print int(30/2); exit}'
-+ threads_per_sub=15
-++ awk 'BEGIN {print int(64000/2); exit}'
-+ mem_per_sub=32000
-+ srun='srun --label --exclusive -N1 -n1 --cpus-per-task 15 --mem-per-cpu=16000'
-+ parallel='parallel --ungroup --progress --delay 0.2 -j2 --joblog /work/fatx405/projects/CSI_TEST/code/log/parallel_runtask.log'
-+ proc_script=/work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh
-+ echo -e 'running:\n parallel --ungroup --progress --delay 0.2 -j2 --joblog /work/fatx405/projects/CSI_TEST/code/log/parallel_runtask.log srun --label --exclusive -N1 -n1 --cpus-per-task 15 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh ::: sub-ewgenia001' sub-ewgenia002
-+ parallel --ungroup --progress --delay 0.2 -j2 --joblog /work/fatx405/projects/CSI_TEST/code/log/parallel_runtask.log 'srun --label --exclusive -N1 -n1 --cpus-per-task 15 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh' ::: sub-ewgenia001 sub-ewgenia002
-
-Computers / CPU cores / Max jobs to run
-1:local / 32 / 2
-
-Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
-local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: + source /sw/batch/init.sh
-0: ++ . /sw/profile/init.sh
-0: +++ case $(/sw/batch/bin/rrz-run-env) in
-0: ++++ /sw/batch/bin/rrz-run-env
-0: + source /sw/batch/init.sh
-0: ++ . /sw/profile/init.sh
-0: +++ case $(/sw/batch/bin/rrz-run-env) in
-0: ++++ /sw/batch/bin/rrz-run-env
-local:2/0/100%/0.0s 0: +++ . /sw/modules/rrz-modules.sh
-0: +++ . /sw/modules/rrz-modules.sh
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: ++++ test -z 1
-0: ++++ echo 'RRZ: re-using existing module setup (RRZ_SW_INIT present)'
-0: RRZ: re-using existing module setup (RRZ_SW_INIT present)
-0: ++++ . /sw/modules/init.sh
-0: ++++++ tclsh /sw/modules/tcl/modulecmd.tcl sh autoinit
-0: ++++ test -z 1
-0: ++++ echo 'RRZ: re-using existing module setup (RRZ_SW_INIT present)'
-0: RRZ: re-using existing module setup (RRZ_SW_INIT present)
-0: ++++ . /sw/modules/init.sh
-0: ++++++ tclsh /sw/modules/tcl/modulecmd.tcl sh autoinit
-local:2/0/100%/0.0s 0: +++++ eval module '()' '{' eval '`'\''/work/fatx405/miniconda3/envs/datalad/bin/tclsh'\''' ''\''/sw/modules/tcl/modulecmd.tcl'\''' ''\''sh'\''' '$*`;' '}' ';' 'MODULESHOME=/sw/modules/tcl;' export 'MODULESHOME;'
-0: ++++++ MODULESHOME=/sw/modules/tcl
-0: ++++++ export MODULESHOME
-0: ++ unset SLURM_EXPORT_ENV
-0: +++++ eval module '()' '{' eval '`'\''/work/fatx405/miniconda3/envs/datalad/bin/tclsh'\''' ''\''/sw/modules/tcl/modulecmd.tcl'\''' ''\''sh'\''' '$*`;' '}' ';' 'MODULESHOME=/sw/modules/tcl;' export 'MODULESHOME;'
-0: ++ /sw/rrz/bin/rrz-quota --dirs=/work --check=90
-0: ++++++ MODULESHOME=/sw/modules/tcl
-0: ++++++ export MODULESHOME
-0: ++ unset SLURM_EXPORT_ENV
-0: ++ /sw/rrz/bin/rrz-quota --dirs=/work --check=90
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: + echo '###################################'
-0: + echo Started processing of sub-ewgenia001
-0: + echo '###################################'
-0: + echo '###################################'
-0: + SCRIPT_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + echo Started processing of sub-ewgenia002
-0: + source /work/fatx405/projects/CSI_TEST/code/.projectrc
-0: + echo '###################################'
-0: ++ PROJ_DIR=/work/fatx405/projects/CSI_TEST
-0: ++ DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-0: + SCRIPT_DIR=/work/fatx405/projects/CSI_TEST/code
-0: ++ DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-local:2/0/100%/0.0s 0: + source /work/fatx405/projects/CSI_TEST/code/.projectrc
-0: ++ BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-0: ++ PROJ_DIR=/work/fatx405/projects/CSI_TEST
-0: ++ CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-0: ++ DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-0: ++ ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-0: ++ DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-0: + export SLURM_CPUS_PER_TASK=15
-0: ++ BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-0: + SLURM_CPUS_PER_TASK=15
-0: ++ CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + export SCRATCH_DIR=/scratch/fatx405.1433190/sub-ewgenia001
-0: ++ ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-0: + SCRATCH_DIR=/scratch/fatx405.1433190/sub-ewgenia001
-0: + export SLURM_CPUS_PER_TASK=15
-0: + '[' '!' -d /scratch/fatx405.1433190/sub-ewgenia001 ']'
-0: + SLURM_CPUS_PER_TASK=15
-0: + mkdir /scratch/fatx405.1433190/sub-ewgenia001
-0: + export SCRATCH_DIR=/scratch/fatx405.1433190/sub-ewgenia002
-0: + SCRATCH_DIR=/scratch/fatx405.1433190/sub-ewgenia002
-0: + export SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + '[' '!' -d /scratch/fatx405.1433190/sub-ewgenia002 ']'
-0: + export SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + mkdir /scratch/fatx405.1433190/sub-ewgenia002
-0: + export DSLOCKFILE=/scratch/fatx405.1433190/sub-ewgenia001/mriqc.lock
-0: + export SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + DSLOCKFILE=/scratch/fatx405.1433190/sub-ewgenia001/mriqc.lock
-0: + SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + export DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433190/sub-ewgenia001/sockets
-0: + export SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433190/sub-ewgenia001/sockets
-0: + SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: ++ hostname
-0: + export DSLOCKFILE=/scratch/fatx405.1433190/sub-ewgenia002/mriqc.lock
-0: + echo hostname: node008
-0: + DSLOCKFILE=/scratch/fatx405.1433190/sub-ewgenia002/mriqc.lock
-0: ++ singularity --version
-0: + export DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433190/sub-ewgenia002/sockets
-0: + DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433190/sub-ewgenia002/sockets
-0: ++ hostname
-0: + echo hostname: node008
-0: ++ singularity --version
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: + echo singularity version 3.5.2
-0: + echo singularity version 3.5.2
-0: + echo TMPDIR: /scratch/fatx405.1433190
-0: + echo TMPDIR: /scratch/fatx405.1433190
-0: + echo RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433190
-0: + echo RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433190
-0: + echo SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
-0: + echo SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
-0: + echo SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
-0: + echo SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
-0: + echo DSLOCKFILE: /scratch/fatx405.1433190/sub-ewgenia001/mriqc.lock
-0: + echo DSLOCKFILE: /scratch/fatx405.1433190/sub-ewgenia002/mriqc.lock
-0: + mkdir -p /scratch/fatx405.1433190/sub-ewgenia001/sockets
-0: + mkdir -p /scratch/fatx405.1433190/sub-ewgenia002/sockets
-0: + echo DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433190/sub-ewgenia001/sockets
-0: + echo DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433190/sub-ewgenia002/sockets
-0: + cd /scratch/fatx405.1433190/sub-ewgenia001
-0: + cd /scratch/fatx405.1433190/sub-ewgenia002
-0: + CLONE=/scratch/fatx405.1433190/sub-ewgenia001/clone
-0: + CLONE=/scratch/fatx405.1433190/sub-ewgenia002/clone
-0: + CLONE_DATA_DIR=/scratch/fatx405.1433190/sub-ewgenia001/clone/data
-0: + CLONE_DATA_DIR=/scratch/fatx405.1433190/sub-ewgenia002/clone/data
-0: + CLONE_BIDS_DIR=/scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids
-0: + CLONE_BIDS_DIR=/scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids
-0: + CLONE_DCM_DIR=/scratch/fatx405.1433190/sub-ewgenia001/clone/data/dicoms
-0: + CLONE_DCM_DIR=/scratch/fatx405.1433190/sub-ewgenia002/clone/data/dicoms
-0: + CLONE_CODE_DIR=/scratch/fatx405.1433190/sub-ewgenia001/clone/code/
-0: + CLONE_CODE_DIR=/scratch/fatx405.1433190/sub-ewgenia002/clone/code/
-0: + CLONE_ENV_DIR=/scratch/fatx405.1433190/sub-ewgenia001/clone/envs/
-0: + CLONE_ENV_DIR=/scratch/fatx405.1433190/sub-ewgenia002/clone/envs/
-0: + CLONE_TMP_DIR=/scratch/fatx405.1433190/sub-ewgenia001/tmp/
-0: + CLONE_TMP_DIR=/scratch/fatx405.1433190/sub-ewgenia002/tmp/
-0: + mkdir -p /scratch/fatx405.1433190/sub-ewgenia001/tmp/
-0: + mkdir -p /scratch/fatx405.1433190/sub-ewgenia002/tmp/
-0: + '[' -d /scratch/fatx405.1433190/sub-ewgenia001/clone ']'
-0: + '[' -d /scratch/fatx405.1433190/sub-ewgenia002/clone ']'
-0: + flock /scratch/fatx405.1433190/sub-ewgenia001/mriqc.lock datalad clone /work/fatx405/projects/CSI_TEST /scratch/fatx405.1433190/sub-ewgenia001/clone
-0: + flock /scratch/fatx405.1433190/sub-ewgenia002/mriqc.lock datalad clone /work/fatx405/projects/CSI_TEST /scratch/fatx405.1433190/sub-ewgenia002/clone
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433190/sub-ewgenia002/clone) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST to /scratch/fatx405.1433190/sub-ewgenia002/clone 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433190/sub-ewgenia001/clone) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST to /scratch/fatx405.1433190/sub-ewgenia001/clone 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433190/sub-ewgenia001/clone) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433190/sub-ewgenia002/clone) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: + cd /scratch/fatx405.1433190/sub-ewgenia002/clone
-0: + datalad get envs/freesurfer_license.txt
-0: + cd /scratch/fatx405.1433190/sub-ewgenia001/clone
-0: + datalad get envs/freesurfer_license.txt
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433190/sub-ewgenia002/clone/envs) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/envs to /scratch/fatx405.1433190/sub-ewgenia002/clone/envs 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433190/sub-ewgenia001/clone/envs) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/envs to /scratch/fatx405.1433190/sub-ewgenia001/clone/envs 
-local:2/0/100%/0.0s 0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433190/sub-ewgenia001/clone/envs) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433190/sub-ewgenia002/clone/envs) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: + datalad get data/raw_bids/dataset_description.json
-0: + datalad get data/raw_bids/dataset_description.json
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids to /scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids to /scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: + git submodule foreach --recursive git annex dead here
-0: + git submodule foreach --recursive git annex dead here
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: + git checkout -b job-1433190-sub-ewgenia001
-0: + git checkout -b job-1433190-sub-ewgenia002
-0: Switched to a new branch 'job-1433190-sub-ewgenia002'
-0: Switched to a new branch 'job-1433190-sub-ewgenia001'
-0: + export TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/.templateflow
-0: + TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/.templateflow
-0: + export SINGULARITYENV_TEMPLATEFLOW_HOME=.templateflow
-0: + SINGULARITYENV_TEMPLATEFLOW_HOME=.templateflow
-0: + find . -name 'sub-*' -maxdepth 1 -type d -a '!' -name '*sub-ewgenia001*' -exec rm -rv '{}' +
-0: ++ ls .
-0: + echo ls BIDS root: CHANGELOG.md code data envs README.md
-0: + export PIPE_ID=job-1433190-mriqc-sub-ewgenia001
-0: + PIPE_ID=job-1433190-mriqc-sub-ewgenia001
-0: + '[' mriqc == bidsify ']'
-0: + export TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/.templateflow
-0: + '[' mriqc == qsiprep ']'
-0: + TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/.templateflow
-0: + '[' mriqc == smriprep ']'
-0: + export SINGULARITYENV_TEMPLATEFLOW_HOME=.templateflow
-0: + SINGULARITYENV_TEMPLATEFLOW_HOME=.templateflow
-0: + '[' mriqc == mriqc ']'
-0: + find . -name 'sub-*' -maxdepth 1 -type d -a '!' -name '*sub-ewgenia002*' -exec rm -rv '{}' +
-0: + datalad get -n -r -J 15 /scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids/sub-ewgenia001
-0: ++ ls .
-0: + echo ls BIDS root: CHANGELOG.md code data envs README.md
-0: + export PIPE_ID=job-1433190-mriqc-sub-ewgenia002
-0: + PIPE_ID=job-1433190-mriqc-sub-ewgenia002
-0: + '[' mriqc == bidsify ']'
-0: + '[' mriqc == qsiprep ']'
-0: + '[' mriqc == smriprep ']'
-0: + '[' mriqc == mriqc ']'
-0: + datalad get -n -r -J 15 /scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids/sub-ewgenia002
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids/sub-ewgenia001) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids/sub-ewgenia001 to /scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids/sub-ewgenia001 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids/sub-ewgenia002) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids/sub-ewgenia002 to /scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids/sub-ewgenia002 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids/sub-ewgenia002) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids/sub-ewgenia001) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Installing Dataset(/scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids) to get /scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids/sub-ewgenia001 recursively 
-0: [INFO] Installing Dataset(/scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids) to get /scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids/sub-ewgenia002 recursively 
-local:2/0/100%/0.0s 0: [INFO] Installing Dataset(/scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids/sub-ewgenia002) to get /scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids/sub-ewgenia002 recursively 
-0: [INFO] Installing Dataset(/scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids/sub-ewgenia001) to get /scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids/sub-ewgenia001 recursively 
-local:2/0/100%/0.0s 0: + datalad get -n -r -J 15 /scratch/fatx405.1433190/sub-ewgenia002/clone/data/mriqc
-0: + datalad get -n -r -J 15 /scratch/fatx405.1433190/sub-ewgenia001/clone/data/mriqc
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433190/sub-ewgenia002/clone/data/mriqc) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/mriqc to /scratch/fatx405.1433190/sub-ewgenia002/clone/data/mriqc 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433190/sub-ewgenia001/clone/data/mriqc) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/mriqc to /scratch/fatx405.1433190/sub-ewgenia001/clone/data/mriqc 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433190/sub-ewgenia002/clone/data/mriqc) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433190/sub-ewgenia001/clone/data/mriqc) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Installing Dataset(/scratch/fatx405.1433190/sub-ewgenia001/clone) to get /scratch/fatx405.1433190/sub-ewgenia001/clone/data/mriqc recursively 
-0: [INFO] Installing Dataset(/scratch/fatx405.1433190/sub-ewgenia002/clone) to get /scratch/fatx405.1433190/sub-ewgenia002/clone/data/mriqc recursively 
-local:2/0/100%/0.0s 0: + git -C /scratch/fatx405.1433190/sub-ewgenia001/clone/data/mriqc checkout -b job-1433190-mriqc-sub-ewgenia001
-0: + git -C /scratch/fatx405.1433190/sub-ewgenia002/clone/data/mriqc checkout -b job-1433190-mriqc-sub-ewgenia002
-0: Switched to a new branch 'job-1433190-mriqc-sub-ewgenia001'
-0: Switched to a new branch 'job-1433190-mriqc-sub-ewgenia002'
-0: + cd /scratch/fatx405.1433190/sub-ewgenia001/clone/data/mriqc
-0: + rm -rf sub-ewgenia001 'sub-ewgenia001*.html' dataset_description.json .bidsignore
-0: + cd /scratch/fatx405.1433190/sub-ewgenia001/clone
-0: + datalad containers-run -m job-1433190-mriqc-sub-ewgenia001 --explicit --output /scratch/fatx405.1433190/sub-ewgenia001/clone/data/mriqc --input /scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids/sub-ewgenia001 --input /scratch/fatx405.1433190/sub-ewgenia001/clone/data/raw_bids/dataset_description.json --container-name mriqc data/raw_bids data/mriqc participant -w .git/tmp/wdir --participant-label sub-ewgenia001 --modalities T1w T2w bold --no-sub --ica --float32 --nprocs 15 --work-dir /tmp
-0: + cd /scratch/fatx405.1433190/sub-ewgenia002/clone/data/mriqc
-0: + rm -rf sub-ewgenia002 'sub-ewgenia002*.html' dataset_description.json .bidsignore
-0: + cd /scratch/fatx405.1433190/sub-ewgenia002/clone
-0: + datalad containers-run -m job-1433190-mriqc-sub-ewgenia002 --explicit --output /scratch/fatx405.1433190/sub-ewgenia002/clone/data/mriqc --input /scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids/sub-ewgenia002 --input /scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids/dataset_description.json --container-name mriqc data/raw_bids data/mriqc participant -w .git/tmp/wdir --participant-label sub-ewgenia002 --modalities T1w T2w bold --no-sub --ica --float32 --nprocs 15 --work-dir /tmp
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Making sure inputs are available (this may take some time) 
-0: [INFO] Making sure inputs are available (this may take some time) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: usage: mriqc [-h] [--version] [-v]
-0:              [--participant-label PARTICIPANT_LABEL [PARTICIPANT_LABEL ...]]
-0:              [--session-id [SESSION_ID [SESSION_ID ...]]]
-0:              [--run-id [RUN_ID [RUN_ID ...]]]
-0:              [--task-id [TASK_ID [TASK_ID ...]]]
-0:              [-m [MODALITIES [MODALITIES ...]]] [--dsname DSNAME]
-0:              [--nprocs NPROCS] [--omp-nthreads OMP_NTHREADS] [--mem MEMORY_GB]
-0:              [--testing] [-f] [--pdb] [-w WORK_DIR] [--verbose-reports]
-0:              [--write-graph] [--dry-run] [--profile] [--use-plugin USE_PLUGIN]
-0:              [--no-sub] [--email EMAIL] [--webapi-url WEBAPI_URL]
-0:              [--webapi-port WEBAPI_PORT] [--upload-strict] [--ants-float]
-0:              [--ants-settings ANTS_SETTINGS] [--ica] [--fft-spikes-detector]
-0:              [--fd_thres FD_THRES] [--deoblique] [--despike]
-0:              [--start-idx START_IDX] [--stop-idx STOP_IDX]
-0:              [--correct-slice-timing]
-0:              bids_dir output_dir {participant,group} [{participant,group} ...]
-0: mriqc: error: Querying BIDS dataset at </scratch/fatx405.1433190/sub-ewgenia002/clone/data/raw_bids> got an empty result.
-0: Please, check out your currently set filters:
-0: 
-0:  *participant_label: ['ewgenia002']
-0:  *session: None
-0:  *run: None
-0:  *task: None
-0:  *bids_type: ['T1w', 'T2w', 'bold']
-0: [34mINFO:   [0m Cleaning up image...
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: Downloading https://templateflow.s3.amazonaws.com/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-02_desc-fMRIPrep_boldref.nii.gz
-local:2/0/100%/0.0s 0:   0%|          | 0.00/1.75M [00:00<?, ?B/s]  0%|          | 2.05k/1.75M [00:00<01:26, 20.3kB/s]  2%|▏         | 36.9k/1.75M [00:00<00:08, 206kB/s]   5%|▌         | 89.1k/1.75M [00:00<00:04, 340kB/s] 12%|█▏        | 211k/1.75M [00:00<00:02, 665kB/s]  24%|██▍       | 420k/1.75M [00:00<00:01, 1.14MB/s] 49%|████▉     | 855k/1.75M [00:00<00:00, 2.17MB/s] 99%|█████████▉| 1.74M/1.75M [00:00<00:00, 4.22MB/s]100%|██████████| 1.75M/1.75M [00:00<00:00, 2.39MB/s]
-0: Downloading https://templateflow.s3.amazonaws.com/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-02_desc-brain_mask.nii.gz
-local:2/0/100%/0.0s 0:   0%|          | 0.00/29.6k [00:00<?, ?B/s]  7%|▋         | 2.05k/29.6k [00:00<00:01, 20.2kB/s]100%|██████████| 29.6k/29.6k [00:00<00:00, 286kB/s] 
-0: Downloading https://templateflow.s3.amazonaws.com/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-01_desc-carpet_dseg.nii.gz
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0:   0%|          | 0.00/451k [00:00<?, ?B/s]  8%|▊         | 36.9k/451k [00:00<00:02, 189kB/s] 43%|████▎     | 194k/451k [00:00<00:00, 624kB/s]  97%|█████████▋| 437k/451k [00:00<00:00, 1.09MB/s]100%|██████████| 451k/451k [00:00<00:00, 922kB/s] 
-0: Downloading https://templateflow.s3.amazonaws.com/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-01_desc-head_mask.nii.gz
-local:2/0/100%/0.0s 0:   0%|          | 0.00/976k [00:00<?, ?B/s]  0%|          | 2.05k/976k [00:00<00:47, 20.4kB/s]  4%|▍         | 36.9k/976k [00:00<00:04, 210kB/s]   9%|▉         | 89.1k/976k [00:00<00:02, 349kB/s] 22%|██▏       | 211k/976k [00:00<00:01, 683kB/s]  45%|████▍     | 437k/976k [00:00<00:00, 1.24MB/s] 91%|█████████ | 890k/976k [00:00<00:00, 2.33MB/s]100%|██████████| 976k/976k [00:00<00:00, 1.59MB/s]
-0: Downloading https://templateflow.s3.amazonaws.com/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-01_label-CSF_probseg.nii.gz
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0:   0%|          | 0.00/5.49M [00:00<?, ?B/s]  0%|          | 1.02k/5.49M [00:00<09:03, 10.1kB/s]  1%|          | 34.8k/5.49M [00:00<00:27, 199kB/s]   2%|▏         | 87.0k/5.49M [00:00<00:15, 342kB/s]  4%|▍         | 209k/5.49M [00:00<00:07, 678kB/s]   8%|▊         | 435k/5.49M [00:00<00:04, 1.23MB/s] 16%|█▌        | 888k/5.49M [00:00<00:01, 2.32MB/s] 33%|███▎      | 1.81M/5.49M [00:00<00:00, 4.52MB/s] 64%|██████▎   | 3.50M/5.49M [00:00<00:00, 8.34MB/s]100%|██████████| 5.49M/5.49M [00:00<00:00, 6.45MB/s]
-0: Downloading https://templateflow.s3.amazonaws.com/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-01_label-GM_probseg.nii.gz
-local:2/0/100%/0.0s 0:   0%|          | 0.00/7.57M [00:00<?, ?B/s]  0%|          | 2.05k/7.57M [00:00<06:36, 19.1kB/s]  0%|          | 36.9k/7.57M [00:00<00:38, 198kB/s]   1%|          | 89.1k/7.57M [00:00<00:22, 328kB/s]  3%|▎         | 211k/7.57M [00:00<00:11, 643kB/s]   6%|▌         | 437k/7.57M [00:00<00:06, 1.17MB/s] 12%|█▏        | 890k/7.57M [00:00<00:03, 2.19MB/s] 24%|██▍       | 1.81M/7.57M [00:00<00:01, 4.26MB/s] 45%|████▍     | 3.39M/7.57M [00:00<00:00, 7.54MB/s] 78%|███████▊  | 5.88M/7.57M [00:00<00:00, 12.4MB/s]100%|██████████| 7.57M/7.57M [00:01<00:00, 7.53MB/s]
-0: Downloading https://templateflow.s3.amazonaws.com/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-01_label-WM_probseg.nii.gz
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0:   0%|          | 0.00/6.91M [00:00<?, ?B/s]  0%|          | 2.05k/6.91M [00:00<06:03, 19.0kB/s]  1%|          | 34.8k/6.91M [00:00<00:36, 186kB/s]   1%|▏         | 87.0k/6.91M [00:00<00:21, 321kB/s]  3%|▎         | 209k/6.91M [00:00<00:10, 637kB/s]   6%|▋         | 435k/6.91M [00:00<00:05, 1.16MB/s] 13%|█▎        | 888k/6.91M [00:00<00:02, 2.19MB/s] 26%|██▌       | 1.81M/6.91M [00:00<00:01, 4.26MB/s] 53%|█████▎    | 3.64M/6.91M [00:00<00:00, 8.25MB/s] 96%|█████████▌| 6.62M/6.91M [00:00<00:00, 14.3MB/s]100%|██████████| 6.91M/6.91M [00:00<00:00, 7.04MB/s]
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] == Command exit (modification check follows) ===== 
-0: [INFO] The command had a non-zero exit code. If this is expected, you can save the changes with 'datalad save -d . -r -F .git/COMMIT_EDITMSG' 
-0: CommandError: 'singularity run --cleanenv --userns --no-home -B . -B $SCRATCH_DIR:/tmp .datalad/environments/mriqc/image data/raw_bids data/mriqc participant -w .git/tmp/wdir --participant-label sub-ewgenia002 --modalities T1w T2w bold --no-sub --ica --float32 --nprocs 15 --work-dir /tmp' failed with exitcode 2 under /scratch/fatx405.1433190/sub-ewgenia002/clone
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s srun: error: node008: task 0: Exited with exit code 2
-local:2/0/100%/0.0s local:1/1/100%/944.0s local:1/1/100%/944.0s local:1/1/100%/945.0s local:1/1/100%/945.0s local:1/1/100%/946.0s local:1/1/100%/947.0s local:1/1/100%/947.0s local:1/1/100%/948.0s local:1/1/100%/949.0s local:1/1/100%/950.0s local:1/1/100%/951.0s local:1/1/100%/952.0s local:1/1/100%/953.0s local:1/1/100%/954.0s local:1/1/100%/956.0s local:1/1/100%/957.0s local:1/1/100%/958.0s local:1/1/100%/959.0s local:1/1/100%/960.0s local:1/1/100%/961.0s local:1/1/100%/962.0s local:1/1/100%/963.0s local:1/1/100%/964.0s local:1/1/100%/965.0s local:1/1/100%/966.0s local:1/1/100%/967.0s local:1/1/100%/968.0s local:1/1/100%/969.0s local:1/1/100%/970.0s local:1/1/100%/971.0s local:1/1/100%/973.0s local:1/1/100%/974.0s local:1/1/100%/975.0s local:1/1/100%/976.0s local:1/1/100%/977.0s local:1/1/100%/978.0s local:1/1/100%/979.0s local:1/1/100%/980.0s local:1/1/100%/981.0s local:1/1/100%/982.0s local:1/1/100%/983.0s local:1/1/100%/984.0s local:1/1/100%/985.0s local:1/1/100%/986.0s local:1/1/100%/987.0s local:1/1/100%/988.0s local:1/1/100%/989.0s local:1/1/100%/990.0s local:1/1/100%/991.0s local:1/1/100%/992.0s local:1/1/100%/993.0s local:1/1/100%/994.0s local:1/1/100%/995.0s local:1/1/100%/996.0s local:1/1/100%/997.0s local:1/1/100%/998.0s local:1/1/100%/999.0s local:1/1/100%/1000.0s local:1/1/100%/1001.0s local:1/1/100%/1003.0s local:1/1/100%/1004.0s local:1/1/100%/1005.0s local:1/1/100%/1006.0s local:1/1/100%/1007.0s local:1/1/100%/1008.0s local:1/1/100%/1009.0s local:1/1/100%/1010.0s local:1/1/100%/1011.0s local:1/1/100%/1012.0s local:1/1/100%/1013.0s local:1/1/100%/1015.0s local:1/1/100%/1016.0s local:1/1/100%/1017.0s local:1/1/100%/1018.0s local:1/1/100%/1019.0s local:1/1/100%/1020.0s local:1/1/100%/1021.0s local:1/1/100%/1022.0s local:1/1/100%/1024.0s local:1/1/100%/1025.0s local:1/1/100%/1026.0s local:1/1/100%/1027.0s local:1/1/100%/1028.0s local:1/1/100%/1029.0s local:1/1/100%/1030.0s local:1/1/100%/1031.0s local:1/1/100%/1032.0s local:1/1/100%/1033.0s local:1/1/100%/1034.0s local:1/1/100%/1035.0s local:1/1/100%/1036.0s local:1/1/100%/1037.0s local:1/1/100%/1039.0s local:1/1/100%/1040.0s local:1/1/100%/1041.0s local:1/1/100%/1042.0s local:1/1/100%/1043.0s local:1/1/100%/1044.0s local:1/1/100%/1045.0s local:1/1/100%/1046.0s local:1/1/100%/1047.0s local:1/1/100%/1048.0s local:1/1/100%/1049.0s local:1/1/100%/1050.0s local:1/1/100%/1051.0s local:1/1/100%/1052.0s local:1/1/100%/1053.0s local:1/1/100%/1054.0s local:1/1/100%/1055.0s local:1/1/100%/1056.0s local:1/1/100%/1057.0s local:1/1/100%/1058.0s local:1/1/100%/1059.0s local:1/1/100%/1060.0s local:1/1/100%/1062.0s local:1/1/100%/1063.0s local:1/1/100%/1064.0s local:1/1/100%/1065.0s local:1/1/100%/1066.0s local:1/1/100%/1067.0s local:1/1/100%/1068.0s local:1/1/100%/1069.0s local:1/1/100%/1070.0s local:1/1/100%/1071.0s local:1/1/100%/1072.0s local:1/1/100%/1073.0s local:1/1/100%/1074.0s local:1/1/100%/1075.0s local:1/1/100%/1076.0s local:1/1/100%/1077.0s local:1/1/100%/1078.0s local:1/1/100%/1079.0s local:1/1/100%/1080.0s local:1/1/100%/1081.0s local:1/1/100%/1082.0s local:1/1/100%/1083.0s local:1/1/100%/1084.0s local:1/1/100%/1085.0s local:1/1/100%/1086.0s local:1/1/100%/1087.0s local:1/1/100%/1088.0s local:1/1/100%/1089.0s local:1/1/100%/1090.0s local:1/1/100%/1091.0s local:1/1/100%/1092.0s local:1/1/100%/1093.0s local:1/1/100%/1094.0s local:1/1/100%/1095.0s local:1/1/100%/1096.0s local:1/1/100%/1097.0s local:1/1/100%/1099.0s local:1/1/100%/1100.0s local:1/1/100%/1101.0s local:1/1/100%/1102.0s local:1/1/100%/1103.0s local:1/1/100%/1104.0s local:1/1/100%/1105.0s local:1/1/100%/1106.0s local:1/1/100%/1107.0s local:1/1/100%/1108.0s local:1/1/100%/1109.0s local:1/1/100%/1110.0s local:1/1/100%/1111.0s local:1/1/100%/1112.0s local:1/1/100%/1113.0s local:1/1/100%/1114.0s local:1/1/100%/1115.0s local:1/1/100%/1117.0s local:1/1/100%/1118.0s local:1/1/100%/1119.0s local:1/1/100%/1120.0s local:1/1/100%/1121.0s local:1/1/100%/1123.0s local:1/1/100%/1124.0s local:1/1/100%/1125.0s local:1/1/100%/1126.0s local:1/1/100%/1127.0s local:1/1/100%/1128.0s local:1/1/100%/1129.0s local:1/1/100%/1130.0s local:1/1/100%/1131.0s local:1/1/100%/1132.0s local:1/1/100%/1133.0s local:1/1/100%/1134.0s local:1/1/100%/1135.0s local:1/1/100%/1136.0s local:1/1/100%/1137.0s local:1/1/100%/1138.0s local:1/1/100%/1139.0s local:1/1/100%/1141.0s local:1/1/100%/1142.0s local:1/1/100%/1143.0s local:1/1/100%/1144.0s local:1/1/100%/1145.0s local:1/1/100%/1146.0s local:1/1/100%/1147.0s local:1/1/100%/1148.0s local:1/1/100%/1149.0s local:1/1/100%/1150.0s local:1/1/100%/1151.0s local:1/1/100%/1152.0s local:1/1/100%/1153.0s local:1/1/100%/1154.0s local:1/1/100%/1155.0s local:1/1/100%/1156.0s local:1/1/100%/1157.0s local:1/1/100%/1158.0s local:1/1/100%/1159.0s local:1/1/100%/1160.0s local:1/1/100%/1161.0s local:1/1/100%/1162.0s local:1/1/100%/1163.0s local:1/1/100%/1164.0s local:1/1/100%/1165.0s local:1/1/100%/1166.0s local:1/1/100%/1167.0s local:1/1/100%/1168.0s local:1/1/100%/1169.0s local:1/1/100%/1170.0s local:1/1/100%/1171.0s local:1/1/100%/1172.0s local:1/1/100%/1173.0s local:1/1/100%/1174.0s local:1/1/100%/1175.0s local:1/1/100%/1176.0s local:1/1/100%/1177.0s local:1/1/100%/1178.0s local:1/1/100%/1179.0s local:1/1/100%/1180.0s local:1/1/100%/1182.0s local:1/1/100%/1183.0s local:1/1/100%/1184.0s local:1/1/100%/1185.0s local:1/1/100%/1186.0s local:1/1/100%/1187.0s local:1/1/100%/1188.0s local:1/1/100%/1189.0s local:1/1/100%/1190.0s local:1/1/100%/1191.0s local:1/1/100%/1192.0s local:1/1/100%/1193.0s local:1/1/100%/1194.0s local:1/1/100%/1195.0s local:1/1/100%/1196.0s local:1/1/100%/1197.0s local:1/1/100%/1198.0s local:1/1/100%/1199.0s local:1/1/100%/1200.0s local:1/1/100%/1201.0s local:1/1/100%/1202.0s local:1/1/100%/1203.0s local:1/1/100%/1204.0s local:1/1/100%/1205.0s local:1/1/100%/1206.0s local:1/1/100%/1207.0s local:1/1/100%/1208.0s local:1/1/100%/1209.0s local:1/1/100%/1210.0s local:1/1/100%/1211.0s local:1/1/100%/1212.0s local:1/1/100%/1213.0s local:1/1/100%/1214.0s local:1/1/100%/1215.0s local:1/1/100%/1216.0s local:1/1/100%/1217.0s local:1/1/100%/1218.0s local:1/1/100%/1219.0s local:1/1/100%/1220.0s local:1/1/100%/1221.0s local:1/1/100%/1222.0s local:1/1/100%/1223.0s local:1/1/100%/1224.0s local:1/1/100%/1225.0s local:1/1/100%/1227.0s local:1/1/100%/1228.0s local:1/1/100%/1229.0s local:1/1/100%/1230.0s local:1/1/100%/1231.0s local:1/1/100%/1232.0s local:1/1/100%/1233.0s local:1/1/100%/1234.0s local:1/1/100%/1235.0s local:1/1/100%/1236.0s local:1/1/100%/1237.0s local:1/1/100%/1238.0s local:1/1/100%/1239.0s local:1/1/100%/1240.0s local:1/1/100%/1241.0s local:1/1/100%/1242.0s local:1/1/100%/1243.0s local:1/1/100%/1244.0s local:1/1/100%/1245.0s local:1/1/100%/1246.0s local:1/1/100%/1247.0s local:1/1/100%/1248.0s local:1/1/100%/1249.0s local:1/1/100%/1250.0s local:1/1/100%/1251.0s local:1/1/100%/1252.0s local:1/1/100%/1253.0s local:1/1/100%/1255.0s local:1/1/100%/1256.0s local:1/1/100%/1257.0s local:1/1/100%/1258.0s local:1/1/100%/1259.0s local:1/1/100%/1260.0s local:1/1/100%/1261.0s local:1/1/100%/1262.0s local:1/1/100%/1263.0s local:1/1/100%/1264.0s local:1/1/100%/1265.0s local:1/1/100%/1266.0s local:1/1/100%/1267.0s local:1/1/100%/1268.0s local:1/1/100%/1269.0s local:1/1/100%/1270.0s local:1/1/100%/1271.0s local:1/1/100%/1272.0s local:1/1/100%/1273.0s local:1/1/100%/1274.0s local:1/1/100%/1276.0s local:1/1/100%/1277.0s local:1/1/100%/1278.0s local:1/1/100%/1279.0s local:1/1/100%/1280.0s local:1/1/100%/1281.0s local:1/1/100%/1282.0s local:1/1/100%/1283.0s local:1/1/100%/1284.0s local:1/1/100%/1285.0s local:1/1/100%/1286.0s local:1/1/100%/1287.0s local:1/1/100%/1289.0s local:1/1/100%/1290.0s local:1/1/100%/1291.0s local:1/1/100%/1292.0s local:1/1/100%/1293.0s local:1/1/100%/1294.0s local:1/1/100%/1295.0s local:1/1/100%/1296.0s local:1/1/100%/1297.0s local:1/1/100%/1298.0s local:1/1/100%/1299.0s local:1/1/100%/1301.0s local:1/1/100%/1302.0s local:1/1/100%/1303.0s local:1/1/100%/1304.0s local:1/1/100%/1305.0s local:1/1/100%/1306.0s local:1/1/100%/1307.0s local:1/1/100%/1308.0s local:1/1/100%/1309.0s local:1/1/100%/1311.0s local:1/1/100%/1312.0s local:1/1/100%/1313.0s local:1/1/100%/1314.0s local:1/1/100%/1316.0s local:1/1/100%/1317.0s local:1/1/100%/1318.0s local:1/1/100%/1319.0s local:1/1/100%/1320.0s local:1/1/100%/1321.0s local:1/1/100%/1322.0s local:1/1/100%/1323.0s local:1/1/100%/1324.0s local:1/1/100%/1325.0s local:1/1/100%/1326.0s local:1/1/100%/1328.0s local:1/1/100%/1329.0s local:1/1/100%/1330.0s local:1/1/100%/1331.0s local:1/1/100%/1332.0s local:1/1/100%/1334.0s local:1/1/100%/1335.0s local:1/1/100%/1336.0s local:1/1/100%/1337.0s local:1/1/100%/1338.0s local:1/1/100%/1339.0s local:1/1/100%/1340.0s local:1/1/100%/1341.0s local:1/1/100%/1342.0s local:1/1/100%/1343.0s local:1/1/100%/1344.0s local:1/1/100%/1345.0s local:1/1/100%/1346.0s local:1/1/100%/1347.0s local:1/1/100%/1348.0s local:1/1/100%/1349.0s local:1/1/100%/1350.0s local:1/1/100%/1351.0s local:1/1/100%/1352.0s local:1/1/100%/1353.0s local:1/1/100%/1354.0s local:1/1/100%/1355.0s local:1/1/100%/1356.0s local:1/1/100%/1357.0s local:1/1/100%/1358.0s local:1/1/100%/1359.0s local:1/1/100%/1360.0s local:1/1/100%/1361.0s local:1/1/100%/1362.0s local:1/1/100%/1363.0s local:1/1/100%/1364.0s local:1/1/100%/1365.0s local:1/1/100%/1366.0s local:1/1/100%/1367.0s local:1/1/100%/1369.0s local:1/1/100%/1370.0s local:1/1/100%/1371.0s local:1/1/100%/1372.0s local:1/1/100%/1373.0s local:1/1/100%/1374.0s local:1/1/100%/1375.0s local:1/1/100%/1376.0s local:1/1/100%/1377.0s local:1/1/100%/1378.0s local:1/1/100%/1379.0s local:1/1/100%/1380.0s local:1/1/100%/1381.0s local:1/1/100%/1382.0s local:1/1/100%/1383.0s local:1/1/100%/1384.0s local:1/1/100%/1385.0s local:1/1/100%/1386.0s local:1/1/100%/1387.0s local:1/1/100%/1388.0s local:1/1/100%/1389.0s local:1/1/100%/1390.0s local:1/1/100%/1391.0s local:1/1/100%/1392.0s local:1/1/100%/1393.0s local:1/1/100%/1394.0s local:1/1/100%/1395.0s local:1/1/100%/1396.0s local:1/1/100%/1397.0s local:1/1/100%/1398.0s local:1/1/100%/1399.0s local:1/1/100%/1400.0s local:1/1/100%/1401.0s local:1/1/100%/1402.0s local:1/1/100%/1403.0s local:1/1/100%/1404.0s local:1/1/100%/1405.0s local:1/1/100%/1406.0s local:1/1/100%/1407.0s local:1/1/100%/1408.0s local:1/1/100%/1409.0s local:1/1/100%/1410.0s local:1/1/100%/1411.0s local:1/1/100%/1412.0s local:1/1/100%/1413.0s local:1/1/100%/1414.0s local:1/1/100%/1415.0s local:1/1/100%/1416.0s local:1/1/100%/1417.0s local:1/1/100%/1418.0s local:1/1/100%/1419.0s local:1/1/100%/1421.0s local:1/1/100%/1422.0s local:1/1/100%/1423.0s local:1/1/100%/1424.0s local:1/1/100%/1425.0s local:1/1/100%/1426.0s local:1/1/100%/1427.0s local:1/1/100%/1428.0s local:1/1/100%/1429.0s local:1/1/100%/1430.0s local:1/1/100%/1431.0s local:1/1/100%/1432.0s local:1/1/100%/1433.0s local:1/1/100%/1434.0s local:1/1/100%/1435.0s local:1/1/100%/1436.0s local:1/1/100%/1437.0s local:1/1/100%/1438.0s local:1/1/100%/1439.0s local:1/1/100%/1440.0s local:1/1/100%/1441.0s local:1/1/100%/1442.0s local:1/1/100%/1443.0s local:1/1/100%/1444.0s local:1/1/100%/1445.0s local:1/1/100%/1446.0s local:1/1/100%/1447.0s local:1/1/100%/1448.0s local:1/1/100%/1449.0s local:1/1/100%/1450.0s local:1/1/100%/1451.0s local:1/1/100%/1452.0s local:1/1/100%/1453.0s local:1/1/100%/1454.0s local:1/1/100%/1455.0s local:1/1/100%/1456.0s local:1/1/100%/1457.0s local:1/1/100%/1458.0s local:1/1/100%/1459.0s local:1/1/100%/1460.0s local:1/1/100%/1461.0s local:1/1/100%/1462.0s local:1/1/100%/1463.0s local:1/1/100%/1464.0s local:1/1/100%/1465.0s local:1/1/100%/1466.0s local:1/1/100%/1467.0s local:1/1/100%/1468.0s local:1/1/100%/1469.0s local:1/1/100%/1470.0s local:1/1/100%/1472.0s local:1/1/100%/1473.0s local:1/1/100%/1474.0s local:1/1/100%/1475.0s local:1/1/100%/1476.0s local:1/1/100%/1477.0s local:1/1/100%/1478.0s local:1/1/100%/1479.0s local:1/1/100%/1480.0s local:1/1/100%/1481.0s local:1/1/100%/1482.0s local:1/1/100%/1483.0s local:1/1/100%/1484.0s local:1/1/100%/1485.0s local:1/1/100%/1486.0s local:1/1/100%/1487.0s local:1/1/100%/1488.0s local:1/1/100%/1489.0s local:1/1/100%/1490.0s local:1/1/100%/1491.0s local:1/1/100%/1492.0s local:1/1/100%/1493.0s local:1/1/100%/1494.0s local:1/1/100%/1495.0s local:1/1/100%/1496.0s local:1/1/100%/1497.0s local:1/1/100%/1498.0s local:1/1/100%/1499.0s local:1/1/100%/1500.0s local:1/1/100%/1501.0s local:1/1/100%/1502.0s local:1/1/100%/1503.0s local:1/1/100%/1504.0s local:1/1/100%/1505.0s local:1/1/100%/1506.0s local:1/1/100%/1507.0s local:1/1/100%/1508.0s local:1/1/100%/1509.0s local:1/1/100%/1510.0s local:1/1/100%/1511.0s local:1/1/100%/1512.0s local:1/1/100%/1513.0s local:1/1/100%/1514.0s local:1/1/100%/1515.0s local:1/1/100%/1516.0s local:1/1/100%/1517.0s local:1/1/100%/1518.0s local:1/1/100%/1519.0s local:1/1/100%/1520.0s local:1/1/100%/1521.0s local:1/1/100%/1523.0s local:1/1/100%/1524.0s local:1/1/100%/1525.0s local:1/1/100%/1526.0s local:1/1/100%/1527.0s local:1/1/100%/1528.0s local:1/1/100%/1529.0s local:1/1/100%/1530.0s local:1/1/100%/1531.0s local:1/1/100%/1532.0s local:1/1/100%/1533.0s local:1/1/100%/1534.0s local:1/1/100%/1535.0s local:1/1/100%/1536.0s local:1/1/100%/1537.0s local:1/1/100%/1538.0s local:1/1/100%/1539.0s local:1/1/100%/1540.0s local:1/1/100%/1541.0s local:1/1/100%/1542.0s local:1/1/100%/1543.0s local:1/1/100%/1544.0s local:1/1/100%/1545.0s local:1/1/100%/1546.0s local:1/1/100%/1547.0s local:1/1/100%/1548.0s local:1/1/100%/1549.0s local:1/1/100%/1550.0s local:1/1/100%/1551.0s local:1/1/100%/1552.0s local:1/1/100%/1553.0s local:1/1/100%/1554.0s local:1/1/100%/1555.0s local:1/1/100%/1556.0s local:1/1/100%/1557.0s local:1/1/100%/1558.0s local:1/1/100%/1559.0s local:1/1/100%/1560.0s local:1/1/100%/1561.0s local:1/1/100%/1562.0s local:1/1/100%/1563.0s local:1/1/100%/1564.0s local:1/1/100%/1565.0s local:1/1/100%/1566.0s local:1/1/100%/1567.0s local:1/1/100%/1568.0s local:1/1/100%/1569.0s local:1/1/100%/1570.0s local:1/1/100%/1571.0s local:1/1/100%/1572.0s local:1/1/100%/1573.0s local:1/1/100%/1575.0s local:1/1/100%/1576.0s local:1/1/100%/1577.0s local:1/1/100%/1578.0s local:1/1/100%/1579.0s local:1/1/100%/1580.0s local:1/1/100%/1581.0s local:1/1/100%/1582.0s local:1/1/100%/1583.0s local:1/1/100%/1584.0s local:1/1/100%/1585.0s local:1/1/100%/1586.0s local:1/1/100%/1587.0s local:1/1/100%/1588.0s local:1/1/100%/1589.0s local:1/1/100%/1590.0s local:1/1/100%/1591.0s 0: The use of ``template_resolution`` is deprecated
-0: Downloading https://templateflow.s3.amazonaws.com/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-02_T1w.nii.gz
-local:1/1/100%/1592.0s local:1/1/100%/1593.0s local:1/1/100%/1594.0s local:1/1/100%/1595.0s local:1/1/100%/1596.0s local:1/1/100%/1597.0s local:1/1/100%/1598.0s local:1/1/100%/1599.0s local:1/1/100%/1600.0s local:1/1/100%/1601.0s local:1/1/100%/1602.0s local:1/1/100%/1603.0s local:1/1/100%/1604.0s local:1/1/100%/1605.0s local:1/1/100%/1606.0s local:1/1/100%/1607.0s local:1/1/100%/1608.0s local:1/1/100%/1609.0s local:1/1/100%/1610.0s local:1/1/100%/1611.0s local:1/1/100%/1612.0s local:1/1/100%/1613.0s local:1/1/100%/1614.0s local:1/1/100%/1615.0s local:1/1/100%/1616.0s local:1/1/100%/1617.0s local:1/1/100%/1618.0s local:1/1/100%/1619.0s local:1/1/100%/1620.0s local:1/1/100%/1621.0s local:1/1/100%/1622.0s local:1/1/100%/1623.0s local:1/1/100%/1624.0s local:1/1/100%/1626.0s local:1/1/100%/1627.0s local:1/1/100%/1628.0s local:1/1/100%/1629.0s local:1/1/100%/1630.0s local:1/1/100%/1631.0s local:1/1/100%/1632.0s local:1/1/100%/1633.0s local:1/1/100%/1634.0s local:1/1/100%/1635.0s local:1/1/100%/1636.0s local:1/1/100%/1637.0s local:1/1/100%/1638.0s local:1/1/100%/1639.0s local:1/1/100%/1640.0s local:1/1/100%/1641.0s local:1/1/100%/1642.0s local:1/1/100%/1643.0s local:1/1/100%/1644.0s local:1/1/100%/1645.0s local:1/1/100%/1646.0s local:1/1/100%/1647.0s local:1/1/100%/1648.0s local:1/1/100%/1649.0s local:1/1/100%/1650.0s local:1/1/100%/1651.0s local:1/1/100%/1652.0s local:1/1/100%/1653.0s local:1/1/100%/1654.0s local:1/1/100%/1655.0s local:1/1/100%/1656.0s local:1/1/100%/1657.0s local:1/1/100%/1658.0s local:1/1/100%/1659.0s local:1/1/100%/1660.0s local:1/1/100%/1661.0s local:1/1/100%/1662.0s local:1/1/100%/1663.0s local:1/1/100%/1664.0s local:1/1/100%/1665.0s local:1/1/100%/1666.0s local:1/1/100%/1667.0s local:1/1/100%/1668.0s local:1/1/100%/1669.0s local:1/1/100%/1670.0s local:1/1/100%/1671.0s local:1/1/100%/1672.0s local:1/1/100%/1673.0s local:1/1/100%/1674.0s local:1/1/100%/1675.0s local:1/1/100%/1677.0s local:1/1/100%/1678.0s local:1/1/100%/1679.0s local:1/1/100%/1680.0s local:1/1/100%/1681.0s local:1/1/100%/1682.0s local:1/1/100%/1683.0s local:1/1/100%/1684.0s local:1/1/100%/1685.0s local:1/1/100%/1686.0s local:1/1/100%/1687.0s local:1/1/100%/1688.0s local:1/1/100%/1689.0s local:1/1/100%/1690.0s local:1/1/100%/1691.0s local:1/1/100%/1692.0s local:1/1/100%/1693.0s local:1/1/100%/1694.0s local:1/1/100%/1695.0s local:1/1/100%/1696.0s local:1/1/100%/1697.0s local:1/1/100%/1698.0s local:1/1/100%/1699.0s local:1/1/100%/1700.0s local:1/1/100%/1701.0s local:1/1/100%/1702.0s local:1/1/100%/1703.0s local:1/1/100%/1704.0s local:1/1/100%/1705.0s local:1/1/100%/1706.0s local:1/1/100%/1707.0s local:1/1/100%/1708.0s local:1/1/100%/1709.0s local:1/1/100%/1710.0s local:1/1/100%/1711.0s local:1/1/100%/1712.0s local:1/1/100%/1713.0s local:1/1/100%/1714.0s local:1/1/100%/1715.0s local:1/1/100%/1716.0s local:1/1/100%/1717.0s local:1/1/100%/1718.0s local:1/1/100%/1719.0s local:1/1/100%/1720.0s local:1/1/100%/1721.0s local:1/1/100%/1722.0s local:1/1/100%/1723.0s local:1/1/100%/1724.0s local:1/1/100%/1725.0s local:1/1/100%/1726.0s local:1/1/100%/1728.0s local:1/1/100%/1729.0s local:1/1/100%/1730.0s local:1/1/100%/1731.0s local:1/1/100%/1732.0s local:1/1/100%/1733.0s local:1/1/100%/1734.0s local:1/1/100%/1735.0s local:1/1/100%/1736.0s local:1/1/100%/1737.0s local:1/1/100%/1738.0s local:1/1/100%/1739.0s local:1/1/100%/1740.0s local:1/1/100%/1741.0s local:1/1/100%/1742.0s local:1/1/100%/1743.0s local:1/1/100%/1744.0s local:1/1/100%/1745.0s local:1/1/100%/1746.0s local:1/1/100%/1747.0s local:1/1/100%/1748.0s local:1/1/100%/1749.0s local:1/1/100%/1750.0s local:1/1/100%/1751.0s local:1/1/100%/1752.0s local:1/1/100%/1753.0s local:1/1/100%/1754.0s local:1/1/100%/1755.0s local:1/1/100%/1756.0s local:1/1/100%/1757.0s local:1/1/100%/1758.0s local:1/1/100%/1759.0s local:1/1/100%/1760.0s local:1/1/100%/1761.0s local:1/1/100%/1762.0s local:1/1/100%/1763.0s local:1/1/100%/1764.0s local:1/1/100%/1765.0s local:1/1/100%/1766.0s local:1/1/100%/1767.0s local:1/1/100%/1768.0s local:1/1/100%/1769.0s local:1/1/100%/1770.0s local:1/1/100%/1771.0s local:1/1/100%/1772.0s local:1/1/100%/1773.0s local:1/1/100%/1774.0s local:1/1/100%/1775.0s local:1/1/100%/1776.0s local:1/1/100%/1777.0s local:1/1/100%/1779.0s local:1/1/100%/1780.0s local:1/1/100%/1781.0s local:1/1/100%/1782.0s local:1/1/100%/1783.0s local:1/1/100%/1784.0s local:1/1/100%/1785.0s local:1/1/100%/1786.0s local:1/1/100%/1787.0s local:1/1/100%/1788.0s local:1/1/100%/1789.0s local:1/1/100%/1790.0s local:1/1/100%/1791.0s local:1/1/100%/1792.0s local:1/1/100%/1793.0s local:1/1/100%/1794.0s local:1/1/100%/1795.0s local:1/1/100%/1796.0s 0:   0%|          | 0.00/1.76M [00:00<?, ?B/s]  2%|▏         | 33.8k/1.76M [00:00<00:10, 171kB/s]  5%|▍         | 86.0k/1.76M [00:00<00:05, 318kB/s] 12%|█▏        | 208k/1.76M [00:00<00:02, 654kB/s]  25%|██▍       | 434k/1.76M [00:00<00:01, 1.21MB/s] 50%|█████     | 887k/1.76M [00:00<00:00, 2.31MB/s]100%|██████████| 1.76M/1.76M [00:00<00:00, 2.70MB/s]
-0: The use of ``template_resolution`` is deprecated
-local:1/1/100%/1797.0s 0: The use of ``template_resolution`` is deprecated
-local:1/1/100%/1798.0s local:1/1/100%/1799.0s local:1/1/100%/1800.0s local:1/1/100%/1801.0s local:1/1/100%/1802.0s local:1/1/100%/1803.0s local:1/1/100%/1804.0s local:1/1/100%/1805.0s local:1/1/100%/1806.0s local:1/1/100%/1807.0s local:1/1/100%/1808.0s local:1/1/100%/1809.0s local:1/1/100%/1810.0s local:1/1/100%/1811.0s local:1/1/100%/1812.0s local:1/1/100%/1813.0s local:1/1/100%/1814.0s local:1/1/100%/1815.0s local:1/1/100%/1816.0s local:1/1/100%/1817.0s local:1/1/100%/1818.0s local:1/1/100%/1819.0s local:1/1/100%/1820.0s local:1/1/100%/1821.0s local:1/1/100%/1822.0s local:1/1/100%/1823.0s local:1/1/100%/1824.0s local:1/1/100%/1825.0s local:1/1/100%/1826.0s local:1/1/100%/1827.0s local:1/1/100%/1828.0s local:1/1/100%/1830.0s local:1/1/100%/1831.0s local:1/1/100%/1832.0s local:1/1/100%/1833.0s local:1/1/100%/1834.0s local:1/1/100%/1835.0s local:1/1/100%/1836.0s local:1/1/100%/1837.0s local:1/1/100%/1838.0s local:1/1/100%/1839.0s local:1/1/100%/1840.0s local:1/1/100%/1841.0s local:1/1/100%/1842.0s local:1/1/100%/1843.0s local:1/1/100%/1844.0s local:1/1/100%/1845.0s local:1/1/100%/1846.0s local:1/1/100%/1847.0s local:1/1/100%/1848.0s local:1/1/100%/1849.0s local:1/1/100%/1850.0s local:1/1/100%/1851.0s local:1/1/100%/1852.0s local:1/1/100%/1853.0s local:1/1/100%/1854.0s local:1/1/100%/1855.0s local:1/1/100%/1856.0s local:1/1/100%/1857.0s local:1/1/100%/1858.0s local:1/1/100%/1859.0s local:1/1/100%/1860.0s local:1/1/100%/1861.0s local:1/1/100%/1862.0s local:1/1/100%/1863.0s local:1/1/100%/1864.0s local:1/1/100%/1865.0s local:1/1/100%/1866.0s local:1/1/100%/1867.0s local:1/1/100%/1868.0s local:1/1/100%/1869.0s local:1/1/100%/1870.0s local:1/1/100%/1871.0s local:1/1/100%/1872.0s local:1/1/100%/1873.0s local:1/1/100%/1874.0s local:1/1/100%/1875.0s local:1/1/100%/1877.0s local:1/1/100%/1878.0s local:1/1/100%/1879.0s local:1/1/100%/1880.0s local:1/1/100%/1881.0s local:1/1/100%/1882.0s local:1/1/100%/1883.0s local:1/1/100%/1884.0s local:1/1/100%/1885.0s local:1/1/100%/1886.0s local:1/1/100%/1887.0s local:1/1/100%/1888.0s local:1/1/100%/1889.0s local:1/1/100%/1890.0s local:1/1/100%/1891.0s local:1/1/100%/1892.0s local:1/1/100%/1893.0s local:1/1/100%/1894.0s local:1/1/100%/1895.0s local:1/1/100%/1896.0s local:1/1/100%/1897.0s local:1/1/100%/1898.0s local:1/1/100%/1899.0s local:1/1/100%/1900.0s local:1/1/100%/1901.0s local:1/1/100%/1902.0s local:1/1/100%/1903.0s local:1/1/100%/1904.0s local:1/1/100%/1905.0s local:1/1/100%/1906.0s local:1/1/100%/1907.0s local:1/1/100%/1908.0s local:1/1/100%/1909.0s local:1/1/100%/1910.0s local:1/1/100%/1911.0s local:1/1/100%/1912.0s local:1/1/100%/1913.0s local:1/1/100%/1914.0s local:1/1/100%/1915.0s local:1/1/100%/1916.0s local:1/1/100%/1917.0s local:1/1/100%/1918.0s local:1/1/100%/1919.0s local:1/1/100%/1920.0s local:1/1/100%/1921.0s local:1/1/100%/1923.0s local:1/1/100%/1924.0s local:1/1/100%/1925.0s local:1/1/100%/1926.0s local:1/1/100%/1927.0s local:1/1/100%/1928.0s local:1/1/100%/1929.0s local:1/1/100%/1930.0s local:1/1/100%/1931.0s local:1/1/100%/1932.0s local:1/1/100%/1933.0s local:1/1/100%/1934.0s local:1/1/100%/1935.0s local:1/1/100%/1936.0s local:1/1/100%/1937.0s local:1/1/100%/1938.0s local:1/1/100%/1939.0s local:1/1/100%/1940.0s local:1/1/100%/1941.0s local:1/1/100%/1942.0s local:1/1/100%/1943.0s local:1/1/100%/1944.0s local:1/1/100%/1945.0s local:1/1/100%/1946.0s local:1/1/100%/1947.0s local:1/1/100%/1948.0s local:1/1/100%/1949.0s local:1/1/100%/1950.0s local:1/1/100%/1951.0s local:1/1/100%/1952.0s local:1/1/100%/1953.0s local:1/1/100%/1954.0s local:1/1/100%/1955.0s local:1/1/100%/1956.0s local:1/1/100%/1957.0s local:1/1/100%/1958.0s local:1/1/100%/1959.0s local:1/1/100%/1960.0s local:1/1/100%/1961.0s local:1/1/100%/1962.0s local:1/1/100%/1963.0s local:1/1/100%/1964.0s local:1/1/100%/1965.0s local:1/1/100%/1966.0s local:1/1/100%/1967.0s local:1/1/100%/1968.0s local:1/1/100%/1969.0s local:1/1/100%/1970.0s local:1/1/100%/1971.0s local:1/1/100%/1972.0s local:1/1/100%/1974.0s local:1/1/100%/1975.0s local:1/1/100%/1976.0s local:1/1/100%/1977.0s local:1/1/100%/1978.0s local:1/1/100%/1979.0s local:1/1/100%/1980.0s local:1/1/100%/1981.0s local:1/1/100%/1982.0s local:1/1/100%/1983.0s local:1/1/100%/1984.0s local:1/1/100%/1985.0s local:1/1/100%/1986.0s local:1/1/100%/1987.0s local:1/1/100%/1988.0s local:1/1/100%/1989.0s local:1/1/100%/1990.0s local:1/1/100%/1991.0s local:1/1/100%/1992.0s local:1/1/100%/1993.0s local:1/1/100%/1994.0s local:1/1/100%/1995.0s local:1/1/100%/1996.0s local:1/1/100%/1997.0s local:1/1/100%/1998.0s local:1/1/100%/1999.0s local:1/1/100%/2000.0s local:1/1/100%/2001.0s local:1/1/100%/2002.0s local:1/1/100%/2003.0s local:1/1/100%/2004.0s local:1/1/100%/2005.0s local:1/1/100%/2006.0s local:1/1/100%/2007.0s local:1/1/100%/2008.0s local:1/1/100%/2009.0s local:1/1/100%/2010.0s local:1/1/100%/2011.0s local:1/1/100%/2012.0s local:1/1/100%/2013.0s local:1/1/100%/2014.0s local:1/1/100%/2015.0s local:1/1/100%/2016.0s local:1/1/100%/2017.0s local:1/1/100%/2018.0s local:1/1/100%/2019.0s local:1/1/100%/2020.0s local:1/1/100%/2021.0s local:1/1/100%/2022.0s local:1/1/100%/2023.0s local:1/1/100%/2025.0s local:1/1/100%/2026.0s local:1/1/100%/2027.0s local:1/1/100%/2028.0s local:1/1/100%/2029.0s local:1/1/100%/2030.0s local:1/1/100%/2031.0s local:1/1/100%/2032.0s local:1/1/100%/2033.0s local:1/1/100%/2034.0s local:1/1/100%/2035.0s local:1/1/100%/2036.0s local:1/1/100%/2037.0s local:1/1/100%/2038.0s local:1/1/100%/2039.0s local:1/1/100%/2040.0s local:1/1/100%/2041.0s local:1/1/100%/2042.0s local:1/1/100%/2043.0s local:1/1/100%/2044.0s local:1/1/100%/2045.0s local:1/1/100%/2046.0s local:1/1/100%/2047.0s local:1/1/100%/2048.0s local:1/1/100%/2049.0s local:1/1/100%/2050.0s local:1/1/100%/2051.0s local:1/1/100%/2052.0s local:1/1/100%/2053.0s local:1/1/100%/2054.0s local:1/1/100%/2055.0s local:1/1/100%/2056.0s local:1/1/100%/2057.0s local:1/1/100%/2058.0s local:1/1/100%/2059.0s local:1/1/100%/2060.0s local:1/1/100%/2061.0s local:1/1/100%/2062.0s local:1/1/100%/2063.0s local:1/1/100%/2064.0s local:1/1/100%/2065.0s local:1/1/100%/2066.0s local:1/1/100%/2067.0s local:1/1/100%/2068.0s local:1/1/100%/2069.0s local:1/1/100%/2070.0s local:1/1/100%/2071.0s local:1/1/100%/2072.0s local:1/1/100%/2073.0s local:1/1/100%/2074.0s local:1/1/100%/2075.0s local:1/1/100%/2077.0s local:1/1/100%/2078.0s local:1/1/100%/2079.0s local:1/1/100%/2080.0s local:1/1/100%/2081.0s local:1/1/100%/2082.0s local:1/1/100%/2083.0s local:1/1/100%/2084.0s local:1/1/100%/2085.0s local:1/1/100%/2086.0s local:1/1/100%/2087.0s local:1/1/100%/2088.0s local:1/1/100%/2089.0s local:1/1/100%/2090.0s local:1/1/100%/2091.0s local:1/1/100%/2092.0s local:1/1/100%/2093.0s local:1/1/100%/2094.0s local:1/1/100%/2095.0s local:1/1/100%/2096.0s local:1/1/100%/2097.0s local:1/1/100%/2098.0s local:1/1/100%/2099.0s local:1/1/100%/2100.0s local:1/1/100%/2101.0s local:1/1/100%/2102.0s local:1/1/100%/2103.0s local:1/1/100%/2104.0s local:1/1/100%/2105.0s local:1/1/100%/2106.0s local:1/1/100%/2107.0s local:1/1/100%/2108.0s local:1/1/100%/2109.0s local:1/1/100%/2110.0s local:1/1/100%/2111.0s local:1/1/100%/2112.0s local:1/1/100%/2113.0s local:1/1/100%/2114.0s local:1/1/100%/2115.0s local:1/1/100%/2116.0s local:1/1/100%/2117.0s local:1/1/100%/2118.0s local:1/1/100%/2119.0s local:1/1/100%/2120.0s local:1/1/100%/2121.0s local:1/1/100%/2122.0s local:1/1/100%/2123.0s local:1/1/100%/2124.0s local:1/1/100%/2125.0s local:1/1/100%/2126.0s local:1/1/100%/2127.0s local:1/1/100%/2129.0s local:1/1/100%/2130.0s local:1/1/100%/2131.0s local:1/1/100%/2132.0s local:1/1/100%/2133.0s local:1/1/100%/2134.0s local:1/1/100%/2135.0s local:1/1/100%/2136.0s local:1/1/100%/2137.0s local:1/1/100%/2138.0s local:1/1/100%/2139.0s local:1/1/100%/2140.0s local:1/1/100%/2141.0s local:1/1/100%/2142.0s local:1/1/100%/2143.0s local:1/1/100%/2144.0s local:1/1/100%/2145.0s 0: [34mINFO:   [0m Cleaning up image...
-local:1/1/100%/2146.0s local:1/1/100%/2147.0s local:1/1/100%/2148.0s local:1/1/100%/2149.0s local:1/1/100%/2150.0s local:1/1/100%/2151.0s local:1/1/100%/2152.0s local:1/1/100%/2153.0s local:1/1/100%/2154.0s local:1/1/100%/2155.0s local:1/1/100%/2156.0s local:1/1/100%/2157.0s local:1/1/100%/2158.0s local:1/1/100%/2159.0s local:1/1/100%/2160.0s local:1/1/100%/2161.0s local:1/1/100%/2162.0s local:1/1/100%/2163.0s local:1/1/100%/2164.0s local:1/1/100%/2165.0s local:1/1/100%/2166.0s local:1/1/100%/2167.0s local:1/1/100%/2168.0s local:1/1/100%/2169.0s local:1/1/100%/2170.0s local:1/1/100%/2171.0s local:1/1/100%/2172.0s local:1/1/100%/2173.0s local:1/1/100%/2174.0s local:1/1/100%/2175.0s local:1/1/100%/2177.0s local:1/1/100%/2178.0s local:1/1/100%/2179.0s local:1/1/100%/2180.0s local:1/1/100%/2181.0s local:1/1/100%/2182.0s local:1/1/100%/2183.0s local:1/1/100%/2184.0s local:1/1/100%/2185.0s local:1/1/100%/2186.0s 0: [INFO] == Command exit (modification check follows) ===== 
-local:1/1/100%/2187.0s local:1/1/100%/2188.0s local:1/1/100%/2189.0s local:1/1/100%/2190.0s local:1/1/100%/2191.0s local:1/1/100%/2192.0s local:1/1/100%/2193.0s local:1/1/100%/2194.0s local:1/1/100%/2195.0s local:1/1/100%/2196.0s local:1/1/100%/2197.0s local:1/1/100%/2198.0s 0: + flock /scratch/fatx405.1433190/sub-ewgenia001/mriqc.lock datalad push -d /scratch/fatx405.1433190/sub-ewgenia001/clone/data/mriqc --to origin
-local:1/1/100%/2199.0s local:1/1/100%/2200.0s 0: [INFO] Determine push target 
-0: [INFO] Push refspecs 
-local:1/1/100%/2201.0s 0: [INFO] Transfer data 
-local:1/1/100%/2202.0s local:1/1/100%/2203.0s local:1/1/100%/2204.0s local:1/1/100%/2205.0s local:1/1/100%/2206.0s local:1/1/100%/2207.0s 0: [INFO] Update availability information 
-local:1/1/100%/2208.0s local:1/1/100%/2209.0s local:1/1/100%/2210.0s local:1/1/100%/2211.0s 0: [INFO] Start enumerating objects 
-0: [INFO] Start counting objects 
-0: [INFO] Start compressing objects 
-0: [INFO] Start writing objects 
-local:1/1/100%/2212.0s local:1/1/100%/2213.0s 0: [INFO] Finished push of Dataset(/scratch/fatx405.1433190/sub-ewgenia001/clone/data/mriqc) 
-0: + exit 0
-local:1/1/100%/2214.0s local:1/1/100%/2215.0s local:1/1/100%/2216.0s local:1/1/100%/2216.0s local:0/2/100%/1108.0s local:0/2/100%/1108.0s 
-+ df -h /scratch
-++++ date +%s
-+++ expr 1625589656 - 1625587438
-++ expr 2218
-+ runtime_s=2218
-++ date -d@2218 -u +%H:%M:%S
-+ echo 'script runtime: 00:36:58 hours'

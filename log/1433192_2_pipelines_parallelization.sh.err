@@ -1,541 +1,0 @@
-module: loaded site/slurm
-module: loaded site/tmpdir
-module: loaded site/hummel
-module: loaded env/system-gcc
-+ module unload singularity
-++ /work/fatx405/miniconda3/bin/tclsh /sw/modules/tcl/modulecmd.tcl sh unload singularity
-+ eval
-+ module switch singularity/3.5.2-overlayfix
-++ /work/fatx405/miniconda3/bin/tclsh /sw/modules/tcl/modulecmd.tcl sh switch singularity/3.5.2-overlayfix
-module: loaded singularity/3.5.2-overlayfix
-+ eval '_LMFILES__modshare=/sw/BASE/env/system-gcc:1:/sw/BASE/site/slurm:1:/sw/BASE/site/hummel:1:/sw/BASE/site/tmpdir:1:/sw/TOOL/singularity/3.5.2-overlayfix:1;' export '_LMFILES__modshare;' 'LOADEDMODULES_modshare=site/hummel:1:site/tmpdir:1:singularity/3.5.2-overlayfix:1:env/system-gcc:1:site/slurm:1;' export 'LOADEDMODULES_modshare;' 'SINGULARITY_CACHEDIR=/scratch/fatx405.1433194/singularity;' export 'SINGULARITY_CACHEDIR;' 'PATH=/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin;' export 'PATH;' '_LMFILES_=/sw/BASE/site/slurm:/sw/BASE/site/tmpdir:/sw/BASE/site/hummel:/sw/BASE/env/system-gcc:/sw/TOOL/singularity/3.5.2-overlayfix;' export '_LMFILES_;' 'LOADEDMODULES=site/slurm:site/tmpdir:site/hummel:env/system-gcc:singularity/3.5.2-overlayfix;' export 'LOADEDMODULES;' 'PATH_modshare=/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:1:/sw/batch/slurm/19.05.6/bin:1:/bin:1:/usr/sbin:1:/work/fatx405/miniconda3/bin:1:/usr/bin:1:/sw/rrz/bin:1:/usr/local/sbin:1:/usr/local/bin:1;' export 'PATH_modshare;'
-++ _LMFILES__modshare=/sw/BASE/env/system-gcc:1:/sw/BASE/site/slurm:1:/sw/BASE/site/hummel:1:/sw/BASE/site/tmpdir:1:/sw/TOOL/singularity/3.5.2-overlayfix:1
-++ export _LMFILES__modshare
-++ LOADEDMODULES_modshare=site/hummel:1:site/tmpdir:1:singularity/3.5.2-overlayfix:1:env/system-gcc:1:site/slurm:1
-++ export LOADEDMODULES_modshare
-++ SINGULARITY_CACHEDIR=/scratch/fatx405.1433194/singularity
-++ export SINGULARITY_CACHEDIR
-++ PATH=/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ export PATH
-++ _LMFILES_=/sw/BASE/site/slurm:/sw/BASE/site/tmpdir:/sw/BASE/site/hummel:/sw/BASE/env/system-gcc:/sw/TOOL/singularity/3.5.2-overlayfix
-++ export _LMFILES_
-++ LOADEDMODULES=site/slurm:site/tmpdir:site/hummel:env/system-gcc:singularity/3.5.2-overlayfix
-++ export LOADEDMODULES
-++ PATH_modshare=/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:1:/sw/batch/slurm/19.05.6/bin:1:/bin:1:/usr/sbin:1:/work/fatx405/miniconda3/bin:1:/usr/bin:1:/sw/rrz/bin:1:/usr/local/sbin:1:/usr/local/bin:1
-++ export PATH_modshare
-+ module load parallel
-++ /work/fatx405/miniconda3/bin/tclsh /sw/modules/tcl/modulecmd.tcl sh load parallel
-module: loaded parallel/20180322
-+ eval '_LMFILES__modshare=/sw/BASE/env/system-gcc:1:/sw/BASE/site/slurm:1:/sw/BASE/site/hummel:1:/sw/BASE/site/tmpdir:1:/sw/TOOL/parallel/20180322:1:/sw/TOOL/singularity/3.5.2-overlayfix:1;' export '_LMFILES__modshare;' 'LOADEDMODULES_modshare=site/hummel:1:site/tmpdir:1:parallel/20180322:1:singularity/3.5.2-overlayfix:1:env/system-gcc:1:site/slurm:1;' export 'LOADEDMODULES_modshare;' 'MANPATH=/sw/env/system-gcc/parallel/20180322/share/man:/sw/batch/slurm/19.05.6/share/man:/sw/rrz/share/man:/sw/modules/man:/usr/share/man;' export 'MANPATH;' 'PATH=/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin;' export 'PATH;' '_LMFILES_=/sw/BASE/site/slurm:/sw/BASE/site/tmpdir:/sw/BASE/site/hummel:/sw/BASE/env/system-gcc:/sw/TOOL/singularity/3.5.2-overlayfix:/sw/TOOL/parallel/20180322;' export '_LMFILES_;' 'LOADEDMODULES=site/slurm:site/tmpdir:site/hummel:env/system-gcc:singularity/3.5.2-overlayfix:parallel/20180322;' export 'LOADEDMODULES;' 'MANPATH_modshare=/sw/modules/man:1:/sw/env/system-gcc/parallel/20180322/share/man:1:/sw/batch/slurm/19.05.6/share/man:1:/usr/share/man:1:/sw/rrz/share/man:1;' export 'MANPATH_modshare;' 'PATH_modshare=/sw/env/system-gcc/parallel/20180322/bin:1:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:1:/sw/batch/slurm/19.05.6/bin:1:/bin:1:/usr/sbin:1:/work/fatx405/miniconda3/bin:1:/usr/bin:1:/sw/rrz/bin:1:/usr/local/sbin:1:/usr/local/bin:1;' export 'PATH_modshare;'
-++ _LMFILES__modshare=/sw/BASE/env/system-gcc:1:/sw/BASE/site/slurm:1:/sw/BASE/site/hummel:1:/sw/BASE/site/tmpdir:1:/sw/TOOL/parallel/20180322:1:/sw/TOOL/singularity/3.5.2-overlayfix:1
-++ export _LMFILES__modshare
-++ LOADEDMODULES_modshare=site/hummel:1:site/tmpdir:1:parallel/20180322:1:singularity/3.5.2-overlayfix:1:env/system-gcc:1:site/slurm:1
-++ export LOADEDMODULES_modshare
-++ MANPATH=/sw/env/system-gcc/parallel/20180322/share/man:/sw/batch/slurm/19.05.6/share/man:/sw/rrz/share/man:/sw/modules/man:/usr/share/man
-++ export MANPATH
-++ PATH=/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ export PATH
-++ _LMFILES_=/sw/BASE/site/slurm:/sw/BASE/site/tmpdir:/sw/BASE/site/hummel:/sw/BASE/env/system-gcc:/sw/TOOL/singularity/3.5.2-overlayfix:/sw/TOOL/parallel/20180322
-++ export _LMFILES_
-++ LOADEDMODULES=site/slurm:site/tmpdir:site/hummel:env/system-gcc:singularity/3.5.2-overlayfix:parallel/20180322
-++ export LOADEDMODULES
-++ MANPATH_modshare=/sw/modules/man:1:/sw/env/system-gcc/parallel/20180322/share/man:1:/sw/batch/slurm/19.05.6/share/man:1:/usr/share/man:1:/sw/rrz/share/man:1
-++ export MANPATH_modshare
-++ PATH_modshare=/sw/env/system-gcc/parallel/20180322/bin:1:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:1:/sw/batch/slurm/19.05.6/bin:1:/bin:1:/usr/sbin:1:/work/fatx405/miniconda3/bin:1:/usr/bin:1:/sw/rrz/bin:1:/usr/local/sbin:1:/usr/local/bin:1
-++ export PATH_modshare
-+ SCRIPT_DIR=/work/fatx405/projects/CSI_TEST/code
-+ source /work/fatx405/projects/CSI_TEST/code/.projectrc
-++ PROJ_DIR=/work/fatx405/projects/CSI_TEST
-++ DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-++ DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-++ BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-++ CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-++ ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-+ source /work/fatx405/set_envs/miniconda
-++ export PATH=/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ PATH=/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-+ source activate datalad
-++ _CONDA_ROOT=/work/fatx405/miniconda3
-++ . /work/fatx405/miniconda3/etc/profile.d/conda.sh
-+++ export CONDA_EXE=/work/fatx405/miniconda3/bin/conda
-+++ CONDA_EXE=/work/fatx405/miniconda3/bin/conda
-+++ export _CE_M=
-+++ _CE_M=
-+++ export _CE_CONDA=
-+++ _CE_CONDA=
-+++ export CONDA_PYTHON_EXE=/work/fatx405/miniconda3/bin/python
-+++ CONDA_PYTHON_EXE=/work/fatx405/miniconda3/bin/python
-+++ '[' -z '' ']'
-+++ export CONDA_SHLVL=0
-+++ CONDA_SHLVL=0
-+++ '[' -n '' ']'
-+++++ dirname /work/fatx405/miniconda3/bin/conda
-++++ dirname /work/fatx405/miniconda3/bin
-+++ PATH=/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-+++ export PATH
-+++ '[' -z '' ']'
-+++ PS1=
-++ conda activate datalad
-++ '[' 2 -lt 1 ']'
-++ local cmd=activate
-++ shift
-++ case "$cmd" in
-++ __conda_activate activate datalad
-++ '[' -n '' ']'
-++ local cmd=activate
-++ shift
-++ local ask_conda
-++ CONDA_INTERNAL_OLDPATH=/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ __add_sys_prefix_to_path
-++ '[' -n '' ']'
-+++ dirname /work/fatx405/miniconda3/bin/conda
-++ SYSP=/work/fatx405/miniconda3/bin
-+++ dirname /work/fatx405/miniconda3/bin
-++ SYSP=/work/fatx405/miniconda3
-++ '[' -n '' ']'
-++ PATH=/work/fatx405/miniconda3/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ export PATH
-+++ PS1=
-+++ /work/fatx405/miniconda3/bin/conda shell.posix activate datalad
-++ ask_conda='PS1='\''(datalad) '\''
-export PATH='\''/work/fatx405/miniconda3/envs/datalad/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin'\''
-export CONDA_PREFIX='\''/work/fatx405/miniconda3/envs/datalad'\''
-export CONDA_SHLVL='\''1'\''
-export CONDA_DEFAULT_ENV='\''datalad'\''
-export CONDA_PROMPT_MODIFIER='\''(datalad) '\''
-export CONDA_EXE='\''/work/fatx405/miniconda3/bin/conda'\''
-export _CE_M='\'''\''
-export _CE_CONDA='\'''\''
-export CONDA_PYTHON_EXE='\''/work/fatx405/miniconda3/bin/python'\'''
-++ rc=0
-++ PATH=/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-++ eval 'PS1='\''(datalad) '\''
-export PATH='\''/work/fatx405/miniconda3/envs/datalad/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin'\''
-export CONDA_PREFIX='\''/work/fatx405/miniconda3/envs/datalad'\''
-export CONDA_SHLVL='\''1'\''
-export CONDA_DEFAULT_ENV='\''datalad'\''
-export CONDA_PROMPT_MODIFIER='\''(datalad) '\''
-export CONDA_EXE='\''/work/fatx405/miniconda3/bin/conda'\''
-export _CE_M='\'''\''
-export _CE_CONDA='\'''\''
-export CONDA_PYTHON_EXE='\''/work/fatx405/miniconda3/bin/python'\'''
-+++ PS1='(datalad) '
-+++ export PATH=/work/fatx405/miniconda3/envs/datalad/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-+++ PATH=/work/fatx405/miniconda3/envs/datalad/bin:/work/fatx405/miniconda3/condabin:/work/fatx405/miniconda3/bin:/sw/env/system-gcc/parallel/20180322/bin:/sw/env/system-gcc/singularity/3.5.2-overlayfix/bin:/sw/batch/slurm/19.05.6/bin:/sw/rrz/bin:/work/fatx405/miniconda3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin
-+++ export CONDA_PREFIX=/work/fatx405/miniconda3/envs/datalad
-+++ CONDA_PREFIX=/work/fatx405/miniconda3/envs/datalad
-+++ export CONDA_SHLVL=1
-+++ CONDA_SHLVL=1
-+++ export CONDA_DEFAULT_ENV=datalad
-+++ CONDA_DEFAULT_ENV=datalad
-+++ export 'CONDA_PROMPT_MODIFIER=(datalad) '
-+++ CONDA_PROMPT_MODIFIER='(datalad) '
-+++ export CONDA_EXE=/work/fatx405/miniconda3/bin/conda
-+++ CONDA_EXE=/work/fatx405/miniconda3/bin/conda
-+++ export _CE_M=
-+++ _CE_M=
-+++ export _CE_CONDA=
-+++ _CE_CONDA=
-+++ export CONDA_PYTHON_EXE=/work/fatx405/miniconda3/bin/python
-+++ CONDA_PYTHON_EXE=/work/fatx405/miniconda3/bin/python
-++ '[' 0 '!=' 0 ']'
-++ __conda_hashr
-++ '[' -n '' ']'
-++ '[' -n '' ']'
-++ hash -r
-+ subjs=($@)
-+ SUBJS_PER_NODE=2
-+ export ITER=0
-+ ITER=0
-++ expr 0 '*' 1000 + 2
-+ subjs_start_idx=2
-+ '[' smriprep == bidsify ']'
-+ subjs=(${subjs[@]-$(ls $PROJ_DIR/sub-* -d -1)})
-+ subjs_subarr=($(basename -a ${subjs[@]:$subjs_start_idx:$SUBJS_PER_NODE}))
-++ basename -a /work/fatx405/projects/CSI_TEST/data/raw_bids/sub-ewgenia003 /work/fatx405/projects/CSI_TEST/data/raw_bids/sub-ewgenia004
-+ echo starting processing with smriprep from index: 2 ...
-+ echo for n=2 subjects
-+ echo subjects to process: sub-ewgenia003 sub-ewgenia004
-+ echo submission script directory: /work/fatx405/projects/CSI_TEST/code
-+ echo current TMPDIR: /scratch/fatx405.1433194
-+ echo ITERator: 0
-++ awk 'BEGIN {print int(30/2); exit}'
-+ threads_per_sub=15
-++ awk 'BEGIN {print int(64000/2); exit}'
-+ mem_per_sub=32000
-+ srun='srun --label --exclusive -N1 -n1 --cpus-per-task 15 --mem-per-cpu=16000'
-+ parallel='parallel --ungroup --progress --delay 0.2 -j2 --joblog /work/fatx405/projects/CSI_TEST/code/log/parallel_runtask.log'
-+ proc_script=/work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh
-+ echo -e 'running:\n parallel --ungroup --progress --delay 0.2 -j2 --joblog /work/fatx405/projects/CSI_TEST/code/log/parallel_runtask.log srun --label --exclusive -N1 -n1 --cpus-per-task 15 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh ::: sub-ewgenia003' sub-ewgenia004
-+ parallel --ungroup --progress --delay 0.2 -j2 --joblog /work/fatx405/projects/CSI_TEST/code/log/parallel_runtask.log 'srun --label --exclusive -N1 -n1 --cpus-per-task 15 --mem-per-cpu=16000 /work/fatx405/projects/CSI_TEST/code/pipelines_processing.sh' ::: sub-ewgenia003 sub-ewgenia004
-
-Computers / CPU cores / Max jobs to run
-1:local / 32 / 2
-
-Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
-local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:1/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: + source /sw/batch/init.sh
-0: ++ . /sw/profile/init.sh
-0: +++ case $(/sw/batch/bin/rrz-run-env) in
-0: ++++ /sw/batch/bin/rrz-run-env
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: +++ . /sw/modules/rrz-modules.sh
-local:2/0/100%/0.0s 0: + source /sw/batch/init.sh
-0: ++ . /sw/profile/init.sh
-0: +++ case $(/sw/batch/bin/rrz-run-env) in
-0: ++++ /sw/batch/bin/rrz-run-env
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: +++ . /sw/modules/rrz-modules.sh
-0: ++++ test -z 1
-0: ++++ echo 'RRZ: re-using existing module setup (RRZ_SW_INIT present)'
-0: RRZ: re-using existing module setup (RRZ_SW_INIT present)
-0: ++++ . /sw/modules/init.sh
-0: ++++++ tclsh /sw/modules/tcl/modulecmd.tcl sh autoinit
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: ++++ test -z 1
-0: ++++ echo 'RRZ: re-using existing module setup (RRZ_SW_INIT present)'
-0: RRZ: re-using existing module setup (RRZ_SW_INIT present)
-0: ++++ . /sw/modules/init.sh
-0: ++++++ tclsh /sw/modules/tcl/modulecmd.tcl sh autoinit
-0: +++++ eval module '()' '{' eval '`'\''/work/fatx405/miniconda3/envs/datalad/bin/tclsh'\''' ''\''/sw/modules/tcl/modulecmd.tcl'\''' ''\''sh'\''' '$*`;' '}' ';' 'MODULESHOME=/sw/modules/tcl;' export 'MODULESHOME;'
-0: ++++++ MODULESHOME=/sw/modules/tcl
-0: ++++++ export MODULESHOME
-0: ++ unset SLURM_EXPORT_ENV
-0: +++++ eval module '()' '{' eval '`'\''/work/fatx405/miniconda3/envs/datalad/bin/tclsh'\''' ''\''/sw/modules/tcl/modulecmd.tcl'\''' ''\''sh'\''' '$*`;' '}' ';' 'MODULESHOME=/sw/modules/tcl;' export 'MODULESHOME;'
-0: ++ /sw/rrz/bin/rrz-quota --dirs=/work --check=90
-0: ++++++ MODULESHOME=/sw/modules/tcl
-0: ++++++ export MODULESHOME
-0: ++ unset SLURM_EXPORT_ENV
-0: ++ /sw/rrz/bin/rrz-quota --dirs=/work --check=90
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: + echo '###################################'
-0: + echo Started processing of sub-ewgenia003
-0: + echo '###################################'
-0: + echo '###################################'
-0: + SCRIPT_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + source /work/fatx405/projects/CSI_TEST/code/.projectrc
-0: ++ PROJ_DIR=/work/fatx405/projects/CSI_TEST
-0: ++ DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-0: + echo Started processing of sub-ewgenia004
-0: + echo '###################################'
-0: ++ DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-0: + SCRIPT_DIR=/work/fatx405/projects/CSI_TEST/code
-0: ++ BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-0: + source /work/fatx405/projects/CSI_TEST/code/.projectrc
-0: ++ CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-0: ++ PROJ_DIR=/work/fatx405/projects/CSI_TEST
-0: ++ ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-0: ++ DATA_DIR=/work/fatx405/projects/CSI_TEST/data
-0: + export SLURM_CPUS_PER_TASK=15
-0: ++ DCM_DIR=/work/fatx405/projects/CSI_TEST/data/dicoms
-0: + SLURM_CPUS_PER_TASK=15
-0: ++ BIDS_DIR=/work/fatx405/projects/CSI_TEST/data/raw_bids
-0: + export SCRATCH_DIR=/scratch/fatx405.1433194/sub-ewgenia003
-0: + SCRATCH_DIR=/scratch/fatx405.1433194/sub-ewgenia003
-0: ++ CODE_DIR=/work/fatx405/projects/CSI_TEST/code
-0: + '[' '!' -d /scratch/fatx405.1433194/sub-ewgenia003 ']'
-0: ++ ENV_DIR=/work/fatx405/projects/CSI_TEST/envs
-0: + mkdir /scratch/fatx405.1433194/sub-ewgenia003
-0: + export SLURM_CPUS_PER_TASK=15
-0: + export SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + SLURM_CPUS_PER_TASK=15
-0: + SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + export SCRATCH_DIR=/scratch/fatx405.1433194/sub-ewgenia004
-0: + export SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + SCRATCH_DIR=/scratch/fatx405.1433194/sub-ewgenia004
-local:2/0/100%/0.0s 0: + export DSLOCKFILE=/scratch/fatx405.1433194/sub-ewgenia003/smriprep.lock
-0: + DSLOCKFILE=/scratch/fatx405.1433194/sub-ewgenia003/smriprep.lock
-0: + '[' '!' -d /scratch/fatx405.1433194/sub-ewgenia004 ']'
-0: + export DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433194/sub-ewgenia003/sockets
-0: + mkdir /scratch/fatx405.1433194/sub-ewgenia004
-0: + DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433194/sub-ewgenia003/sockets
-0: + export SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: ++ hostname
-0: + SINGULARITY_CACHEDIR=/work/fatx405/tmp/singularity
-0: + echo hostname: node072
-0: + export SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: ++ singularity --version
-0: + SINGULARITY_TMPDIR=/work/fatx405/tmp/singularity
-0: + export DSLOCKFILE=/scratch/fatx405.1433194/sub-ewgenia004/smriprep.lock
-0: + DSLOCKFILE=/scratch/fatx405.1433194/sub-ewgenia004/smriprep.lock
-0: + export DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433194/sub-ewgenia004/sockets
-0: + DATALAD_LOCATIONS_SOCKETS=/scratch/fatx405.1433194/sub-ewgenia004/sockets
-0: ++ hostname
-0: + echo hostname: node072
-0: ++ singularity --version
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: + echo singularity version 3.5.2
-0: + echo singularity version 3.5.2
-0: + echo TMPDIR: /scratch/fatx405.1433194
-0: + echo TMPDIR: /scratch/fatx405.1433194
-0: + echo RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433194
-0: + echo RRZ_LOCAL_TMPDIR: /scratch/fatx405.1433194
-0: + echo SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
-0: + echo SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
-0: + echo SINGULARITY_CACHEDIR: /work/fatx405/tmp/singularity
-0: + echo SINGULARITY_TMPDIR: /work/fatx405/tmp/singularity
-0: + echo DSLOCKFILE: /scratch/fatx405.1433194/sub-ewgenia004/smriprep.lock
-0: + echo DSLOCKFILE: /scratch/fatx405.1433194/sub-ewgenia003/smriprep.lock
-0: + mkdir -p /scratch/fatx405.1433194/sub-ewgenia003/sockets
-0: + mkdir -p /scratch/fatx405.1433194/sub-ewgenia004/sockets
-0: + echo DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433194/sub-ewgenia003/sockets
-0: + echo DATALAD_LOCATIONS_SOCKETS: /scratch/fatx405.1433194/sub-ewgenia004/sockets
-0: + cd /scratch/fatx405.1433194/sub-ewgenia003
-0: + CLONE=/scratch/fatx405.1433194/sub-ewgenia003/clone
-0: + cd /scratch/fatx405.1433194/sub-ewgenia004
-0: + CLONE_DATA_DIR=/scratch/fatx405.1433194/sub-ewgenia003/clone/data
-0: + CLONE=/scratch/fatx405.1433194/sub-ewgenia004/clone
-0: + CLONE_BIDS_DIR=/scratch/fatx405.1433194/sub-ewgenia003/clone/data/raw_bids
-0: + CLONE_DATA_DIR=/scratch/fatx405.1433194/sub-ewgenia004/clone/data
-0: + CLONE_DCM_DIR=/scratch/fatx405.1433194/sub-ewgenia003/clone/data/dicoms
-0: + CLONE_BIDS_DIR=/scratch/fatx405.1433194/sub-ewgenia004/clone/data/raw_bids
-0: + CLONE_CODE_DIR=/scratch/fatx405.1433194/sub-ewgenia003/clone/code/
-0: + CLONE_DCM_DIR=/scratch/fatx405.1433194/sub-ewgenia004/clone/data/dicoms
-0: + CLONE_ENV_DIR=/scratch/fatx405.1433194/sub-ewgenia003/clone/envs/
-0: + CLONE_CODE_DIR=/scratch/fatx405.1433194/sub-ewgenia004/clone/code/
-0: + CLONE_TMP_DIR=/scratch/fatx405.1433194/sub-ewgenia003/tmp/
-0: + CLONE_ENV_DIR=/scratch/fatx405.1433194/sub-ewgenia004/clone/envs/
-0: + mkdir -p /scratch/fatx405.1433194/sub-ewgenia003/tmp/
-0: + CLONE_TMP_DIR=/scratch/fatx405.1433194/sub-ewgenia004/tmp/
-0: + '[' -d /scratch/fatx405.1433194/sub-ewgenia003/clone ']'
-0: + mkdir -p /scratch/fatx405.1433194/sub-ewgenia004/tmp/
-0: + flock /scratch/fatx405.1433194/sub-ewgenia003/smriprep.lock datalad clone /work/fatx405/projects/CSI_TEST /scratch/fatx405.1433194/sub-ewgenia003/clone
-0: + '[' -d /scratch/fatx405.1433194/sub-ewgenia004/clone ']'
-0: + flock /scratch/fatx405.1433194/sub-ewgenia004/smriprep.lock datalad clone /work/fatx405/projects/CSI_TEST /scratch/fatx405.1433194/sub-ewgenia004/clone
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST to /scratch/fatx405.1433194/sub-ewgenia004/clone 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST to /scratch/fatx405.1433194/sub-ewgenia003/clone 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: + cd /scratch/fatx405.1433194/sub-ewgenia004/clone
-0: + datalad get envs/freesurfer_license.txt
-0: + cd /scratch/fatx405.1433194/sub-ewgenia003/clone
-0: + datalad get envs/freesurfer_license.txt
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone/envs) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/envs to /scratch/fatx405.1433194/sub-ewgenia003/clone/envs 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone/envs) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/envs to /scratch/fatx405.1433194/sub-ewgenia004/clone/envs 
-local:2/0/100%/0.0s 0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone/envs) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone/envs) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] scanning for unlocked files (this may take some time) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: + datalad get data/raw_bids/dataset_description.json
-0: + datalad get data/raw_bids/dataset_description.json
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone/data/raw_bids) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids to /scratch/fatx405.1433194/sub-ewgenia004/clone/data/raw_bids 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone/data/raw_bids) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids to /scratch/fatx405.1433194/sub-ewgenia003/clone/data/raw_bids 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone/data/raw_bids) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone/data/raw_bids) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: + git submodule foreach --recursive git annex dead here
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: + git submodule foreach --recursive git annex dead here
-0: + git checkout -b job-1433194-sub-ewgenia003
-0: Switched to a new branch 'job-1433194-sub-ewgenia003'
-0: + export TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/.templateflow
-0: + TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/.templateflow
-0: + export SINGULARITYENV_TEMPLATEFLOW_HOME=.templateflow
-0: + SINGULARITYENV_TEMPLATEFLOW_HOME=.templateflow
-0: + find . -name 'sub-*' -maxdepth 1 -type d -a '!' -name '*sub-ewgenia003*' -exec rm -rv '{}' +
-0: ++ ls .
-0: + echo ls BIDS root: CHANGELOG.md code data envs README.md
-0: + export PIPE_ID=job-1433194-smriprep-sub-ewgenia003
-0: + PIPE_ID=job-1433194-smriprep-sub-ewgenia003
-0: + '[' smriprep == bidsify ']'
-0: + '[' smriprep == qsiprep ']'
-0: + '[' smriprep == smriprep ']'
-0: + datalad get -n -r -J 15 /scratch/fatx405.1433194/sub-ewgenia003/clone/data/raw_bids/sub-ewgenia003
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone/data/raw_bids/sub-ewgenia003) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids/sub-ewgenia003 to /scratch/fatx405.1433194/sub-ewgenia003/clone/data/raw_bids/sub-ewgenia003 
-local:2/0/100%/0.0s 0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone/data/raw_bids/sub-ewgenia003) 
-0: + git checkout -b job-1433194-sub-ewgenia004
-0: Switched to a new branch 'job-1433194-sub-ewgenia004'
-0: + export TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/.templateflow
-0: + TEMPLATEFLOW_HOME=/work/fatx405/projects/CSI_TEST/.templateflow
-0: + export SINGULARITYENV_TEMPLATEFLOW_HOME=.templateflow
-0: + SINGULARITYENV_TEMPLATEFLOW_HOME=.templateflow
-0: + find . -name 'sub-*' -maxdepth 1 -type d -a '!' -name '*sub-ewgenia004*' -exec rm -rv '{}' +
-0: ++ ls .
-0: + echo ls BIDS root: CHANGELOG.md code data envs README.md
-0: + export PIPE_ID=job-1433194-smriprep-sub-ewgenia004
-0: + PIPE_ID=job-1433194-smriprep-sub-ewgenia004
-0: + '[' smriprep == bidsify ']'
-0: + '[' smriprep == qsiprep ']'
-0: + '[' smriprep == smriprep ']'
-0: + datalad get -n -r -J 15 /scratch/fatx405.1433194/sub-ewgenia004/clone/data/raw_bids/sub-ewgenia004
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone/data/raw_bids/sub-ewgenia004) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/raw_bids/sub-ewgenia004 to /scratch/fatx405.1433194/sub-ewgenia004/clone/data/raw_bids/sub-ewgenia004 
-0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone/data/raw_bids/sub-ewgenia004) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Installing Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone/data/raw_bids) to get /scratch/fatx405.1433194/sub-ewgenia003/clone/data/raw_bids/sub-ewgenia003 recursively 
-local:2/0/100%/0.0s 0: [INFO] Installing Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone/data/raw_bids/sub-ewgenia003) to get /scratch/fatx405.1433194/sub-ewgenia003/clone/data/raw_bids/sub-ewgenia003 recursively 
-0: + datalad get -n -r -J 15 /scratch/fatx405.1433194/sub-ewgenia003/clone/data/freesurfer
-0: [INFO] scanning for unlocked files (this may take some time) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone/data/freesurfer) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/freesurfer to /scratch/fatx405.1433194/sub-ewgenia003/clone/data/freesurfer 
-0: [INFO] Installing Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone/data/raw_bids) to get /scratch/fatx405.1433194/sub-ewgenia004/clone/data/raw_bids/sub-ewgenia004 recursively 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone/data/freesurfer) 
-local:2/0/100%/0.0s 0: [INFO] Installing Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone/data/raw_bids/sub-ewgenia004) to get /scratch/fatx405.1433194/sub-ewgenia004/clone/data/raw_bids/sub-ewgenia004 recursively 
-0: + datalad get -n -r -J 15 /scratch/fatx405.1433194/sub-ewgenia004/clone/data/freesurfer
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone/data/freesurfer) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/freesurfer to /scratch/fatx405.1433194/sub-ewgenia004/clone/data/freesurfer 
-local:2/0/100%/0.0s 0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone/data/freesurfer) 
-local:2/0/100%/0.0s 0: [INFO] Installing Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone) to get /scratch/fatx405.1433194/sub-ewgenia003/clone/data/freesurfer recursively 
-local:2/0/100%/0.0s 0: + datalad get -n -r -J 15 /scratch/fatx405.1433194/sub-ewgenia003/clone/data/smriprep
-local:2/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-local:2/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone/data/smriprep) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/smriprep to /scratch/fatx405.1433194/sub-ewgenia003/clone/data/smriprep 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone/data/smriprep) 
-local:2/0/100%/0.0s 0: [INFO] Installing Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone) to get /scratch/fatx405.1433194/sub-ewgenia004/clone/data/freesurfer recursively 
-local:2/0/100%/0.0s 0: + datalad get -n -r -J 15 /scratch/fatx405.1433194/sub-ewgenia004/clone/data/smriprep
-local:2/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-local:2/0/100%/0.0s 0: [INFO] Cloning dataset to Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone/data/smriprep) 
-0: [INFO] Attempting to clone from /work/fatx405/projects/CSI_TEST/data/smriprep to /scratch/fatx405.1433194/sub-ewgenia004/clone/data/smriprep 
-0: [INFO] Completed clone attempts for Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone/data/smriprep) 
-local:2/0/100%/0.0s 0: [INFO] Installing Dataset(/scratch/fatx405.1433194/sub-ewgenia003/clone) to get /scratch/fatx405.1433194/sub-ewgenia003/clone/data/smriprep recursively 
-local:2/0/100%/0.0s 0: + git -C /scratch/fatx405.1433194/sub-ewgenia003/clone/data/freesurfer checkout -b job-1433194-freesurfer-sub-ewgenia003
-0: Switched to a new branch 'job-1433194-freesurfer-sub-ewgenia003'
-0: + git -C /scratch/fatx405.1433194/sub-ewgenia003/clone/data/smriprep checkout -b job-1433194-smriprep-sub-ewgenia003
-0: Switched to a new branch 'job-1433194-smriprep-sub-ewgenia003'
-local:2/0/100%/0.0s 0: + cd /scratch/fatx405.1433194/sub-ewgenia003/clone/data/freesurfer
-0: + rm -rf fsaverage sub-ewgenia003 .bidsignore
-0: + cd /scratch/fatx405.1433194/sub-ewgenia003/clone/data/smriprep
-0: + rm -rf logs sub-ewgenia003 sub-ewgenia003.html dataset_description.json desc-aparcaseg_dseg.tsv desc-aseg_dseg.tsv .bidsignore
-0: + datalad containers-run -m job-1433194-smriprep-sub-ewgenia003 --explicit --output /scratch/fatx405.1433194/sub-ewgenia003/clone/data/freesurfer -o /scratch/fatx405.1433194/sub-ewgenia003/clone/data/smriprep --input /scratch/fatx405.1433194/sub-ewgenia003/clone/data/raw_bids/sub-ewgenia003 -i /scratch/fatx405.1433194/sub-ewgenia003/clone/.templateflow --container-name smriprep data/raw_bids data participant -w .git/tmp/wdir --participant-label sub-ewgenia003 --output-spaces fsnative fsaverage MNI152NLin6Asym T1w T2w --nthreads 15 --fs-subjects-dir data/freesurfer --stop-on-first-crash --fs-license-file envs/freesurfer_license.txt
-local:2/0/100%/0.0s 0: [INFO] scanning for unlocked files (this may take some time) 
-local:2/0/100%/0.0s 0: [INFO] Making sure inputs are available (this may take some time) 
-local:2/0/100%/0.0s 0: [INFO] Installing Dataset(/scratch/fatx405.1433194/sub-ewgenia004/clone) to get /scratch/fatx405.1433194/sub-ewgenia004/clone/data/smriprep recursively 
-local:2/0/100%/0.0s 0: + git -C /scratch/fatx405.1433194/sub-ewgenia004/clone/data/freesurfer checkout -b job-1433194-freesurfer-sub-ewgenia004
-0: Switched to a new branch 'job-1433194-freesurfer-sub-ewgenia004'
-0: + git -C /scratch/fatx405.1433194/sub-ewgenia004/clone/data/smriprep checkout -b job-1433194-smriprep-sub-ewgenia004
-0: Switched to a new branch 'job-1433194-smriprep-sub-ewgenia004'
-0: + cd /scratch/fatx405.1433194/sub-ewgenia004/clone/data/freesurfer
-0: + rm -rf fsaverage sub-ewgenia004 .bidsignore
-0: + cd /scratch/fatx405.1433194/sub-ewgenia004/clone/data/smriprep
-0: + rm -rf logs sub-ewgenia004 sub-ewgenia004.html dataset_description.json desc-aparcaseg_dseg.tsv desc-aseg_dseg.tsv .bidsignore
-0: + datalad containers-run -m job-1433194-smriprep-sub-ewgenia004 --explicit --output /scratch/fatx405.1433194/sub-ewgenia004/clone/data/freesurfer -o /scratch/fatx405.1433194/sub-ewgenia004/clone/data/smriprep --input /scratch/fatx405.1433194/sub-ewgenia004/clone/data/raw_bids/sub-ewgenia004 -i /scratch/fatx405.1433194/sub-ewgenia004/clone/.templateflow --container-name smriprep data/raw_bids data participant -w .git/tmp/wdir --participant-label sub-ewgenia004 --output-spaces fsnative fsaverage MNI152NLin6Asym T1w T2w --nthreads 15 --fs-subjects-dir data/freesurfer --stop-on-first-crash --fs-license-file envs/freesurfer_license.txt
-local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] Making sure inputs are available (this may take some time) 
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] == Command start (output follows) ===== 
-0: [34mINFO:   [0m Convert SIF file to sandbox...
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/feature_extraction/image.py:167: DeprecationWarning: `np.int` is a deprecated alias for the builtin `int`. To silence this warning, use `int` by itself. Doing this will not modify any behavior and is safe. When replacing `np.int`, you may wish to use e.g. `np.int64` or `np.int32` to specify the precision. If you wish to review your current use, check the release note link for additional information.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   dtype=np.int):
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:35: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   eps=np.finfo(np.float).eps,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:597: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   eps=np.finfo(np.float).eps, copy_X=True, fit_path=True,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:836: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   eps=np.finfo(np.float).eps, copy_X=True, fit_path=True,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:862: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   eps=np.finfo(np.float).eps, positive=False):
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:1074: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   max_n_alphas=1000, n_jobs=1, eps=np.finfo(np.float).eps,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:1306: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   max_n_alphas=1000, n_jobs=1, eps=np.finfo(np.float).eps,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:1442: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   eps=np.finfo(np.float).eps, copy_X=True, positive=False):
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/randomized_l1.py:152: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   precompute=False, eps=np.finfo(np.float).eps,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/randomized_l1.py:318: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   eps=np.finfo(np.float).eps, random_state=None,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/randomized_l1.py:575: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   eps=4 * np.finfo(np.float).eps, n_jobs=1,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/decomposition/online_lda.py:31: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   EPS = np.finfo(np.float).eps
-0: /usr/local/miniconda/lib/python3.7/site-packages/bids/layout/models.py:152: FutureWarning: The 'extension' entity currently excludes the leading dot ('.'). As of version 0.14.0, it will include the leading dot. To suppress this warning and include the leading dot, use `bids.config.set_option('extension_initial_dot', True)`.
-0:   FutureWarning)
-0: Process Process-2:
-0: Traceback (most recent call last):
-0:   File "/usr/local/miniconda/lib/python3.7/multiprocessing/process.py", line 297, in _bootstrap
-0:     self.run()
-0:   File "/usr/local/miniconda/lib/python3.7/multiprocessing/process.py", line 99, in run
-0:     self._target(*self._args, **self._kwargs)
-0:   File "/usr/local/miniconda/lib/python3.7/site-packages/smriprep/cli/run.py", line 579, in build_workflow
-0:     bids_filters=bids_filters,
-0:   File "/usr/local/miniconda/lib/python3.7/site-packages/smriprep/workflows/base.py", line 162, in init_smriprep_wf
-0:     bids_filters=bids_filters,
-0:   File "/usr/local/miniconda/lib/python3.7/site-packages/smriprep/workflows/base.py", line 298, in init_single_subject_wf
-0:     "All workflows require T1w images.".format(subject_id)
-0: Exception: No T1w images found for participant ewgenia003. All workflows require T1w images.
-local:2/0/100%/0.0s 0: [34mINFO:   [0m Cleaning up image...
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/feature_extraction/image.py:167: DeprecationWarning: `np.int` is a deprecated alias for the builtin `int`. To silence this warning, use `int` by itself. Doing this will not modify any behavior and is safe. When replacing `np.int`, you may wish to use e.g. `np.int64` or `np.int32` to specify the precision. If you wish to review your current use, check the release note link for additional information.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   dtype=np.int):
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:35: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   eps=np.finfo(np.float).eps,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:597: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   eps=np.finfo(np.float).eps, copy_X=True, fit_path=True,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:836: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   eps=np.finfo(np.float).eps, copy_X=True, fit_path=True,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:862: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   eps=np.finfo(np.float).eps, positive=False):
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:1074: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   max_n_alphas=1000, n_jobs=1, eps=np.finfo(np.float).eps,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:1306: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   max_n_alphas=1000, n_jobs=1, eps=np.finfo(np.float).eps,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:1442: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   eps=np.finfo(np.float).eps, copy_X=True, positive=False):
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/randomized_l1.py:152: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   precompute=False, eps=np.finfo(np.float).eps,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/randomized_l1.py:318: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   eps=np.finfo(np.float).eps, random_state=None,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/linear_model/randomized_l1.py:575: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   eps=4 * np.finfo(np.float).eps, n_jobs=1,
-0: /usr/local/miniconda/lib/python3.7/site-packages/sklearn/decomposition/online_lda.py:31: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
-0: Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
-0:   EPS = np.finfo(np.float).eps
-0: /usr/local/miniconda/lib/python3.7/site-packages/bids/layout/models.py:152: FutureWarning: The 'extension' entity currently excludes the leading dot ('.'). As of version 0.14.0, it will include the leading dot. To suppress this warning and include the leading dot, use `bids.config.set_option('extension_initial_dot', True)`.
-0:   FutureWarning)
-0: Process Process-2:
-0: Traceback (most recent call last):
-0:   File "/usr/local/miniconda/lib/python3.7/multiprocessing/process.py", line 297, in _bootstrap
-0:     self.run()
-0:   File "/usr/local/miniconda/lib/python3.7/multiprocessing/process.py", line 99, in run
-0:     self._target(*self._args, **self._kwargs)
-0:   File "/usr/local/miniconda/lib/python3.7/site-packages/smriprep/cli/run.py", line 579, in build_workflow
-0:     bids_filters=bids_filters,
-0:   File "/usr/local/miniconda/lib/python3.7/site-packages/smriprep/workflows/base.py", line 162, in init_smriprep_wf
-0:     bids_filters=bids_filters,
-0:   File "/usr/local/miniconda/lib/python3.7/site-packages/smriprep/workflows/base.py", line 298, in init_single_subject_wf
-0:     "All workflows require T1w images.".format(subject_id)
-0: Exception: No T1w images found for participant ewgenia004. All workflows require T1w images.
-local:2/0/100%/0.0s 0: [34mINFO:   [0m Cleaning up image...
-local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s local:2/0/100%/0.0s 0: [INFO] == Command exit (modification check follows) ===== 
-0: [INFO] The command had a non-zero exit code. If this is expected, you can save the changes with 'datalad save -d . -r -F .git/COMMIT_EDITMSG' 
-0: CommandError: 'singularity run --cleanenv --userns --no-home -B . -B $SCRATCH_DIR:/tmp .datalad/environments/smriprep/image data/raw_bids data participant -w .git/tmp/wdir --participant-label sub-ewgenia003 --output-spaces fsnative fsaverage MNI152NLin6Asym T1w T2w --nthreads 15 --fs-subjects-dir data/freesurfer --stop-on-first-crash --fs-license-file envs/freesurfer_license.txt' failed with exitcode 1 under /scratch/fatx405.1433194/sub-ewgenia003/clone
-local:2/0/100%/0.0s local:2/0/100%/0.0s srun: error: node072: task 0: Exited with exit code 1
-local:2/0/100%/0.0s local:1/1/100%/1061.0s local:1/1/100%/1061.0s local:1/1/100%/1062.0s local:1/1/100%/1063.0s local:1/1/100%/1063.0s local:1/1/100%/1064.0s local:1/1/100%/1065.0s local:1/1/100%/1066.0s 0: [INFO] == Command exit (modification check follows) ===== 
-0: [INFO] The command had a non-zero exit code. If this is expected, you can save the changes with 'datalad save -d . -r -F .git/COMMIT_EDITMSG' 
-0: CommandError: 'singularity run --cleanenv --userns --no-home -B . -B $SCRATCH_DIR:/tmp .datalad/environments/smriprep/image data/raw_bids data participant -w .git/tmp/wdir --participant-label sub-ewgenia004 --output-spaces fsnative fsaverage MNI152NLin6Asym T1w T2w --nthreads 15 --fs-subjects-dir data/freesurfer --stop-on-first-crash --fs-license-file envs/freesurfer_license.txt' failed with exitcode 1 under /scratch/fatx405.1433194/sub-ewgenia004/clone
-local:1/1/100%/1067.0s local:1/1/100%/1068.0s local:1/1/100%/1069.0s srun: error: node072: task 0: Exited with exit code 1
-local:1/1/100%/1069.0s local:0/2/100%/534.5s local:0/2/100%/534.5s 
-+ df -h /scratch
-++++ date +%s
-+++ expr 1625588526 - 1625587456
-++ expr 1070
-+ runtime_s=1070
-++ date -d@1070 -u +%H:%M:%S
-+ echo 'script runtime: 00:17:50 hours'
