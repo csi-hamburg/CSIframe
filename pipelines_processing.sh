@@ -441,6 +441,10 @@ elif [ $PIPELINE == 'wmhprep' ];then
 	T1_BRAIN_IN_FLAIR=$OUT_DIR/${1}_ses-1_space-FLAIR_desc-brainex_T1w.nii.gz
 	T1_MASK_IN_FLAIR_THR=$OUT_DIR/${1}_ses-1_space-FLAIR_desc-brainmaskthresh_T1w.nii.gz
 	FLAIR_BRAIN=$OUT_DIR/${1}_ses-1_desc-brainex_FLAIR.nii.gz
+	MNI_T1=/opt/fsl-6.0.3/data/standard/MNI152_T1_1mm_brain.nii.gz
+	FLAIR_TO_MNI_WARP=$OUT_DIR/${1}_ses-1_from-FLAIR_to-MNI_mode-image_xfm.txt
+	T1_IN_MNI=$OUT_DIR/${1}_ses-1_space-MNI_desc-preproc_T1w.nii.gz
+
 
 	# Define commands
 	CMD_T1_TO_FLAIR="flirt -in $T1 -ref $FLAIR -omat $T1_TO_FLAIR_WARP -out $T1_IN_FLAIR -v"
@@ -448,6 +452,7 @@ elif [ $PIPELINE == 'wmhprep' ];then
 	CMD_MASK_THRESH="mrthreshold $T1_MASK_IN_FLAIR -abs 0.95 $T1_MASK_IN_FLAIR_THR --force"
 	CMD_MASKING_T1_IN_FLAIR="mrcalc $T1_MASK_IN_FLAIR_THR $T1_IN_FLAIR -mult $T1_BRAIN_IN_FLAIR --force"
 	CMD_MASKING_FLAIR="mrcalc $T1_MASK_IN_FLAIR_THR $FLAIR -mult $FLAIR_BRAIN --force"
+	CMD_T1_FLAIR_TO_MNI="flirt -in $T1_BRAIN_IN_FLAIR -ref $MNI_T1 -omat $FLAIR_TO_MNI_WARP -out $T1_IN_MNI -v"
 
 	# Execute with datalad
 	datalad containers-run	\
@@ -465,6 +470,15 @@ elif [ $PIPELINE == 'wmhprep' ];then
 	--output $T1_MASK_IN_FLAIR_THR -o $T1_BRAIN_IN_FLAIR -o $FLAIR_BRAIN  \
 	--container-name mrtrix \
 	"$CMD_MASK_THRESH ; $CMD_MASKING_T1_IN_FLAIR ; $CMD_MASKING_FLAIR"
+
+	datalad containers-run	\
+	-m "T1_brain_in_FLAIR to MNI;  $1 $SLURM_JOBID" \
+	--explicit \
+	--input $T1_BRAIN_IN_FLAIR \
+	--output $FLAIR_TO_MNI_WARP -o $T1_IN_MNI  \
+	--container-name fsl \
+	"$CMD_T1_FLAIR_TO_MNI"
+
 
 	flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/wmhprep/$1 --to origin
 
