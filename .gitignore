@@ -1,4 +1,6 @@
 __pycache__
 heudiconv_heuristic.py
-!templateflow
-!log
+templateflow/*
+!templateflow/templates
+log/*
+!log/log.txt
