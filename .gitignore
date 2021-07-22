@@ -1,4 +1,2 @@
-log/*
 __pycache__
 heudiconv_heuristic.py
-templateflow/*
