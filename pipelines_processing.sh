@@ -119,9 +119,8 @@ if [ $PIPELINE == "bidsify" ];then
 	    -B $CLONE_DCM_DIR:/dcm \
 	    -B $CLONE_TMP_DIR:/tmp \
 	    $ENV_DIR/heudiconv-0.9.0.sif\
-	    -d /dcm/{{subject}}/ses-{{session}}/*\
+	    -d /dcm/{{subject}}/ses-1/*\
 	    --subjects $1 \
-		--ses 1 \
 	    --bids notop \
 	    -f /code/heudiconv_heuristic.py\
 	    -c dcm2niix \
