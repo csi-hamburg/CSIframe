@@ -102,13 +102,13 @@ if [ $PIPELINE == "bidsify" ];then
 	datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/raw_bids/sub-${1}
 	
 	# Checkout new branch in bids subject directory dataset
-	git -C data/raw_bids/ checkout -b "${PIPE_ID}"
+	#git -C data/raw_bids/ checkout -b "${PIPE_ID}"
 	git -C data/raw_bids/sub-${1} checkout -b "${PIPE_ID}"
 
 	( rm -rf data/raw_bids/sub-${1}/ses-* )
 
 	# Run heudiconv for dcm2nii and bidsification of its outputs
-	# DSSPECIFIC heudiconv_heuristic.py
+	# heudiconv_heuristic.py is dataset specific
 	CMD="
 	    singularity run --cleanenv --userns\
 	    --home $PWD \
@@ -168,7 +168,7 @@ if [ $PIPELINE == "bidsify" ];then
 	rm -rf $CLONE_BIDS_DIR/.heudiconv
 
 	# Push results from clone to original dataset
-	flock $DSLOCKFILE datalad push -d $CLONE_BIDS_DIR/ --to origin
+	#flock $DSLOCKFILE datalad push -d $CLONE_BIDS_DIR/ --to origin
 	flock $DSLOCKFILE datalad push -d $CLONE_BIDS_DIR/sub-${1} --to origin
 
 elif [ $PIPELINE == "qsiprep" ];then
