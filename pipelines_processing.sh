@@ -109,6 +109,8 @@ if [ $PIPELINE == "bidsify" ];then
 
 	# Run heudiconv for dcm2nii and bidsification of its outputs
 	# heudiconv_heuristic.py is dataset specific
+	# FIXME: amend -d PATH according to your dicom directory structure 
+	# NOTE: Run again after cleaning dataset state
 	CMD="
 	    singularity run --cleanenv --userns\
 	    --home $PWD \
@@ -117,8 +119,9 @@ if [ $PIPELINE == "bidsify" ];then
 	    -B $CLONE_DCM_DIR:/dcm \
 	    -B $CLONE_TMP_DIR:/tmp \
 	    $ENV_DIR/heudiconv-0.9.0.sif\
-	    -d /dcm/{{subject}}/ses-1/*\
-	    -s $1 \
+	    -d /dcm/{{subject}}/ses-{{session}}/*\
+	    --subjects $1 \
+		--ses 1 \
 	    --bids notop \
 	    -f /code/heudiconv_heuristic.py\
 	    -c dcm2niix \
