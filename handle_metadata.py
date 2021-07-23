@@ -12,7 +12,7 @@ bidsdir=os.getcwd()
 problematic_metadata=['InstitutionName', 'InstitutionalDepartmentName','InstitutionAddress','InstitutionAddress','ProcedureStepDescription']
 
 # Make list of the json files to edit
-json_paths=glob.glob(f'data/raw_bids/{subject}/ses-1/*/*.json')
+json_paths=glob.glob(f'data/raw_bids/{subject}/ses-*/*/*.json')
 print('Amending json metadata of:', json_paths)
 
 # For each json substitute contents of problematic metadata fields with 'deleted'
