@@ -61,18 +61,19 @@ mkdir -p $CLONE_TMP_DIR
 # clone the analysis dataset. flock makes sure that this does not interfere
 # with another job finishing and pushing results back at the same time
 # remove clone beforehand for seamless interactive testing
-[ -d $CLONE ] && { chmod 777 -R $CLONE; rm -rf $CLONE; }
-flock $DSLOCKFILE datalad clone $PROJ_DIR $CLONE
+[ -d $CLONE ] && datalad update -r --merge any -d $CLONE
+flock $DSLOCKFILE datalad clone $PROJ_DIR $CLONE #&& { chmod 777 -R $CLONE; rm -rf $CLONE; }
+
 #flock $DSLOCKFILE datalad install --reckless -r --source $PROJ_DIR $CLONE
 
 # All in-container-paths relative to $CLONE
 cd $CLONE
 
 # Get necessary subdatasets and files
-datalad get envs/freesurfer_license.txt
-datalad get -n -r -R0 data/raw_bids
-datalad get data/raw_bids/dataset_description.json
-datalad get data/raw_bids/participants.tsv
+[ -f $CLONE_ENV_DIR/freesurfer_license.txt ] || datalad get $CLONE_ENV_DIR/freesurfer_license.txt
+[ -d $CLONE_BIDS_DIR ] || datalad get -n $CLONE_BIDS_DIR
+[ -f $CLONE_ENV_DIR/freesurfer_license.txt ] || datalad get $CLONE_BIDS_DIR/dataset_description.json
+[ -f $CLONE_ENV_DIR/freesurfer_license.txt ] || datalad get $CLONE_BIDS_DIR/participants.tsv
 #datalad get data/raw_bids/.bidsignore
 
 # Make git-annex disregard the clones - they are meant to be thrown away
@@ -87,8 +88,8 @@ export TEMPLATEFLOW_HOME=$CODE_DIR/templateflow
 export SINGULARITYENV_TEMPLATEFLOW_HOME=$TEMPLATEFLOW_HOME
 
 # Remove other participants than $1 in bids (pybids gets angry when it sees dangling symlinks)
-find data/raw_bids -maxdepth 1 -name 'sub-*' -type d -a ! -name '*'"$1"'*' -exec rm -rv {} +
-echo ls BIDS root: $(ls data/raw_bids)
+find $CLONE_BIDS_DIR -maxdepth 1 -name 'sub-*' -type d -a ! -name '*'"$1"'*' -exec rm -rv {} +
+echo ls BIDS root: $(ls $CLONE_BIDS_DIR)
 
 # Run pipeline; paths relative to project root and push back the results.
 
