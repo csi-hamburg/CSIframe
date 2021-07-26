@@ -64,7 +64,7 @@ datalad containers-run \
     --force
 
 # Remove problematic metadata from json sidecars
-CMD="python $CODE_DIR/handle_metadata.py $1"
+CMD="python $CODE_DIR/pipelines/$PIPELINE/handle_metadata.py $1"
 datalad run -m '${PIPE_ID} handle metadata' \
    --explicit \
    --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*.json" \
