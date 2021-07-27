@@ -29,11 +29,6 @@ if [ -z $PIPELINE ];then
 	read input
 	export PIPELINE=$input
 fi
-if [ -z $SESSION ];then
-	echo "Which session do you want to process? e.g. '1'"
-	read input
-	export SESSION=$input
-fi
 
 # define subjects
 subjs=(${input_subject_array[@]-$(ls $BIDS_DIR/sub-* -d -1)}) 
@@ -46,10 +41,15 @@ script_path=$CODE_DIR/$script_name
 # empirical job config
 if [ $PIPELINE == "bidsify" ];then
 	export SUBJS_PER_NODE=6
-	batch_time="02:00:00"
+	batch_time="04:00:00"
 	partition="std"
 	at_once=
 	subjs=(${input_subject_array[@]-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata)}) # subjects in data/dicoms
+	if [ -z $SESSION ];then
+		echo "Which session do you want to process? e.g. '1'"
+		read input
+		export SESSION=$input
+	fi
 elif [ $PIPELINE == "qsiprep" ];then
 	export SUBJS_PER_NODE=1
 	batch_time="10:00:00"

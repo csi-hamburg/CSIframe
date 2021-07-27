@@ -16,7 +16,7 @@ set -oux
 source /sw/batch/init.sh
 
 echo '###################################'
-echo Started processing of $1 session $SESSION
+echo Started processing of $1
 echo '###################################'
 
 # define environment
