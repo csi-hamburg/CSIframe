@@ -16,9 +16,9 @@ def infotodict(seqinfo):
     #
     # The "data" key creates sequential numbers which can be for naming sequences.
     # This is especially valuable if you run the same sequence multiple times at the scanner.
-    t1w = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-wface_T1w')
-    t2w = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-wface_T2w')
-    flair = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-wface_FLAIR')
+    t1w = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_T1w')
+    t2w = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_T2w')
+    flair = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_FLAIR')
     dwi = create_key('sub-{subject}/{session}/dwi/sub-{subject}_{session}_acq-AP_dwi')
     func_rest = create_key('sub-{subject}/{session}/func/sub-{subject}_{session}_task-rest_bold')
 
