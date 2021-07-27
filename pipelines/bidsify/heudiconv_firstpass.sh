@@ -8,7 +8,7 @@ module switch singularity singularity/3.5.2-overlayfix
 
 # export project env variables
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-export PROJ_DIR=$(realpath $SCRIPT_DIR/..) # project root; should be 1 level above code
+export PROJ_DIR=$(realpath $SCRIPT_DIR/../../..) # project root; should be 1 level above code
 export CODE_DIR=$PROJ_DIR/code
 export ENV_DIR=$PROJ_DIR/envs
 export DATA_DIR=$PROJ_DIR/data
@@ -18,13 +18,13 @@ export TMPDIR=$WORK/tmp
 
 # Define singularity command and srun flags
 CMD="singularity run --cleanenv --userns \
-    -B $BIDS_DIR:/bids -B $DCM_DIR:/dcm \
+    -B $SCRIPT_DIR:/out -B $DCM_DIR:/dcm \
     -B $TMPDIR:/tmp $ENV_DIR/heudiconv-0.9.0.sif \
     -d /dcm/{subject}/ses-1/* \
     -s $(ls ${DCM_DIR} | sort -R | tail -3) \
     -f convertall \
     -c none \
-    -o /bids"
+    -o /out"
 
-#| execute command
+# execute command
 $CMD

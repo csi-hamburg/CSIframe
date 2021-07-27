@@ -14,7 +14,7 @@ git -C data/raw_bids/sub-${1} checkout -b "${PIPE_ID}"
 # Run heudiconv for dcm2nii and bidsification of its outputs
 # heudiconv_heuristic.py is dataset specific
 # FIXME: amend -d PATH according to your dicom directory structure 
-# NOTE: Run again after cleaning dataset state
+# FIXME: amend -f PATH to the suitable heudicon heuristic file
 CMD="
     singularity run --cleanenv --userns\
     --home $PWD \
@@ -26,7 +26,7 @@ CMD="
     -d /dcm/{{subject}}/ses-1/*\
     --subjects $1 \
     --bids notop \
-    -f /code/pipelines/bidsify/heudiconv_heuristic.py\
+    -f /code/pipelines/bidsify/heudiconv_test.py\
     -c dcm2niix \
     --overwrite\
     --minmeta \
