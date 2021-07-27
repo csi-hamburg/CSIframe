@@ -39,7 +39,9 @@ datalad run -m "${PIPE_ID} heudiconv" \
    --output $CLONE_BIDS_DIR/sub-${1} -o $CLONE_BIDS_DIR/participants.tsv -o $CLONE_BIDS_DIR/participants.json -o $CLONE_BIDS_DIR/dataset_description.json \
    --input $CLONE_DCM_DIR/$1 \
    $CMD
-      
+
+datalad save -d . -r -F .git/COMMIT_EDITMSG
+
 # Deface T1	
 T1=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_T1w.nii.gz
 datalad containers-run \
