@@ -25,7 +25,7 @@ CMD="
     $ENV_DIR/heudiconv-0.9.0.sif\
     -d /dcm/{{subject}}/ses-{{session}}.tar.gz\
     --subjects $1 \
-    --ses 1 \
+    --ses $SESSION \
     --bids notop \
     -f /code/pipelines/bidsify/heudiconv_test.py\
     -c dcm2niix \
@@ -44,27 +44,36 @@ datalad save -d . -r -F .git/COMMIT_EDITMSG
 
 # Deface T1	
 T1=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_T1w.nii.gz
+FLAIR=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_FLAIR.nii.gz
+CMD_T1="pydeface $T1 --outfile $T1 --force"
+CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force"
+
 datalad containers-run \
    -m "${PIPE_ID} pydeface T1w" \
    --explicit \
    --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*T1w.nii.gz" \
-   --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*T1w.nii.gz" \
-   --container-name pydeface \
-           pydeface $T1 \
-    --outfile $T1 \
-    --force
-
-# Deface FLAIR
-FLAIR=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_FLAIR.nii.gz
-datalad containers-run \
-   -m "${PIPE_ID} pydeface FLAIR" \
-   --explicit \
    --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*FLAIR.nii.gz" \
+   --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*T1w.nii.gz" \
    --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*FLAIR.nii.gz" \
    --container-name pydeface \
-           pydeface $FLAIR \
-    --outfile $FLAIR \
-    --force
+   "$CMD_T1 ; $CMD_FLAIR"
+   
+   
+#           pydeface $T1 \
+#    --outfile $T1 \
+#    --force
+#
+## Deface FLAIR
+#FLAIR=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_FLAIR.nii.gz
+#datalad containers-run \
+#   -m "${PIPE_ID} pydeface FLAIR" \
+#   --explicit \
+#   --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*FLAIR.nii.gz" \
+#   --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*FLAIR.nii.gz" \
+#   --container-name pydeface \
+#           pydeface $FLAIR \
+#    --outfile $FLAIR \
+#    --force
 
 # Remove problematic metadata from json sidecars
 CMD="python $CODE_DIR/pipelines/$PIPELINE/handle_metadata.py $1"

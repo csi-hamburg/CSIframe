@@ -3,7 +3,7 @@
 ####################
 # submission script for distributed parallelism
 # subjects are submitted in batches depending on pipeline choice
-# provide pipeline name as argument (bidsify, qsiprep, smriprep, fmriprep, mriqc, xcpengine, wmhprep, bianca_train, bianca_predict)
+# provide pipeline name as arg1 and session as arg2; e.g. srun pipelines_processing.sh bidsify 1 sub-test001 
 ####################
 
 set -x
@@ -18,8 +18,23 @@ export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
 
 export PIPELINE=$1;shift
+export SESSION=$1;shift
 input_subject_array=($@)
 echo ${input_subject_array[@]}
+
+# Read $1 is empty
+if [ -z $PIPELINE ];then
+	echo "Which pipeline do you want to execute?"
+	echo "Please choose from: $(ls $CODE_DIR/pipelines)"
+	read input
+	export PIPELINE=$input
+fi
+if [ -z $SESSION ];then
+	echo "Which session do you want to process? e.g. '1'"
+	read input
+	export SESSION=$input
+fi
+
 # define subjects
 subjs=(${input_subject_array[@]-$(ls $BIDS_DIR/sub-* -d -1)}) 
 subj_array_length=$(expr ${#subjs[@]} - 1)
@@ -101,4 +116,5 @@ for i in $(seq $times_1000);do
         --error $CODE_DIR/log/"%A_%a_${script_name}.err" \
     $script_path "${subjs[@]}""
     ${CMD}
+
 done

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #SBATCH --nodes=1
-#SBATCH --export=PIPELINE,SUBJS_PER_NODE,ITER
+#SBATCH --export=PIPELINE,SESSION,SUBJS_PER_NODE,ITER
 
 ####################
 # batch script for across subject parallelization
@@ -79,7 +79,7 @@ srun="srun --label --exclusive -N1 -n1 --cpus-per-task $threads_per_sub --mem-pe
 parallel="parallel --ungroup --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/log/parallel_runtask.log"
 
 proc_script=$CODE_DIR/pipelines_processing.sh
-echo -e "running:\n $parallel $srun $proc_script ::: ${subjs_subarr[@]}"
+echo -e "running:\n $parallel $srun $proc_script {} ::: ${subjs_subarr[@]}"
 $parallel "$srun $proc_script" ::: ${subjs_subarr[@]}
 
 # Monitor usage of /scratch partition

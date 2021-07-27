@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-#SBATCH --export=PIPELINE,SLURM_CPUS_PER_TASK
+#SBATCH --export=PIPELINE,SESSION,SLURM_CPUS_PER_TASK
 
 ####################
 # Application of preconfigured neuroimaging pipelines for image processing
@@ -16,7 +16,7 @@ set -oux
 source /sw/batch/init.sh
 
 echo '###################################'
-echo Started processing of $1
+echo Started processing of $1 session $SESSION
 echo '###################################'
 
 # define environment
@@ -97,6 +97,8 @@ echo ls BIDS root: $(ls $CLONE_BIDS_DIR)
 export PIPE_ID="job-$SLURM_JOBID-$PIPELINE-$1-$(date +%d%m%Y)"
 
 source $PIPELINE_DIR/${PIPELINE}.sh $1
+
+datalad remove $CLONE
 
 #if [ $PIPELINE == "bidsify" ];then
 #
