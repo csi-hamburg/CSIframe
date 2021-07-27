@@ -23,8 +23,9 @@ CMD="
     -B $CLONE_DCM_DIR:/dcm \
     -B $CLONE_TMP_DIR:/tmp \
     $ENV_DIR/heudiconv-0.9.0.sif\
-    -d /dcm/{{subject}}/ses-1/*\
+    -d /dcm/{{subject}}/ses-{{session}}.tar.gz\
     --subjects $1 \
+    --ses 1 \
     --bids notop \
     -f /code/pipelines/bidsify/heudiconv_test.py\
     -c dcm2niix \
