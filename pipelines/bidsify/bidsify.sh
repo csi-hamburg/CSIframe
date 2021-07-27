@@ -6,15 +6,15 @@ datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/dicoms/${1}
 datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/raw_bids/sub-${1}
 
 # Checkout new branch in bids subject directory dataset
-#git -C data/raw_bids/ checkout -b "${PIPE_ID}"
 git -C data/raw_bids/sub-${1} checkout -b "${PIPE_ID}"
 
+# Remove previously produced outputs from CLONE to avoid clonflicts
 ( rm -rf data/raw_bids/sub-${1}/ses-* )
 
 # Run heudiconv for dcm2nii and bidsification of its outputs
 # heudiconv_heuristic.py is dataset specific
 # FIXME: amend -d PATH according to your dicom directory structure 
-# FIXME: amend -f PATH to the suitable heudicon heuristic file
+# FIXME: amend -f PATH to the suitable heudiconv heuristic file
 CMD="
     singularity run --cleanenv --userns\
     --home $PWD \
@@ -75,5 +75,4 @@ datalad run -m '${PIPE_ID} handle metadata' \
 rm -rf $CLONE_BIDS_DIR/.heudiconv
 
 # Push results from clone to original dataset
-#flock $DSLOCKFILE datalad push -d $CLONE_BIDS_DIR/ --to origin
 flock $DSLOCKFILE datalad push -d $CLONE_BIDS_DIR/sub-${1} --to origin
