@@ -1,4 +1,0 @@
-{('run{item:03d}', ('nii.gz',), None): ['5-3D_Flair',
-                                        '8-t1_mprage_cor',
-                                        '12-ep2d_restingstate',
-                                        '15-ep2d_diff_96dir_7b0_3shell']}
