@@ -22,7 +22,7 @@ CMD="
     -B $CLONE_BIDS_DIR:/bids \
     -B $CLONE_DCM_DIR:/dcm \
     -B $CLONE_TMP_DIR:/tmp \
-    $ENV_DIR/heudiconv-0.9.0_update.sif\
+    $ENV_DIR/heudiconv-0.9.0.sif\
     heudiconv \
     -d /dcm/{{subject}}/ses-{{session}}.tar.gz\
     --subjects $1 \
