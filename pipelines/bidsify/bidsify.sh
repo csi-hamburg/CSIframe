@@ -30,10 +30,11 @@ CMD="
     -f /code/pipelines/bidsify/heudiconv_test.py\
     -c dcm2niix \
     --overwrite\
-    --minmeta \
     --grouping accession_number \
     -o /bids"
 
+    #--minmeta \
+    
 datalad run -m "${PIPE_ID} heudiconv" \
    --explicit \
    --output $CLONE_BIDS_DIR/sub-${1} -o $CLONE_BIDS_DIR/participants.tsv -o $CLONE_BIDS_DIR/participants.json -o $CLONE_BIDS_DIR/dataset_description.json \
@@ -45,36 +46,23 @@ datalad save -d . -r -F .git/COMMIT_EDITMSG
 # Deface T1	
 T1=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_T1w.nii.gz
 FLAIR=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_FLAIR.nii.gz
+T2=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_T2w.nii.gz
 CMD_T1="pydeface $T1 --outfile $T1 --force"
 CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force"
+CMD_T2="pydeface $T2w --outfile $T2w --force"
 
 datalad containers-run \
-   -m "${PIPE_ID} pydeface T1w" \
+   -m "${PIPE_ID} pydeface T1w, T2w and FLAIR" \
    --explicit \
    --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*T1w.nii.gz" \
    --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*FLAIR.nii.gz" \
+   --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*T2w.nii.gz" \
    --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*T1w.nii.gz" \
    --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*FLAIR.nii.gz" \
+   --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*T2w.nii.gz" \
    --container-name pydeface \
-   "$CMD_T1 ; $CMD_FLAIR"
+   "[ -f $T1 ] && $CMD_T1 ; [ -f $FLAIR ] $CMD_FLAIR ; [ -f $T2 ] $CMD_T2"
    
-   
-#           pydeface $T1 \
-#    --outfile $T1 \
-#    --force
-#
-## Deface FLAIR
-#FLAIR=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_FLAIR.nii.gz
-#datalad containers-run \
-#   -m "${PIPE_ID} pydeface FLAIR" \
-#   --explicit \
-#   --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*FLAIR.nii.gz" \
-#   --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*FLAIR.nii.gz" \
-#   --container-name pydeface \
-#           pydeface $FLAIR \
-#    --outfile $FLAIR \
-#    --force
-
 # Remove problematic metadata from json sidecars
 CMD="python $CODE_DIR/pipelines/$PIPELINE/handle_metadata.py $1"
 datalad run -m '${PIPE_ID} handle metadata' \

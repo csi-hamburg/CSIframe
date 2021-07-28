@@ -9,7 +9,7 @@ if not subject.startswith('sub-'): subject = 'sub-' + subject
 bidsdir=os.getcwd()
 
 # Defince problematic metadata fields
-problematic_metadata=['InstitutionName', 'InstitutionalDepartmentName','InstitutionAddress','InstitutionAddress','ProcedureStepDescription']
+problematic_metadata=['InstitutionName', 'InstitutionalDepartmentName','InstitutionAddress','InstitutionAddress','ProcedureStepDescription', "StationName"]
 
 # Make list of the json files to edit
 json_paths=glob.glob(f'data/raw_bids/{subject}/ses-*/*/*.json')
