@@ -13,11 +13,14 @@
 ####################
 
 set -oux
-source /sw/batch/init.sh
+source /sw/batch/init.s
 
 echo '###################################'
 echo Started processing of $1
 echo '###################################'
+
+# Change default permissions for new files
+umask u=rwx g=rwx
 
 # define environment
 SCRIPT_DIR=${SLURM_SUBMIT_DIR-$(dirname "$0")}
@@ -98,7 +101,7 @@ export PIPE_ID="job-$SLURM_JOBID-$PIPELINE-$1-$(date +%d%m%Y)"
 
 source $PIPELINE_DIR/${PIPELINE}.sh $1
 
-datalad remove $CLONE
+datalad remove --nocheck $CLONE
 
 #if [ $PIPELINE == "bidsify" ];then
 #
@@ -489,7 +492,7 @@ datalad remove $CLONE
 # list branches with "git branch -l"
 #
 # Merge branches into master with 
-# $ git merge -m "Merge results from job cluster XY" $(git branch -l | grep 'job-' | tr -d ' ')
+# $ git merge -m "Merge results from job" $(git branch -l | grep 'job-' | tr -d ' ')
 #
 # Delete merged branches with
 # $ git branch --merged | grep -i -v -E "git-annex|master|dev"| xargs git branch -d

@@ -29,11 +29,11 @@ CMD="
     --bids notop \
     -f /code/pipelines/bidsify/heudiconv_test.py\
     -c dcm2niix \
+    --minmeta \
     --overwrite\
     --grouping accession_number \
     -o /bids"
 
-    #--minmeta \
     
 datalad run -m "${PIPE_ID} heudiconv" \
    --explicit \
