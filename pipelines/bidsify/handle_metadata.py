@@ -22,4 +22,4 @@ for json_path in json_paths:
 		for item in problematic_metadata:
 			if item in json_file: json_file[item]='deleted'
 	with open(json_path, 'w') as data_file:
-		json_file = json.dump(json_file, data_file)
+		json_file = json.dump(json_file, data_file, indent=2)

@@ -22,7 +22,8 @@ CMD="
     -B $CLONE_BIDS_DIR:/bids \
     -B $CLONE_DCM_DIR:/dcm \
     -B $CLONE_TMP_DIR:/tmp \
-    $ENV_DIR/heudiconv-0.9.0.sif\
+    $ENV_DIR/heudiconv-0.9.0_update.sif\
+    heudiconv \
     -d /dcm/{{subject}}/ses-{{session}}.tar.gz\
     --subjects $1 \
     --ses $SESSION \
@@ -41,7 +42,7 @@ datalad run -m "${PIPE_ID} heudiconv" \
    --input $CLONE_DCM_DIR/$1 \
    $CMD
 
-datalad save -d . -r -F .git/COMMIT_EDITMSG
+#datalad save -d . -r -F .git/COMMIT_EDITMSG
 
 # Deface T1	
 T1=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_T1w.nii.gz
