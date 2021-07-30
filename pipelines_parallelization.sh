@@ -41,7 +41,7 @@ subjs_start_idx=$(expr $ITER \* 1000 + ${SLURM_ARRAY_TASK_ID-0})
 if [ $PIPELINE == bidsify ];then
 	subjs=(${subjs[@]-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata)})
 else
-	subjs=(${subjs[@]-$(ls $PROJ_DIR/sub-* -d -1)})
+	subjs=(${subjs[@]-$(ls $BIDS_DIR/sub-* -d -1)})
 fi
 
 subjs_subarr=($(basename -a ${subjs[@]:$subjs_start_idx:$SUBJS_PER_NODE}))

@@ -18,12 +18,13 @@ git -C $CLONE_DATA_DIR/mriqc/$1 checkout -b "$PIPE_ID"
 
 cd $CLONE
 
-datalad containers-run \
+datalad run \
    -m "$PIPE_ID" \
    --explicit \
    --input "$CLONE_BIDS_DIR/$1" --input "$CLONE_BIDS_DIR/dataset_description.json" \
    --output $CLONE_DATA_DIR/mriqc -o $CLONE_DATA_DIR/mriqc/$1 \
-   --container-name mriqc \
+   singularity run --cleanenv --userns -B . -B $PROJ_DIR -B $SCRATCH_DIR/:/tmp \
+   $ENV_DIR/mriqc-0.16.1 \
     data/raw_bids data/mriqc participant \
     -w .git/tmp/wdir \
     --participant-label $1 \
@@ -32,6 +33,21 @@ datalad containers-run \
     --ica \
     --float32 \
     --nprocs $SLURM_CPUS_PER_TASK 
+
+# datalad containers-run \
+#    -m "$PIPE_ID" \
+#    --explicit \
+#    --input "$CLONE_BIDS_DIR/$1" --input "$CLONE_BIDS_DIR/dataset_description.json" \
+#    --output $CLONE_DATA_DIR/mriqc -o $CLONE_DATA_DIR/mriqc/$1 \
+#    --container-name mriqc \
+#     data/raw_bids data/mriqc participant \
+#     -w .git/tmp/wdir \
+#     --participant-label $1 \
+#     --modalities T1w T2w bold \
+#     --no-sub \
+#     --ica \
+#     --float32 \
+#     --nprocs $SLURM_CPUS_PER_TASK 
 
 echo $(ls -lah $CLONE_DATA_DIR/mriqc)
 echo $(ls -lah $CLONE_DATA_DIR/mriqc/$1)

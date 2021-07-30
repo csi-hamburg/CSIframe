@@ -22,7 +22,7 @@ CMD="
     -B $CLONE_BIDS_DIR:/bids \
     -B $CLONE_DCM_DIR:/dcm \
     -B $CLONE_TMP_DIR:/tmp \
-    $ENV_DIR/heudiconv-0.9.0.sif\
+    $ENV_DIR/heudiconv-0.9.0\
     heudiconv \
     -d /dcm/{{subject}}/ses-{{session}}.tar.gz\
     --subjects $1 \
@@ -52,7 +52,19 @@ CMD_T1="pydeface $T1 --outfile $T1 --force"
 CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force"
 CMD_T2="pydeface $T2w --outfile $T2w --force"
 
-datalad containers-run \
+# datalad containers-run \
+#    -m "${PIPE_ID} pydeface T1w, T2w and FLAIR" \
+#    --explicit \
+#    --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*T1w.nii.gz" \
+#    --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*FLAIR.nii.gz" \
+#    --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*T2w.nii.gz" \
+#    --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*T1w.nii.gz" \
+#    --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*FLAIR.nii.gz" \
+#    --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*T2w.nii.gz" \
+#    --container-name pydeface \
+#    "[ -f $T1 ] && $CMD_T1 ; [ -f $FLAIR ] $CMD_FLAIR ; [ -f $T2 ] $CMD_T2"
+   
+datalad run \
    -m "${PIPE_ID} pydeface T1w, T2w and FLAIR" \
    --explicit \
    --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*T1w.nii.gz" \
@@ -61,9 +73,10 @@ datalad containers-run \
    --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*T1w.nii.gz" \
    --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*FLAIR.nii.gz" \
    --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*T2w.nii.gz" \
-   --container-name pydeface \
+   singularity run --cleanenv --userns -B . -B $PROJ_DIR -B $SCRATCH_DIR/:/tmp \
+   $ENV_DIR/pydeface-2.0.0 \
    "[ -f $T1 ] && $CMD_T1 ; [ -f $FLAIR ] $CMD_FLAIR ; [ -f $T2 ] $CMD_T2"
-   
+
 # Remove problematic metadata from json sidecars
 CMD="python $CODE_DIR/pipelines/$PIPELINE/handle_metadata.py $1"
 datalad run -m '${PIPE_ID} handle metadata' \

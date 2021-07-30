@@ -37,6 +37,29 @@ datalad containers-run \
    --explicit \
    --input "$CLONE_BIDS_DIR/$1" \
    --output $CLONE_DATA_DIR/qsiprep -o $CLONE_DATA_DIR/qsiprep/$1 -o $CLONE_DATA_DIR/qsirecon -o $CLONE_DATA_DIR/qsirecon/$1 \
+   singularity run --cleanenv --userns -B . -B $PROJ_DIR -B $SCRATCH_DIR/:/tmp \
+   $ENV_DIR/qsiprep-0.13.0
+    data/raw_bids data participant \
+    -w .git/tmp/wdir \
+    --participant-label $1 \
+    --recon_input data/qsiprep/$1 \
+    --recon_spec mrtrix_multishell_msmt \
+    --nthreads $SLURM_CPUS_PER_TASK \
+    --skip-bids-validation \
+    --use-syn-sdc \
+    --denoise-method dwidenoise \
+    --unringing-method mrdegibbs \
+    --skull-strip-template OASIS \
+    --stop-on-first-crash \
+    --output-resolution 1.3 \
+    --stop-on-first-crash \
+    --fs-license-file envs/freesurfer_license.txt
+
+datalad containers-run \
+   -m "$PIPE_ID" \
+   --explicit \
+   --input "$CLONE_BIDS_DIR/$1" \
+   --output $CLONE_DATA_DIR/qsiprep -o $CLONE_DATA_DIR/qsiprep/$1 -o $CLONE_DATA_DIR/qsirecon -o $CLONE_DATA_DIR/qsirecon/$1 \
    --container-name qsiprep \
     data/raw_bids data participant \
     -w .git/tmp/wdir \

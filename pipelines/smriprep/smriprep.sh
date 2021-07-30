@@ -26,7 +26,8 @@ datalad containers-run \
    --explicit \
    --output $CLONE_DATA_DIR/freesurfer -o $CLONE_DATA_DIR/smriprep -o $CLONE_DATA_DIR/smriprep/$1 \
    --input "$CLONE_BIDS_DIR/$1"\
-   --container-name smriprep \
+   singularity run --cleanenv --userns -B . -B $PROJ_DIR -B $SCRATCH_DIR/:/tmp \
+   $ENV_DIR/smriprep-0.8.0rc2.sif
     data/raw_bids data participant \
     -w .git/tmp/wdir \
     --participant-label $1 \

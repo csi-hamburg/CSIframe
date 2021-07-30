@@ -13,7 +13,7 @@
 ####################
 
 set -oux
-source /sw/batch/init.s
+source /sw/batch/init.sh
 
 echo '###################################'
 echo Started processing of $1
@@ -35,8 +35,8 @@ export BIDS_DIR=$PROJ_DIR/data/raw_bids
 export SLURM_CPUS_PER_TASK=${SLURM_CPUS_PER_TASK-10}
 export SCRATCH_DIR=/scratch/${USER}.${SLURM_JOBID}/$1 
 [ ! -d $SCRATCH_DIR ] && mkdir $SCRATCH_DIR
-export SINGULARITY_CACHEDIR=$WORK/tmp/singularity  #$SCRATCH_DIR 
-export SINGULARITY_TMPDIR=$WORK/tmp/singularity  #$SCRATCH_DIR
+export SINGULARITY_CACHEDIR=$WORK/tmp/singularity_cache  #$SCRATCH_DIR 
+export SINGULARITY_TMPDIR=$WORK/tmp/singularity_tmp  #$SCRATCH_DIR
 export DSLOCKFILE=$WORK/tmp/pipeline.lock
 export DATALAD_LOCATIONS_SOCKETS=$SCRATCH_DIR/sockets
 
@@ -76,8 +76,8 @@ cd $CLONE
 # Get necessary subdatasets and files
 [ -f $CLONE_ENV_DIR/freesurfer_license.txt ] || datalad get $CLONE_ENV_DIR/freesurfer_license.txt
 [ -d $CLONE_BIDS_DIR ] || datalad get -n $CLONE_BIDS_DIR
-[ -f $CLONE_ENV_DIR/freesurfer_license.txt ] || datalad get $CLONE_BIDS_DIR/dataset_description.json
-[ -f $CLONE_ENV_DIR/freesurfer_license.txt ] || datalad get $CLONE_BIDS_DIR/participants.tsv
+[ -f $CLONE_BIDS_DIR/dataset_description.json ] || datalad get $CLONE_BIDS_DIR/dataset_description.json
+[ -f $CLONE_BIDS_DIR/participants.tsv ] || datalad get $CLONE_BIDS_DIR/participants.tsv
 #datalad get data/raw_bids/.bidsignore
 
 # Make git-annex disregard the clones - they are meant to be thrown away
