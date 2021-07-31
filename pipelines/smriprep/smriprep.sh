@@ -3,7 +3,6 @@
 # Get input and output dataset directory trees
 datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_BIDS_DIR/$1
 datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freesurfer
-#datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freesurfer/$1
 datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/smriprep
 datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/smriprep/$1
 
@@ -21,13 +20,9 @@ git -C $CLONE_DATA_DIR/smriprep/$1 checkout -b "job-$SLURM_JOBID-smriprep-$1"
 (cd $CLONE_DATA_DIR/freesurfer && rm -rf fsaverage $1 .bidsignore)
 (cd $CLONE_DATA_DIR/smriprep && rm -rf logs $1/* "${1}.html" dataset_description.json desc-aparcaseg_dseg.tsv desc-aseg_dseg.tsv .bidsignore)
 
-datalad containers-run \
-   -m "$PIPE_ID" \
-   --explicit \
-   --output $CLONE_DATA_DIR/freesurfer -o $CLONE_DATA_DIR/smriprep -o $CLONE_DATA_DIR/smriprep/$1 \
-   --input "$CLONE_BIDS_DIR/$1"\
+CMD="
    singularity run --cleanenv --userns -B . -B $PROJ_DIR -B $SCRATCH_DIR/:/tmp \
-   $ENV_DIR/smriprep-0.8.0rc2.sif
+   $ENV_DIR/smriprep-0.8.0rc2
     data/raw_bids data participant \
     -w .git/tmp/wdir \
     --participant-label $1 \
@@ -36,6 +31,14 @@ datalad containers-run \
     --fs-subjects-dir data/freesurfer \
     --stop-on-first-crash \
     --fs-license-file envs/freesurfer_license.txt
+"
+
+datalad run \
+   -m "$PIPE_ID" \
+   --explicit \
+   --output $CLONE_DATA_DIR/freesurfer -o $CLONE_DATA_DIR/smriprep -o $CLONE_DATA_DIR/smriprep/$1 \
+   --input "$CLONE_BIDS_DIR/$1"\
+    $CMD
 
 echo $(ls -lah $CLONE_DATA_DIR/smriprep)
 echo $(ls -lah $CLONE_DATA_DIR/smriprep/$1)
