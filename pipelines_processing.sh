@@ -101,7 +101,8 @@ export PIPE_ID="job-$SLURM_JOBID-$PIPELINE-$1-$(date +%d%m%Y)"
 
 source $PIPELINE_DIR/${PIPELINE}.sh $1
 
-datalad remove --nocheck $CLONE
+chmod 770 -R $CLONE
+rm -rf $CLONE
 
 #if [ $PIPELINE == "bidsify" ];then
 #

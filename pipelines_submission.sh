@@ -40,7 +40,7 @@ script_path=$CODE_DIR/$script_name
 
 # empirical job config
 if [ $PIPELINE == "bidsify" ];then
-	export SUBJS_PER_NODE=6
+	export SUBJS_PER_NODE=20  # 6
 	batch_time="04:00:00"
 	partition="std"
 	at_once=
@@ -51,27 +51,27 @@ if [ $PIPELINE == "bidsify" ];then
 		export SESSION=$input
 	fi
 elif [ $PIPELINE == "qsiprep" ];then
-	export SUBJS_PER_NODE=1
+	export SUBJS_PER_NODE=5  #1
 	batch_time="10:00:00"
 	partition="std" # ponder usage of gpu for eddy speed up
 	at_once=
 elif [ $PIPELINE == "smriprep" ];then
-	export SUBJS_PER_NODE=4
+	export SUBJS_PER_NODE=5  #4
 	batch_time="15:00:00"
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "mriqc" ];then
-	export SUBJS_PER_NODE=6
+	export SUBJS_PER_NODE=10 #6
 	batch_time="02:00:00"
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "fmriprep" ];then
-	export SUBJS_PER_NODE=4
+	export SUBJS_PER_NODE=5 #4
 	batch_time="15:00:00"
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "xcpengine" ];then
-	export SUBJS_PER_NODE=16
+	export SUBJS_PER_NODE=15
 	batch_time="12:00:00"
 	partition="std"
 	at_once=

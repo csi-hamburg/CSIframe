@@ -37,20 +37,6 @@ datalad run \
    --input "$CLONE_BIDS_DIR/$1" --input "$CLONE_BIDS_DIR/dataset_description.json" \
    --output $CLONE_DATA_DIR/mriqc -o $CLONE_DATA_DIR/mriqc/$1 \
     $CMD
-# datalad containers-run \
-#    -m "$PIPE_ID" \
-#    --explicit \
-#    --input "$CLONE_BIDS_DIR/$1" --input "$CLONE_BIDS_DIR/dataset_description.json" \
-#    --output $CLONE_DATA_DIR/mriqc -o $CLONE_DATA_DIR/mriqc/$1 \
-#    --container-name mriqc \
-#     data/raw_bids data/mriqc participant \
-#     -w .git/tmp/wdir \
-#     --participant-label $1 \
-#     --modalities T1w T2w bold \
-#     --no-sub \
-#     --ica \
-#     --float32 \
-#     --nprocs $SLURM_CPUS_PER_TASK 
 
 echo $(ls -lah $CLONE_DATA_DIR/mriqc)
 echo $(ls -lah $CLONE_DATA_DIR/mriqc/$1)
