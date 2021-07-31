@@ -22,7 +22,7 @@ export SESSION=$1;shift
 input_subject_array=($@)
 echo ${input_subject_array[@]}
 
-# Read $1 is empty
+# Read if  $1 is empty
 if [ -z $PIPELINE ];then
 	echo "Which pipeline do you want to execute?"
 	echo "Please choose from: $(ls $CODE_DIR/pipelines)"
@@ -56,7 +56,7 @@ elif [ $PIPELINE == "qsiprep" ];then
 	partition="std" # ponder usage of gpu for eddy speed up
 	at_once=
 elif [ $PIPELINE == "smriprep" ];then
-	export SUBJS_PER_NODE=5  #4
+	export SUBJS_PER_NODE=10  #4
 	batch_time="15:00:00"
 	partition="std"
 	at_once=
@@ -76,7 +76,7 @@ elif [ $PIPELINE == "xcpengine" ];then
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "wmhprep" ];then
-	export SUBJS_PER_NODE=6
+	export SUBJS_PER_NODE=5
 	batch_time="04:00:00"
 	partition="std"
 else
