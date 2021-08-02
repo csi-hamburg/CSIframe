@@ -24,7 +24,7 @@ Invoke dataset_helper.sh and provide the name of the dataset_concerned in the sa
         - Add subject subdatasets to a data subdataset in data/ (e.g. add data/fmriprep/sub-0001)
     - Before execution of pipeline scripts make sure that all datasets you are reading from and pushing to are in a clean state (content saved to annex and all information propagated to superdataset) with `datalad status data/subds` and `datalad save -d^. -r data/subds`
     - Pipeline testing (optional but recommended)
-        - Execute in code
+        - Execute in code before job submission
         1. `salloc`: allocate an interactive node for an hour
         2. `export PIPELINE=<pipeline>`: export PIPELINE variable to specify pipeline
         3. Provide session if applying session-specific analysis (like *bidsify*); e.g. `export SESSION=1`
