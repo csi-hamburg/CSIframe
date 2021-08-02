@@ -35,8 +35,8 @@ export BIDS_DIR=$PROJ_DIR/data/raw_bids
 export SLURM_CPUS_PER_TASK=${SLURM_CPUS_PER_TASK-10}
 export SCRATCH_DIR=/scratch/${USER}.${SLURM_JOBID}/$1 
 [ ! -d $SCRATCH_DIR ] && mkdir $SCRATCH_DIR
-export SINGULARITY_CACHEDIR=$WORK/tmp/singularity_cache  #$SCRATCH_DIR 
-export SINGULARITY_TMPDIR=$WORK/tmp/singularity_tmp  #$SCRATCH_DIR
+export SINGULARITY_CACHEDIR=$SCRATCH_DIR/singularity_cache  #$SCRATCH_DIR 
+export SINGULARITY_TMPDIR=$SCRATCH_DIR/singularity_tmp  #$SCRATCH_DIR
 export DSLOCKFILE=$WORK/tmp/pipeline.lock
 export DATALAD_LOCATIONS_SOCKETS=$SCRATCH_DIR/sockets
 
@@ -93,16 +93,12 @@ export SINGULARITYENV_TEMPLATEFLOW_HOME=$TEMPLATEFLOW_HOME
 
 # Remove other participants than $1 in bids (pybids gets angry when it sees dangling symlinks)
 find $CLONE_BIDS_DIR -maxdepth 1 -name 'sub-*' -type d -a ! -name '*'"$1"'*' -exec rm -rv {} +
-echo ls BIDS root: $(ls $CLONE_BIDS_DIR)
 
 # Run pipeline; paths relative to project root and push back the results.
 
 export PIPE_ID="job-$SLURM_JOBID-$PIPELINE-$1-$(date +%d%m%Y)"
 
 source $PIPELINE_DIR/${PIPELINE}.sh $1
-
-chmod 770 -R $CLONE
-rm -rf $CLONE
 
 #if [ $PIPELINE == "bidsify" ];then
 #
