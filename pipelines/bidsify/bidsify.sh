@@ -40,30 +40,12 @@ datalad run -m "${PIPE_ID} heudiconv" \
    --output $CLONE_BIDS_DIR/sub-${1} -o $CLONE_BIDS_DIR/participants.tsv -o $CLONE_BIDS_DIR/participants.json -o $CLONE_BIDS_DIR/dataset_description.json \
    --input $CLONE_DCM_DIR/$1 \
    $CMD
+datalad save -d . -r -F .git/COMMIT_EDITMSG
 
-#datalad save -d . -r -F .git/COMMIT_EDITMSG
+# Deface	
 
-# Deface T1	
 T1=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_T1w.nii.gz
-FLAIR=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_FLAIR.nii.gz
-T2=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_T2w.nii.gz
-CMD_T1="pydeface $T1 --outfile $T1 --force"
-CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force"
-CMD_T2="pydeface $T2 --outfile $T2 --force"
-
-#datalad run \
-#   -m "${PIPE_ID} pydeface T1w, T2w and FLAIR" \
-#   --explicit \
-#   --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*T1w.nii.gz" \
-#   --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*FLAIR.nii.gz" \
-#   --output "$CLONE_BIDS_DIR/sub-${1}/*/*/*T2w.nii.gz" \
-#   --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*T1w.nii.gz" \
-#   --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*FLAIR.nii.gz" \
-#   --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*T2w.nii.gz" \
-#   singularity run --cleanenv --userns -B . -B $PROJ_DIR -B $SCRATCH_DIR/:/tmp \
-#   $ENV_DIR/pydeface-2.0.0 \
-#   "$CMD_T1 ; $CMD_FLAIR ; $CMD_T2"
-
+CMD_T1="pydeface $T1 --outfile $T1 --force --verbose"
 datalad run \
    -m "${PIPE_ID} pydeface T1w" \
    --explicit \
@@ -73,6 +55,8 @@ datalad run \
    $ENV_DIR/pydeface-2.0.0 \
    "$CMD_T1"
 
+T2=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_T2w.nii.gz
+CMD_T2="pydeface $T2 --outfile $T2 --force --verbose"
 datalad run \
    -m "${PIPE_ID} pydeface T2w" \
    --explicit \
@@ -82,6 +66,8 @@ datalad run \
    $ENV_DIR/pydeface-2.0.0 \
    "$CMD_T2"
 
+FLAIR=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_FLAIR.nii.gz
+CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force --verbose"
 datalad run \
    -m "${PIPE_ID} pydeface FLAIR" \
    --explicit \
