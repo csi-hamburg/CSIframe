@@ -40,10 +40,6 @@ datalad run \
    --input "$CLONE_BIDS_DIR/$1"\
     $CMD
 
-echo $(ls -lah $CLONE_DATA_DIR/smriprep)
-echo $(ls -lah $CLONE_DATA_DIR/smriprep/$1)
-echo $(ls -lah $CLONE_DATA_DIR/freesurfer)
-echo $(ls -lah $CLONE_DATA_DIR/freesurfer/$1)
 
 #flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freesurfer/$1 --to origin
 flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freesurfer --to origin
