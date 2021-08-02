@@ -23,6 +23,7 @@ CMD="
     -B $CLONE_DCM_DIR:/dcm \
     -B $CLONE_TMP_DIR:/tmp \
     $ENV_DIR/heudiconv-0.9.0\
+    heudiconv \
     -d /dcm/{{subject}}/ses-{{session}}.tar.gz\
     --subjects $1 \
     --ses $SESSION \
@@ -53,7 +54,7 @@ datalad run \
    --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*T1w.nii.gz" \
    singularity run --cleanenv --userns -B . -B $PROJ_DIR -B $SCRATCH_DIR/:/tmp \
    $ENV_DIR/pydeface-2.0.0 \
-   "$CMD_T1"
+   $CMD_T1
 
 T2=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_T2w.nii.gz
 CMD_T2="pydeface $T2 --outfile $T2 --force --verbose"
@@ -64,7 +65,7 @@ datalad run \
    --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*T2w.nii.gz" \
    singularity run --cleanenv --userns -B . -B $PROJ_DIR -B $SCRATCH_DIR/:/tmp \
    $ENV_DIR/pydeface-2.0.0 \
-   "$CMD_T2"
+   $CMD_T2
 
 FLAIR=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_FLAIR.nii.gz
 CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force --verbose"
@@ -75,7 +76,7 @@ datalad run \
    --input "$CLONE_BIDS_DIR/sub-${1}/*/*/*FLAIR.nii.gz" \
    singularity run --cleanenv --userns -B . -B $PROJ_DIR -B $SCRATCH_DIR/:/tmp \
    $ENV_DIR/pydeface-2.0.0 \
-   "$CMD_FLAIR"
+   $CMD_FLAIR
 
 # Remove problematic metadata from json sidecars
 CMD="python $CODE_DIR/pipelines/$PIPELINE/handle_metadata.py $1"
