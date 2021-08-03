@@ -45,7 +45,7 @@ datalad save -d . -r -F .git/COMMIT_EDITMSG
 
 # Deface	
 
-T1=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_T1w.nii.gz
+T1=$CLONE_BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T1w.nii.gz
 CMD_T1="pydeface $T1 --outfile $T1 --force --verbose"
 datalad run \
    -m "${PIPE_ID} pydeface T1w" \
@@ -56,7 +56,7 @@ datalad run \
    $ENV_DIR/pydeface-2.0.0 \
    $CMD_T1
 
-T2=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_T2w.nii.gz
+T2=$CLONE_BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T2w.nii.gz
 CMD_T2="pydeface $T2 --outfile $T2 --force --verbose"
 datalad run \
    -m "${PIPE_ID} pydeface T2w" \
@@ -67,7 +67,7 @@ datalad run \
    $ENV_DIR/pydeface-2.0.0 \
    $CMD_T2
 
-FLAIR=$CLONE_BIDS_DIR/sub-${1}/ses-1/anat/sub-${1}_ses-1_FLAIR.nii.gz
+FLAIR=$CLONE_BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_FLAIR.nii.gz
 CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force --verbose"
 datalad run \
    -m "${PIPE_ID} pydeface FLAIR" \
