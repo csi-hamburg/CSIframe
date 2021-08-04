@@ -38,11 +38,11 @@ def infotodict(seqinfo):
     # 1) An equivalent field "==" (e.g., good for checking dimensions)
     # 2) A field that includes a string (e.g., 'mprage' in s.protocol_name)
     for idx, s in enumerate(seqinfo):
-        if ('t1_mprage_cor_ND' in s.series_description):
+        if ('t1_mprage_cor_ND' == s.series_description):
             info[t1w].append(s.series_id)
-        if ('t2_tse_tra_ND' in s.series_description) or ('t2_space_cor_p4_iso_ND' in s.series_description):
+        if ('t2_tse_tra_ND' == s.series_description) or ('t2_space_cor_p4_iso_ND' == s.series_description):
             info[t2w].append(s.series_id)
-        if ('t2_spc_da-fl_sag_ND' in s.series_description):
+        if ('t2_spc_da-fl_sag_ND' == s.series_description):
             info[flair].append(s.series_id)
         if ('ep2d_diff_tra_DTI_DFC' == s.series_description) or ('ep2d_diff_tra_DTI_DFC_MIX' == s.series_description):
             info[dwi].append(s.series_id)
