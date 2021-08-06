@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #SBATCH --nodes=1
-#SBATCH --export=PIPELINE,SESSION,SUBJS_PER_NODE,ITER
+#SBATCH --export=PIPELINE,SESSION,SUBJS_PER_NODE,ITER,MODIFIED
 
 ####################
 # batch script for across subject parallelization

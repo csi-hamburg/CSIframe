@@ -16,6 +16,7 @@ Invoke dataset_helper.sh and provide the name of the dataset_concerned in the sa
         - Mind to check whether raw_bids is clean (everything saved to annex, propagated to superdataset?)
     4. `convert_containers`
         - Convert singularity containers to sandboxes that are used in the pipeline scripts
+    5. Ensure that dataset is clean with `datalad status` and `datalad save` 
 -> Now bidsification of dicoms should be possible
 3. Processing
     - `add_data_subds`
@@ -23,6 +24,9 @@ Invoke dataset_helper.sh and provide the name of the dataset_concerned in the sa
     - `add_subjects_subds`
         - Add subject subdatasets to a data subdataset in data/ (e.g. add data/fmriprep/sub-0001)
     - Before execution of pipeline scripts make sure that all datasets you are reading from and pushing to are in a clean state (content saved to annex and all information propagated to superdataset) with `datalad status data/subds` and `datalad save -d^. -r data/subds`
+    - Fix FIXMEs
+        - bidsify: edit heudiconv heuristic and dicom directory structure
+        - qsiprep: edit --recon-spec
     - Pipeline testing (optional but recommended)
         - Execute in code before job submission
         1. `salloc`: allocate an interactive node for an hour

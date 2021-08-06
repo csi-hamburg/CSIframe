@@ -33,25 +33,52 @@ cd $CLONE
 
 # Run pipeline with datalad
 # FIXME: amend according to used shell, etc.
-CMD="
-   singularity run --cleanenv --userns -B . -B $PROJ_DIR -B $SCRATCH_DIR/:/tmp \
-   $ENV_DIR/qsiprep-0.13.0
-    data/raw_bids data participant \
-    -w .git/tmp/wdir \
-    --participant-label $1 \
-    --recon_input data/qsiprep/$1 \
-    --recon_spec mrtrix_multishell_msmt \
-    --nthreads $SLURM_CPUS_PER_TASK \
-    --skip-bids-validation \
-    --use-syn-sdc \
-    --denoise-method dwidenoise \
-    --unringing-method mrdegibbs \
-    --skull-strip-template OASIS \
-    --stop-on-first-crash \
-    --output-resolution 1.3 \
-    --stop-on-first-crash \
-    --fs-license-file envs/freesurfer_license.txt
-"
+
+if [ $MODIFIED == y ];then
+
+   # qsiprep only preprocessing
+
+   CMD="
+      singularity run --cleanenv --userns -B . -B $PROJ_DIR -B $SCRATCH_DIR/:/tmp \
+      $ENV_DIR/qsiprep-0.13.0
+       data/raw_bids data participant \
+       -w .git/tmp/wdir \
+       --participant-label $1 \
+       --nthreads $SLURM_CPUS_PER_TASK \
+       --skip-bids-validation \
+       --use-syn-sdc \
+       --denoise-method dwidenoise \
+       --unringing-method mrdegibbs \
+       --skull-strip-template OASIS \
+       --stop-on-first-crash \
+       --output-resolution 1.3 \
+       --stop-on-first-crash \
+       --fs-license-file envs/freesurfer_license.txt
+   "
+else
+
+   # qsiprep + qsirecon
+
+   CMD="
+      singularity run --cleanenv --userns -B . -B $PROJ_DIR -B $SCRATCH_DIR/:/tmp \
+      $ENV_DIR/qsiprep-0.13.0
+       data/raw_bids data participant \
+       -w .git/tmp/wdir \
+       --participant-label $1 \
+       --recon_input data/qsiprep/$1 \
+       --recon_spec mrtrix_multishell_msmt \
+       --nthreads $SLURM_CPUS_PER_TASK \
+       --skip-bids-validation \
+       --use-syn-sdc \
+       --denoise-method dwidenoise \
+       --unringing-method mrdegibbs \
+       --skull-strip-template OASIS \
+       --stop-on-first-crash \
+       --output-resolution 1.3 \
+       --stop-on-first-crash \
+       --fs-license-file envs/freesurfer_license.txt
+   "
+fi
 
 datalad run \
    -m "$PIPE_ID" \

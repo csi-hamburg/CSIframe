@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-#SBATCH --export=PIPELINE,SESSION,SLURM_CPUS_PER_TASK
+#SBATCH --export=PIPELINE,SESSION,SLURM_CPUS_PER_TASK,MODIFIED
 
 ####################
 # Application of preconfigured neuroimaging pipelines for image processing
@@ -22,7 +22,7 @@ echo '###################################'
 # Change default permissions for new files
 umask u=rwx g=rwx
 
-# define environment
+# Define environment
 SCRIPT_DIR=${SLURM_SUBMIT_DIR-$(dirname "$0")}
 export PROJ_DIR=$(realpath $SCRIPT_DIR/..) # project root; should be 1 level above code
 export CODE_DIR=$PROJ_DIR/code
@@ -49,7 +49,7 @@ echo SINGULARITY_TMPDIR: $SINGULARITY_TMPDIR
 echo DSLOCKFILE: $DSLOCKFILE
 mkdir -p $DATALAD_LOCATIONS_SOCKETS && echo DATALAD_LOCATIONS_SOCKETS: $DATALAD_LOCATIONS_SOCKETS
 
-# setup scratch dir
+# Setup scratch dir
 cd $SCRATCH_DIR
 CLONE=$SCRATCH_DIR/clone
 CLONE_DATA_DIR=$CLONE/data

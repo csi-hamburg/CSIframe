@@ -55,9 +55,21 @@ elif [ $PIPELINE == "qsiprep" ];then
 	batch_time="10:00:00"
 	partition="std" # ponder usage of gpu for eddy speed up
 	at_once=
+
+	echo "Do you want to perform preprocessing only; i.e. qsiprep but no qsirecon (y/n)"
+	read MODIFIED
+	export MODIFIED
+
+	if [ $MODIFIED == y ];then
+		export SUBJS_PER_NODE=10  #1
+		batch_time="5:00:00"
+		partition="std" # ponder usage of gpu for eddy speed up
+		at_once=
+	fi
+
 elif [ $PIPELINE == "smriprep" ];then
-	export SUBJS_PER_NODE=10  #4
-	batch_time="15:00:00"
+	export SUBJS_PER_NODE=10 
+	batch_time="18:00:00"
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "mriqc" ];then
