@@ -69,7 +69,7 @@ elif [ $PIPELINE == "qsiprep" ];then
 
 elif [ $PIPELINE == "smriprep" ];then
 	export SUBJS_PER_NODE=10 
-	batch_time="18:00:00"
+	batch_time="23:00:00"
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "mriqc" ];then
