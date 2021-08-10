@@ -91,6 +91,10 @@ elif [ $PIPELINE == "wmhprep" ];then
 	export SUBJS_PER_NODE=5
 	batch_time="04:00:00"
 	partition="std"
+elif [ $PIPELINE == "freewater" ];then
+	export SUBJS_PER_NODE=15
+	batch_time="02:00:00"
+	partition="std"
 else
 	echo "Pipeline $PIPELINE not supported"
 	exit
