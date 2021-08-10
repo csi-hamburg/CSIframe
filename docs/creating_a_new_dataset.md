@@ -25,8 +25,9 @@ Invoke dataset_helper.sh and provide the name of the dataset_concerned in the sa
         - Add subject subdatasets to a data subdataset in data/ (e.g. add data/fmriprep/sub-0001)
     - Before execution of pipeline scripts make sure that all datasets you are reading from and pushing to are in a clean state (content saved to annex and all information propagated to superdataset) with `datalad status data/subds` and `datalad save -d^. -r data/subds`
     - Fix FIXMEs
-        - bidsify: edit heudiconv heuristic and dicom directory structure
-        - qsiprep: edit --recon-spec
+        - bidsify: heudiconv heuristic and dicom directory structure
+        - qsiprep: --recon-spec
+        - smriprep: --output-spaces
     - Pipeline testing (optional but recommended)
         - Execute in code before job submission
         1. `salloc`: allocate an interactive node for an hour
