@@ -61,8 +61,8 @@ elif [ $PIPELINE == "qsiprep" ];then
 	export MODIFIED
 
 	if [ $MODIFIED == y ];then
-		export SUBJS_PER_NODE=10  #1
-		batch_time="5:00:00"
+		export SUBJS_PER_NODE=4  #1
+		batch_time="10:00:00"
 		partition="std" # ponder usage of gpu for eddy speed up
 		at_once=
 	fi
