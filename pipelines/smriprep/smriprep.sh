@@ -44,7 +44,6 @@ datalad run \
 
 
 cp -ruvfL $CLONE_DATA_DIR/freesurfer/$1 $DATA_DIR/freesurfer/
-cp -ruvfl $CLONE_DATA_DIR/freesurfer/$1 $WORK/freesurfer_postcovid/
 
 #flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freesurfer/$1 --to origin
 flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freesurfer --to origin
