@@ -45,7 +45,9 @@ datalad run \
 
 cp -ruvfL $CLONE_DATA_DIR/freesurfer/$1 $DATA_DIR/freesurfer/
 
+pushd $CLONE_DATA_DIR/freesurfer; git annex fsck -f origin --fast; popd
+
 #flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freesurfer/$1 --to origin
-flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freesurfer --to origin
+flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freesurfer --to origin --data nothing
 flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/smriprep/$1 --to origin
 flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/smriprep --to origin
