@@ -20,6 +20,8 @@ git -C $CLONE_DATA_DIR/smriprep/$1 checkout -b "job-$SLURM_JOBID-smriprep-$1"
 (cd $CLONE_DATA_DIR/freesurfer && rm -rf fsaverage $1 .bidsignore)
 (cd $CLONE_DATA_DIR/smriprep && rm -rf logs $1/* "${1}.html" dataset_description.json desc-aparcaseg_dseg.tsv desc-aseg_dseg.tsv .bidsignore)
 
+# Run pipeline with datalad
+# FIXME: --output-spaces
 CMD="
    singularity run --cleanenv --userns -B . -B $PROJ_DIR -B $SCRATCH_DIR/:/tmp \
    $ENV_DIR/smriprep-0.8.0rc2
@@ -40,6 +42,9 @@ datalad run \
    --input "$CLONE_BIDS_DIR/$1"\
     $CMD
 
+
+cp -ruvfL $CLONE_DATA_DIR/freesurfer/$1 $DATA_DIR/freesurfer/
+cp -ruvfl $CLONE_DATA_DIR/freesurfer/$1 $WORK/freesurfer_postcovid/
 
 #flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freesurfer/$1 --to origin
 flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freesurfer --to origin
