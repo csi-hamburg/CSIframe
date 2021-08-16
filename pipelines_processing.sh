@@ -96,7 +96,7 @@ find $CLONE_BIDS_DIR -maxdepth 1 -name 'sub-*' -type d -a ! -name '*'"$1"'*' -ex
 
 # Run pipeline; paths relative to project root and push back the results.
 
-export PIPE_ID="job-$SLURM_JOBID-$PIPELINE-$1-$(date +%d%m%Y)"
+export PIPE_ID="job-$SLURM_JOBID-$SLURM_ARRAY_JOB_ID-$PIPELINE-$1-$(date +%d%m%Y)"
 
 source $PIPELINE_DIR/${PIPELINE}.sh $1
 

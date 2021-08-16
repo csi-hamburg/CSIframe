@@ -60,13 +60,6 @@ elif [ $PIPELINE == "qsiprep" ];then
 	read MODIFIED
 	export MODIFIED
 
-	if [ $MODIFIED == y ];then
-		export SUBJS_PER_NODE=4  #1
-		batch_time="10:00:00"
-		partition="std" # ponder usage of gpu for eddy speed up
-		at_once=
-	fi
-
 elif [ $PIPELINE == "smriprep" ];then
 	export SUBJS_PER_NODE=10 
 	batch_time="23:00:00"
@@ -100,6 +93,10 @@ else
 	exit
 fi
 
+# If subject array length < subjects per node -> match subjects per node to array length
+[ $subj_array_length -lt $SUBJS_PER_NODE ] && export SUBJS_PER_NODE=$subj_array_length
+
+
 # subdivision of subjs in batches <= 1000 since max slurm array size = 1000
 times_1000=$(expr $subj_array_length / 1000 + 1)
 if [ $subj_array_length -ge 1000  ];then
@@ -111,6 +108,8 @@ fi
 # submission for every 1000 subjs
 # passed to batchscript for array slicing
 echo submitting $subj_array_length subjects for $PIPELINE processing
+
+export PIPE_ID="job-$SLURM_JOBID-$PIPELINE-$1-$(date +%d%m%Y)"
 
 for i in $(seq $times_1000);do                
 
@@ -128,8 +127,8 @@ for i in $(seq $times_1000);do
         --time ${batch_time} \
         --partition $partition \
 	--tasks-per-node=$SUBJS_PER_NODE \
-        --output $CODE_DIR/log/"%A_%a_${script_name}.out" \
-        --error $CODE_DIR/log/"%A_%a_${script_name}.err" \
+        --output $CODE_DIR/log/"job-%A-%a-${PIPELINE}-$1-$(date +%d%m%Y).err" \
+        --error $CODE_DIR/log/"job-%A-%a-${PIPELINE}-$1-$(date +%d%m%Y).err" \
     $script_path "${subjs[@]}""
     ${CMD}
 

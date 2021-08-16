@@ -74,7 +74,7 @@ echo ITERator: $ITER
 threads_per_sub=$(awk "BEGIN {print int(30/$SUBJS_PER_NODE); exit}")
 mem_per_sub=$(awk "BEGIN {print int(64000/$SUBJS_PER_NODE); exit}")
 
-srun="srun --label --exclusive -N1 -n1 --cpus-per-task $threads_per_sub --mem-per-cpu=16000" 
+srun="srun --label --exclusive -N1 -n1 --cpus-per-task $threads_per_sub --mem-per-cpu=2G" 
 
 parallel="parallel --ungroup --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/log/parallel_runtask.log"
 

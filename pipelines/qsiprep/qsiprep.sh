@@ -48,6 +48,7 @@ if [ $MODIFIED == y ];then
        --skip-bids-validation \
        --use-syn-sdc \
        --force-syn \
+       --output-space T1w \
        --denoise-method dwidenoise \
        --unringing-method mrdegibbs \
        --skull-strip-template OASIS \
@@ -71,6 +72,7 @@ else
        --nthreads $SLURM_CPUS_PER_TASK \
        --skip-bids-validation \
        --use-syn-sdc \
+       --output-space T1w \
        --force-syn \
        --denoise-method dwidenoise \
        --unringing-method mrdegibbs \
