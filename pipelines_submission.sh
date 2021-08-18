@@ -85,7 +85,7 @@ elif [ $PIPELINE == "wmhprep" ];then
 	batch_time="04:00:00"
 	partition="std"
 elif [ $PIPELINE == "freewater" ];then
-	export SUBJS_PER_NODE=15
+	export SUBJS_PER_NODE=5
 	batch_time="02:00:00"
 	partition="std"
 else
@@ -129,7 +129,7 @@ for i in $(seq $times_1000);do
 	--tasks-per-node=$SUBJS_PER_NODE \
         --output $CODE_DIR/log/"job-%A-%a-${PIPELINE}-$1-$(date +%d%m%Y).err" \
         --error $CODE_DIR/log/"job-%A-%a-${PIPELINE}-$1-$(date +%d%m%Y).err" \
-    $script_path "${subjs[@]}""
+    $script_path "${subjs[@]}"" # subjects reduzieren
     ${CMD}
 
 done
