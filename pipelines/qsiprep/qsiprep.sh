@@ -96,6 +96,17 @@ echo $(ls -lah $CLONE_DATA_DIR/qsiprep/$1)
 echo $(ls -lah $CLONE_DATA_DIR/qsirecon)
 echo $(ls -lah $CLONE_DATA_DIR/qsirecon/$1)
 
+# Move subject specific directories and files to qsiprep/$1 and qsirecon/$1, respectively
+mv $CLONE_DATA_DIR/qsiprep/$1.html $CLONE_DATA_DIR/qsiprep/$1
+mv $CLONE_DATA_DIR/qsiprep/dwiqc.json $CLONE_DATA_DIR/qsiprep/$1
+mv $CLONE_DATA_DIR/qsirecon/$1.html $CLONE_DATA_DIR/qsirecon/$1
+mv $CLONE_DATA_DIR/qsirecon/dwiqc.json $CLONE_DATA_DIR/qsirecon/$1
+
+# Datalad save changes
+cd $CLONE_DATA_DIR/qsiprep/$1; datalad save -m "save reports"
+cd $CLONE_DATE_DIR/qsirecon/$1; datalad save -m "save reports"
+cd $CLONE
+
 # Push results from clone to original dataset
 flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/qsiprep --to origin
 flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/qsiprep/$1 --to origin
