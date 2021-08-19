@@ -12,7 +12,7 @@ source /sw/batch/init.sh
 start=$(date +%s)
 
 # -x to get verbose logfiles
-set -x
+#set -x
 
 # Load HPC environment modules
 module unload singularity
@@ -28,27 +28,26 @@ export DATA_DIR=$PROJ_DIR/data
 export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
 
-#source $SCRIPT_DIR/.projectrc
 source /work/fatx405/set_envs/miniconda
 source activate datalad # env with python>=3.8, datalad, pybids
 
 # Define subarray of subjects to process
-subjs=($@)
-SUBJS_PER_NODE=${SUBJS_PER_NODE-5}
-export ITER=${ITER-0}
-subjs_start_idx=$(expr $ITER \* 1000 + ${SLURM_ARRAY_TASK_ID-0})
+subj_batch_array=($@)
+echo $(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata)
 
+# For interactive tests define subj_batch_array if not defined
 if [ $PIPELINE == bidsify ];then
-	subjs=(${subjs[@]-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata)})
+	subj_batch_array=(${subj_batch_array[@]:-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata | xargs -n 1 basename)})
 else
-	subjs=(${subjs[@]-$(ls $BIDS_DIR/sub-* -d -1)})
+	subj_batch_array=(${subj_batch_array[@]:-$(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename)})
 fi
 
-subjs_subarr=($(basename -a ${subjs[@]:$subjs_start_idx:$SUBJS_PER_NODE}))
+SUBJS_PER_NODE=${SUBJS_PER_NODE-4}
+export ITER=${ITER-0}
 
-echo starting processing with $PIPELINE from index: $subjs_start_idx ...
+echo starting processing with $PIPELINE from index: $ITER ...
 echo for n=$SUBJS_PER_NODE subjects
-echo subjects to process: ${subjs_subarr[@]}
+echo subjects to process: ${subj_batch_array[@]}
 echo submission script directory: $SCRIPT_DIR
 echo current TMPDIR: $TMPDIR
 echo ITERator: $ITER
@@ -62,7 +61,8 @@ echo ITERator: $ITER
 # parallel -jX -> X tasks that GNU parallel invokes in parallel
 # each  provided with a consecutive array element
 #
-# srun -nY -cpus-per-task Z -> Y tasks that slurm spawns, Z threads per task
+# srun -nY -cpus-per-task Z -> Y is amount of the same tasks/binaries 
+# that slurm spawns, Z CPUs (here =threads) per task
 # $parallel_script gets executed Y times with same!! array element
 #
 # To achieve across subject parallelization X = number of subjects
@@ -70,17 +70,18 @@ echo ITERator: $ITER
 # Z = number of available threads / X -> drop floating point
 #################################################################
 
+# Define CPUS_PER_TASK as 32 / Subject count. Make sure that SUBJS_PER_NODE is a power of two 
 # 32 threads per node on hummel but we allocate only 30 threads (empirical!)
-threads_per_sub=$(awk "BEGIN {print int(30/$SUBJS_PER_NODE); exit}")
-mem_per_sub=$(awk "BEGIN {print int(64000/$SUBJS_PER_NODE); exit}")
+export SLURM_CPUS_PER_TASK=$(awk "BEGIN {print int(32/$SUBJS_PER_NODE); exit}")
+# mem_per_sub=$(awk "BEGIN {print int(64000/$SUBJS_PER_NODE); exit}")
 
-srun="srun --label --exclusive -N1 -n1 --cpus-per-task $threads_per_sub --mem-per-cpu=2G" 
+#srun="srun --label --exclusive -N1 -n1 --cpus-per-task $threads_per_sub --mem-per-cpu=2G" 
 
 parallel="parallel --ungroup --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/log/parallel_runtask.log"
 
 proc_script=$CODE_DIR/pipelines_processing.sh
-echo -e "running:\n $parallel $srun $proc_script {} ::: ${subjs_subarr[@]}"
-$parallel "$srun $proc_script" ::: ${subjs_subarr[@]}
+echo -e "running:\n $parallel $srun $proc_script {} ::: ${subj_batch_array[@]}"
+$parallel $proc_script ::: ${subj_batch_array[@]}
 
 # Monitor usage of /scratch partition
 df -h /scratch
