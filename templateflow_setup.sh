@@ -10,6 +10,6 @@ CODE_DIR=$SCRIPT_DIR
 export TEMPLATEFLOW_HOME=$CODE_DIR/templateflow
 mkdir -p $TEMPLATEFLOW_HOME
 
-python -c "from templateflow.api import get; get(['MNI152NLin2009cAsym', 'MNI152NLin6Asym', 'OASIS30ANTs', 'MNIPediatricAsym', 'MNIInfant'])"
+python -c "from templateflow.api import get; get(['MNI152NLin2009cAsym', 'MNI152NLin6Asym', 'OASIS30ANTs'])"
 
 

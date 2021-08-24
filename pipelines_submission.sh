@@ -3,7 +3,10 @@
 ####################
 # submission script for distributed parallelism
 # subjects are submitted in batches depending on pipeline choice
-# provide pipeline name as arg1 and session as arg2; e.g. srun pipelines_processing.sh bidsify 1 sub-test001 
+# arg1 - pipeline
+# arg2 - session
+# arg3 - subject subset
+# e.g. srun pipelines_processing.sh bidsify 1 sub-test001 
 ####################
 
 set -x
@@ -30,40 +33,47 @@ if [ -z $PIPELINE ];then
 	export PIPELINE=$input
 fi
 
+if [ -z $SESSION ];then
+	echo "Which session do you want to process? e.g. '1'"
+	read input
+	export SESSION=$input
+fi
+
+# define subjects
+subj_array=(${input_subject_array[@]-$(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename)}) 
+subj_array_length=${#subj_array[@]}
+
 # empirical job config
 if [ $PIPELINE == "bidsify" ];then
 	export SUBJS_PER_NODE=16  # 6
 	batch_time="04:00:00"
 	partition="std"
 	at_once=
-	subj_array=(${input_subject_array[@]-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata | xargs -n basename)}) # subjects in data/dicoms
-	if [ -z $SESSION ];then
-		echo "Which session do you want to process? e.g. '1'"
-		read input
-		export SESSION=$input
-	fi
+	subj_array=(${input_subject_array[@]-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata | xargs -n 1 basename)}) # subjects in data/dicoms
+
 elif [ $PIPELINE == "qsiprep" ];then
-	export SUBJS_PER_NODE=2  #1
+	# Mind limitation by /scratch and memory capacity (23gb temporary files, 15gb max RAM usage)
+	export SUBJS_PER_NODE=4  #1
 	batch_time="10:00:00"
 	partition="std" # ponder usage of gpu for eddy speed up
 	at_once=
-
+	
 	echo "Do you want to perform preprocessing only; i.e. qsiprep but no qsirecon (y/n)"
 	read MODIFIED
 	export MODIFIED
 
 elif [ $PIPELINE == "smriprep" ];then
-	export SUBJS_PER_NODE=8 
+	export SUBJS_PER_NODE=16 
 	batch_time="23:00:00"
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "mriqc" ];then
-	export SUBJS_PER_NODE=8 #6
+	export SUBJS_PER_NODE=8
 	batch_time="02:00:00"
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "fmriprep" ];then
-	export SUBJS_PER_NODE=4 #4
+	export SUBJS_PER_NODE=4
 	batch_time="15:00:00"
 	partition="std"
 	at_once=
@@ -80,14 +90,15 @@ elif [ $PIPELINE == "freewater" ];then
 	export SUBJS_PER_NODE=4
 	batch_time="02:00:00"
 	partition="std"
+elif [ $PIPELINE == "bianca" ];then
+	export SUBJS_PER_NODE=16
+	batch_time="04:00:00"
+	partition="std"
 else
 	echo "Pipeline $PIPELINE not supported"
 	exit
 fi
 
-# define subjects
-subj_array=(${input_subject_array[@]-$(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename)}) 
-subj_array_length=${#subj_array[@]}
 
 # define batch script
 script_name="pipelines_parallelization.sh"
@@ -95,7 +106,7 @@ script_path=$CODE_DIR/$script_name
 
 # If subject array length < subjects per node -> match subjects per node to array length
 [ $subj_array_length -lt $SUBJS_PER_NODE ] && export SUBJS_PER_NODE=$subj_array_length
-echo submitting $subj_array_length subjects for $PIPELINE processing
+echo Submitting $subj_array_length subjects for $PIPELINE processing
 
 
 batch_amount=$(($subj_array_length / $SUBJS_PER_NODE))
@@ -110,33 +121,9 @@ for batch in $(seq $batch_amount);do
     CMD="sbatch --job-name $PIPELINE \
         --time ${batch_time} \
         --partition $partition \
-        --output $CODE_DIR/log/"job-%A-${PIPELINE}-$ITER-$(date +%d%m%Y).err" \
-        --error $CODE_DIR/log/"job-%A-${PIPELINE}-$ITER-$(date +%d%m%Y).err" \
+        --output $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).err" \
+        --error $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).err" \
     	$script_path "${subj_batch_array[@]}""
 	export ITER=$(($ITER+$SUBJS_PER_NODE))
-	echo $CMD
+	$CMD
 done
-
-
-#for i in $(seq $times_1000);do                
-#
-#    # ITER used for proper array slicing in batch script
-#    export ITER=$(expr $i - 1)                       
-#
-#    # for last batch batchsize = remaining subjects (<= 1000)
-#    if [ $i == $times_1000 ]; then
-#        batchsize=$(expr $subj_array_length - $ITER \* $batchsize)
-#    fi
-#
-#
-#    CMD="sbatch --job-name $PIPELINE \
-#        --array=[0-$batchsize:$SUBJS_PER_NODE]${at_once} \
-#        --time ${batch_time} \
-#        --partition $partition \
-#	--tasks-per-node=$SUBJS_PER_NODE \
-#        --output $CODE_DIR/log/"job-%A-%a-${PIPELINE}-$1-$(date +%d%m%Y).err" \
-#        --error $CODE_DIR/log/"job-%A-%a-${PIPELINE}-$1-$(date +%d%m%Y).err" \
-#    $script_path "${subjs[@]}"" # subjects reduzieren
-#    echo ${CMD}
-#
-#done

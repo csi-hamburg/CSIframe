@@ -17,11 +17,8 @@ export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
 export TMPDIR=$WORK/tmp
 
-# Get and unlock random subject subsample 
-subs=$(ls ${DCM_DIR} | sort -R | tail -3) 
-for sub in $subs;do pushd $DCM_DIR; datalad unlock $DCM_DIR/$sub; popd; done
-
 # Define commands
+subs=$(ls $DCM_DIR/ | xargs -n 1 basename | sort -r | tail -n 3 )
 CMD="heudiconv
     -d $DCM_DIR/{subject}/ses-{session}.tar.gz \
     -s $subs \
@@ -30,5 +27,7 @@ CMD="heudiconv
     -c none \
     -o $PIPELINE_DIR"
 
-# execute command
+# Execute command
+echo $PWD
+echo $CMD
 $CMD

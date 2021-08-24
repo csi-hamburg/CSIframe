@@ -4,8 +4,8 @@
 #SBATCH --export=PIPELINE,SESSION,SUBJS_PER_NODE,ITER,MODIFIED
 
 ####################
-# batch script for across subject parallelization
-# test this script interactively by running 'srun script.sh' after salloc
+# Batch script for across subject parallelization
+# Test this script interactively by running 'srun script.sh' after salloc
 ####################
 
 source /sw/batch/init.sh
@@ -28,8 +28,8 @@ export DATA_DIR=$PROJ_DIR/data
 export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
 
-source /work/fatx405/set_envs/miniconda
-source activate datalad # env with python>=3.8, datalad, pybids
+#source /work/fatx405/set_envs/miniconda
+#source activate datalad # env with python>=3.8, datalad, pybids
 
 # Define subarray of subjects to process
 subj_batch_array=($@)
@@ -42,7 +42,7 @@ else
 	subj_batch_array=(${subj_batch_array[@]:-$(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename)})
 fi
 
-SUBJS_PER_NODE=${SUBJS_PER_NODE-4}
+SUBJS_PER_NODE=${SUBJS_PER_NODE-8}
 export ITER=${ITER-0}
 
 echo starting processing with $PIPELINE from index: $ITER ...
@@ -70,12 +70,12 @@ echo ITERator: $ITER
 # Z = number of available threads / X -> drop floating point
 #################################################################
 
-# Define CPUS_PER_TASK as 32 / Subject count. Make sure that SUBJS_PER_NODE is a power of two 
+# Define SLURM_CPUS_PER_TASK as 32 / Subject count. Make sure that SUBJS_PER_NODE is a power of two 
 # 32 threads per node on hummel but we allocate only 30 threads (empirical!)
 export SLURM_CPUS_PER_TASK=$(awk "BEGIN {print int(32/$SUBJS_PER_NODE); exit}")
-# mem_per_sub=$(awk "BEGIN {print int(64000/$SUBJS_PER_NODE); exit}")
-
-#srun="srun --label --exclusive -N1 -n1 --cpus-per-task $threads_per_sub --mem-per-cpu=2G" 
+export OMP_NTHREADS=$(($SLURM_CPUS_PER_TASK - 1 ))
+export MEM_PER_SUB_MB=$(awk "BEGIN {print int(60000/$SUBJS_PER_NODE); exit}")
+export MEM_PER_SUB_GB=$(awk "BEGIN {print int($MEM_PER_SUB_MB/1000); exit}")
 
 parallel="parallel --ungroup --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/log/parallel_runtask.log"
 
