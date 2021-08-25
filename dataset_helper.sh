@@ -22,7 +22,7 @@ echo "Script is run from $(realpath .); superdataset is assumed to be/become sub
 echo "Enter name of dataset concerned / to create; e.g. CSI_HCHS"
 read PROJ_NAME
 
-echo "What do you want to do? (setup_superdataset, add_data_subds, add_raw_bids_subds, convert_containers, add_ses_dcm, import_dcms, missing_outputs, create_participants_tsv, add_lzs_s3_remote)"
+echo "What do you want to do? (setup_superdataset, add_data_subds, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, create_participants_tsv, add_lzs_s3_remote, export_from_datalad)"
 read PIPELINE
 
 #################################################################
@@ -129,7 +129,7 @@ if [ $PIPELINE == setup_superdataset ];then
 
 	# Clone envs subdataset from source
 	echo "Where to clone envs/ from?"
-	echo "Please provide absolute Path to datalad dataset or github URL; e.g. https://github.com/csi-hamburg/envs"
+	echo "Please provide absolute Path to datalad dataset or github URL; e.g. https://github.com/csi-hamburg/csi_envs"
 	read envs_source
 
 	datalad clone $envs_source $ENV_DIR
@@ -198,25 +198,11 @@ elif [ $PIPELINE == import_dcms ];then
 	
 	import $INPUT_PATH $OUTPUT_PATH $zip $session $time
 
-elif [ $PIPELINE == add_raw_bids_subds ];then
+elif [ $PIPELINE == import_raw_bids ];then
 
 	## Add subdataset for bidsified raw data in data/
 
 	create_data_subds "raw_bids"
-
-	# Edit .bidsignore
-	echo -e ".heudiconv" >> data/raw_bids/.bidsignore
-
-	echo "Do you want to create subject subdatasets in raw_bids? (y/n)"
-	read yn
-	if [ $yn == y ];then
-		echo "Please provide path to read subject names from; e.g. data/dicoms/"
-		read read_dir
-		echo "Does the directory contain subject names with a sub- prefix? (y/n)"
-		read prefix_yn
-		subs=$(ls -I CHANGELOG.md -I README.md -I dataset_description.json -I participants.tsv -I sourcedata -I code $read_dir)
-		srun -t 01:00:00 $parallel "[ $prefix_yn == n ] && sub=sub-{} ; datalad create $DATA_DIR/raw_bids/\$sub" ::: $subs
-	fi
 
 	echo "Do you want to import bidsified subjects in raw_bids?"
 	read yn
@@ -310,7 +296,7 @@ elif [ $PIPELINE == add_lzs_s3_remote ];then
 
 	remote_name=$RANDOM
 
-	git annex initremote $remote_name type=S3 datacenter=s3-uhh encryption=none bucket=$bucket public=no autoenable=true host=s3-uhh.lzs.uni-hamburg.de
+	git annex initremote $remote_name type=S3 chunk=1GB datacenter=s3-uhh encryption=none bucket=$bucket public=no autoenable=true host=s3-uhh.lzs.uni-hamburg.de
 
 	git annex enableremote $remote_name publicurl=https://${bucket}.s3-uhh.lzs.uni-hamburg.de
 
@@ -328,12 +314,20 @@ elif [ $PIPELINE == export_from_datalad ];then
 	read source_ds
 
 	for ds in ${subds[@]};do
-		for sub in $(ls $SCRIPT_DIR/$source_ds/data/raw_bids/sub-* -d | xargs -n1 basename );do
-			TARGET_DIR=$PROJ_DIR/data/$ds/$sub
-			mkdir -p $TARGET_DIR
-			cp -ruvfL $SCRIPT_DIR/$source_ds/data/$ds/$sub/* $TARGET_DIR
-			pushd $TARGET_DIR; git annex uninit; rm -rf .git .datalad .gitattributes; chmod 770 -R .; popd
-		done
+		#for sub in $(ls $PROJ_DIR/../$source_ds/data/raw_bids/sub-* -d | xargs -n1 basename );do
+		#	TARGET_DIR=$PROJ_DIR/data/$ds/$sub
+		#	mkdir -p $TARGET_DIR
+		#	cp -ruvfL $PROJ_DIR/../$source_ds/data/$ds/$sub/* $TARGET_DIR
+		#	pushd $TARGET_DIR; git annex uninit; rm -rf .git .datalad .gitattributes; chmod 770 -R .; popd
+		#done
+		for_each -nthreads 7 -debug $(ls $PROJ_DIR/../$source_ds/data/raw_bids/sub-* -d | xargs -n1 basename ) : \
+			mkdir -p $PROJ_DIR/data/$ds/NAME ";" \
+			cp -ruvfL $PROJ_DIR/../$source_ds/data/$ds/NAME/* $PROJ_DIR/data/$ds/NAME ";" \
+			pushd $PROJ_DIR/data/$ds/NAME ";" \
+			git annex uninit ";" \
+			rm -rf .git .datalad .gitattributes ";" \
+			chmod 770 -R . ";"\
+			popd
 	done
 
 else
