@@ -15,7 +15,7 @@ CMD="
    singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR/:/tmp \
    $ENV_DIR/qsiprep-0.14.2 \
    data/raw_bids data participant \
-   -w $TMP_DIR $recon \
+   -w /tmp $recon \
    --participant-label $1 \
    --nthreads $SLURM_CPUS_PER_TASK \
    --skip-bids-validation \
@@ -35,5 +35,5 @@ CMD="
 $CMD
 
 # Move subject specific directories and files to qsiprep/$1 and qsirecon/$1, respectively
-mv $CLONE_DATA_DIR/qsiprep/dwiqc.json $CLONE_DATA_DIR/qsiprep/$1
-mv $CLONE_DATA_DIR/qsirecon/dwiqc.json $CLONE_DATA_DIR/qsirecon/$1
+mv $DATA_DIR/qsiprep/dwiqc.json $DATA_DIR/qsiprep/$1
+mv $DATA_DIR/qsirecon/dwiqc.json $DATA_DIR/qsirecon/$1
