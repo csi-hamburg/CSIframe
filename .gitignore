@@ -1,5 +1,5 @@
 __pycache__
 templateflow/*
-!templateflow/templates
+!templateflow/placeholder
 log/*
-!log/log.txt
+!log/placeholder
