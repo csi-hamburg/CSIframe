@@ -25,23 +25,25 @@ singularity run --cleanenv --userns \
 $ENV_DIR/heudiconv-0.9.0 \
 $CMD
 
+chmod 770 -R $BIDS_DIR/sub-${1}
+
 # Deface	
 singularity="singularity run --cleanenv --userns -B . -B $TMP_DIR/:/tmp"
 
 T1=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T1w.nii.gz
-CMD_T1="chmod 770 $T1; pydeface $T1 --outfile $T1 --force --verbose"
+CMD_T1="pydeface $T1 --outfile $T1 --force --verbose"
 $singularity \
 $ENV_DIR/pydeface-2.0.0 \
 /bin/bash -c "$CMD_T1"
 
 T2=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T2w.nii.gz
-CMD_T2="chmod 770 $T2; pydeface $T2 --outfile $T2 --force --verbose"
+CMD_T2="pydeface $T2 --outfile $T2 --force --verbose"
 $singularity \
 $ENV_DIR/pydeface-2.0.0 \
 $CMD_T2
 
 FLAIR=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_FLAIR.nii.gz
-CMD_FLAIR="chmod 770 $FLAIR; pydeface $FLAIR --outfile $FLAIR --force --verbose"
+CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force --verbose"
 $singularity \
 $ENV_DIR/pydeface-2.0.0 \
 $CMD_FLAIR

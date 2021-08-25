@@ -16,7 +16,7 @@ Invoke dataset_helper.sh and provide the name of the dataset_concerned in the sa
         - Mind to check whether raw_bids is clean (everything saved to annex, propagated to superdataset?)
     4. `convert_containers`
         - Convert singularity containers to sandboxes that are used in the pipeline scripts
-    5. For prep pipelines: download templateflow data and `datalad get envs/freesurfer_license.txt` 
+    5. For prep pipelines: download templateflow data (can only be downloaded on login node with internet connection) and `datalad get envs/freesurfer_license.txt` 
     5. Ensure that dataset is clean with `datalad status` and `datalad save` 
 -> Now bidsification of dicoms should be possible
 3. Processing

@@ -55,7 +55,6 @@ export parallel="parallel --ungroup --delay 0.2 -j32"
 create_data_subds () {
 	subds=$1
 	mkdir $DATA_DIR/$subds
-	datalad create --force --description "$subds subdataset" -d^ $DATA_DIR/$subds
 	echo "Dataset README" >> $DATA_DIR/$subds/README.md
 	[ -f $BIDS_DIR/dataset_description.json ] && cp $BIDS_DIR/dataset_description.json $DATA_DIR/$subds 
 	}

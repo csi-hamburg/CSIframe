@@ -20,14 +20,21 @@ export DATA_DIR=$PROJ_DIR/data
 export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
 
-export SLURM_CPUS_PER_TASK=${SLURM_CPUS_PER_TASK-10}
 export SCRATCH_DIR=/scratch/${USER}.${SLURM_JOBID}/$1 
 [ ! -d $SCRATCH_DIR ] && mkdir $SCRATCH_DIR
 export SINGULARITY_CACHEDIR=$SCRATCH_DIR/singularity_cache  #$SCRATCH_DIR 
 export SINGULARITY_TMPDIR=$SCRATCH_DIR/singularity_tmp  #$SCRATCH_DIR
 export DSLOCKFILE=$WORK/tmp/pipeline.lock
 export DATALAD_LOCATIONS_SOCKETS=$SCRATCH_DIR/sockets
-export TMP_DIR=$SCRATCH_DIR/tmp/ # $CLONE_DATA_DIR/.git/tmp/wdir
+export TMP_DIR=$SCRATCH_DIR/tmp/
+
+# Define SLURM_CPUS_PER_TASK as 32 / Subject count. Make sure that SUBJS_PER_NODE is a power of two 
+# 32 threads per node on hummel but we allocate only 30 threads (empirical!)
+export SUBJS_PER_NODE=${SUBJS_PER_NODE-2}
+export SLURM_CPUS_PER_TASK=$(awk "BEGIN {print int(32/$SUBJS_PER_NODE); exit}")
+export OMP_NTHREADS=$(($SLURM_CPUS_PER_TASK - 1 ))
+export MEM_PER_SUB_MB=$(awk "BEGIN {print int(64000/$SUBJS_PER_NODE); exit}")
+export MEM_PER_SUB_GB=$(awk "BEGIN {print int($MEM_PER_SUB_MB/1000); exit}")
 
 echo hostname: $(hostname)
 echo $(singularity --version)

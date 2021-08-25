@@ -3,7 +3,7 @@
 CMD="
    singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR/:/tmp \
    $ENV_DIR/fmriprep-20.2.3 \
-   data/raw_bids data particikipant \
+   data/raw_bids data participant \
    -w /tmp \
    --participant-label $1 \
    --output-spaces fsnative fsaverage MNI152NLin6Asym \

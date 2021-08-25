@@ -25,7 +25,7 @@ export SESSION=$1;shift
 input_subject_array=($@)
 echo ${input_subject_array[@]}
 
-# Read if  $1 is empty
+# Read if $1 is empty
 if [ -z $PIPELINE ];then
 	echo "Which pipeline do you want to execute?"
 	echo "Please choose from: $(ls $CODE_DIR/pipelines)"
@@ -39,11 +39,11 @@ if [ -z $SESSION ];then
 	export SESSION=$input
 fi
 
-# define subjects
+# Define subjects
 subj_array=(${input_subject_array[@]-$(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename)}) 
 subj_array_length=${#subj_array[@]}
 
-# empirical job config
+# Empirical job config
 if [ $PIPELINE == "bidsify" ];then
 	export SUBJS_PER_NODE=16  # 6
 	batch_time="04:00:00"
@@ -53,7 +53,7 @@ if [ $PIPELINE == "bidsify" ];then
 
 elif [ $PIPELINE == "qsiprep" ];then
 	# Mind limitation by /scratch and memory capacity (23gb temporary files, 15gb max RAM usage)
-	export SUBJS_PER_NODE=4  #1
+	export SUBJS_PER_NODE=4
 	batch_time="10:00:00"
 	partition="std" # ponder usage of gpu for eddy speed up
 	at_once=
@@ -63,12 +63,12 @@ elif [ $PIPELINE == "qsiprep" ];then
 	export MODIFIED
 
 elif [ $PIPELINE == "smriprep" ];then
-	export SUBJS_PER_NODE=16 
+	export SUBJS_PER_NODE=8 
 	batch_time="23:00:00"
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "mriqc" ];then
-	export SUBJS_PER_NODE=8
+	export SUBJS_PER_NODE=4
 	batch_time="02:00:00"
 	partition="std"
 	at_once=
@@ -92,13 +92,12 @@ elif [ $PIPELINE == "freewater" ];then
 	partition="std"
 elif [ $PIPELINE == "bianca" ];then
 	export SUBJS_PER_NODE=16
-	batch_time="04:00:00"
+	batch_time="08:00:00"
 	partition="std"
 else
 	echo "Pipeline $PIPELINE not supported"
 	exit
 fi
-
 
 # define batch script
 script_name="pipelines_parallelization.sh"
@@ -107,7 +106,6 @@ script_path=$CODE_DIR/$script_name
 # If subject array length < subjects per node -> match subjects per node to array length
 [ $subj_array_length -lt $SUBJS_PER_NODE ] && export SUBJS_PER_NODE=$subj_array_length
 echo Submitting $subj_array_length subjects for $PIPELINE processing
-
 
 batch_amount=$(($subj_array_length / $SUBJS_PER_NODE))
 export ITER=0
@@ -121,7 +119,7 @@ for batch in $(seq $batch_amount);do
     CMD="sbatch --job-name $PIPELINE \
         --time ${batch_time} \
         --partition $partition \
-        --output $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).err" \
+        --output $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).out" \
         --error $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).err" \
     	$script_path "${subj_batch_array[@]}""
 	export ITER=$(($ITER+$SUBJS_PER_NODE))
