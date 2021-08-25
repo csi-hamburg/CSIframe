@@ -122,7 +122,7 @@ if [ $PIPELINE == setup_superdataset ];then
 	# Create code subdataset and insert copy of this script
 	
 	# Clone code from git
-	git clone https://github.com/csi-hamburg/hummel_pipelines $PROJ_DIR/code
+	git clone https://github.com/csi-hamburg/hummel_processing $PROJ_DIR/code
 
 	# Create data directory (no datalad dataset)
 	mkdir data
