@@ -11,7 +11,7 @@ CMD="
     --output-spaces fsnative fsaverage MNI152NLin6Asym T1w T2w \
     --nthreads $SLURM_CPUS_PER_TASK \
     --omp-nthreads $OMP_NTHREADS \
-    --mem-gb $MEM_PER_SUB_GB \
+    --mem-gb $MEM_GB \
     --fs-subjects-dir data/freesurfer \
     --stop-on-first-crash \
     --fs-license-file envs/freesurfer_license.txt"

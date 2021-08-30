@@ -5,6 +5,7 @@ source /sw/batch/init.sh
 
 echo '###################################'
 echo Started processing of $1
+echo Analysis level $ANALYSIS_LEVEL
 echo '###################################'
 
 # Change default permissions for new files
@@ -29,6 +30,7 @@ export TMP_DIR=$SCRATCH_DIR/tmp/
 # Define SLURM_CPUS_PER_TASK as 32 / Subject count. Make sure that SUBJS_PER_NODE is a power of two 
 # 32 threads per node on hummel but we allocate only 30 threads (empirical!)
 export SUBJS_PER_NODE=${SUBJS_PER_NODE-2}
+export ANALYSIS_LEVEL=${ANALYSIS_LEVEL-"subject"}
 if [ "$ANALYSIS_LEVEL" == "subject" ];then
     export SLURM_CPUS_PER_TASK=$(awk "BEGIN {print int(32/$SUBJS_PER_NODE); exit}")
     export MEM_MB=$(awk "BEGIN {print int(64000/$SUBJS_PER_NODE); exit}")
@@ -45,8 +47,6 @@ echo TMPDIR: $TMPDIR
 echo RRZ_LOCAL_TMPDIR: $RRZ_LOCAL_TMPDIR
 echo SINGULARITY_CACHEDIR: $SINGULARITY_CACHEDIR
 echo SINGULARITY_TMPDIR: $SINGULARITY_TMPDIR
-echo DSLOCKFILE: $DSLOCKFILE
-mkdir -p $DATALAD_LOCATIONS_SOCKETS && echo DATALAD_LOCATIONS_SOCKETS: $DATALAD_LOCATIONS_SOCKETS
 
 # Create temporary clone working directory
 mkdir -p $TMP_DIR 

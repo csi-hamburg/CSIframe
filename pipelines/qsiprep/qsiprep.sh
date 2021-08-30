@@ -3,19 +3,20 @@
 # Set specific environment for pipeline
 export MRTRIX_TMPFILE_DIR=$TMP_DIR
 
-if [ $MODIFIED == y ];then
-   # qsiprep only preprocessing
-   recon=""
-else
-   # qsiprep + qsirecon
-   recon="--recon_input data/qsiprep/$1 --recon_spec mrtrix_singleshell_ss3t"
+if [ -z $RECON ];then
+	echo "Do you want to perform connectome reconstruction after preprocessing; i.e. qsiprep incl. qsirecon (y/n)"
+	read RECON; export RECON
+	if [ $RECON == y ];then
+		echo "Choose reconstruction pipeline you want to apply (mrtrix_singleshell_ss3t, mrtrix_multishell_msmt)"
+		read RECON_PIPELINE; export RECON_PIPELINE
+	fi
 fi
 
 CMD="
    singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR/:/tmp \
    $ENV_DIR/qsiprep-0.14.2 \
    data/raw_bids data participant \
-   -w /tmp $recon \
+   -w /tmp \
    --participant-label $1 \
    --nthreads $SLURM_CPUS_PER_TASK \
    --skip-bids-validation \
@@ -24,7 +25,7 @@ CMD="
    --output-space T1w \
    --nthreads $SLURM_CPUS_PER_TASK \
    --omp-nthreads $OMP_NTHREADS \
-   --mem_mb $MEM_PER_SUB_MB \
+   --mem_mb $MEM_MB \
    --denoise-method dwidenoise \
    --unringing-method mrdegibbs \
    --skull-strip-template OASIS \
@@ -32,8 +33,5 @@ CMD="
    --output-resolution 1.3 \
    --stop-on-first-crash \
    --fs-license-file envs/freesurfer_license.txt"
+[ $RECON == y ] && CMD="${CMD} --recon_input data/qsiprep/$1 --recon_spec $RECON_PIPELINE"
 $CMD
-
-# Move subject specific directories and files to qsiprep/$1 and qsirecon/$1, respectively
-mv $DATA_DIR/qsiprep/dwiqc.json $DATA_DIR/qsiprep/$1
-mv $DATA_DIR/qsirecon/dwiqc.json $DATA_DIR/qsirecon/$1

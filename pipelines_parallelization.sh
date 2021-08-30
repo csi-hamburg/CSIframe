@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 
 #SBATCH --nodes=1
-#SBATCH --export=PIPELINE,SESSION,SUBJS_PER_NODE,ITER,MODIFIED
+#SBATCH --export=PIPELINE,SESSION,SUBJS_PER_NODE,ITER,ANALYSIS_LEVEL,HEURISTIC,RECON,RECON_PIPELINE
 
 ####################
 # Batch script for across subject parallelization
-# Test this script interactively by running 'srun script.sh' after salloc
 ####################
 
 source /sw/batch/init.sh
 start=$(date +%s)
 
 # -x to get verbose logfiles
-#set -x
+set -x
 
 # Load HPC environment modules
 module unload singularity
@@ -31,9 +30,13 @@ export BIDS_DIR=$PROJ_DIR/data/raw_bids
 #source /work/fatx405/set_envs/miniconda
 #source activate datalad # env with python>=3.8, datalad, pybids
 
+if [ -z $ANALYSIS_LEVEL ];then
+	echo "Specify analysis level. (subject/group)"
+	read ANALYSIS_LEVEL; export ANALYSIS_LEVEL
+fi
+
 # Define subarray of subjects to process
 subj_batch_array=($@)
-echo $(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata)
 
 # For interactive tests define subj_batch_array if not defined
 if [ $PIPELINE == bidsify ];then
@@ -52,37 +55,15 @@ echo submission script directory: $SCRIPT_DIR
 echo current TMPDIR: $TMPDIR
 echo ITERator: $ITER
 
-#################################################################
-# Usage notes for parallelization with srun and GNU parallel
-#
-# Command example: "parallel --delay 0.2 -j2 'srun --exclusive -N1 -n1 
-# --cpus-per-task 16 script.sh' ::: ${input_array[@]}"
-#
-# parallel -jX -> X tasks that GNU parallel invokes in parallel
-# each  provided with a consecutive array element
-#
-# srun -nY -cpus-per-task Z -> Y is amount of the same tasks/binaries 
-# that slurm spawns, Z CPUs (here =threads) per task
-# $parallel_script gets executed Y times with same!! array element
-#
-# To achieve across subject parallelization X = number of subjects
-# to process per node, Y = 1 (execute script once per subject),
-# Z = number of available threads / X -> drop floating point
-#################################################################
-
-
-## Define SLURM_CPUS_PER_TASK as 32 / Subject count. Make sure that SUBJS_PER_NODE is a power of two 
-## 32 threads per node on hummel but we allocate only 30 threads (empirical!)
-#export SLURM_CPUS_PER_TASK=$(awk "BEGIN {print int(32/$SUBJS_PER_NODE); exit}")
-#export OMP_NTHREADS=$(($SLURM_CPUS_PER_TASK - 1 ))
-#export MEM_PER_SUB_MB=$(awk "BEGIN {print int(64000/$SUBJS_PER_NODE); exit}")
-#export MEM_PER_SUB_GB=$(awk "BEGIN {print int($MEM_PER_SUB_MB/1000); exit}")
-
-parallel="parallel --ungroup --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/log/parallel_runtask.log"
-
 proc_script=$CODE_DIR/pipelines_processing.sh
-echo -e "running:\n $parallel $srun $proc_script {} ::: ${subj_batch_array[@]}"
-$parallel $proc_script ::: ${subj_batch_array[@]}
+
+if [ $ANALYSIS_LEVEL == subject ];then
+	parallel="parallel --ungroup --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/log/parallel_runtask.log"
+	echo -e "running:\n $parallel $proc_script {} ::: ${subj_batch_array[@]}"
+	$parallel $proc_script ::: ${subj_batch_array[@]}
+elif [ $ANALYSIS_LEVEL == group ];then
+	source $proc_script "${subj_batch_array[@]}"
+fi
 
 # Monitor usage of /scratch partition
 df -h /scratch

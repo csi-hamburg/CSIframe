@@ -1,16 +1,21 @@
 #!/bin/bash
 
+
+if [ -z $HEURISTIC ];then
+	echo "What heuristic do you want to apply?"
+	echo "Choose from" $(ls $CODE_DIR/pipelines/bidsify/heudiconv_*)
+	read HEURISTIC; export HEURISTIC
+fi
+
 # Run heudiconv for dcm2nii and bidsification of its outputs
 # heudiconv_heuristic.py is dataset specific
-# FIXME: amend -d PATH according to your dicom directory structure 
-# FIXME: amend -f PATH to the suitable heudiconv heuristic file
 CMD="
    heudiconv \
    -d /dcm/{subject}/ses-{session}.tar.gz\
    --subjects $1 \
    --ses $SESSION \
    --bids notop \
-   -f /code/pipelines/bidsify/heudiconv_hchs.py\
+   -f /code/pipelines/bidsify/$HEURISTIC\
    -c dcm2niix \
    --minmeta \
    --overwrite\

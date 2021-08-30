@@ -31,10 +31,10 @@ set -e
 module load matlab/2019b
 
 # Get input and output dataset directory trees
-datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/qsiprep
-datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/qsiprep/${1}
-datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freewater
-datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freewater/${1}
+# datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/qsiprep
+# datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/qsiprep/${1}
+# datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freewater
+# datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freewater/${1}
 
 # Checkout unique branches (names derived from jobIDs) of result subdatasets
 
@@ -44,12 +44,12 @@ datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freewater/${1}
 # and a new branch would be checked out in the superdataset instead.   #
 ########################################################################
 
-git -C $CLONE_DATA_DIR/freewater checkout -b "$PIPE_ID"
-git -C $CLONE_DATA_DIR/freewater/$1 checkout -b "$PIPE_ID"
+# git -C $CLONE_DATA_DIR/freewater checkout -b "$PIPE_ID"
+# git -C $CLONE_DATA_DIR/freewater/$1 checkout -b "$PIPE_ID"
 
 # Remove job outputs in dataset clone to prevent issues when rerunning
 # $1/* matches all content in subject subdataset but dotfiles (.git, .datalad, .gitattributes)
-(cd $CLONE_DATA_DIR/freewater && rm -rf $1/*)
+# (cd $CLONE_DATA_DIR/freewater && rm -rf $1/*)
 
 ##############################
 # Run free-water elimination #
@@ -65,28 +65,40 @@ git -C $CLONE_DATA_DIR/freewater/$1 checkout -b "$PIPE_ID"
 ##############################################################################################
 
 # Define inputs and output
-datalad get $CLONE_DATA_DIR/freewater/code/Free-Water-master
-FW_CODE_DIR=$CLONE_DATA_DIR/freewater/code/Free-Water-master
+# datalad get $CLONE_DATA_DIR/freewater/code/Free-Water-master
+FW_CODE_DIR=$DATA_DIR/freewater/code/Free-Water-master
 
-INPUT_DWI=$CLONE_DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_dir-AP_space-T1w_desc-preproc_dwi.nii.gz
-INPUT_BVAL=$CLONE_DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_dir-AP_space-T1w_desc-preproc_dwi.bval
-INPUT_BVEC=$CLONE_DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_dir-AP_space-T1w_desc-preproc_dwi.bvec
-INPUT_MASK=$CLONE_DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_dir-AP_space-T1w_desc-brain_mask.nii.gz
+INPUT_DWI=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.nii.gz
+INPUT_BVAL=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.bval
+INPUT_BVEC=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.bvec
+INPUT_MASK=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-brain_mask.nii.gz
 
-mkdir -p $CLONE_DATA_DIR/freewater/$1/ses-${SESSION}/dwi
-FW_OUTPUT_DIR=$CLONE_DATA_DIR/freewater/$1/ses-${SESSION}/dwi
+# Check whether output directory already exists: yes > remove and create new output directory
+
+if [ ! -d $DATA_DIR/freewater/$1/ses-${SESSION}/dwi ]; then
+
+   mkdir -p $DATA_DIR/freewater/$1/ses-${SESSION}/dwi
+
+else 
+   
+   rm -rf $DATA_DIR/freewater/$1/ses-${SESSION}/dwi
+   mkdir -p $DATA_DIR/freewater/$1/ses-${SESSION}/dwi
+
+fi
+
+FW_OUTPUT_DIR=$DATA_DIR/freewater/$1/ses-${SESSION}/dwi
 
 # execute command with datalad run
-datalad run -m "${PIPE_ID} freewater" \
-   --explicit \
-   --input $CLONE_DATA_DIR/qsiprep/$1 \
-   --output $CLONE_DATA_DIR/freewater/$1 \
+# datalad run -m "${PIPE_ID} freewater" \
+   # --explicit \
+   # --input $CLONE_DATA_DIR/qsiprep/$1 \
+   # --output $CLONE_DATA_DIR/freewater/$1 \
    matlab \
       -nosplash \
       -nodesktop \
       -nojvm \
       -batch \
-      "cd('$FW_CODE_DIR'); FreeWater_OneCase('$1', 'ses-${SESSION}', '$INPUT_DWI', '$INPUT_BVAL', '$INPUT_BVEC', '$INPUT_MASK', '$FW_OUTPUT_DIR'); cd('$CLONE'); quit"
+      "cd('$FW_CODE_DIR'); FreeWater_OneCase('$1', 'ses-${SESSION}', '$INPUT_DWI', '$INPUT_BVAL', '$INPUT_BVEC', '$INPUT_MASK', '$FW_OUTPUT_DIR'); cd('$CODE_DIR'); quit"
 
 ######################################################################################
 # Estimate free-water corrected and negative eigenvalue corrected diffusion measures #
@@ -95,8 +107,8 @@ datalad run -m "${PIPE_ID} freewater" \
 # Define inputs and outputs
 INPUT_TENSOR_CORRECTED=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_space-T1w_desc-FWCorrected_tensor.nii.gz
 INPUT_TENSOR_NONEG=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_tensor.nii.gz
-OUTPUT_FWC_DIFF=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_desc-FWcorrected
-OUTPUT_NONEG_DIFF=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_desc-DTINoNeg
+OUTPUT_FWC_DIFF=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_space-T1w_desc-FWcorrected
+OUTPUT_NONEG_DIFF=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg
 
 # Calculate free-water corrected diffusion measures (note, L1 = AD)
 ###################################################################
@@ -115,10 +127,10 @@ CMD_FWC="
       ${OUTPUT_FWC_DIFF}_RD.nii.gz"
 
 # Execute command with datalad run
-datalad run -m "${PIPE_ID} calculate free-water corrected diffusion measures" \
-   --explicit \
-   --input $INPUT_TENSOR_CORRECTED -i $INPUT_MASK \
-   --output $FW_OUTPUT_DIR \
+# datalad run -m "${PIPE_ID} calculate free-water corrected diffusion measures" \
+#    --explicit \
+#    --input $INPUT_TENSOR_CORRECTED -i $INPUT_MASK \
+#    --output $FW_OUTPUT_DIR \
       singularity run --cleanenv --userns \
       -B .\
       -B $PROJ_DIR \
@@ -142,10 +154,10 @@ CMD_NONEG="
       ${OUTPUT_NONEG_DIFF}_RD.nii.gz"
 
 # Execute command with datalad run
-datalad run -m "${PIPE_ID} calculate negative eigenvalue corrected diffusion measures" \
-   --explicit \
-   --input $INPUT_TENSOR_NONEG -i $INPUT_MASK \
-   --output $FW_OUTPUT_DIR \
+# datalad run -m "${PIPE_ID} calculate negative eigenvalue corrected diffusion measures" \
+#    --explicit \
+#    --input $INPUT_TENSOR_NONEG -i $INPUT_MASK \
+#    --output $FW_OUTPUT_DIR \
       singularity run --cleanenv --userns \
       -B . \
       -B $PROJ_DIR \
@@ -156,5 +168,5 @@ datalad run -m "${PIPE_ID} calculate negative eigenvalue corrected diffusion mea
 # Push results from clone to original dataset #
 ###############################################
 
-flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freewater --to origin
-flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freewater/${1} --to origin
+# flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freewater --to origin
+# flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freewater/${1} --to origin

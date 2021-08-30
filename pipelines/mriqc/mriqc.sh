@@ -8,7 +8,7 @@ CMD="
     --participant-label $1 \
     --modalities T1w T2w bold \
     --no-sub \
-    --mem_gb $MEM_PER_SUB_GB \
+    --mem_gb $MEM_GB \
     --ica \
     --float32 \
     --nprocs $SLURM_CPUS_PER_TASK"

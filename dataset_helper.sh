@@ -32,6 +32,7 @@ read PIPELINE
 # Define location of this very script and its name
 export SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"  # "$0"
 export SCRIPT_NAME="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
+echo $SCRIPT_DIR
 echo $SCRIPT_NAME
 export PROJ_DIR=$(realpath $SCRIPT_DIR/../../$PROJ_NAME)
 export DATA_DIR=$PROJ_DIR/data
@@ -41,8 +42,6 @@ export CODE_DIR=$PROJ_DIR/code
 export ENV_DIR=$PROJ_DIR/envs
 
 export DATALAD_LOCATIONS_SOCKETS=$WORK/tmp
-
-
 
 #################################################################
 # Functions

@@ -31,7 +31,7 @@ T1_MASK_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
 CMD_T1_TO_FLAIR="flirt -in $T1 -ref $FLAIR -omat $T1_TO_FLAIR_WARP -out $T1_IN_FLAIR -v"
 CMD_T1_MASK_TO_FLAIR="flirt -in $T1_MASK -ref $FLAIR -init $T1_TO_FLAIR_WARP -out $T1_MASK_IN_FLAIR -v -applyxfm"
 
-# Execute with datalad
+# Execute 
 $singularity \
 $FSL_CONTAINER \
 /bin/bash -c "$CMD_T1_TO_FLAIR; $CMD_T1_MASK_TO_FLAIR"
@@ -52,6 +52,7 @@ T1_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii.gz
 FLAIR=data/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_FLAIR.nii.gz
 
 # Define outputs
+FLAIR_BIASCORR=$OUT_DIR/${1}_ses-${SESSION}_desc-biascorr_FLAIR.nii.gz
 T1_BRAIN_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brain_T1w.nii.gz
 T1_MASK_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
 FLAIR_BRAIN=$OUT_DIR/${1}_ses-${SESSION}_desc-brain_FLAIR.nii.gz
@@ -59,12 +60,13 @@ FLAIR_BRAIN=$OUT_DIR/${1}_ses-${SESSION}_desc-brain_FLAIR.nii.gz
 # Define commands
 CMD_MASK_THRESH="mrthreshold $T1_MASK_IN_FLAIR -abs 0.95 $T1_MASK_IN_FLAIR --force"
 CMD_MASKING_T1_IN_FLAIR="mrcalc $T1_MASK_IN_FLAIR $T1_IN_FLAIR -mult $T1_BRAIN_IN_FLAIR --force"
-CMD_MASKING_FLAIR="mrcalc $T1_MASK_IN_FLAIR $FLAIR -mult $FLAIR_BRAIN --force"
+CMD_BIASCORR_FLAIR="N4BiasFieldCorrection -d 3 -i $FLAIR -x $T1_MASK_IN_FLAIR -o $FLAIR_BIASCORR --verbose 1"
+CMD_MASKING_FLAIR="mrcalc $T1_MASK_IN_FLAIR $FLAIR_BIASCORR -mult $FLAIR_BRAIN --force"
 
-# Execute with datalad
+# Execute
 $singularity \
 $MRTRIX_CONTAINER \
-/bin/bash -c "$CMD_MASK_THRESH; $CMD_MASKING_T1_IN_FLAIR; $CMD_MASKING_FLAIR"
+/bin/bash -c "$CMD_MASK_THRESH; $CMD_MASKING_T1_IN_FLAIR; $CMD_BIASCORR_FLAIR; $CMD_MASKING_FLAIR"
 ###############################################################################################################################################################
 
 
@@ -87,7 +89,7 @@ FLAIR_IN_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-brain_FLAIR.nii.gz
 # Define commands
 CMD_flirt="flirt -in $FLAIR_BRAIN -ref $MNI_TEMPLATE -omat $FLAIR_TO_MNI_WARP -out $FLAIR_IN_MNI -v "
 
-# Execute with datalad
+# Execute 
 #-i $MNI_TEMPLATE also needed for command but datalad run first checks the existence of the file which will cause error prior to loading the fsl container
 $singularity \
 $FSL_CONTAINER \
@@ -130,7 +132,7 @@ CMD_threshold_wmmask="fslmaths $WMMASK_FLAIR -bin $WMMASK_FLAIR"
 
 ( cp -ruvfL $ENV_DIR/freesurfer_license.txt $FREESURFER_CONTAINER/opt/$FREESURFER_VERSION/.license )
 
-# Execute with datalad
+# Execute 
 $singularity \
 $FREESURFER_CONTAINER \
 /bin/bash -c "$CMD_prepare_wmmask; $CMD_convert_wmmask"
@@ -176,7 +178,7 @@ CMD_register_ventriclemask="flirt -in $VENTRICLEMASK_T1 -ref $FLAIR_BRAIN -apply
 CMD_threshold_ventriclemask="fslmaths $VENTRICLEMASK_FLAIR -thr 0.95 -bin $VENTRICLEMASK_FLAIR"
 CMD_create_ventriclewmmask="fslmaths $VENTRICLEMASK_FLAIR -add $WMMASK_FLAIR -add $FREESURFER_WMH_FLAIR -bin $VENTRICLEWMWMHMASK_FLAIR"
 
-# Execute with datalad
+# Execute 
 $singularity \
 $FSL_CONTAINER \
 /bin/bash -c "$CMD_create_freesurferwmh_mask; $CMD_register_freesurferwmh_mask; $CMD_create_ventriclemask_right; $CMD_create_ventriclemask_left; $CMD_merge_ventriclemasks; $CMD_register_ventriclemask; $CMD_threshold_ventriclemask; $CMD_create_ventriclewmmask"
@@ -216,7 +218,7 @@ CMD_final_mask="fslmaths $BRAINWITHOUTRIBBON_MASK -mul $VENTRICLEWMWMHMASK_FLAIR
 
 
 
-# Execute with datalad
+# Execute 
 $singularity \
 $FSL_CONTAINER \
 /bin/bash -c "$CMD_create_ribbonmask_right; $CMD_create_ribbonmask_left; $CMD_merge_ribbonmasks; $CMD_register_ribbonmask; $CMD_threshold_ribbonmask; $CMD_new_brainmask; $CMD_final_mask"
@@ -270,7 +272,7 @@ CMD_threshold_segmentation="cluster --in=$SEGMENTATION1 --thresh=0.9 --osize=$SE
 CMD_thresholdcluster_segmentation="fslmaths $SEGMENTATION2 -thr 3 -bin $SEGMENTATION3"
 
 
-# Execute with datalad
+# Execute 
 $singularity \
 $FSL_CONTAINER \
 /bin/bash -c "$CMD_run_bianca; $CMD_overlay_wmmask; $CMD_threshold_segmentation; $CMD_thresholdcluster_segmentation"
@@ -302,7 +304,7 @@ CMD_create_distancemap="distancemap -i $VENTRICLEMASK_FLAIR -m $T1_MASK_IN_FLAIR
 CMD_upperthreshold_distancemap="fslmaths $DISTANCEMAP -uthr 10 -bin $WMMASK_peri"
 CMD_threshold_distancemap="fslmaths $DISTANCEMAP -thr 10 -bin $WMMASK_deep"
 
-# Execute with datalad
+# Execute 
 $singularity \
 $FSL_CONTAINER \
 /bin/bash -c "$CMD_create_distancemap; $CMD_upperthreshold_distancemap; $CMD_threshold_distancemap"
@@ -333,7 +335,7 @@ SEGMENTATION_deep=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmhdeep_mask.nii
 CMD_segementation_filterperi="fslmaths $SEGMENTATION -mas $WMMASK_peri $SEGMENTATION_peri"
 CMD_segmentation_filterdeep="fslmaths $SEGMENTATION -mas $WMMASK_deep $SEGMENTATION_deep"
 
-# Execute with datalad
+# Execute 
 $singularity \
 $FSL_CONTAINER \
 /bin/bash -c "$CMD_segementation_filterperi; $CMD_segmentation_filterdeep"
@@ -367,7 +369,7 @@ CMD_extract_stats_WMH="bianca_cluster_stats $SEGMENTATION 0 5 > $STATS"
 CMD_extract_stats_periWMH="bianca_cluster_stats $SEGMENTATION_peri 0 5 > $PERI_STATS"
 CMD_extract_stats_deepWMH="bianca_cluster_stats $SEGMENTATION_deep 0 5 > $DEEP_STATS"
 
-# Execute with datalad
+# Execute 
 $singularity \
 $FSL_CONTAINER \
 /bin/bash -c "$CMD_extract_stats_WMH; $CMD_extract_stats_periWMH; $CMD_extract_stats_deepWMH"

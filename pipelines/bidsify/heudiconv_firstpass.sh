@@ -28,6 +28,4 @@ CMD="heudiconv
     -o $PIPELINE_DIR"
 
 # Execute command
-echo $PWD
-echo $CMD
 $CMD
