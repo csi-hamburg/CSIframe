@@ -4,7 +4,7 @@ set -oux
 source /sw/batch/init.sh
 
 echo '###################################'
-echo Started processing of $1
+echo Started processing of $@
 echo Analysis level $ANALYSIS_LEVEL
 echo '###################################'
 
@@ -22,10 +22,10 @@ export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
 
 export SCRATCH_DIR=/scratch/${USER}.${SLURM_JOBID}/$1 
-[ ! -d $SCRATCH_DIR ] && mkdir $SCRATCH_DIR
 export SINGULARITY_CACHEDIR=$SCRATCH_DIR/singularity_cache 
 export SINGULARITY_TMPDIR=$SCRATCH_DIR/singularity_tmp
 export TMP_DIR=$SCRATCH_DIR/tmp/
+[ -d $SCRATCH_DIR ] || mkdir -p $SINGULARITY_CACHEDIR $SINGULARITY_TMPDIR $TMP_DIR
 
 # Define SLURM_CPUS_PER_TASK as 32 / Subject count. Make sure that SUBJS_PER_NODE is a power of two 
 # 32 threads per node on hummel but we allocate only 30 threads (empirical!)
@@ -60,4 +60,4 @@ cd $PROJ_DIR
 
 # Run pipeline
 export PIPE_ID="$SLURM_JOBID-$PIPELINE-$1-$(date +%d%m%Y)"
-source $PIPELINE_DIR/${PIPELINE}.sh $1
+source $PIPELINE_DIR/${PIPELINE}.sh $@

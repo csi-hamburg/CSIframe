@@ -3,15 +3,6 @@
 # Set specific environment for pipeline
 export MRTRIX_TMPFILE_DIR=$TMP_DIR
 
-if [ -z $RECON ];then
-	echo "Do you want to perform connectome reconstruction after preprocessing; i.e. qsiprep incl. qsirecon (y/n)"
-	read RECON; export RECON
-	if [ $RECON == y ];then
-		echo "Choose reconstruction pipeline you want to apply (mrtrix_singleshell_ss3t, mrtrix_multishell_msmt)"
-		read RECON_PIPELINE; export RECON_PIPELINE
-	fi
-fi
-
 CMD="
    singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR/:/tmp \
    $ENV_DIR/qsiprep-0.14.2 \

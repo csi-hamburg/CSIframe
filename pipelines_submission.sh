@@ -72,7 +72,7 @@ elif [ $PIPELINE == "smriprep" ];then
 elif [ $PIPELINE == "mriqc" ];then
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
-	batch_time="02:00:00"
+	batch_time="08:00:00"
 	partition="std"
 	at_once=
 elif [ $PIPELINE == "mriqc_group" ];then
@@ -106,7 +106,7 @@ elif [ $PIPELINE == "freewater" ];then
 elif [ $PIPELINE == "tbss_enigma" ];then
 	export SUBJS_PER_NODE=$subj_array_length
 	export ANALYSIS_LEVEL=group
-	batch_time="24:00:00"
+	batch_time="12:00:00"
 	partition="big"
 elif [ $PIPELINE == "bianca" ];then
 	export SUBJS_PER_NODE=16
