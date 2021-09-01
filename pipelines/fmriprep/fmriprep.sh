@@ -9,7 +9,7 @@ CMD="
    --output-spaces fsnative fsaverage MNI152NLin6Asym \
    --nthreads $SLURM_CPUS_PER_TASK \
    --omp-nthreads $OMP_NTHREADS \
-   --mem-mb $MEM_MB
+   --mem-mb $MEM_MB \
    --stop-on-first-crash \
    --ignore t2w \
    --skip-bids-validation \

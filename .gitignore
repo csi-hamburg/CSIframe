@@ -3,3 +3,5 @@ templateflow/*
 !templateflow/placeholder
 log/*
 !log/placeholder
+bids_database/*
+!bids_database/placeholder
