@@ -26,4 +26,4 @@ export BIDS_DIR=$PROJ_DIR/data/raw_bids
 
 export BIDS_DATABASE_DIR=$CODE_DIR/bids_database
 [ -d $BIDS_DATABASE_DIR ] || mkdir -p $BIDS_DATABASE_DIR
-pybids layout $BIDS_DIR $BIDS_DATABASE_DIR --no-validate
+pybids layout $BIDS_DIR $BIDS_DATABASE_DIR --no-validate --reset-db
