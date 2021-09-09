@@ -23,33 +23,11 @@ set -e
 # Authors: Fan Zhang (fzhang@bwh.harvard.edu) and Ofer Pasternak (ofer@bwh.harvard.edu)  #
 ##########################################################################################
 
-#########################################
-# Load modules and set up datalad clone #
-#########################################
+######################
+# Load matlab module #
+######################
 
-# Load matlab module
 module load matlab/2019b
-
-# Get input and output dataset directory trees
-# datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/qsiprep
-# datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/qsiprep/${1}
-# datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freewater
-# datalad get -n -J $SLURM_CPUS_PER_TASK $CLONE_DATA_DIR/freewater/${1}
-
-# Checkout unique branches (names derived from jobIDs) of result subdatasets
-
-########################################################################
-# Enables pushing the results without interference from other jobs.    #
-# In a setup with no subdatasets, "-C <subds-name>" would be stripped, #
-# and a new branch would be checked out in the superdataset instead.   #
-########################################################################
-
-# git -C $CLONE_DATA_DIR/freewater checkout -b "$PIPE_ID"
-# git -C $CLONE_DATA_DIR/freewater/$1 checkout -b "$PIPE_ID"
-
-# Remove job outputs in dataset clone to prevent issues when rerunning
-# $1/* matches all content in subject subdataset but dotfiles (.git, .datalad, .gitattributes)
-# (cd $CLONE_DATA_DIR/freewater && rm -rf $1/*)
 
 ##############################
 # Run free-water elimination #
@@ -88,17 +66,12 @@ fi
 
 FW_OUTPUT_DIR=$DATA_DIR/freewater/$1/ses-${SESSION}/dwi
 
-# execute command with datalad run
-# datalad run -m "${PIPE_ID} freewater" \
-   # --explicit \
-   # --input $CLONE_DATA_DIR/qsiprep/$1 \
-   # --output $CLONE_DATA_DIR/freewater/$1 \
-   matlab \
-      -nosplash \
-      -nodesktop \
-      -nojvm \
-      -batch \
-      "cd('$FW_CODE_DIR'); FreeWater_OneCase('$1', 'ses-${SESSION}', '$INPUT_DWI', '$INPUT_BVAL', '$INPUT_BVEC', '$INPUT_MASK', '$FW_OUTPUT_DIR'); cd('$CODE_DIR'); quit"
+matlab \
+   -nosplash \
+   -nodesktop \
+   -nojvm \
+   -batch \
+   "cd('$FW_CODE_DIR'); FreeWater_OneCase('$1', 'ses-${SESSION}', '$INPUT_DWI', '$INPUT_BVAL', '$INPUT_BVEC', '$INPUT_MASK', '$FW_OUTPUT_DIR'); cd('$CODE_DIR'); quit"
 
 ######################################################################################
 # Estimate free-water corrected and negative eigenvalue corrected diffusion measures #
@@ -126,16 +99,11 @@ CMD_FWC="
       -div 2 \
       ${OUTPUT_FWC_DIFF}_RD.nii.gz"
 
-# Execute command with datalad run
-# datalad run -m "${PIPE_ID} calculate free-water corrected diffusion measures" \
-#    --explicit \
-#    --input $INPUT_TENSOR_CORRECTED -i $INPUT_MASK \
-#    --output $FW_OUTPUT_DIR \
-      singularity run --cleanenv --userns \
-      -B .\
-      -B $PROJ_DIR \
-      -B $SCRATCH_DIR:/tmp \
-      $ENV_DIR/fsl-6.0.3 /bin/bash -c "$CMD_FWC"
+singularity run --cleanenv --userns \
+   -B .\
+   -B $PROJ_DIR \
+   -B $SCRATCH_DIR:/tmp \
+   $ENV_DIR/fsl-6.0.3 /bin/bash -c "$CMD_FWC"
 
 # Calculate negative eigenvalue corrected diffusion measures (note, L1 = AD)
 ############################################################################
@@ -153,20 +121,8 @@ CMD_NONEG="
       -div 2 \
       ${OUTPUT_NONEG_DIFF}_RD.nii.gz"
 
-# Execute command with datalad run
-# datalad run -m "${PIPE_ID} calculate negative eigenvalue corrected diffusion measures" \
-#    --explicit \
-#    --input $INPUT_TENSOR_NONEG -i $INPUT_MASK \
-#    --output $FW_OUTPUT_DIR \
-      singularity run --cleanenv --userns \
-      -B . \
-      -B $PROJ_DIR \
-      -B $SCRATCH_DIR:/tmp \
-      $ENV_DIR/fsl-6.0.3 /bin/bash -c "$CMD_NONEG"
-
-###############################################
-# Push results from clone to original dataset #
-###############################################
-
-# flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freewater --to origin
-# flock $DSLOCKFILE datalad push -d $CLONE_DATA_DIR/freewater/${1} --to origin
+singularity run --cleanenv --userns \
+   -B . \
+   -B $PROJ_DIR \
+   -B $SCRATCH_DIR:/tmp \
+   $ENV_DIR/fsl-6.0.3 /bin/bash -c "$CMD_NONEG"
