@@ -37,6 +37,7 @@ subj_array_length=${#subj_array[@]}
 
 # Empirical job config
 if [ $PIPELINE == "bidsify" ];then
+	
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
 	batch_time="04:00:00"
@@ -49,6 +50,7 @@ if [ $PIPELINE == "bidsify" ];then
 	read HEURISTIC; export HEURISTIC
 
 elif [ $PIPELINE == "qsiprep" ];then
+	
 	# Mind limitation by /scratch and memory capacity (23gb temporary files, 15gb max RAM usage)
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
@@ -58,6 +60,7 @@ elif [ $PIPELINE == "qsiprep" ];then
 	
 	echo "Do you want to perform connectome reconstruction after preprocessing; i.e. qsiprep incl. qsirecon (y/n)"
 	read RECON; export RECON
+
 	if [ $RECON == y ];then
 		echo "Choose reconstruction pipeline you want to apply (mrtrix_singleshell_ss3t, mrtrix_multishell_msmt)"
 		read RECON_PIPELINE; export RECON_PIPELINE
@@ -69,51 +72,104 @@ elif [ $PIPELINE == "smriprep" ];then
 	batch_time="23:00:00"
 	partition="std"
 	at_once=
+
 elif [ $PIPELINE == "mriqc" ];then
-	export SUBJS_PER_NODE=4
-	export ANALYSIS_LEVEL=subject
-	batch_time="12:00:00"
-	partition="std"
-	at_once=
-elif [ $PIPELINE == "mriqc_group" ];then
-	export SUBJS_PER_NODE=$subj_array_length
-	export ANALYSIS_LEVEL=group
-	batch_time="01:00:00"
-	partition="std"
-	at_once=
+
+	echo "Choose between participant and group level anaylsis (participant/group)." 
+	echo "Please make sure participant level is finished before running group level analysis."
+	read MRIQC_LEVEL; export MRIQC_LEVEL
+
+	if [ $MRIQC_LEVEL == "participant" ]; then
+		export SUBJS_PER_NODE=4
+		export ANALYSIS_LEVEL=subject
+		batch_time="12:00:00"
+		partition="std"
+		at_once=
+	elif [ $MRIQC_LEVEL == "group" ]; then
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time="01:00:00"
+		partition="std"
+		at_once=
+	fi
+
+# elif [ $PIPELINE == "mriqc_group" ];then
+# 	export SUBJS_PER_NODE=$subj_array_length
+# 	export ANALYSIS_LEVEL=group
+# 	batch_time="01:00:00"
+# 	partition="std"
+# 	at_once=
+
 elif [ $PIPELINE == "fmriprep" ];then
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
 	batch_time="15:00:00"
 	partition="std"
 	at_once=
+
 elif [ $PIPELINE == "xcpengine" ];then
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
 	batch_time="12:00:00"
 	partition="std"
 	at_once=
+
 elif [ $PIPELINE == "wmhprep" ];then
 	export SUBJS_PER_NODE=8
 	export ANALYSIS_LEVEL=subject
 	batch_time="04:00:00"
 	partition="std"
+
 elif [ $PIPELINE == "freewater" ];then
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
 	batch_time="02:00:00"
 	partition="std"
-elif [ $PIPELINE == "tbss_enigma" ];then
-	export SUBJS_PER_NODE=$subj_array_length
-	export ANALYSIS_LEVEL=group
-	batch_time="12:00:00"
-	partition="big"
+
+elif [ $PIPELINE == "tbss" ];then
+	
+	echo "Which TBSS pipeline would you like to run? Choose between 'enigma' and 'fmrib'"
+	read TBSS_PIPELINE; export TBSS_PIPELINE
+	
+	if [ $TBSS_PIPELINE != "enigma" || "fmrib" ]; then
+		echo "$TBSS_PIPELINE TBSS pipeline not supported."
+		exit
+	else
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time="01:00:00"
+		partition="std"
+	fi
+
+elif [ $PIPELINE == "psmd" ];then
+	
+	echo "On which level you like to run the PSMD pipeline? Choose between 'subject' and 'group'"
+	read PSMD_LEVEL
+
+	if [ $PSMD_LEVEL == "subject" ]; then
+		export SUBJS_PER_NODE=1
+		export ANALYSIS_LEVEL=subject
+		batch_time="00:20:00"
+		partition="std"
+	elif [ $PSMD_LEVEL == "group" ];then
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time="00:10:00"
+		partition="std"
+	else
+	 	echo "$PSMD_LEVEL for $PIPELINE pipeline not supported."
+	 	exit
+	 fi
+
 elif [ $PIPELINE == "bianca" ];then
+	
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
 	batch_time="08:00:00"
 	partition="std"
+
 else
+	
 	echo "Pipeline $PIPELINE not supported"
 	exit
 fi
@@ -140,7 +196,8 @@ for batch in $(seq $batch_amount);do
 
 	# In case of interactive session source $script_path directly
 	if [ $INTERACTIVE == y ]; then
-		source $script_path "${subj_batch_array[@]}" && exit 0
+		srun $script_path "${subj_batch_array[@]}" && exit 0
+		#source $script_path "${subj_batch_array[@]}" && exit 0
 	elif [ $INTERACTIVE == n ]; then
 	    CMD="sbatch --job-name $PIPELINE \
 	        --time ${batch_time} \
