@@ -3,9 +3,8 @@
 # Run heudiconv for dcm2nii and bidsification of its outputs
 # heudiconv_heuristic.py is dataset specific
 echo $SESSION out
-if [ "$SESSION"=="all" ];then
+if [ "$SESSION" == "all" ];then
    export SESSIONS=$(ls $DCM_DIR/$1/ses-* -d | xargs -n 1 basename | cut -d'.' -f 1 | cut -d'-' -f 2)
-   echo $SESSION inif
    for SESSION in $SESSIONS;do
       CMD="
       heudiconv \
