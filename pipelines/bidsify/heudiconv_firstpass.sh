@@ -17,12 +17,15 @@ export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
 export TMPDIR=$WORK/tmp
 
+echo "Provide session"
+read session
+
 # Define commands
 subs=$(ls $DCM_DIR/ | xargs -n 1 basename | sort -r | tail -n 3 )
 CMD="heudiconv
     -d $DCM_DIR/{subject}/ses-{session}.tar.gz \
     -s $subs \
-    -ss 1 \
+    -ss $session \
     -f convertall \
     -c none \
     -o $PIPELINE_DIR"
