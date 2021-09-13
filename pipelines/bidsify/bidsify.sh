@@ -2,7 +2,8 @@
 
 # Run heudiconv for dcm2nii and bidsification of its outputs
 # heudiconv_heuristic.py is dataset specific
-
+echo $SESSION
+sleep 60
 if [ $SESSION==all ];then
    export SESSIONS=$(ls $DCM_DIR/$1/ses-* -d | xargs -n 1 basename | cut -d'.' -f 1 | cut -d'-' -f 2)
    for SESSION in $SESSIONS;do
@@ -114,4 +115,4 @@ fi
 CMD="python $CODE_DIR/pipelines/$PIPELINE/handle_metadata.py $1"
 $CMD
 
-rm -rf $BIDS_DIR/.heudiconv/$1
+rm -rf $BIDS_DIR/.heudiconv
