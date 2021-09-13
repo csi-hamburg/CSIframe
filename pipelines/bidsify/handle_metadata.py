@@ -11,9 +11,8 @@ if not subject.startswith('sub-'): subject = 'sub-' + subject
 problematic_metadata=['InstitutionName', 'InstitutionalDepartmentName','InstitutionAddress','InstitutionAddress','ProcedureStepDescription', "StationName"]
 
 # Make list of the json files to edit
-print("list current dir", os.listdir())
-print("Found sessions:", glob.glob("data/raw_bids/*{subject}/ses-*"))
-json_paths=glob.glob(f'data/raw_bids/*{subject}/ses-*/*/*.json')
+print("Found sessions:", glob.glob("data/raw_bids/{subject}/ses-*"))
+json_paths=glob.glob(f'data/raw_bids/{subject}/ses-*/*/*.json')
 print(f'Amending json metadata of {subject}:', json_paths)
 
 # For each json substitute contents of problematic metadata fields with 'deleted'
