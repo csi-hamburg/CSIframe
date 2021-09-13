@@ -114,4 +114,4 @@ fi
 CMD="python $CODE_DIR/pipelines/$PIPELINE/handle_metadata.py $1"
 $CMD
 
-rm -rf $BIDS_DIR/.heudiconv
+rm -rf $BIDS_DIR/.heudiconv/$1
