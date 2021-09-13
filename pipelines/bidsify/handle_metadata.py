@@ -11,6 +11,7 @@ if not subject.startswith('sub-'): subject = 'sub-' + subject
 problematic_metadata=['InstitutionName', 'InstitutionalDepartmentName','InstitutionAddress','InstitutionAddress','ProcedureStepDescription', "StationName"]
 
 # Make list of the json files to edit
+print("list current dir", os.listdir())
 print("Found sessions:", glob.glob("data/raw_bids/*{subject}/ses-*"))
 json_paths=glob.glob(f'data/raw_bids/*{subject}/ses-*/*/*.json')
 print('Amending json metadata of:', json_paths)
