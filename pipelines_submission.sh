@@ -93,13 +93,6 @@ elif [ $PIPELINE == "mriqc" ];then
 		at_once=
 	fi
 
-# elif [ $PIPELINE == "mriqc_group" ];then
-# 	export SUBJS_PER_NODE=$subj_array_length
-# 	export ANALYSIS_LEVEL=group
-# 	batch_time="01:00:00"
-# 	partition="std"
-# 	at_once=
-
 elif [ $PIPELINE == "fmriprep" ];then
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
@@ -196,7 +189,7 @@ for batch in $(seq $batch_amount);do
 
 	# In case of interactive session source $script_path directly
 	if [ $INTERACTIVE == y ]; then
-		srun $script_path "${subj_batch_array[@]}" && exit 0
+		srun $script_path "${subj_batch_array[@]}" #&& exit 0
 		#source $script_path "${subj_batch_array[@]}" && exit 0
 	elif [ $INTERACTIVE == n ]; then
 	    CMD="sbatch --job-name $PIPELINE \
