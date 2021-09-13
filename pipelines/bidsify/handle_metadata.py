@@ -6,13 +6,13 @@ import sys
 
 subject=sys.argv[1]
 if not subject.startswith('sub-'): subject = 'sub-' + subject
-bidsdir=os.getcwd()
 
-# Defince problematic metadata fields
+# Define problematic metadata fields
 problematic_metadata=['InstitutionName', 'InstitutionalDepartmentName','InstitutionAddress','InstitutionAddress','ProcedureStepDescription', "StationName"]
 
 # Make list of the json files to edit
-json_paths=glob.glob(f'data/raw_bids/{subject}/ses-*/*/*.json')
+print("Found sessions:", glob.glob("data/raw_bids/*{subject}/ses-*"))
+json_paths=glob.glob(f'data/raw_bids/*{subject}/ses-*/*/*.json')
 print('Amending json metadata of:', json_paths)
 
 # For each json substitute contents of problematic metadata fields with 'deleted'
