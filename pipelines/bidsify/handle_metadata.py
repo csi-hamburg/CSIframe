@@ -14,7 +14,7 @@ problematic_metadata=['InstitutionName', 'InstitutionalDepartmentName','Institut
 print("list current dir", os.listdir())
 print("Found sessions:", glob.glob("data/raw_bids/*{subject}/ses-*"))
 json_paths=glob.glob(f'data/raw_bids/*{subject}/ses-*/*/*.json')
-print('Amending json metadata of:', json_paths)
+print(f'Amending json metadata of {subject}:', json_paths)
 
 # For each json substitute contents of problematic metadata fields with 'deleted'
 for json_path in json_paths:
