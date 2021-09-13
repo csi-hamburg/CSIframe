@@ -229,13 +229,14 @@ elif [ $PIPELINE == missing_outputs ];then
 	echo "If nothing is provided, output file will be $default_out"
 	read out_file
 
+	echo "Please provide subds in data/ to read subject names from; recommended: raw_bids/"
+	echo "Here, subjects should be complete so they can be used to find potentially missing directories in subds to check"
+	read template_dir
+
 	[ -z $out_file ] && out_file=$default_out
 
 	if [ $file_or_subdir == subdir ];then
 
-		echo "Please provide subds in data/ to read subject names from; recommended: raw_bids/"
-		echo "Here, subjects should be complete so they can be used to find potentially missing directories in subds to check"
-		read template_dir
 
 
 		for ds in ${subds[@]};do
@@ -252,7 +253,10 @@ elif [ $PIPELINE == missing_outputs ];then
 
 		for ds in ${subds[@]};do
 		pushd $DATA_DIR/$subds
-			find . -type f | grep $search | grep sub | cut -d'/' -f 2 > $out_file
+			arr_search=($(find $DATA_DIR/$ds -type f | grep $search | grep sub | cut -d'/' -f 2))
+			arr_template=($(find $DATA_DIR/$template_dir -type f | grep $search | grep sub | cut -d'/' -f 2))
+			echo ${arr_search[@]}
+			echo ${arr_search[@]} ${arr_template[@]} | tr ' ' '\n' | sort | uniq -u > $out_file
 			#find . -mindepth 1 -maxdepth 1 -type d '!' -exec test -e "{}/${search}" ';' -print | grep sub | cut -d"/" -f 2 > $out_file
 		popd
 		done
