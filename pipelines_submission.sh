@@ -46,7 +46,7 @@ if [ $PIPELINE == "bidsify" ];then
 	subj_array=(${input_subject_array[@]-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata | xargs -n 1 basename)}) # subjects in data/dicoms
 
 	echo "What heuristic do you want to apply?"
-	echo "Choose from" $(ls $CODE_DIR/pipelines/bidsify/heudiconv_*)
+	echo "Choose from" $(ls $CODE_DIR/pipelines/bidsify/heudiconv_*.py | xargs -n 1 basename)
 	read HEURISTIC; export HEURISTIC
 
 elif [ $PIPELINE == "qsiprep" ];then
@@ -72,6 +72,21 @@ elif [ $PIPELINE == "smriprep" ];then
 	batch_time="23:00:00"
 	partition="std"
 	at_once=
+
+	echo "Do you want to use specific templates? (y/n)"
+	echo "Enter 'n' to keep defaults (fsnative fsaverage MNI152NLin6Asym anat)"
+	read SPECIFIC_TEMP; export SPECIFIC_TEMP
+
+	if [ $SPECIFIC_TEMP == y ];then
+		echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym anat)"
+		echo "or infant templates (MNIPediatricAsym:cohort-1:res-native)"
+		read OUTPUT_SPACES; export OUTPUT_SPACES
+	elif [ $SPECIFIC_TEMP == n ];then
+		# Keep templates
+		export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym anat"
+	else
+		echo "Please answer with 'y' or 'n'"
+	fi
 
 elif [ $PIPELINE == "mriqc" ];then
 
@@ -99,6 +114,21 @@ elif [ $PIPELINE == "fmriprep" ];then
 	batch_time="15:00:00"
 	partition="std"
 	at_once=
+
+	echo "Do you want to use specific templates? (y/n)"
+	echo "Do not enter anything to keep defaults (fsnative fsaverage MNI152NLin6Asym)"
+	read SPECIFIC_TEMP; export SPECIFIC_TEMP
+
+	if [ $SPECIFIC_TEMP == y ];then
+		echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym anat)"
+		echo "or infant templates (MNIPediatricAsym:cohort-1:res-1)"
+		read OUTPUT_SPACES; export OUTPUT_SPACES
+	elif [ $SPECIFIC_TEMP == n ];then
+		# Keep templates
+		export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym"
+	else
+		echo "Please answer with 'y' or 'n'"
+	fi
 
 elif [ $PIPELINE == "xcpengine" ];then
 	export SUBJS_PER_NODE=16
