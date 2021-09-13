@@ -16,7 +16,7 @@ if [ $SESSION==all ];then
       heudiconv \
       -d /dcm/{subject}/ses-{session}.tar.gz\
       --subjects $1 \
-      --ses $SESSION \
+      --ses $session \
       --bids notop \
       -f /code/pipelines/bidsify/$HEURISTIC\
       -c dcm2niix \
