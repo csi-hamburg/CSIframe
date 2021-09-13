@@ -4,7 +4,7 @@
 # heudiconv_heuristic.py is dataset specific
 echo $SESSION out
 sleep 30
-if [ $SESSION==all ];then
+if [ "$SESSION"=="all" ];then
    export SESSIONS=$(ls $DCM_DIR/$1/ses-* -d | xargs -n 1 basename | cut -d'.' -f 1 | cut -d'-' -f 2)
    echo $SESSION inif
    sleep 30
