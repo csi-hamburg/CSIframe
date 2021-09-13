@@ -252,10 +252,12 @@ elif [ $PIPELINE == missing_outputs ];then
 		read search
 
 		for ds in ${subds[@]};do
-		pushd $DATA_DIR/$subds
-			arr_search=($(find $DATA_DIR/$ds -type f | grep $search | grep sub | cut -d'/' -f 2))
-			arr_template=($(find $DATA_DIR/$template_dir -type f | grep $search | grep sub | cut -d'/' -f 2))
+		pushd $DATA_DIR/$ds
+			arr_search=($(find $DATA_DIR/$ds -type f | grep $search | grep sub | cut -d'/' -f 8))
+			arr_template=($(ls $DATA_DIR/$template_dir/sub-* -d | cut -d'/' -f 8))
 			echo ${arr_search[@]}
+			echo "#####################################"
+			echo ${arr_template[@]}
 			echo ${arr_search[@]} ${arr_template[@]} | tr ' ' '\n' | sort | uniq -u > $out_file
 			#find . -mindepth 1 -maxdepth 1 -type d '!' -exec test -e "{}/${search}" ';' -print | grep sub | cut -d"/" -f 2 > $out_file
 		popd
