@@ -245,15 +245,15 @@ elif [ $PIPELINE == missing_outputs ];then
 		done
 
 		echo "Finished writing to $out_file"
-	fi
-
-	if [ $file_or_subdir == in_subdir ];then
-		echo "Please provide file or directory name you are looking for (search depth of 1, i.e. sub-xyz/?)"
+	elif [ $file_or_subdir == in_subdir ];then
+		echo "Please provide search term you are looking for; e.g. 'dwi.nii.gz'"
+		#echo "Please provide file or directory name you are looking for (search depth of 1, i.e. sub-xyz/?)"
 		read search
 
 		for ds in ${subds[@]};do
 		pushd $DATA_DIR/$subds
-			find . -mindepth 1 -maxdepth 1 -type d '!' -exec test -e "{}/${search}" ';' -print | grep sub | cut -d"/" -f 2 > $out_file
+			find . -type f | grep $search | grep sub | cut -d'/' -f 2 > $out_file
+			#find . -mindepth 1 -maxdepth 1 -type d '!' -exec test -e "{}/${search}" ';' -print | grep sub | cut -d"/" -f 2 > $out_file
 		popd
 		done
 	fi
