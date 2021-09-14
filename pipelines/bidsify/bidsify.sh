@@ -27,7 +27,7 @@ if [ "$SESSION" == "all" ];then
       $ENV_DIR/heudiconv-0.9.0 \
       $CMD
 
-      chmod 770 -R $BIDS_DIR/sub-${1}
+      [ -d $BIDS_DIR/sub-${1} ] && chmod 770 -R $BIDS_DIR/sub-${1}
 
       # Deface	
       singularity="singularity run --cleanenv --userns -B . -B $TMP_DIR/:/tmp"
