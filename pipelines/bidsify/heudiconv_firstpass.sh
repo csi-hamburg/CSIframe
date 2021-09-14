@@ -19,9 +19,10 @@ export TMPDIR=$WORK/tmp
 
 echo "Provide session"
 read session
-
+subs=($@)
 # Define commands
-subs=$(ls $DCM_DIR/ | xargs -n 1 basename | sort -R | tail -n 3 )
+subs=${subs-$(ls $DCM_DIR/ | xargs -n 1 basename | sort -R | tail -n 3 )}
+echo "Processing:" $subs
 CMD="heudiconv
     -d $DCM_DIR/{subject}/ses-{session}.tar.gz \
     -s $subs \
