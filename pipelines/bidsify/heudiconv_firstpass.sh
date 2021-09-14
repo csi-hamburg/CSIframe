@@ -21,7 +21,7 @@ echo "Provide session"
 read session
 
 # Define commands
-subs=$(ls $DCM_DIR/ | xargs -n 1 basename | sort -r | tail -n 3 )
+subs=$(ls $DCM_DIR/ | xargs -n 1 basename | sort -R | tail -n 3 )
 CMD="heudiconv
     -d $DCM_DIR/{subject}/ses-{session}.tar.gz \
     -s $subs \
