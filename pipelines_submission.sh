@@ -74,19 +74,14 @@ elif [ $PIPELINE == "smriprep" ];then
 	partition="std"
 	at_once=
 
-	echo "Do you want to use specific templates? (y/n)"
-	echo "Enter 'n' to keep defaults (fsnative fsaverage MNI152NLin6Asym anat)"
-	read SPECIFIC_TEMP; export SPECIFIC_TEMP
+	echo "Please enter specific templates if you want to use them."
+	echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym anat)"
+	echo "or infant templates (MNIPediatricAsym:cohort-1:res-native)"
+	echo "Enter nothing to keep defaults (fsnative fsaverage MNI152NLin6Asym anat)"
+	read OUTPUT_SPACES; export OUTPUT_SPACES
 
-	if [ $SPECIFIC_TEMP == y ];then
-		echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym anat)"
-		echo "or infant templates (MNIPediatricAsym:cohort-1:res-native)"
-		read OUTPUT_SPACES; export OUTPUT_SPACES
-	elif [ $SPECIFIC_TEMP == n ];then
-		# Keep templates
+	if [ -z $OUTPUT_SPACES ];then
 		export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym anat"
-	else
-		echo "Please answer with 'y' or 'n'"
 	fi
 
 elif [ $PIPELINE == "mriqc" ];then
@@ -116,19 +111,14 @@ elif [ $PIPELINE == "fmriprep" ];then
 	partition="std"
 	at_once=
 
-	echo "Do you want to use specific templates? (y/n)"
-	echo "Enter 'n' to keep defaults (fsnative fsaverage MNI152NLin6Asym)"
-	read SPECIFIC_TEMP; export SPECIFIC_TEMP
+	echo "Please enter specific templates if you want to use them."
+	echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym anat)"
+	echo "or infant templates (MNIPediatricAsym:cohort-1:res-native)"
+	echo "Enter nothing to keep defaults (fsnative fsaverage MNI152NLin6Asym anat)"
+	read OUTPUT_SPACES; export OUTPUT_SPACES
 
-	if [ $SPECIFIC_TEMP == y ];then
-		echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym anat)"
-		echo "or infant templates (MNIPediatricAsym:cohort-1:res-1)"
-		read OUTPUT_SPACES; export OUTPUT_SPACES
-	elif [ $SPECIFIC_TEMP == n ];then
-		# Keep templates
+	if [ -z $OUTPUT_SPACES ];then
 		export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym"
-	else
-		echo "Please answer with 'y' or 'n'"
 	fi
 
 elif [ $PIPELINE == "xcpengine" ];then
