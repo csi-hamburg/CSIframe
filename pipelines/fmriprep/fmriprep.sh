@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CMD="
-   singularity run --cleanenv --userns -B $PROJ_DIR -B /work/fatx405/tmp/:/tmp \
+   singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR:/tmp \
    $ENV_DIR/fmriprep-21.0.0rc0 \
    data/raw_bids data participant \
    -w /tmp \
