@@ -17,8 +17,9 @@ CMD="
    --use-aroma \
    --random-seed 12345 \
    --use-syn-sdc \
-   --cifti-output 91k \
    --notrack \
    --skip_bids_validation \
    --fs-license-file envs/freesurfer_license.txt"
 $CMD
+
+# --cifti-output 91k \
