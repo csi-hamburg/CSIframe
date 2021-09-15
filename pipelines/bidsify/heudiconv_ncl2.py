@@ -35,6 +35,6 @@ def infotodict(seqinfo):
     # 2) A field that includes a string (e.g., 'mprage' in s.protocol_name)
     for idx, s in enumerate(seqinfo):
         #if ('t1_mprage_ns_sag_fast' == s.series_description) or ('3D_T1w_MPRAGE' == s.series_description) or ('CS sag T1W_3D_TFE nativ' == s.series_description):
-        if (('CS sag T1W_3D_TFE nativ' == s.series_description):
+        if ('CS sag T1W_3D_TFE nativ' == s.series_description):
             info[t1w].append(s.series_id)
     return info
