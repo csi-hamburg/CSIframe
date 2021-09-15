@@ -117,7 +117,7 @@ elif [ $PIPELINE == "fmriprep" ];then
 	at_once=
 
 	echo "Do you want to use specific templates? (y/n)"
-	echo "Do not enter anything to keep defaults (fsnative fsaverage MNI152NLin6Asym)"
+	echo "Enter 'n' to keep defaults (fsnative fsaverage MNI152NLin6Asym)"
 	read SPECIFIC_TEMP; export SPECIFIC_TEMP
 
 	if [ $SPECIFIC_TEMP == y ];then
