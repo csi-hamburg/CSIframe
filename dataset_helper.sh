@@ -62,12 +62,11 @@ import() {
 	INPUT_PATH=$1
 	OUTPUT_PATH=$2
 	zip=$3
-	session=$4
-	time=$5 
+	time=$4
 
 	# Define subject list
 	subs=$(ls $INPUT_PATH)
-	echo INPUT $INPUT_PATH OUTPUT $OUTPUT_PATH zip $zip ses $session sub $sub
+	echo INPUT $INPUT_PATH OUTPUT $OUTPUT_PATH zip $zip sub $sub
 	echo $subs
 
 	# Define import loop to parallelize across
@@ -77,26 +76,30 @@ import() {
 		INPUT_PATH=$1
 		OUTPUT_PATH=$2
 		zip=$3
-		session=$4
-		sub=$5
+		sub=$4
 
 		echo "Importing subject $sub"
 		echo "Sequences to import: $seqs"
 		OUTPUT_DIR=$OUTPUT_PATH/$sub
 		INPUT_DIR=$INPUT_PATH/$sub
+		for session in $(ls $INPUT_DIR/ses-* -d | xargs -n 1 basename);do
+			if [ $zip == y ];then #&& [ ! -f $OUTPUT_DIR/${session}.tar.gz ]
+				mkdir -p $OUTPUT_DIR
+				pushd $INPUT_DIR
+				tar -czvf $OUTPUT_DIR/${session}.tar.gz $session
+				popd
+			elif [ $zip == n ];then
+				for seq in $seqs;do
 
-		[ $zip == y ] && [ ! -f $OUTPUT_DIR/${session}.tar.gz ] && { mkdir -p $OUTPUT_DIR ; pushd $INPUT_DIR; tar -czvf $OUTPUT_DIR/${session}.tar.gz $session; popd; }
-		if [ $zip == n ];then
-			for seq in $seqs;do
-
-			 	mkdir $OUTPUT_DIR 
-				cp -ruvf $INPUT_DIR/$session/$seq $OUTPUT_DIR/$session/$seq
-			done
-		fi
+				 	mkdir $OUTPUT_DIR 
+					cp -ruvf $INPUT_DIR/$session/$seq $OUTPUT_DIR/$session/$seq
+				done
+			fi
+		done
 
 	}
 	export -f import_loop
-	CMD="$parallel import_loop $INPUT_PATH $OUTPUT_PATH $zip $session {} ::: $subs"
+	CMD="$parallel import_loop $INPUT_PATH $OUTPUT_PATH $zip {} ::: $subs"
 	echo $CMD
 
 	# Calculate with ~1h for 150 subjects
@@ -186,16 +189,13 @@ elif [ $PIPELINE == import_dcms ];then
 	read INPUT_PATH
 	OUTPUT_PATH=$DCM_DIR
 
-	echo "Supply session; e.g. 'ses-1'"
-	read session
-
 	echo "How much time do you want to allocate? e.g. '01:00:00' for one hour"
 	read time
 
 	echo "Converting subject dirs to tarballs and copying into data/dicoms"
 	export zip=y
 	
-	import $INPUT_PATH $OUTPUT_PATH $zip $session $time
+	import $INPUT_PATH $OUTPUT_PATH $zip $time
 
 elif [ $PIPELINE == import_raw_bids ];then
 
@@ -255,9 +255,8 @@ elif [ $PIPELINE == missing_outputs ];then
 		pushd $DATA_DIR/$ds
 			arr_search=($(find $DATA_DIR/$ds -type f | grep $search | grep sub | cut -d'/' -f 8))
 			arr_template=($(ls $DATA_DIR/$template_dir/sub-* -d | cut -d'/' -f 8))
-			echo ${arr_search[@]}
 			echo "#####################################"
-			echo ${arr_template[@]}
+			echo ${arr_search[@]} ${arr_template[@]} | tr ' ' '\n' | sort | uniq -u
 			echo ${arr_search[@]} ${arr_template[@]} | tr ' ' '\n' | sort | uniq -u > $out_file
 			#find . -mindepth 1 -maxdepth 1 -type d '!' -exec test -e "{}/${search}" ';' -print | grep sub | cut -d"/" -f 2 > $out_file
 		popd
