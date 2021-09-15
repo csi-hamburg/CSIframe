@@ -8,7 +8,7 @@ CMD="
     data/raw_bids data participant \
     -w /tmp \
     --participant-label $1 \
-    --output-spaces fsnative fsaverage MNI152NLin6Asym T1w T2w \
+    --output-spaces $OUTPUT_SPACES \
     --nthreads $SLURM_CPUS_PER_TASK \
     --omp-nthreads $OMP_NTHREADS \
     --mem-gb $MEM_GB \
