@@ -25,4 +25,4 @@ CMD_OBSEG="python3 run_pipeline.py -in $T2 -out $OUT_DIR -sid $1 -ncuda"
 # Execute 
 $singularity \
 $OBSEG_CONTAINER \
-/bin/bash -c "$CMD_OBSEG"
+"$CMD_OBSEG"
