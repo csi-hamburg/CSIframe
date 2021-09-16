@@ -3,7 +3,7 @@
 #!/bin/bash
 
 # Set output directory
-OUT_DIR=data/obseg/$1/ses-${SESSION}/anat/
+OUT_DIR=data/obseg/
 [ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
 
 # SET VARIABLES FOR CONTAINER TO BE USED
@@ -14,7 +14,7 @@ OBSEG_CONTAINER=$ENV_DIR/$OBSEG_VERSION
 singularity="singularity exec --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR:/tmp"
 
 ###############################################################################################################################################################
-##### STEP 1: OLFACTORY BULB SEGMENTATION BASED ON 3DT2
+##### STEP 1: OLFACTORY BULB SEGMENTATION BASED ON 3D-T2w
 ###############################################################################################################################################################
 # Define inputs
 T2=data/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_T2w.nii.gz
