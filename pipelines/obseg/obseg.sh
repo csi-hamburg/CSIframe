@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#!/bin/bash
+
+# Set output directory
+OUT_DIR=data/obseg/$1/ses-${SESSION}/anat/
+[ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
+
+# SET VARIABLES FOR CONTAINER TO BE USED
+OLFSEG_VERSION=olfsegnet_cpu-latest
+OLFSEG_CONTAINER=$ENV_DIR/$OLFSEG_VERSION
+###############################################################################################################################################################
+
+singularity="singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR/:/tmp"
+
+###############################################################################################################################################################
+##### STEP 1: OLFACTORY BULB SEGMENTATION BASED ON 3DT2
+###############################################################################################################################################################
+# Define inputs
+T2=data/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_T2w.nii.gz
+
+# Define commands
+CMD_OBSEG="python3 run_pipeline.py -in $T2 -out $OUT_DIR -sid $1 -ncuda"
+
+# Execute 
+$singularity \
+$FSL_CONTAINER \
+/bin/bash -c "$CMD_OBSEG"
