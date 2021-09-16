@@ -182,6 +182,13 @@ elif [ $PIPELINE == "bianca" ];then
 	batch_time="08:00:00"
 	partition="std"
 
+elif [ $PIPELINE == "obseg" ];then
+	
+	export SUBJS_PER_NODE=16
+	export ANALYSIS_LEVEL=subject
+	batch_time="01:00:00"
+	partition="std"
+
 else
 	
 	echo "Pipeline $PIPELINE not supported"
