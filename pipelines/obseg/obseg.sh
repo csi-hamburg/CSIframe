@@ -20,9 +20,9 @@ singularity="singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR/:/tmp"
 T2=data/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_T2w.nii.gz
 
 # Define commands
-CMD_OBSEG="/olf-bulb-segmentation/run_pipeline.py -in $T2 -out $OUT_DIR -sid $1 -ncuda"
+CMD_OBSEG=" /olf-bulb-segmentation/run_pipeline.py -in $T2 -out $OUT_DIR -sid $1 -ncuda"
 
 # Execute 
 $singularity \
 $OBSEG_CONTAINER \
-/opt/conda/bin/python3"$CMD_OBSEG"
+/opt/conda/bin/python3 "$CMD_OBSEG"
