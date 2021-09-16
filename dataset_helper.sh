@@ -308,13 +308,13 @@ elif [ $PIPELINE == add_lzs_s3_remote ];then
 
 elif [ $PIPELINE == create_pybids_db ];then
 
-	[ -d $BIDS_DIR/code/pybids_db ] && mkdir -p $BIDS_DIR/code/pybids_db
+	[ ! -d $BIDS_DIR/code/pybids_db ] && mkdir -p $BIDS_DIR/code/pybids_db
 	pybids layout --index-metadata --reset-db $BIDS_DIR $BIDS_DIR/code/pybids_db
 
 elif [ $PIPELINE == templateflow_setup ];then
 
 	export TEMPLATEFLOW_HOME=$BIDS_DIR/code/templateflow
-	[ -d $TEMPLATEFLOW_HOME ] && mkdir -p $TEMPLATEFLOW_HOME
+	[ ! -d $TEMPLATEFLOW_HOME ] && mkdir -p $TEMPLATEFLOW_HOME
 	python -c "from templateflow.api import get; get(['MNI152NLin2009cAsym', 'MNI152NLin6Asym', 'OASIS30ANTs'])"
 
 elif [ $PIPELINE == export_from_datalad ];then
