@@ -11,7 +11,7 @@ OBSEG_VERSION=olfsegnet_cpu-latest
 OBSEG_CONTAINER=$ENV_DIR/$OBSEG_VERSION
 ###############################################################################################################################################################
 
-singularity="singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR:/tmp"
+singularity="singularity exec --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR:/tmp"
 
 ###############################################################################################################################################################
 ##### STEP 1: OLFACTORY BULB SEGMENTATION BASED ON 3DT2
@@ -25,5 +25,4 @@ CMD_OBSEG="/opt/conda/bin/python3 /olf-bulb-segmentation/run_pipeline.py" #-in $
 # Execute 
 $singularity \
 $OBSEG_CONTAINER \
-echo hello
-#"$CMD_OBSEG"
+"$CMD_OBSEG"
