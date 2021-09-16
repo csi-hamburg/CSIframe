@@ -7,8 +7,8 @@ OUT_DIR=data/obseg/$1/ses-${SESSION}/anat/
 [ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
 
 # SET VARIABLES FOR CONTAINER TO BE USED
-OLFSEG_VERSION=olfsegnet_cpu-latest
-OLFSEG_CONTAINER=$ENV_DIR/$OLFSEG_VERSION
+OBSEG_VERSION=olfsegnet_cpu-latest
+OBSEG_CONTAINER=$ENV_DIR/$OBSEG_VERSION
 ###############################################################################################################################################################
 
 singularity="singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR/:/tmp"
@@ -24,5 +24,5 @@ CMD_OBSEG="python3 run_pipeline.py -in $T2 -out $OUT_DIR -sid $1 -ncuda"
 
 # Execute 
 $singularity \
-$FSL_CONTAINER \
+$OBSEG_CONTAINER \
 /bin/bash -c "$CMD_OBSEG"
