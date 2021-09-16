@@ -12,7 +12,7 @@ Invoke dataset_helper.sh and provide the name of the dataset_concerned in the sa
     4. `convert_containers`
         - Convert singularity containers to sandboxes that are used in the pipeline scripts
     5. Pipeline specific precautions
-        -  For prep pipelines: download templateflow data (can only be downloaded on login node with internet connection) and `datalad get envs/freesurfer_license.txt`
+        -  For prep pipelines: `templateflow_setup` (can only be downloaded on login node with internet connection), `create_pybids_db` and `datalad get envs/freesurfer_license.txt`, 
         - Make sure dataset_description.json is present in data/raw_bids/
         - run bids-validator
         - Bianca: containers (mrtrix, freesurfer, fsl), freesurfer license, classifier in sourcedata

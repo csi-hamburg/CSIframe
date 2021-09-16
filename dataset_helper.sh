@@ -329,12 +329,7 @@ elif [ $PIPELINE == export_from_datalad ];then
 	read source_ds
 
 	for ds in ${subds[@]};do
-		#for sub in $(ls $PROJ_DIR/../$source_ds/data/raw_bids/sub-* -d | xargs -n1 basename );do
-		#	TARGET_DIR=$PROJ_DIR/data/$ds/$sub
-		#	mkdir -p $TARGET_DIR
-		#	cp -ruvfL $PROJ_DIR/../$source_ds/data/$ds/$sub/* $TARGET_DIR
-		#	pushd $TARGET_DIR; git annex uninit; rm -rf .git .datalad .gitattributes; chmod 770 -R .; popd
-		#done
+
 		for_each -nthreads 7 -debug $(ls $PROJ_DIR/../$source_ds/data/raw_bids/sub-* -d | xargs -n1 basename ) : \
 			mkdir -p $PROJ_DIR/data/$ds/NAME ";" \
 			cp -ruvfL $PROJ_DIR/../$source_ds/data/$ds/NAME/* $PROJ_DIR/data/$ds/NAME ";" \

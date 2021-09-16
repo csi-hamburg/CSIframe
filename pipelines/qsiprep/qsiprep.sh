@@ -11,6 +11,7 @@ CMD="
    --participant-label $1 \
    --nthreads $SLURM_CPUS_PER_TASK \
    --skip-bids-validation \
+   --bids-database-dir data/raw_bids/code/pybids_db \
    --use-syn-sdc \
    --force-syn \
    --output-space T1w \
