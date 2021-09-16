@@ -7,7 +7,6 @@ def create_key(template, outtype=('nii.gz',), annotation_classes=None):
         raise ValueError('Template must be a valid format string')
     return template, outtype, annotation_classes
 
-
 def infotodict(seqinfo):
     # Section 1: These key definitions should be revised by the user
     ###################################################################

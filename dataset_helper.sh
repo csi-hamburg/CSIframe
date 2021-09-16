@@ -22,7 +22,7 @@ echo "Script is run from $(realpath .); superdataset is assumed to be/become sub
 echo "Enter name of dataset concerned / to create; e.g. CSI_HCHS"
 read PROJ_NAME
 
-echo "What do you want to do? (setup_superdataset, add_data_subds, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, create_participants_tsv, add_lzs_s3_remote, export_from_datalad)"
+echo "What do you want to do? (setup_superdataset, add_data_subds, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, create_participants_tsv, add_lzs_s3_remote, create_pybids_db, templateflow_setup, export_from_datalad)"
 read PIPELINE
 
 #################################################################
@@ -306,6 +306,17 @@ elif [ $PIPELINE == add_lzs_s3_remote ];then
 
 	datalad create-sibling-github -d $PROJ_DIR --publish-depends s3 --github-organization csi-hamburg --existing replace --private -s github $repo
 
+elif [ $PIPELINE == create_pybids_db ];then
+
+	[ -d $BIDS_DIR/code/pybids_db ] && mkdir -p $BIDS_DIR/code/pybids_db
+	pybids layout --index-metadata --reset-db $BIDS_DIR $BIDS_DIR/code/pybids_db
+
+elif [ $PIPELINE == templateflow_setup ];then
+
+	export TEMPLATEFLOW_HOME=$BIDS_DIR/code/templateflow
+	[ -d $TEMPLATEFLOW_HOME ] && mkdir -p $TEMPLATEFLOW_HOME
+	python -c "from templateflow.api import get; get(['MNI152NLin2009cAsym', 'MNI152NLin6Asym', 'OASIS30ANTs'])"
+
 elif [ $PIPELINE == export_from_datalad ];then
 
 
@@ -333,6 +344,7 @@ elif [ $PIPELINE == export_from_datalad ];then
 			chmod 770 -R . ";"\
 			popd
 	done
+
 
 else
 	echo "$PIPELINE is not supported"

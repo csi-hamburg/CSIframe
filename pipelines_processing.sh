@@ -52,7 +52,7 @@ echo SINGULARITY_TMPDIR: $SINGULARITY_TMPDIR
 mkdir -p $TMP_DIR 
 
 # Tell templateflow where to read/write
-export TEMPLATEFLOW_HOME=$CODE_DIR/templateflow
+export TEMPLATEFLOW_HOME=$BIDS_DIR/code/templateflow
 export SINGULARITYENV_TEMPLATEFLOW_HOME=$TEMPLATEFLOW_HOME
 
 # All paths relative paths relate to project_dir
