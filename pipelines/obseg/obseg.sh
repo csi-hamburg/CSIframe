@@ -21,8 +21,8 @@ T2=data/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_T2w.nii.gz
 
 # Define commands
 CMD_OBSEG="python3 /olf-bulb-segmentation/run_pipeline.py" #-in $T2 -out $OUT_DIR -sid $1 -ncuda"
-
+#singularity exec olfsegnet_cpu-latest/ python3 /olf-bulb-segmentation/run_pipeline.py
 # Execute 
 $singularity \
 $OBSEG_CONTAINER \
-"$CMD_OBSEG"
+$CMD_OBSEG
