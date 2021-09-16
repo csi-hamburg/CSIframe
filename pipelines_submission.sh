@@ -184,9 +184,9 @@ elif [ $PIPELINE == "bianca" ];then
 
 elif [ $PIPELINE == "obseg" ];then
 	
-	export SUBJS_PER_NODE=16
+	export SUBJS_PER_NODE=1
 	export ANALYSIS_LEVEL=subject
-	batch_time="01:00:00"
+	batch_time="03:00:00"
 	partition="std"
 
 else
