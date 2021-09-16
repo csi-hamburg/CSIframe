@@ -24,5 +24,6 @@ CMD_OBSEG="/opt/conda/bin/python3 /olf-bulb-segmentation/run_pipeline.py" #-in $
 
 # Execute 
 $singularity \
-$OBSEG_CONTAINER #\
+$OBSEG_CONTAINER \
+echo hello
 #"$CMD_OBSEG"
