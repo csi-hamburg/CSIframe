@@ -19,7 +19,7 @@ CMD="
    --random-seed 12345 \
    --use-syn-sdc \
    --notrack \
-   --skip_bids_validation \
+   --skip_bids_validation \"
    --fs-license-file envs/freesurfer_license.txt"
 [ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
 $CMD

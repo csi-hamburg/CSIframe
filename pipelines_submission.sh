@@ -59,12 +59,13 @@ elif [ $PIPELINE == "qsiprep" ];then
 	partition="std" # ponder usage of gpu for eddy speed up
 	at_once=
 	
-	echo "Do you want to perform connectome reconstruction after preprocessing; i.e. qsiprep incl. qsirecon (y/n)"
+	echo "If you want to perform connectome reconstruction after preprocessing (i.e. qsiprep incl. qsirecon) please provide reconstruction pipeline (mrtrix_singleshell_ss3t, mrtrix_multishell_msmt)"
+	echo "Leave empty if you want to use default (mrtrix_singleshell_ss3t)"
 	read RECON; export RECON
 
-	if [ $RECON == y ];then
+	if [ -z $RECON ];then
 		echo "Choose reconstruction pipeline you want to apply (mrtrix_singleshell_ss3t, mrtrix_multishell_msmt)"
-		read RECON_PIPELINE; export RECON_PIPELINE
+		export RECON=mrtrix_singleshell_ss3t
 	fi
 
 	echo "Choose additional arguments you want to provide to qsiprep call; e.g. '--dwi-only'"
