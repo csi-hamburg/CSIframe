@@ -67,6 +67,9 @@ elif [ $PIPELINE == "qsiprep" ];then
 		read RECON_PIPELINE; export RECON_PIPELINE
 	fi
 
+	echo "Choose additional arguments you want to provide to qsiprep call; e.g. '--dwi-only'"
+	read MODIFIER; export MODIFIER
+
 elif [ $PIPELINE == "smriprep" ];then
 	export SUBJS_PER_NODE=8 
 	export ANALYSIS_LEVEL=subject

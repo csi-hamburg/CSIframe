@@ -26,4 +26,5 @@ CMD="
    --stop-on-first-crash \
    --fs-license-file envs/freesurfer_license.txt"
 [ $RECON == y ] && CMD="${CMD} --recon_input data/qsiprep/$1 --recon_spec $RECON_PIPELINE"
+[ ! -z $MODIFIED ] && CMD="${CMD} $MODIFIED"
 $CMD

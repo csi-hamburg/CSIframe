@@ -16,5 +16,6 @@ CMD="
     --bids-database-dir data/raw_bids/code/pybids_db \
     --fs-subjects-dir data/freesurfer \
     --stop-on-first-crash \
+    --notrack \
     --fs-license-file envs/freesurfer_license.txt"
 $CMD
