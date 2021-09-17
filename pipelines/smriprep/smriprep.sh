@@ -12,6 +12,8 @@ CMD="
     --nthreads $SLURM_CPUS_PER_TASK \
     --omp-nthreads $OMP_NTHREADS \
     --mem-gb $MEM_GB \
+    --ignore t2w \
+    --bids-database-dir data/raw_bids/code/pybids_db \
     --fs-subjects-dir data/freesurfer \
     --stop-on-first-crash \
     --fs-license-file envs/freesurfer_license.txt"
