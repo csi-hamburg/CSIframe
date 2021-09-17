@@ -21,4 +21,5 @@ CMD="
    --notrack \
    --skip_bids_validation \
    --fs-license-file envs/freesurfer_license.txt"
+[ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
 $CMD

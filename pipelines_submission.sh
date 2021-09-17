@@ -121,6 +121,9 @@ elif [ $PIPELINE == "fmriprep" ];then
 		export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym"
 	fi
 
+	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '--anat-only'"
+	read MODIFIER; export MODIFIER
+	
 elif [ $PIPELINE == "xcpengine" ];then
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
