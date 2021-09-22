@@ -111,7 +111,7 @@ elif [ $PIPELINE == "mriqc" ];then
 elif [ $PIPELINE == "fmriprep" ];then
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
-	batch_time="23:00:00"
+	batch_time="1-00:00:00"
 	partition="std"
 	at_once=
 
