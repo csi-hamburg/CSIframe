@@ -158,9 +158,16 @@ elif [ $PIPELINE == "tbss" ];then
 	else
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="01:00:00"
+		batch_time="1-00:00:00"
 		partition="std"
 	fi
+
+
+elif [ $PIPELINE == "fba" ];then
+	export SUBJS_PER_NODE=$subj_array_length
+	export ANALYSIS_LEVEL=group
+	batch_time="07-00:00:00"
+	partition="big"
 
 elif [ $PIPELINE == "psmd" ];then
 	

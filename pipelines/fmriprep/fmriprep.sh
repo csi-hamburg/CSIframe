@@ -1,9 +1,13 @@
 #!/bin/bash
 
+# To make I/O more efficient write outputs to scratch
+TMP_OUT=$TMP/output
+[ -d $TMP_OUT ] && mkdir -p $TMP_OUT
+
 CMD="
-   singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR:/tmp \
+   singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR:/tmp -B $TMP_OUT:/tmp_out \
    $ENV_DIR/fmriprep-unstable21.0.0rc1 \
-   data/raw_bids data participant \
+   data/raw_bids /tmp_out participant \
    -w /tmp \
    --participant-label $1 \
    --output-spaces $OUTPUT_SPACES \
@@ -23,3 +27,5 @@ CMD="
    --fs-license-file envs/freesurfer_license.txt"
 [ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
 $CMD
+
+cp -ruvf $TMP_OUT/* $DATA_DIR
