@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # To make I/O more efficient write outputs to scratch
-TMP_OUT=$TMP/output
+TMP_OUT=$TMP_DIR/output
 [ -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 CMD="
