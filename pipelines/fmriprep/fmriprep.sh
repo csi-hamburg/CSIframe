@@ -3,7 +3,7 @@
 # To make I/O more efficient write outputs to scratch
 BIDS_DIR_CACHED=$(echo $BIDS_DIR | sed 's/^\/work/\/work_cached/g')
 TMP_OUT=$TMP_DIR/output
-[ -d $TMP_OUT ] && mkdir -p $TMP_OUT
+[ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 CMD="
    singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR:/tmp -B $TMP_OUT:/tmp_out -B $BIDS_DIR_CACHED:/bids_cached\
