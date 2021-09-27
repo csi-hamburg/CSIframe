@@ -1,13 +1,14 @@
 #!/bin/bash
 
 # To make I/O more efficient write outputs to scratch
+BIDS_DIR_CACHED=$(echo $BIDS_DIR | sed 's/^\/work/\/work_cached/g')
 TMP_OUT=$TMP_DIR/output
-[ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
+[ -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 CMD="
-   singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR:/tmp -B $TMP_OUT:/tmp_out \
+   singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR:/tmp -B $TMP_OUT:/tmp_out -B $BIDS_DIR_CACHED:/bids_cached\
    $ENV_DIR/fmriprep-unstable21.0.0rc1 \
-   data/raw_bids /tmp_out participant \
+   /bids_cached /tmp_out participant \
    -w /tmp \
    --participant-label $1 \
    --output-spaces $OUTPUT_SPACES \
