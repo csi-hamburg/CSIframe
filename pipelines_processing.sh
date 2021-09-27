@@ -60,4 +60,4 @@ cd $PROJ_DIR
 
 # Run pipeline
 export PIPE_ID="$SLURM_JOBID-$PIPELINE-$1-$(date +%d%m%Y)"
-source $PIPELINE_DIR/${PIPELINE}.sh $@
+source $PIPELINE_DIR/${PIPELINE}${PIPELINE_SUFFIX}.sh $@

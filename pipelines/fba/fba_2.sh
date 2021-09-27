@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-
-#SBATCH --nodes=1
-#SBATCH --export=INTERACTIVE,PIPELINE,SESSION,SUBJS_PER_NODE,MODIFIER,FBA_LEVEL
+set -x
 
 ###################################################################################################################
 # FBA based on https://mrtrix.readthedocs.io/en/latest/fixel_based_analysis/st_fibre_density_cross-section.html   #
@@ -69,7 +67,7 @@ FOD_CSF="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-re
 
 # Command
 #########################
-CMD_DWI2FOD="ss3t_csd_beta1 -nthreads 4 $DWI_PREPROC_UPSAMPLED_MIF $GROUP_RESPONSE_WM $FOD_WM $GROUP_RESPONSE_GM $FOD_GM $GROUP_RESPONSE_CSF $FOD_CSF"
+CMD_DWI2FOD="ss3t_csd_beta1 -nthreads 4 $DWI_PREPROC_UPSAMPLED_MIF $GROUP_RESPONSE_WM $FOD_WM $GROUP_RESPONSE_GM $FOD_GM $GROUP_RESPONSE_CSF $FOD_CSF -force"
 CMD_MTNORMALISE="mtnormalise $FOD_WM $FOD_WM $FOD_GM $FOD_GM $FOD_CSF $FOD_CSF -mask $DWI_MASK_UPSAMPLED -force"
 
 # Execution

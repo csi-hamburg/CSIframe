@@ -9,11 +9,6 @@
 
 set -x
 
-# Define subjects
-input_subject_array=($@)
-subj_array=(${input_subject_array[@]-$(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename)}) 
-subj_array_length=${#subj_array[@]}
-
 echo "Is this an interactive session for testing purposes? (y/n)"
 read INTERACTIVE; export INTERACTIVE
 
@@ -26,11 +21,15 @@ export DATA_DIR=$PROJ_DIR/data
 export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
 
-
 # Read pipeline and session information in
 echo "Which pipeline do you want to execute?"
 echo "Please choose from: $(ls $CODE_DIR/pipelines)"
 read PIPELINE; export PIPELINE
+
+# Define subjects
+input_subject_array=($@)
+subj_array=(${input_subject_array[@]-$(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename)}) 
+subj_array_length=${#subj_array[@]}
 
 # Empirical job config
 if [ $PIPELINE == "bidsify" ];then
@@ -64,7 +63,6 @@ elif [ $PIPELINE == "qsiprep" ];then
 	read RECON; export RECON
 
 	if [ -z $RECON ];then
-		echo "Choose reconstruction pipeline you want to apply (mrtrix_singleshell_ss3t, mrtrix_multishell_msmt)"
 		export RECON=mrtrix_singleshell_ss3t
 	fi
 
@@ -169,14 +167,34 @@ elif [ $PIPELINE == "tbss" ];then
 	read SESSION; export SESSION
 
 elif [ $PIPELINE == "fba" ];then
-	export SUBJS_PER_NODE=$subj_array_length
-	export ANALYSIS_LEVEL=group
-	batch_time="07-00:00:00"
-	partition="big"
 
-	echo "Which FBA_LEVEL do you want to perform? (1/2/3)"
-	echo "Leave empty if you want them all."
+
+	echo "Which FBA_LEVEL do you want to perform? (1/2/3/4)"
 	read FBA_LEVEL; export FBA_LEVEL
+	export PIPELINE_SUFFIX=_${FBA_LEVEL}
+
+	if [ $FBA_LEVEL == 1 ];then
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time="07-00:00:00"
+		partition="big"
+	elif [ $FBA_LEVEL == 2 ];then
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=participant
+		batch_time="12:00:00"
+		partition="std"
+	elif [ $FBA_LEVEL == 3 ];then
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time="07-00:00:00"
+		partition="std"
+	elif [ $FBA_LEVEL == 4 ];then
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time="07-00:00:00"
+		partition="std"
+	fi
+
 
 	[ -z $FBA_LEVEL ] && FBA_LEVEL=all && export FBA_LEVEL
 
@@ -215,6 +233,7 @@ elif [ $PIPELINE == "bianca" ];then
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
+
 elif [ $PIPELINE == "obseg" ];then
 	
 	export SUBJS_PER_NODE=1
@@ -256,7 +275,7 @@ for batch in $(seq $batch_amount);do
 		srun $script_path "${subj_batch_array[@]}" #&& exit 0
 		#source $script_path "${subj_batch_array[@]}" && exit 0
 	elif [ $INTERACTIVE == n ]; then
-	    CMD="sbatch --job-name $PIPELINE \
+	    CMD="sbatch --job-name ${PIPELINE}${PIPELINE_SUFFIX} \
 	        --time ${batch_time} \
 	        --partition $partition \
 	        --output $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).out" \
