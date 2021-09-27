@@ -10,7 +10,7 @@
 set -x
 
 echo "Is this an interactive session for testing purposes? (y/n)"
-read INTERACTIVE
+read INTERACTIVE; export INTERACTIVE
 
 # export project env variables
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
@@ -159,7 +159,7 @@ elif [ $PIPELINE == "tbss" ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time="1-00:00:00"
-		partition="std"
+		partition="big"
 	fi
 
 
@@ -168,6 +168,13 @@ elif [ $PIPELINE == "fba" ];then
 	export ANALYSIS_LEVEL=group
 	batch_time="07-00:00:00"
 	partition="big"
+
+	echo "Which FBA_LEVEL do you want to perform? (1/2/3)"
+	echo "Leave empty if you want them all."
+	read FBA_LEVEL; export FBA_LEVEL
+
+	[ -z $FBA_LEVEL ] && FBA_LEVEL=all && export FBA_LEVEL
+
 
 elif [ $PIPELINE == "psmd" ];then
 	
