@@ -9,6 +9,11 @@
 
 set -x
 
+# Define subjects
+input_subject_array=($@)
+subj_array=(${input_subject_array[@]-$(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename)}) 
+subj_array_length=${#subj_array[@]}
+
 echo "Is this an interactive session for testing purposes? (y/n)"
 read INTERACTIVE; export INTERACTIVE
 
@@ -27,14 +32,6 @@ echo "Which pipeline do you want to execute?"
 echo "Please choose from: $(ls $CODE_DIR/pipelines)"
 read PIPELINE; export PIPELINE
 
-echo "Which session do you want to process? e.g. '1' 'all'"
-read SESSION; export SESSION
-
-# Define subjects
-input_subject_array=($@)
-subj_array=(${input_subject_array[@]-$(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename)}) 
-subj_array_length=${#subj_array[@]}
-
 # Empirical job config
 if [ $PIPELINE == "bidsify" ];then
 	
@@ -49,6 +46,9 @@ if [ $PIPELINE == "bidsify" ];then
 	echo "What heuristic do you want to apply?"
 	echo "Choose from" $(ls $CODE_DIR/pipelines/bidsify/heudiconv_*.py | xargs -n 1 basename)
 	read HEURISTIC; export HEURISTIC
+
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
 
 elif [ $PIPELINE == "qsiprep" ];then
 	
@@ -147,6 +147,9 @@ elif [ $PIPELINE == "freewater" ];then
 	batch_time="02:00:00"
 	partition="std"
 
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
+
 elif [ $PIPELINE == "tbss" ];then
 	
 	echo "Which TBSS pipeline would you like to run? Choose between 'enigma' and 'fmrib'"
@@ -162,6 +165,8 @@ elif [ $PIPELINE == "tbss" ];then
 		partition="big"
 	fi
 
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
 
 elif [ $PIPELINE == "fba" ];then
 	export SUBJS_PER_NODE=$subj_array_length
@@ -175,6 +180,8 @@ elif [ $PIPELINE == "fba" ];then
 
 	[ -z $FBA_LEVEL ] && FBA_LEVEL=all && export FBA_LEVEL
 
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
 
 elif [ $PIPELINE == "psmd" ];then
 	
@@ -196,6 +203,9 @@ elif [ $PIPELINE == "psmd" ];then
 	 	exit
 	 fi
 
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
+
 elif [ $PIPELINE == "bianca" ];then
 	
 	export SUBJS_PER_NODE=16
@@ -203,6 +213,8 @@ elif [ $PIPELINE == "bianca" ];then
 	batch_time="08:00:00"
 	partition="std"
 
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
 elif [ $PIPELINE == "obseg" ];then
 	
 	export SUBJS_PER_NODE=1
@@ -210,13 +222,16 @@ elif [ $PIPELINE == "obseg" ];then
 	batch_time="03:00:00"
 	partition="std"
 
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
+
 else
 	
 	echo "Pipeline $PIPELINE not supported"
 	exit
 fi
 
-# define batch script
+# Define batch script
 script_name="pipelines_parallelization.sh"
 script_path=$CODE_DIR/$script_name
 
