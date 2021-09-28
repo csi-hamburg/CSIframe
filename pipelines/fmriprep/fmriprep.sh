@@ -29,4 +29,5 @@ CMD="
 [ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
 $CMD
 
-cp -ruvf $TMP_OUT/* $DATA_DIR
+cp -ruvf $TMP_OUT/freesurfer $DATA_DIR
+cp -ruvf sub-* $DATA_DIR/fmriprep
