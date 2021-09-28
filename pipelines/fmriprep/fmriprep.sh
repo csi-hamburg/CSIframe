@@ -5,7 +5,7 @@ TMP_IN=$TMP_DIR/input
 TMP_OUT=$TMP_DIR/output
 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN && cp -rf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
 [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
-[ -f $DATA_DIR/freesurfer/$1/scripts/IsRunning* ] && rm -rf $DATA_DIR/freesurfer/$1/scripts/IsRunning*
+[ -d $DATA_DIR/freesurfer/$1 ] && rm -rf $DATA_DIR/freesurfer/$1
 
 
 CMD="
