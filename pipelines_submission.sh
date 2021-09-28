@@ -25,6 +25,7 @@ export BIDS_DIR=$PROJ_DIR/data/raw_bids
 echo "Which pipeline do you want to execute?"
 echo "Please choose from: $(ls $CODE_DIR/pipelines)"
 read PIPELINE; export PIPELINE
+export PIPELINE_SUFFIX=""
 
 # Define subjects
 input_subject_array=($@)
