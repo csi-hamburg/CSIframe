@@ -18,7 +18,6 @@ CMD="
    --nthreads $SLURM_CPUS_PER_TASK \
    --omp-nthreads $OMP_NTHREADS \
    --mem-mb $MEM_MB \
-   --bids-database-dir data/raw_bids/code/pybids_db \
    --stop-on-first-crash \
    --ignore t2w \
    --fs-subjects-dir data/freesurfer \
@@ -34,3 +33,5 @@ $CMD
 
 cp -ruvf $TMP_OUT/freesurfer $DATA_DIR
 cp -ruvf sub-* $DATA_DIR/fmriprep
+
+#--bids-database-dir data/raw_bids/code/pybids_db \
