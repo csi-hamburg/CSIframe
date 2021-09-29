@@ -4,8 +4,8 @@
 TMP_IN=$TMP_DIR/input
 TMP_OUT=$TMP_DIR/output
 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN && cp -rf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
-[ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
-[ -d $DATA_DIR/freesurfer/$1 ] && rm -rf $DATA_DIR/freesurfer/$1
+[ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT/freesurfer
+[ ! -f $DATA_DIR/freesurfer/$1/stats/aseg.stats ] && rm -rf $DATA_DIR/freesurfer/$1 || cp -rf $DATA_DIR/freesurfer/$1 $TMP_OUT/freesurfer
 
 
 CMD="
@@ -20,7 +20,7 @@ CMD="
    --mem-mb $MEM_MB \
    --stop-on-first-crash \
    --ignore t2w \
-   --fs-subjects-dir data/freesurfer \
+   --fs-subjects-dir /tmp_out/freesurfer \
    --use-aroma \
    --cifti-output 91k \
    --random-seed 12345 \
