@@ -58,7 +58,7 @@ if [ $TBSS_PIPELINE == "enigma" ]; then
             --avg \
             --force \
             --verbose \
-            --ncpu 16" 
+            --ncpu 8" 
 
 elif [ $TBSS_PIPELINE == "fmrib" ]; then 
 
@@ -90,7 +90,7 @@ elif [ $TBSS_PIPELINE == "fmrib" ]; then
             --avg \
             --force \
             --verbose \
-            --ncpu 16" 
+            --ncpu 8" 
 
 fi
 
