@@ -160,8 +160,8 @@ elif [ $PIPELINE == "tbss" ];then
 	else
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="1-00:00:00"
-		partition="big"
+		batch_time="2-00:00:00"
+		partition="stl"
 	fi
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
@@ -204,7 +204,7 @@ elif [ $PIPELINE == "fba" ];then
 
 elif [ $PIPELINE == "psmd" ];then
 	
-	echo "On which level you like to run the PSMD pipeline? Choose between 'subject' and 'group'"
+	echo "On which level you like to run the PSMD pipeline? Choose between 'subject' and 'group'. Subject level needs to be run first."
 	read PSMD_LEVEL
 
 	if [ $PSMD_LEVEL == "subject" ]; then

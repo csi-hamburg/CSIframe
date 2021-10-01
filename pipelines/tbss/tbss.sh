@@ -45,6 +45,13 @@ if [ $TBSS_PIPELINE == "enigma" ]; then
     IMAGELIST=$TBSS_DIR/sourcedata/imagelist.csv
     CASELIST=$TBSS_DIR/sourcedata/caselist.csv
 
+    # Remove previous run
+    #####################
+
+    if [ -f $TBSS_DIR/log/config.ini} ]; then
+        rm -rf $TBSS_DIR/*/
+    fi
+
     # Define command
     ################
 
@@ -58,7 +65,7 @@ if [ $TBSS_PIPELINE == "enigma" ]; then
             --avg \
             --force \
             --verbose \
-            --ncpu 16" 
+            --ncpu 8" 
 
 elif [ $TBSS_PIPELINE == "fmrib" ]; then 
 
@@ -75,6 +82,13 @@ elif [ $TBSS_PIPELINE == "fmrib" ]; then
     IMAGELIST=$TBSS_DIR/sourcedata/imagelist.csv
     CASELIST=$TBSS_DIR/sourcedata/caselist.csv
 
+    # Remove previous run
+    #####################
+
+    if [ -f $TBSS_DIR/log/config.ini} ]; then
+        rm -rf $TBSS_DIR/*/
+    fi
+
     # Define command
     ################
 
@@ -85,12 +99,12 @@ elif [ $TBSS_PIPELINE == "fmrib" ]; then
             --modality FA,FAt,AD,ADt,RD,RDt,MD,MDt,FW \
             --fmrib \
             --labelMap /opt/fsl-6.0.4/data/atlases/JHU/JHU-ICBM-labels-1mm.nii.gz \
-            --lut $PIPELINE_DIR/JHU-ICBM-LUT.txt
+            --lut $PIPELINE_DIR/JHU-ICBM-LUT.txt \
             --outDir $TBSS_DIR \
             --avg \
             --force \
             --verbose \
-            --ncpu 16" 
+            --ncpu 8" 
 
 fi
 
@@ -105,13 +119,13 @@ echo "TBSS_DIR = $TBSS_DIR"
 
 # Remove old imagelist.csv and caselist.csv; other previous output will be overwritten by --force flag of tbss_all
 
-if [ -f $IMAGELIST ]; then
-    rm $IMAGELIST
-fi
+# if [ -f $IMAGELIST ]; then
+#     rm $IMAGELIST
+# fi
 
-if [ -f $CASELIST ]; then
-    rm $CASELIST
-fi
+# if [ -f $CASELIST ]; then
+#     rm $CASELIST
+# fi
 
 for sub in ${input_subject_array[@]}; do
 
