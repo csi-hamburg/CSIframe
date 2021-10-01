@@ -32,6 +32,8 @@ CMD="
 $CMD
 
 cp -ruvf $TMP_OUT/freesurfer $DATA_DIR
-cp -ruvf sub-* $DATA_DIR/fmriprep
+cp -ruvf $TMP_OUT/sub-* $DATA_DIR/fmriprep
+cp -ruvf $TMP_OUT/d* $DATA_DIR/fmriprep
+cp -ruvf $TMP_OUT/logs $DATA_DIR/fmriprep
 
 #--bids-database-dir data/raw_bids/code/pybids_db \
