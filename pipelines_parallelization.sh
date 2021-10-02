@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #SBATCH --nodes=1
-#SBATCH --export=PIPELINE,PIPELINE_SUFFIX,SESSION,SUBJS_PER_NODE,ITER,ANALYSIS_LEVEL,OUTPUT_SPACES,HEURISTIC,RECON,MRIQC_LEVEL,TBSS_PIPELINE,MODIFIER
+#SBATCH --export=PIPELINE,PIPELINE_SUFFIX,SESSION,SUBJS_PER_NODE,ITER,ANALYSIS_LEVEL,OUTPUT_SPACES,HEURISTIC,RECON,MRIQC_LEVEL,TBSS_PIPELINE,MODIFIER,ALGORITHM
 
 ####################
 # Batch script for across subject parallelization
@@ -26,9 +26,6 @@ export ENV_DIR=$PROJ_DIR/envs
 export DATA_DIR=$PROJ_DIR/data
 export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
-
-#source /work/fatx405/set_envs/miniconda
-#source activate datalad # env with python>=3.8, datalad, pybids
 
 if [ -z $ANALYSIS_LEVEL ];then
 	echo "Specify analysis level. (subject/group)"

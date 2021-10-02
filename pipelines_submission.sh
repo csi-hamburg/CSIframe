@@ -180,20 +180,50 @@ elif [ $PIPELINE == "fba" ];then
 		batch_time="07-00:00:00"
 		partition="big"
 	elif [ $FBA_LEVEL == 2 ];then
-		export SUBJS_PER_NODE=$subj_array_length
-		export ANALYSIS_LEVEL=participant
+		export SUBJS_PER_NODE=4
+		export ANALYSIS_LEVEL=subject
 		batch_time="12:00:00"
 		partition="std"
 	elif [ $FBA_LEVEL == 3 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time="07-00:00:00"
-		partition="std"
+		partition="big"
 	elif [ $FBA_LEVEL == 4 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time="07-00:00:00"
 		partition="std"
+	elif [ -z $FBA_LEVEL ];then
+		echo "FBA level needs to be set"
+		exit 0
+	fi
+
+
+
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
+
+elif [ $PIPELINE == "bct" ];then
+
+
+	echo "On which connectome flavor do you want to apply network analysis? (struct/func)"
+	read CONN_FLAV; export CONN_FLAV
+	export PIPELINE_SUFFIX=_${CONN_FLA}
+
+	if [ $CONN_FLAV == struct ];then
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=subject
+		batch_time="12:00:00"
+		partition="std"
+	elif [ $CONN_FLAV == func ];then
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=subject
+		batch_time="12:00:00"
+		partition="std"
+	elif [ -z $CONN_FLAV ];then
+		echo "Connectome type needs to be set"
+		exit 0
 	fi
 
 
@@ -201,7 +231,6 @@ elif [ $PIPELINE == "fba" ];then
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
-
 elif [ $PIPELINE == "psmd" ];then
 	
 	echo "On which level you like to run the PSMD pipeline? Choose between 'subject' and 'group'. Subject level needs to be run first."
@@ -240,6 +269,19 @@ elif [ $PIPELINE == "obseg" ];then
 	export SUBJS_PER_NODE=1
 	export ANALYSIS_LEVEL=subject
 	batch_time="03:00:00"
+	partition="std"
+
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
+
+elif [ $PIPELINE == "lst" ];then
+	
+	echo "Which algorithm you want to start? Choose between 'lga' (lesion growth algorithm) and 'lpa' (lesion prediction algorithm)"
+	read ALGORITHM; export ALGORITHM
+
+	export SUBJS_PER_NODE=16
+	export ANALYSIS_LEVEL=subject
+	batch_time="08:00:00"
 	partition="std"
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
