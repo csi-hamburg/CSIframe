@@ -22,10 +22,10 @@ CMD="
    --unringing-method mrdegibbs \
    --skull-strip-template OASIS \
    --stop-on-first-crash \
+   --output-resolution $OUTPUT_RESOLUTION \
    --fs-license-file envs/freesurfer_license.txt"
 [ ! -z $RECON ] && CMD="${CMD} --recon_input data/qsiprep/$1 --recon_spec $RECON"
 [ ! -z $MODIFIER ] && CMD="${CMD} $MODIFIED"
 $CMD
 
 
-   #--output-resolution 1.3 \
