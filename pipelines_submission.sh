@@ -59,6 +59,10 @@ elif [ $PIPELINE == "qsiprep" ];then
 	partition="std" # ponder usage of gpu for eddy speed up
 	at_once=
 	
+	echo "What is the desired output resolution? e.g. '1.3'"
+	echo "Leave empty if you want to use default (2)"
+	read $OUTPUT_RESOLUTION; [ -z $OUTPUT_RESOLUTION ] && export OUTPUT_RESOLUTION=2
+
 	echo "If you want to perform connectome reconstruction after preprocessing (i.e. qsiprep incl. qsirecon) please provide reconstruction pipeline (mrtrix_singleshell_ss3t, mrtrix_multishell_msmt)"
 	echo "Leave empty if you want to use default (mrtrix_singleshell_ss3t)"
 	read RECON; export RECON
@@ -183,7 +187,7 @@ elif [ $PIPELINE == "fba" ];then
 		export SUBJS_PER_NODE=4
 		export ANALYSIS_LEVEL=subject
 		batch_time="12:00:00"
-		partition="std"
+		partition="big"
 	elif [ $FBA_LEVEL == 3 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
@@ -193,7 +197,7 @@ elif [ $PIPELINE == "fba" ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time="07-00:00:00"
-		partition="std"
+		partition="big"
 	elif [ -z $FBA_LEVEL ];then
 		echo "FBA level needs to be set"
 		exit 0
@@ -227,10 +231,9 @@ elif [ $PIPELINE == "bct" ];then
 	fi
 
 
-	[ -z $FBA_LEVEL ] && FBA_LEVEL=all && export FBA_LEVEL
-
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
+
 elif [ $PIPELINE == "psmd" ];then
 	
 	echo "On which level you like to run the PSMD pipeline? Choose between 'subject' and 'group'"
