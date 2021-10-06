@@ -15,7 +15,7 @@ read INTERACTIVE; export INTERACTIVE
 # export project env variables
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 export PROJ_DIR=$(realpath $SCRIPT_DIR/..) # project root; should be 1 level above code
-export CODE_DIR=$PROJ_DIR/code
+export CODE_DIR=$SCRIPT_DIR
 export ENV_DIR=$PROJ_DIR/envs
 export DATA_DIR=$PROJ_DIR/data
 export DCM_DIR=$PROJ_DIR/data/dicoms
@@ -208,28 +208,21 @@ elif [ $PIPELINE == "fba" ];then
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
 
-elif [ $PIPELINE == "bct" ];then
+elif [ $PIPELINE == "connectome_analysis" ];then
 
 
-	echo "On which connectome flavor do you want to apply network analysis? (struct/func)"
-	read CONN_FLAV; export CONN_FLAV
-	export PIPELINE_SUFFIX=_${CONN_FLA}
+	echo "On which connectome flavor do you want to apply network analysis? (sc/fc)"
+	read MODIFIER; export MODIFIER
 
-	if [ $CONN_FLAV == struct ];then
-		export SUBJS_PER_NODE=$subj_array_length
-		export ANALYSIS_LEVEL=subject
-		batch_time="12:00:00"
-		partition="std"
-	elif [ $CONN_FLAV == func ];then
-		export SUBJS_PER_NODE=$subj_array_length
-		export ANALYSIS_LEVEL=subject
-		batch_time="12:00:00"
-		partition="std"
-	elif [ -z $CONN_FLAV ];then
+	elif [ -z $MODIFIER ];then
 		echo "Connectome type needs to be set"
 		exit 0
 	fi
 
+	export SUBJS_PER_NODE=$subj_array_length
+	export ANALYSIS_LEVEL=group
+	batch_time="12:00:00"
+	partition="std"
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
