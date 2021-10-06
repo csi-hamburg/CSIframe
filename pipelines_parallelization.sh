@@ -21,7 +21,7 @@ module load parallel
 # Source project environment
 export SCRIPT_DIR=${SLURM_SUBMIT_DIR-$(dirname "$0")} # should be code
 export PROJ_DIR=$(realpath $SCRIPT_DIR/..) # project root; should be 1 level above code
-export CODE_DIR=$PROJ_DIR/code
+export CODE_DIR=$SCRIPT_DIR
 export ENV_DIR=$PROJ_DIR/envs
 export DATA_DIR=$PROJ_DIR/data
 export DCM_DIR=$PROJ_DIR/data/dicoms
