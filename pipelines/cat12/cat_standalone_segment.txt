@@ -103,7 +103,7 @@ matlabbatch{1}.spm.tools.cat.(estwrite).output.ROImenu.atlases.julichbrain = 1;
 matlabbatch{1}.spm.tools.cat.(estwrite).output.ROImenu.atlases.Schaefer2018_100Parcels_17Networks_order = 1;
 matlabbatch{1}.spm.tools.cat.(estwrite).output.ROImenu.atlases.Schaefer2018_200Parcels_17Networks_order = 1;
 matlabbatch{1}.spm.tools.cat.(estwrite).output.ROImenu.atlases.Schaefer2018_400Parcels_17Networks_order = 1;
-matlabbatch{1}.spm.tools.cat.(estwrite).output.ROImenu.atlases.Schaefer2018_600Parcels_17Networks_order = 0;
+matlabbatch{1}.spm.tools.cat.(estwrite).output.ROImenu.atlases.Schaefer2018_600Parcels_17Networks_order = 1;
 matlabbatch{1}.spm.tools.cat.(estwrite).output.ROImenu.atlases.ownatlas = {''};
 
 % Writing options (see cat_defaults for the description of parameters)
@@ -163,7 +163,7 @@ matlabbatch{1}.spm.tools.cat.(estwrite).output.las.warped = 0;
 matlabbatch{1}.spm.tools.cat.(estwrite).output.las.dartel = 0;
 
 % jacobian determinant 0/1 (none/yes)
-matlabbatch{1}.spm.tools.cat.(estwrite).output.jacobianwarped = 0;
+matlabbatch{1}.spm.tools.cat.(estwrite).output.jacobianwarped = 1;
 
 % deformations, order is [forward inverse]
 matlabbatch{1}.spm.tools.cat.(estwrite).output.warps = [0 0];

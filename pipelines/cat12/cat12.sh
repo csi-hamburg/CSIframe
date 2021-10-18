@@ -22,9 +22,9 @@ module load zip
 CAT_VERSION=cat12_standalone
 CAT_CONTAINER=$ENV_DIR/$CAT_VERSION
 CAT_CODE_DIR=$CODE_DIR/pipelines/cat12/
-OUT_DIR=data/cat12/derivatives/; [ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
+OUT_DIR=$DATA_DIR/cat12/$1; [ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
 #TMP_DIR=$TMP_DIR/cat12; [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
-singularity="singularity exec --cleanenv --userns -B $PROJ_DIR -B $HOME -B $TMP_DIR:/tmp_dir"
+singularity="singularity exec --cleanenv --no-home --userns -B $PROJ_DIR -B $WORK/:/home -B $TMP_DIR:/tmp_dir"
 
 ###############################################################################################################################################################
 ##### STEP 1: SEGMENTATION & SMOOTHING
@@ -37,15 +37,16 @@ T1_orig=data/fmriprep/$1/ses-$SESSION/anat/$T1
 T1_unzipped=${1}_ses-${SESSION}_desc-preproc_T1w.nii
 cp -rf $T1_orig $TMP_DIR
 gzip -dc $TMP_DIR/$T1 > $TMP_DIR/T1.nii
+GM_SEGMENTS=mri/mwp1T1.nii
 
 # Define commands
 CMD_SEGMENT="cat_standalone.sh -b $CAT_CODE_DIR/cat_standalone_segment.txt /tmp_dir/T1.nii"
-#CMD_SMOOTH="cat_standalone.sh -b $CAT_CODE_DIR/cat_standalone_smooth.txt $T1"
+CMD_SMOOTH="cat_standalone.sh -b $CAT_CODE_DIR/cat_standalone_smooth.txt /tmp_dir/$GM_SEGMENTS"
 
 # Execute 
 $singularity $CAT_CONTAINER \
-/bin/bash -c "echo $(ls /tmp_dir); $CMD_SEGMENT" #CMD_SMOOTH
+/bin/bash -c "$CMD_SEGMENT; $CMD_SMOOTH"
 
-rm -rf $TMP_DIR/$T1_unzipped
+rm -rf $TMP_DIR/$T1_unzipped $TMP_DIR/$T1
 cp -ruvf $TMP_DIR/* $OUT_DIR
 ###############################################################################################################################################################
