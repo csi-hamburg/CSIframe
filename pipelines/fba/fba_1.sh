@@ -28,6 +28,7 @@ FBA_GROUP_DIR=$DATA_DIR/fba/derivatives
 TEMPLATE_SUBJECTS_TXT=$FBA_DIR/sourcedata/template_subjects.txt
 container_mrtrix3=mrtrix3-3.0.2      
 container_mrtrix3tissue=mrtrix3tissue-5.2.8
+export SINGULARITYENV_MRTRIX_TMPFILE_DIR=$TMP_DIR
 
 [ ! -d $FBA_GROUP_DIR ] && mkdir -p $FBA_GROUP_DIR
 singularity_mrtrix3="singularity run --cleanenv --userns \
@@ -52,8 +53,7 @@ parallel="parallel --ungroup --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/lo
 # Input
 #########################
 DWI_PREPROC_UPSAMPLED_NII="$DATA_DIR/qsiprep/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.nii.gz"
-DWI_PREPROC_UPSAMPLED_BVEC="$DATA_DIR/qsiprep/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.bvec"
-DWI_PREPROC_UPSAMPLED_BVAL="$DATA_DIR/qsiprep/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.bval"
+DWI_PREPROC_UPSAMPLED_GRAD_TABLE="$DATA_DIR/qsiprep/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.b"
 DWI_MASK_UPSAMPLED="$DATA_DIR/qsiprep/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-brain_mask.nii.gz"
 
 # Output
@@ -65,7 +65,7 @@ RESPONSE_CSF="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_de
 
 # Command
 #########################
-CMD_NII2MIF="mrconvert $DWI_PREPROC_UPSAMPLED_NII -fslgrad $DWI_PREPROC_UPSAMPLED_BVEC $DWI_PREPROC_UPSAMPLED_BVAL $DWI_PREPROC_UPSAMPLED_MIF -force"
+CMD_NII2MIF="mrconvert $DWI_PREPROC_UPSAMPLED_NII -grad $DWI_PREPROC_UPSAMPLED_GRAD_TABLE $DWI_PREPROC_UPSAMPLED_MIF -force"
 CMD_DWI2RESPONSE="dwi2response dhollander $DWI_PREPROC_UPSAMPLED_MIF $RESPONSE_WM $RESPONSE_GM $RESPONSE_CSF -mask $DWI_MASK_UPSAMPLED -force"
 
 # Execution
