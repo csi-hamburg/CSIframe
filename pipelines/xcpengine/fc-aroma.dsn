@@ -33,7 +33,7 @@
 ###################################################################
 
 analysis=fc_$(whoami)
-design=code/pipelines/xcpengine/fc-aroma.dsn
+design=/work/fatx405/projects/CSI_TEST/code/pipelines/xcpengine/fc-aroma.dsn
 sequence=fc-rest
 standard=MNI%2x2x2
 
