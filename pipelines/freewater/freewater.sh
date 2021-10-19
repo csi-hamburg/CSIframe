@@ -79,7 +79,7 @@ INPUT_BVAL=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi_
 # Convert bvals and bvecs from .b (mrtrix format) to .bval and .bvec (fsl format)
 
 CMD_CONVERT="mrconvert \
-   -force
+   -force \
    -grad $INPUT_BVEC_BVAL \
    -export_grad_fsl $INPUT_BVEC $INPUT_BVAL \
    $INPUT_DWI $INPUT_DWI_MIF"
