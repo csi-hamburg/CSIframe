@@ -9,6 +9,14 @@ set -e
 # 'FreeWater_OneCase.m' was adjusted to comply with BIDS naming convention          #
 # (https://bids.neuroimaging.io/)                                                   #
 # 'load_nifti.m' was adjusted to gunzip to ./                                       #
+#                                                                                   #
+# Pipeline specific dependencies:                                                   #
+#   [pipelines which need to be run first]                                          #
+#       - qsiprep                                                                   #                                         
+#   [container/code]                                                                #                                                          #    
+#       - Free-Water-master                                                         #                              
+#       - fsl-6.0.3                                                                 #  
+#       - mrtrix3-3.0.2                                                             # 
 #####################################################################################
 
 ##########################################################################################
@@ -43,28 +51,46 @@ module load matlab/2019b
 ##############################################################################################
 
 # Define inputs and output
-# datalad get $CLONE_DATA_DIR/freewater/code/Free-Water-master
-FW_CODE_DIR=$DATA_DIR/freewater/code/Free-Water-master
+##########################
 
-INPUT_DWI=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.nii.gz
-INPUT_BVAL=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.bval
-INPUT_BVEC=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.bvec
-INPUT_MASK=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-brain_mask.nii.gz
+FW_CODE_DIR=$DATA_DIR/freewater/code/Free-Water-master
+FW_OUTPUT_DIR=$DATA_DIR/freewater/$1/ses-${SESSION}/dwi
 
 # Check whether output directory already exists: yes > remove and create new output directory
 
-if [ ! -d $DATA_DIR/freewater/$1/ses-${SESSION}/dwi ]; then
+if [ ! -d $FW_OUTPUT_DIR ]; then
 
-   mkdir -p $DATA_DIR/freewater/$1/ses-${SESSION}/dwi
+   mkdir -p $FW_OUTPUT_DIR
 
 else 
    
-   rm -rf $DATA_DIR/freewater/$1/ses-${SESSION}/dwi
-   mkdir -p $DATA_DIR/freewater/$1/ses-${SESSION}/dwi
+   rm -rf $FW_OUTPUT_DIR
+   mkdir -p $FW_OUTPUT_DIR
 
 fi
 
-FW_OUTPUT_DIR=$DATA_DIR/freewater/$1/ses-${SESSION}/dwi
+INPUT_DWI=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.nii.gz
+INPUT_DWI_MIF=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.mif
+INPUT_MASK=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-brain_mask.nii.gz
+INPUT_BVEC_BVAL=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.b
+INPUT_BVEC=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi_desc-mrconvert.bvec
+INPUT_BVAL=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi_desc-mrconvert.bval
+
+# Convert bvals and bvecs from .b (mrtrix format) to .bval and .bvec (fsl format)
+
+CMD_CONVERT="mrconvert \
+   -force \
+   -grad $INPUT_BVEC_BVAL \
+   -export_grad_fsl $INPUT_BVEC $INPUT_BVAL \
+   $INPUT_DWI $INPUT_DWI_MIF"
+
+singularity run --cleanenv --userns \
+    -B . \
+    -B $PROJ_DIR \
+    -B $SCRATCH_DIR:/tmp \
+    $ENV_DIR/mrtrix3-3.0.2 /bin/bash -c "$CMD_CONVERT"
+
+# Execute free-water pipeline
 
 matlab \
    -nosplash \
@@ -87,6 +113,7 @@ OUTPUT_NONEG_DIFF=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg
 ###################################################################
 
 # Define command
+
 CMD_FWC="
    fslmaths \
       $INPUT_TENSOR_CORRECTED \
@@ -99,6 +126,8 @@ CMD_FWC="
       -div 2 \
       ${OUTPUT_FWC_DIFF}_RD.nii.gz"
 
+# Execute command
+
 singularity run --cleanenv --userns \
    -B .\
    -B $PROJ_DIR \
@@ -109,6 +138,7 @@ singularity run --cleanenv --userns \
 ############################################################################
 
 # Define command
+
 CMD_NONEG="
    fslmaths \
       $INPUT_TENSOR_NONEG \
@@ -120,6 +150,8 @@ CMD_NONEG="
       -add ${OUTPUT_NONEG_DIFF}_L3.nii.gz \
       -div 2 \
       ${OUTPUT_NONEG_DIFF}_RD.nii.gz"
+
+# Execute command
 
 singularity run --cleanenv --userns \
    -B . \
