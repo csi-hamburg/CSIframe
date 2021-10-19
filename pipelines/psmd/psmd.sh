@@ -137,27 +137,27 @@ cd $CODE_DIR
 
 elif [ $ANALYSIS_LEVEL == "group" ]; then
 
-    echo "Please confirm PSMD has been run on participant level (y/n)."
-    read PSMD_RUN
+    #cho "Please confirm PSMD has been run on participant level (y/n)."
+    #read PSMD_RUN
 
-    if [ $PSMD_RUN == "y" ]; then
+    #if [ $PSMD_RUN == "y" ]; then
 
         cd $PSMD_DIR
         echo "Subject,PSMD_global,PSMD_left,PSMD_right" > $PSMD_DIR/group_ses-${SESSION}_psmd.csv
     
         for sub in $(ls -d sub-*); do
 
-            tail -n 1 $PSMD_DIR/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_psmd.csv >> $PSMD_DIR/group_ses-${SESSION}_psmd.csv
+            tail -n 1 $PSMD_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_psmd.csv >> $PSMD_DIR/group_ses-${SESSION}_psmd.csv
         
         done
 
         cd $CODE_DIR 
 
-    elif [ $PSMD_RUN == "n" ]; then
+    #elif [ $PSMD_RUN == "n" ]; then
 
-        echo "Please run PSMD on participant level first. Exiting ..."
-        exit
+    #    echo "Please run PSMD on participant level first. Exiting ..."
+    #    exit
     
-    fi
+    #fi
 
 fi
