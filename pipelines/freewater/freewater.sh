@@ -88,7 +88,7 @@ singularity run --cleanenv --userns \
     -B . \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
-    $ENV_DIR/mrtrix3-3.0.2 "CMD_CONVERT"
+    $ENV_DIR/mrtrix3-3.0.2 "$CMD_CONVERT"
 
 # Execute free-water pipeline
 
