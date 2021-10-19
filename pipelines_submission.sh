@@ -158,13 +158,13 @@ elif [ $PIPELINE == "tbss" ];then
 	echo "Which TBSS pipeline would you like to run? Choose between 'enigma' and 'fmrib'"
 	read TBSS_PIPELINE; export TBSS_PIPELINE
 	
-	if [ $TBSS_PIPELINE != "enigma" || $TBSS_PIPELINE != "fmrib" ]; then
+	if [ $TBSS_PIPELINE != "enigma" ] && [ $TBSS_PIPELINE != "fmrib" ]; then
 		echo "$TBSS_PIPELINE TBSS pipeline not supported."
 		exit
 	else
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="02:00:00"
+		batch_time="12:00:00"
 		partition="std"
 	fi
 
@@ -214,7 +214,7 @@ elif [ $PIPELINE == "connectome_analysis" ];then
 	echo "On which connectome flavor do you want to apply network analysis? (sc/fc)"
 	read MODIFIER; export MODIFIER
 
-	elif [ -z $MODIFIER ];then
+	if [ -z $MODIFIER ];then
 		echo "Connectome type needs to be set"
 		exit 0
 	fi
