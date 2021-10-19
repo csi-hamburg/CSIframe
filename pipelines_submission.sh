@@ -214,7 +214,7 @@ elif [ $PIPELINE == "connectome_analysis" ];then
 	echo "On which connectome flavor do you want to apply network analysis? (sc/fc)"
 	read MODIFIER; export MODIFIER
 
-	elif [ -z $MODIFIER ];then
+	if [ -z $MODIFIER ];then
 		echo "Connectome type needs to be set"
 		exit 0
 	fi
