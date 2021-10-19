@@ -138,6 +138,16 @@ elif [ $PIPELINE == "xcpengine" ];then
 	partition="std"
 	at_once=
 
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
+
+	echo "Which xcpengine subanalysis do you want to use? (fc)"
+	read MODIFIER; export MODIFIER
+
+	echo "Pick design you want use"
+	echo "Choose from $(ls $CODE_DIR/pipelines/xcpengine/*.dsn | xargs -n 1 basename)"
+	read DESIGN; export DESIGN
+
 elif [ $PIPELINE == "wmhprep" ];then
 	export SUBJS_PER_NODE=8
 	export ANALYSIS_LEVEL=subject
@@ -208,13 +218,13 @@ elif [ $PIPELINE == "fba" ];then
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
 
-elif [ $PIPELINE == "connectome_analysis" ];then
+elif [ $PIPELINE == "connectomics" ];then
 
 
 	echo "On which connectome flavor do you want to apply network analysis? (sc/fc)"
 	read MODIFIER; export MODIFIER
 
-	elif [ -z $MODIFIER ];then
+	if [ -z $MODIFIER ];then
 		echo "Connectome type needs to be set"
 		exit 0
 	fi
@@ -283,6 +293,15 @@ elif [ $PIPELINE == "lst" ];then
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
 
+elif [ $PIPELINE == "cat12" ];then
+	
+	export SUBJS_PER_NODE=8
+	export ANALYSIS_LEVEL=subject
+	batch_time="08:00:00"
+	partition="std"
+
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
 else
 	
 	echo "Pipeline $PIPELINE not supported"

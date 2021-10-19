@@ -18,8 +18,8 @@ singularity="singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR/:/tmp"
 ##### STEP 1: REGISTRATION OF T1 AND T1 MASK ON FLAIR
 ###############################################################################################################################################################
 # Define inputs
-T1=data/smriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-preproc_T1w.nii.gz
-T1_MASK=data/smriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-brain_mask.nii.gz
+T1=data/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-preproc_T1w.nii.gz
+T1_MASK=data/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-brain_mask.nii.gz
 FLAIR=data/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_FLAIR.nii.gz
 
 # Define outputs
@@ -217,7 +217,6 @@ CMD_new_brainmask="fslmaths $T1_MASK_IN_FLAIR -sub $RIBBONMASK_FLAIR $BRAINWITHO
 CMD_final_mask="fslmaths $BRAINWITHOUTRIBBON_MASK -mul $VENTRICLEWMWMHMASK_FLAIR $BRAINWITHOUTRIBBON_MASK "
 
 
-
 # Execute 
 $singularity \
 $FSL_CONTAINER \
@@ -374,7 +373,3 @@ $singularity \
 $FSL_CONTAINER \
 /bin/bash -c "$CMD_extract_stats_WMH; $CMD_extract_stats_periWMH; $CMD_extract_stats_deepWMH"
 ###############################################################################################################################################################
-
-# additional steps:
-# wmh to mni
-# nawm mask

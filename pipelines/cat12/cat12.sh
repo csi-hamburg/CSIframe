@@ -47,6 +47,6 @@ CMD_SMOOTH="cat_standalone.sh -b $CAT_CODE_DIR/cat_standalone_smooth.txt /tmp_di
 $singularity $CAT_CONTAINER \
 /bin/bash -c "$CMD_SEGMENT; $CMD_SMOOTH"
 
-rm -rf $TMP_DIR/$T1_unzipped $TMP_DIR/$T1
+rm -rf $TMP_DIR/T1.nii $TMP_DIR/$T1
 cp -ruvf $TMP_DIR/* $OUT_DIR
 ###############################################################################################################################################################

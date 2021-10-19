@@ -78,6 +78,6 @@ CMD_AVG="mrmath $FA_TEMP_DIR/* mean $FBA_DIR/derivatives/FA_averaged.nii.gz"
 
 # Execution
 #########################
-$parallel "$singularity_mrtrix3tissue $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
 $parallel ln -sr $FA_TEMP $FA_TEMP_DIR ::: ${input_subject_array[@]}
-
+$singularity_mrtrix3 $CMD_AVG
