@@ -1,0 +1,40 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf210
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 This folder contains code to calculate the Small-World Propensity of a network.\
+\
+Make sure all files are in the path, but then run small_world_propensity.m (see instructions below.)  The other files are dependencies of the main function.\
+\
+\
+%function [SWP,delta_C,delta_L] = small_world_propensity(A, varargin)\
+% a function for calculating the small world propensity of\
+% a given network - assumes that matrix is undirected (symmeteric) and if\
+% not, creates a symmetric matrix which is used for the calculations\
+\
+%NOTE:  This code requires the Bioinformatics Toolbox to be installed\
+%        (uses graphallshortestpaths.m)\
+\
+%Inputs:\
+%   A           the connectivity matrix, weighted or binary\
+%   varargin    a string corresponding to the method of clustering\
+%               to be used, where 'O' is Onnela, 'Z' is Zhang, \
+%               'B' is Barrat, 'bin' is binary (default is Onnela).\
+%               If the user specifies binary analysis, a \
+%               weighted matrix will be converted to a binary matrix \
+%               before proceeding.\
+%        \
+\
+%Outputs:\
+%   SWP         the small world propensity of the matrix\
+%   delta_C     the fractional deviation from the expected culstering coefficient of a\
+%                   random network\
+%   delta_L     the fractional deviation from the expected path length of a\
+%                   random network\
+\
+%written by Eric Bridgeford\
+\
+% Reference: Muldoon, Bridgeford, and Bassett (2015) "Small-World Propensity in Weighted, \
+%               Real-World Networks" http://arxiv.org/abs/1505.02194}
