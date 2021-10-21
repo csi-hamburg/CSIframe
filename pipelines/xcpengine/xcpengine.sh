@@ -10,9 +10,11 @@ COHORT_FILE=$TMP_DIR/${1}_ses-${SESSION}_cohort_file.txt
 
 if [ $MODIFIER == struc ];then
 
-   T1_IMG=fmriprep/$1/ses-$SESSION/func/${1}_ses-${SESSION}_desc-preproc_T1w.nii.gz
-   echo "$1 $T1_IMG" > $COHORT_FILE
+   T1_IMG=fmriprep/$1/ses-$SESSION/anat/${1}_ses-${SESSION}_desc-preproc_T1w.nii.gz
+   echo "id0,img" > $COHORT_FILE
+   echo "$1,$T1_IMG" >> $COHORT_FILE
 
+   design=struc.dsn
    OUT_DIR=data/xcpengine/
    [ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
 
@@ -22,6 +24,7 @@ elif [ $MODIFIER == fc ];then
    echo "id0,img" > $COHORT_FILE
    echo "$1,$BOLD_IMG" >> $COHORT_FILE
 
+   design=fc-36p_spkreg.dsn
    OUT_DIR=data/xcpengine/
    [ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
 
@@ -30,7 +33,7 @@ fi
 CMD="
    singularity run --cleanenv --userns -B $PROJ_DIR/data:/data -B $TMP_DIR/:/tmp \
    $ENV_DIR/$XCPENGINE_VERSION \
-   -d code/pipelines/xcpengine/$DESIGN \
+   -d code/pipelines/xcpengine/$design \
    -c /tmp/${1}_ses-${SESSION}_cohort_file.txt \
    -i /tmp \
    -r /data \
