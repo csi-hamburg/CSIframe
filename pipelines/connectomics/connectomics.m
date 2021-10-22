@@ -24,7 +24,7 @@ function connectomics(subject, input_path, output_path, session, threads, atlas,
 %           realms of both connectivites (efficiency for fc, controllability for sc)
 %         connectivity_method: which connectome flavor to operate on
 %           structural (qsiprep): count, sift, invnode_sift, mean_length
-%           functional (xcpengine): processing short (e.g. 36pspkreg)
+%           functional (xcpengine): simply provide preprocessing short (e.g. 36pspkreg)
 %
 % OUTPUT:
 %         CSV files containing metrics at output_path

@@ -21,6 +21,9 @@ module load matlab/2019b
 CONN_DIR=$DATA_DIR/connectomics
 [ ! -d $CONN_DIR/derivatives ] && mkdir -p $CONN_DIR/derivatives
 
+# Max threads for hpc matlab set to 16 by admins
+parpool_threads=16
+
 for sub in ${input_subject_array[@]};do
 
     if [ $MODIFIER == sc ];then
@@ -30,7 +33,7 @@ for sub in ${input_subject_array[@]};do
         # Execute 
         for atlas in schaefer100x17 schaefer200x17 schaefer400x17; do
             matlab -nosplash -nodesktop -batch \
-            "addpath(genpath('$CODE_DIR/pipelines/connectomics/matlab_toolboxes')); connectomics('$sub','$INPUT_DIR', '$CONN_DIR', 'ses-$SESSION', $SLURM_CPUS_PER_TASK, '$atlas', 'sc', 'sift', '$TMP_DIR', '$ENV_DIR/standard/'); quit"
+            "addpath(genpath('$CODE_DIR/pipelines/connectomics/matlab_toolboxes')); connectomics('$sub','$INPUT_DIR', '$CONN_DIR', 'ses-$SESSION', $parpool_threads, '$atlas', 'sc', 'sift', '$TMP_DIR', '$ENV_DIR/standard/'); quit"
         done
 
 
@@ -42,7 +45,7 @@ for sub in ${input_subject_array[@]};do
         # Execute 
         for atlas in schaefer100x17 schaefer200x17 schaefer400x17; do
             matlab -nosplash -nodesktop -batch \
-            "addpath(genpath('$CODE_DIR/pipelines/connectomics/matlab_toolboxes')); connectomics('$sub','$INPUT_DIR', '$CONN_DIR', 'ses-$SESSION', $SLURM_CPUS_PER_TASK, '$atlas', 'fc', '36pspkreg', '$TMP_DIR', '$ENV_DIR/standard/'); quit"
+            "addpath(genpath('$ENV_DIR/matlab_toolboxes')); addpath(genpath('$CODE_DIR/pipelines/connectomics')); connectomics('$sub','$INPUT_DIR', '$CONN_DIR', 'ses-$SESSION', $parpool_threads, '$atlas', 'fc', '36pspkreg', '$TMP_DIR', '$ENV_DIR/standard/'); quit"
         done
 
     fi
