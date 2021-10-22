@@ -207,10 +207,6 @@ CMD_TRACTSEG="TractSeg -i $TEMPLATE_SHPEAKS --output_type tract_segmentation"
 CMD_TRACTENDINGS="TractSeg -i $TEMPLATE_SHPEAKS --output_type endings_segmentation"
 CMD_TOM="TractSeg -i $TEMPLATE_SHPEAKS --output_type TOM"
 CMD_TRACTOGRAMS="Tracking -i $TEMPLATE_SHPEAKS --tracking_format tck"
-#_CMD_TRACTEXTRACTION="for_each $(ls $TRACTSEG_DIR/bundles_tdi | xargs -n 1 basename) : tckedit $TRACTOGRAM_SIFT 
-#    -include $TRACTSEG_DIR/endings_segmentations/NAME_b.nii.gz 
-#    -include $TRACTSEG_DIR/endings_segmentations/NAME_e.nii.gz 
-#    -mask $TRACTSEG_DIR/bundle_segmentations/NAME.nii.gz $TRACTSEG_DIR/bundles_tck/NAME.tck -firce"
 CMD_TRACTEXTRACTION="tckedit $TRACTOGRAM_SIFT -include $TRACTSEG_OUT_DIR/endings_segmentations/{}_b.nii.gz -include $TRACTSEG_OUT_DIR/endings_segmentations/{}_e.nii.gz -mask $TRACTSEG_OUT_DIR/bundle_segmentations/{}.nii.gz $TRACTSEG_DIR/bundles_sift_tck/{}.tck -force"
 CMD_BUNDLETRACTOGRAM="tckedit $TRACTSEG_DIR/bundles_sift_tck/* $BUNDLE_TRACTOGRAM -force"
 CMD_BUNDLETDI="tck2fixel $BUNDLE_TRACTOGRAM $FIXELMASK_FINAL $BUNDLE_FIXELMASK segmentation_bundle_tdi.mif -force"
