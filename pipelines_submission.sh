@@ -134,19 +134,19 @@ elif [ $PIPELINE == "fmriprep" ];then
 elif [ $PIPELINE == "xcpengine" ];then
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
-	batch_time="12:00:00"
+	batch_time="8:00:00"
 	partition="std"
 	at_once=
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
 
-	echo "Which xcpengine subanalysis do you want to use? (fc)"
+	echo "Which xcpengine subanalysis do you want to use? (fc/struc)"
 	read MODIFIER; export MODIFIER
 
-	echo "Pick design you want use"
-	echo "Choose from $(ls $CODE_DIR/pipelines/xcpengine/*.dsn | xargs -n 1 basename)"
-	read DESIGN; export DESIGN
+	#echo "Pick design you want use"
+	#echo "Choose from $(ls $CODE_DIR/pipelines/xcpengine/*.dsn | xargs -n 1 basename)"
+	#read DESIGN; export DESIGN
 
 elif [ $PIPELINE == "wmhprep" ];then
 	export SUBJS_PER_NODE=8
@@ -184,7 +184,7 @@ elif [ $PIPELINE == "tbss" ];then
 elif [ $PIPELINE == "fba" ];then
 
 
-	echo "Which FBA_LEVEL do you want to perform? (1/2/3/4)"
+	echo "Which FBA_LEVEL do you want to perform? (1/2/3/4/5)"
 	read FBA_LEVEL; export FBA_LEVEL
 	export PIPELINE_SUFFIX=_${FBA_LEVEL}
 
@@ -208,6 +208,11 @@ elif [ $PIPELINE == "fba" ];then
 		export ANALYSIS_LEVEL=group
 		batch_time="07-00:00:00"
 		partition="big"
+	elif [ $FBA_LEVEL == 5 ];then
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time="01-00:00:00"
+		partition="std"
 	elif [ -z $FBA_LEVEL ];then
 		echo "FBA level needs to be set"
 		exit 0
@@ -230,7 +235,7 @@ elif [ $PIPELINE == "connectomics" ];then
 	fi
 
 	export SUBJS_PER_NODE=$subj_array_length
-	export ANALYSIS_LEVEL=group
+	export ANALYSIS_LEVEL=subject
 	batch_time="12:00:00"
 	partition="std"
 
@@ -302,6 +307,24 @@ elif [ $PIPELINE == "cat12" ];then
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
+elif [ $PIPELINE == "statistics" ];then
+
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
+
+	echo "Which method do you want to perform? (cfe)"
+	read STAT_METHOD; export STAT_METHOD
+	export PIPELINE_SUFFIX=_${STAT_METHOD}
+
+	echo "Define hypothesis short (-> becomes name of subdirectory in data/statistics), e.g. 'cfe_group_comparison_postcovid_controls' or 'tfce_linear_relationship_fa_tmtb'"
+	read MODIFIER; export MODIFIER
+
+	if [ $STAT_METHOD == cfe ];then
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time="04:00:00"
+		partition="std"
+	fi
 else
 	
 	echo "Pipeline $PIPELINE not supported"
@@ -330,8 +353,8 @@ for batch in $(seq $batch_amount);do
 
 	# In case of interactive session source $script_path directly
 	if [ $INTERACTIVE == y ]; then
-		srun $script_path "${subj_batch_array[@]}" #&& exit 0
-		#source $script_path "${subj_batch_array[@]}" && exit 0
+		srun $script_path "${subj_batch_array[@]}"
+
 	elif [ $INTERACTIVE == n ]; then
 	    CMD="sbatch --job-name ${PIPELINE}${PIPELINE_SUFFIX} \
 	        --time ${batch_time} \
