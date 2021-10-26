@@ -66,7 +66,7 @@ RESPONSE_CSF="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_de
 
 # Command
 #########################
-CMD_SUBDIR="[ ! -d $FBA_DIR/{}/ses-$SESSION/dwi/ ] && mkdir $FBA_DIR/{}/ses-$SESSION/dwi/"
+CMD_SUBDIR="[ ! -d $FBA_DIR/{}/ses-$SESSION/dwi/ ] && mkdir -p $FBA_DIR/{}/ses-$SESSION/dwi/"
 CMD_CONVERT="mrconvert $DWI_PREPROC_NII -grad $DWI_PREPROC_UPSAMPLED_GRAD_TABLE $DWI_PREPROC_MIF -force"
 CMD_UPSAMPLE="mrgrid $DWI_PREPROC_MIF regrid -vox 1.25 $DWI_PREPROC_UPSAMPLED_MIF -force; rm $DWI_PREPROC_MIF"
 CMD_DWI2RESPONSE="dwi2response dhollander $DWI_PREPROC_UPSAMPLED_MIF $RESPONSE_WM $RESPONSE_GM $RESPONSE_CSF -mask $DWI_MASK_UPSAMPLED -force"
