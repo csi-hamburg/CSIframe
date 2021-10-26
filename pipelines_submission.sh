@@ -119,13 +119,13 @@ elif [ $PIPELINE == "fmriprep" ];then
 	at_once=
 
 	echo "Please enter specific templates if you want to use them."
-	echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym anat)"
+	echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym T1w)"
 	echo "or infant templates (MNIPediatricAsym:cohort-1:res-native)"
-	echo "Enter nothing to keep defaults (fsnative fsaverage MNI152NLin6Asym anat)"
+	echo "Enter nothing to keep defaults (fsnative fsaverage MNI152NLin6Asym T1w)"
 	read OUTPUT_SPACES; export OUTPUT_SPACES
 
 	if [ -z $OUTPUT_SPACES ];then
-		export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym"
+		export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym T1w"
 	fi
 
 	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '--anat-only'"

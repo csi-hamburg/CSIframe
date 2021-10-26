@@ -60,7 +60,7 @@ DWI_MASK_NII="$DATA_DIR/qsiprep/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_spa
 #########################
 DWI_PREPROC_MIF="/tmp/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.mif"
 DWI_PREPROC_UPSAMPLED_MIF="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_desc-upsampled_dwi.mif.gz"
-DWI_MASK_UPSAMPLED="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_desc-upsampled_dwi.mif.gz"
+DWI_MASK_UPSAMPLED="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-upsampled_desc-brain_mask.mif.gz"
 RESPONSE_WM="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-responsemean_desc-preproc_desc-wmFODdhollander2019_ss3tcsd.txt"
 RESPONSE_GM="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-responsemean_desc-preproc_desc-gmFODdhollander2019_ss3tcsd.txt"
 RESPONSE_CSF="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-responsemean_desc-preproc_desc-csfFODdhollander2019_ss3tcsd.txt"
