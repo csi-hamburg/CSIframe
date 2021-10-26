@@ -77,8 +77,8 @@ CMD_MRTRANSFORM="mrtransform $DWI_MASK_UPSAMPLED -warp $SUB2TEMP_WARP -interp ne
 
 # Execution
 #########################
-# $parallel "$singularity_mrtrix3tissue $CMD_MRREGISTER" ::: ${input_subject_array[@]}
-# $parallel "$singularity_mrtrix3tissue $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3tissue $CMD_MRREGISTER" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3tissue $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
 
 
 #########################
@@ -101,8 +101,8 @@ CMD_TEMPLATEMASK="mrmath $FBA_DIR/*/ses-$SESSION/dwi/*_ses-${SESSION}_space-fodt
 
 # Execution
 #########################
-# $singularity_mrtrix3 \
-# /bin/bash -c "$CMD_TEMPLATEMASK"
+$singularity_mrtrix3 \
+/bin/bash -c "$CMD_TEMPLATEMASK"
 
 
 #########################
@@ -135,6 +135,7 @@ FIXELMASK_FINAL="$FBA_GROUP_DIR/fixelmask/06_fixelmask_final"
 
 # Command
 #########################
+
 CMD_FIXMASKCROSSINGFB="[ -d $FIXELMASK_CROSSFB ] && rm -rf $FIXELMASK_CROSSFB/*; fod2fixel -force -mask $TEMPLATE_MASK -fmls_peak_value $thr4crossingfibres $FOD_TEMPLATE $FIXELMASK_CROSSFB"
 CMD_FIXMASKFALSEPOS="[ -d $FIXELMASK_FALSEPOS ] && rm -rf $FIXELMASK_FALSEPOS/*; fod2fixel -force -mask $TEMPLATE_MASK -fmls_peak_value $thr4fpcontrol $FOD_TEMPLATE $FIXELMASK_FALSEPOS"
 CMD_VOXMASKFALSEPOS="fixel2voxel $FIXELMASK_FALSEPOS/directions.mif count - | mrthreshold - -abs 0.9 $VOXELMASK_FALSEPOS -force"
@@ -150,8 +151,8 @@ fi
 
 # Execution
 #########################
-# $singularity_mrtrix3 \
-# /bin/bash -c "$CMD_FIXMASKCROSSINGFB; $CMD_FIXMASKFALSEPOS; $CMD_VOXMASKFALSEPOS; $CMD_CROPMASK; $CMD_EXCLUSIONFIXELMASK; $CMD_CROP_CROSSFB; $CMD_CROP_FINAL"
+$singularity_mrtrix3 \
+/bin/bash -c "$CMD_FIXMASKCROSSINGFB; $CMD_FIXMASKFALSEPOS; $CMD_VOXMASKFALSEPOS; $CMD_CROPMASK; $CMD_EXCLUSIONFIXELMASK; $CMD_CROP_CROSSFB; $CMD_CROP_FINAL"
 
 
 #########################
@@ -175,8 +176,8 @@ CMD_TCKSIFT="tcksift $TRACTOGRAM $FOD_TEMPLATE $TRACTOGRAM_SIFT -term_number 200
 
 # Execution
 #########################
-# $singularity_mrtrix3 \
-# /bin/bash -c "$CMD_TCKGEN; $CMD_TCKSIFT"
+$singularity_mrtrix3 \
+/bin/bash -c "$CMD_TCKGEN; $CMD_TCKSIFT"
 
 
 #########################
@@ -214,11 +215,11 @@ CMD_BUNDLEFIXELMASK="mrthreshold -abs 1 $BUNDLE_FIXELMASK/segmentation_bundle_td
 
 # Execution
 #########################
-# $singularity_tractseg \
-# /bin/bash -c "$CMD_TEMPLATEMASK; $CMD_TRACTSEG; $CMD_TRACTENDINGS; $CMD_TOM; $CMD_TRACTOGRAMS"
-#$parallel "$singularity_mrtrix3 $CMD_TRACTEXTRACTION" ::: $(ls $TRACTSEG_OUT_DIR/bundle_segmentations | xargs -n 1 basename | cut -d "." -f 1)
-#$singularity_mrtrix3 \
-#/bin/bash -c "$CMD_BUNDLETRACTOGRAM; $CMD_BUNDLETDI; $CMD_BUNDLEFIXELMASK"
+$singularity_tractseg \
+/bin/bash -c "$CMD_TEMPLATEMASK; $CMD_TRACTSEG; $CMD_TRACTENDINGS; $CMD_TOM; $CMD_TRACTOGRAMS"
+$parallel "$singularity_mrtrix3 $CMD_TRACTEXTRACTION" ::: $(ls $TRACTSEG_OUT_DIR/bundle_segmentations | xargs -n 1 basename | cut -d "." -f 1)
+$singularity_mrtrix3 \
+/bin/bash -c "$CMD_BUNDLETRACTOGRAM; $CMD_BUNDLETDI; $CMD_BUNDLEFIXELMASK"
 
 popd
 
