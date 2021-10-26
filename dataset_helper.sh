@@ -86,8 +86,17 @@ import() {
 			if [ $zip == y ];then #&& [ ! -f $OUTPUT_DIR/${session}.tar.gz ]
 				mkdir -p $OUTPUT_DIR
 				pushd $INPUT_DIR
+				
+				if [ -f $OUTPUT_DIR/${session}.tar.gz ]; then
+					tar -xf $OUTPUT_DIR/${session}.tar.gz
+					tar -uvf $OUTPUT_DIR/${session}.tar $session
+					tar -zvf $OUTPUT_DIR/${session}.tar
+
+				else
 				tar -czvf $OUTPUT_DIR/${session}.tar.gz $session
-				popd
+				
+				fi
+
 			elif [ $zip == n ];then
 				for seq in $seqs;do
 
