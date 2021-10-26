@@ -53,13 +53,14 @@ parallel="parallel --ungroup --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/lo
 # Input
 #########################
 DWI_PREPROC_NII="$DATA_DIR/qsiprep/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.nii.gz"
-DWI_PREPROC_UPSAMPLED_GRAD_TABLE="$DATA_DIR/qsiprep/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.b"
-DWI_MASK_UPSAMPLED="$DATA_DIR/qsiprep/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-brain_mask.nii.gz"
+DWI_PREPROC_GRAD_TABLE="$DATA_DIR/qsiprep/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.b"
+DWI_MASK_NII="$DATA_DIR/qsiprep/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-brain_mask.nii.gz"
 
 # Output
 #########################
 DWI_PREPROC_MIF="/tmp/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.mif.gz"
 DWI_PREPROC_UPSAMPLED_MIF="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_desc-upsampled_dwi.mif.gz"
+DWI_MASK_UPSAMPLED_MIF="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_desc-upsampled_dwi.mif.gz"
 RESPONSE_WM="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-responsemean_desc-preproc_desc-wmFODdhollander2019_ss3tcsd.txt"
 RESPONSE_GM="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-responsemean_desc-preproc_desc-gmFODdhollander2019_ss3tcsd.txt"
 RESPONSE_CSF="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-responsemean_desc-preproc_desc-csfFODdhollander2019_ss3tcsd.txt"
@@ -67,8 +68,8 @@ RESPONSE_CSF="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_de
 # Command
 #########################
 CMD_SUBDIR="[ ! -d $FBA_DIR/{}/ses-$SESSION/dwi/ ] && mkdir -p $FBA_DIR/{}/ses-$SESSION/dwi/"
-CMD_CONVERT="mrconvert $DWI_PREPROC_NII -grad $DWI_PREPROC_UPSAMPLED_GRAD_TABLE $DWI_PREPROC_MIF -force"
-CMD_UPSAMPLE="mrgrid $DWI_PREPROC_MIF regrid -vox 1.25 $DWI_PREPROC_UPSAMPLED_MIF -force; rm $DWI_PREPROC_MIF"
+CMD_CONVERT="mrconvert $DWI_PREPROC_NII -grad $DWI_PREPROC_GRAD_TABLE $DWI_PREPROC_MIF -force"
+CMD_UPSAMPLE_DWI="mrgrid $DWI_PREPROC_MIF regrid -vox 1.25 $DWI_PREPROC_UPSAMPLED_MIF -force; rm $DWI_PREPROC_MIF; mrgrid $DWI_MASK_NII regrid 1.25 $DWI_MASK_UPSAMPLED"
 CMD_DWI2RESPONSE="dwi2response dhollander $DWI_PREPROC_UPSAMPLED_MIF $RESPONSE_WM $RESPONSE_GM $RESPONSE_CSF -mask $DWI_MASK_UPSAMPLED -force"
 
 # Execution
@@ -76,7 +77,7 @@ CMD_DWI2RESPONSE="dwi2response dhollander $DWI_PREPROC_UPSAMPLED_MIF $RESPONSE_W
 
 $parallel "$singularity_mrtrix3tissue $CMD_SUBDIR" ::: ${input_subject_array[@]}
 $parallel "$singularity_mrtrix3tissue $CMD_CONVERT" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3tissue $CMD_UPSAMPLE" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3tissue $CMD_UPSAMPLE_DWI" ::: ${input_subject_array[@]}
 $parallel "$singularity_mrtrix3tissue $CMD_DWI2RESPONSE" ::: ${input_subject_array[@]}
 
 #########################
