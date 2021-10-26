@@ -300,7 +300,7 @@ elif [ $PIPELINE == "lst" ];then
 
 elif [ $PIPELINE == "cat12" ];then
 	
-	export SUBJS_PER_NODE=8
+	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
 	batch_time="08:00:00"
 	partition="std"
