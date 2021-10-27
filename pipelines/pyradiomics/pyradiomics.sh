@@ -6,12 +6,11 @@ set -x
 #                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [pipelines which need to be run first]                                                                        #
-#       - fmriprep (anat)
 #       - wmh (WMH masks and FLAIR in MNI)                                                                        #
 #   [optional]                                                                                                    #
-#       - freewater                                                                                               #
-#       - fmriprep & xcpengine                                                                                    #
-#       - aslprep                                                                                                 #
+#       - freewater (FA, MD, FW)                                                                                  #
+#       - fmriprep & xcpengine (ReHo)                                                                             #
+#       - aslprep (CBF, CBV)                                                                                      #
 #   [container]                                                                                                   #
 #       - pyradiomics_latest.sif                                                                                  #
 ###################################################################################################################
@@ -41,18 +40,17 @@ singularity_pyradiomics="singularity run --cleanenv --userns \
 
 # Input
 #########################
-T1w_MNI=sub-002144a4_ses-1_space-MNI152NLin6Asym_desc-preproc_T1w.nii.gz
-FLAIR_MNI
+INPUT=$DATA_DIR/fmriprep/$1/ses-$SESSION/anat/${1}_ses-${session}_space-MNI152NLin6Asym_desc-preproc_T1w.nii.gz
+INPUT_WMH_MASK=
 
 # Output
 #########################
+OUT_WMH_CSV=$PYRADIOMICS_DIR/$1/ses-$SESSION/anat/T1w.csv
 
 # Command
 #########################
+CMD_PYRADIOMICS="pyradiomics $INPUT $INPUT_WMH_MASK --out $OUT_WMH_CSV -f csv --mode segment --format-path basename --jobs $SLURM_CPUS_PER_TASK" #--out-dir .
 
 # Execution
 #########################
-
-
-foreach_="for_each -nthreads $SLURM_CPUS_PER_TASK ${input_subject_array[@]} :"
-parallel="parallel --ungroup --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/log/parallel_runtask.log"
+[ -f $INPUT ] && $singularity_pyradiomics $CMD_PYRADIOMICS

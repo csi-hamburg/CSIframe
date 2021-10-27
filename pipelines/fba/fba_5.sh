@@ -65,6 +65,7 @@ TEMP2MNI_DIR=$FBA_DIR/derivatives/temp2mni
 # Input
 #########################
 FA="$FW_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz"
+FW="$FW_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz"
 SUB2TEMP_WARP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_from-subject_to-fodtemplate_warp.mif"
 FA_MNI_TARGET="$ENV_DIR/standard/FSL_HCP1065_FA_1mm.nii.gz"
 SCHAEFER200_MNI="$ENV_DIR/standard/Schaefer2018_200Parcels_17Networks_order_FSLMNI152_1mm.nii.gz"
@@ -102,6 +103,8 @@ TEMP2MNI_WARP="$TEMP2MNI_DIR/FA_averaged_in_mni_InverseComposite.h5"
 FA_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-FWcorrected_FA.nii.gz"
 ATLAS_TEMP="$TEMP2MNI_DIR/Schaefer2018_{}Parcels_17Networks_order_FSLMNI152_space-fodtemplate_1mm.nii.gz"
 
+# Command
+#########################
 CMD_TEMP2MNI="
 antsRegistration \
     --output [ $TEMP2MNI_DIR/FA2MNI, $FA_TEMP_DIR/FA_averaged_in_mni.nii.gz ] \
@@ -143,5 +146,7 @@ antsApplyTransforms -d 3 -e 3 -n Linear \
             -t $TEMP2MNI_WARP
 "
 
+# Execution
+#########################
 #$singularity_mrtrix3 $CMD_TEMP2MNI
 $parallel $singularity_mrtrix3 $CMD_ATLAS2TEMP ::: 100 200 400 600
