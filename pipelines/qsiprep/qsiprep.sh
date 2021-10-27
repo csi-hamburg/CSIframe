@@ -9,7 +9,6 @@ CMD="
    data/raw_bids data participant \
    -w /tmp \
    --participant-label $1 \
-   --nthreads $SLURM_CPUS_PER_TASK \
    --skip-bids-validation \
    --bids-database-dir data/raw_bids/code/pybids_db \
    --use-syn-sdc \
