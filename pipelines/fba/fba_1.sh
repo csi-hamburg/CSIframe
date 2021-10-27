@@ -44,7 +44,7 @@ singularity_mrtrix3tissue="singularity run --cleanenv --userns \
     $ENV_DIR/$container_mrtrix3tissue" 
 
 foreach_="for_each -nthreads $SLURM_CPUS_PER_TASK ${input_subject_array[@]} :"
-parallel="parallel --ungroup --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/log/parallel_runtask.log"
+parallel="parallel --ungroup --delay 0.2 -j16 --joblog $CODE_DIR/log/parallel_runtask.log"
 
 #########################
 # DWI2RESPONSE
@@ -71,7 +71,7 @@ CMD_SUBDIR="[ ! -d $FBA_DIR/{}/ses-$SESSION/dwi/ ] && mkdir -p $FBA_DIR/{}/ses-$
 CMD_CONVERT="mrconvert $DWI_PREPROC_NII -grad $DWI_PREPROC_GRAD_TABLE $DWI_PREPROC_MIF -force"
 CMD_UPSAMPLE_DWI="mrgrid $DWI_PREPROC_MIF regrid -vox 1.25 $DWI_PREPROC_UPSAMPLED_MIF -force"
 CMD_UPSAMPLE_MASK="mrgrid $DWI_MASK_NII regrid -vox 1.25 $DWI_MASK_UPSAMPLED -force"
-CMD_DWI2RESPONSE="dwi2response dhollander $DWI_PREPROC_UPSAMPLED_MIF $RESPONSE_WM $RESPONSE_GM $RESPONSE_CSF -mask $DWI_MASK_UPSAMPLED -force"
+CMD_DWI2RESPONSE="dwi2response dhollander -nthreads 16 $DWI_PREPROC_UPSAMPLED_MIF $RESPONSE_WM $RESPONSE_GM $RESPONSE_CSF -mask $DWI_MASK_UPSAMPLED -force"
 
 # Execution
 #########################
