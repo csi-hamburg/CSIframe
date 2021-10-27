@@ -55,7 +55,7 @@ elif [ $PIPELINE == "qsiprep" ];then
 	# Mind limitation by /scratch and memory capacity (23gb temporary files, 15gb max RAM usage)
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
-	batch_time="24:00:00"
+	batch_time="14:00:00"
 	partition="std" # ponder usage of gpu for eddy speed up
 	at_once=
 	
@@ -192,7 +192,7 @@ elif [ $PIPELINE == "fba" ];then
 		export SUBJS_PER_NODE=4
 		export ANALYSIS_LEVEL=subject
 		batch_time="12:00:00"
-		partition="big"
+		partition="std"
 	elif [ $FBA_LEVEL == 3 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
