@@ -148,11 +148,6 @@ elif [ $PIPELINE == "xcpengine" ];then
 	#echo "Choose from $(ls $CODE_DIR/pipelines/xcpengine/*.dsn | xargs -n 1 basename)"
 	#read DESIGN; export DESIGN
 
-elif [ $PIPELINE == "wmhprep" ];then
-	export SUBJS_PER_NODE=8
-	export ANALYSIS_LEVEL=subject
-	batch_time="04:00:00"
-	partition="std"
 
 elif [ $PIPELINE == "freewater" ];then
 	export SUBJS_PER_NODE=4
@@ -265,16 +260,6 @@ elif [ $PIPELINE == "psmd" ];then
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
 
-elif [ $PIPELINE == "bianca" ];then
-	
-	export SUBJS_PER_NODE=16
-	export ANALYSIS_LEVEL=subject
-	batch_time="08:00:00"
-	partition="std"
-
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
-
 elif [ $PIPELINE == "obseg" ];then
 	
 	export SUBJS_PER_NODE=1
@@ -285,28 +270,49 @@ elif [ $PIPELINE == "obseg" ];then
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
 
-elif [ $PIPELINE == "lst" ];then
-	
-	echo "Which algorithm you want to start? Choose between 'lga' (lesion growth algorithm) and 'lpa' (lesion prediction algorithm)"
-	read ALGORITHM; export ALGORITHM
-
-	export SUBJS_PER_NODE=16
-	export ANALYSIS_LEVEL=subject
-	batch_time="08:00:00"
-	partition="std"
-
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
 
 elif [ $PIPELINE == "cat12" ];then
 	
-	export SUBJS_PER_NODE=16
+	export SUBJS_PER_NODE=8
 	export ANALYSIS_LEVEL=subject
 	batch_time="08:00:00"
 	partition="std"
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
+
+elif [ $PIPELINE == "wmh" ];then
+	
+	export SUBJS_PER_NODE=16
+	export ANALYSIS_LEVEL=subject
+	batch_time="04:00:00"
+	partition="std"
+
+	echo "which part of analysis you want to do? currently available: antsrnet / bianca / lga / lpa / samseg"
+	read ALGORITHM; export ALGORITHM
+
+	if [ $ALGORITHM == "samseg" ]; then
+
+		echo "samseg does not recommend any bias-correction. Automatically set to NO."
+		BIASCORR=n; export BIASCORR
+
+	else 
+
+		echo "do you want to perform bias-correction? (y/n)"
+		read BIASCORR; export BIASCORR
+
+	fi
+
+	[ $ALGORITHM == "antsrnet" ] && batch_time="00:30:00"
+	[ $ALGORITHM == "bianca" ] && batch_time="00:30:00"
+	[ $ALGORITHM == "lpa" ] && batch_time="00:10:00"
+
+	echo "do you want to play the masking game? (y/n) | Caution: this may sound like fun, but is no fun at all."
+	read MASKINGGAME; export MASKINGGAME
+
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
+	
 elif [ $PIPELINE == "statistics" ];then
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
