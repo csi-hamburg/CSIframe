@@ -4,7 +4,7 @@
 export MRTRIX_TMPFILE_DIR=$TMP_DIR
 
 CMD="
-   singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR/:/tmp \
+   singularity run --cleanenv --userns -B $PROJ_DIR -B $(readlink -f $ENV_DIR) -B $TMP_DIR/:/tmp \
    $ENV_DIR/qsiprep-0.14.2 \
    data/raw_bids data participant \
    -w /tmp \
