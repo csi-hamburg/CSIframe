@@ -61,7 +61,7 @@ parallel="parallel --ungroup --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/lo
 # Input
 #########################
 FOD_WM="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-responsemean_desc-preproc_desc-wmFODmtnormed_ss3tcsd.mif.gz"
-DWI_MASK_UPSAMPLED="$DATA_DIR/qsiprep/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-brain_mask.nii.gz"
+DWI_MASK_UPSAMPLED="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-upsampled_desc-brain_mask.mif.gz"
 FOD_TEMPLATE="$FBA_GROUP_DIR/template/wmfod_template.mif"
 
 # Output
@@ -176,8 +176,8 @@ CMD_TCKSIFT="tcksift $TRACTOGRAM $FOD_TEMPLATE $TRACTOGRAM_SIFT -term_number 200
 
 # Execution
 #########################
-$singularity_mrtrix3 \
-/bin/bash -c "$CMD_TCKGEN; $CMD_TCKSIFT"
+# $singularity_mrtrix3 \
+# /bin/bash -c "$CMD_TCKGEN; $CMD_TCKSIFT"
 
 
 #########################
@@ -215,11 +215,11 @@ CMD_BUNDLEFIXELMASK="mrthreshold -abs 1 $BUNDLE_FIXELMASK/segmentation_bundle_td
 
 # Execution
 #########################
-$singularity_tractseg \
-/bin/bash -c "$CMD_TEMPLATEMASK; $CMD_TRACTSEG; $CMD_TRACTENDINGS; $CMD_TOM; $CMD_TRACTOGRAMS"
-$parallel "$singularity_mrtrix3 $CMD_TRACTEXTRACTION" ::: $(ls $TRACTSEG_OUT_DIR/bundle_segmentations | xargs -n 1 basename | cut -d "." -f 1)
-$singularity_mrtrix3 \
-/bin/bash -c "$CMD_BUNDLETRACTOGRAM; $CMD_BUNDLETDI; $CMD_BUNDLEFIXELMASK"
+# $singularity_tractseg \
+# /bin/bash -c "$CMD_TEMPLATEMASK; $CMD_TRACTSEG; $CMD_TRACTENDINGS; $CMD_TOM; $CMD_TRACTOGRAMS"
+# $parallel "$singularity_mrtrix3 $CMD_TRACTEXTRACTION" ::: $(ls $TRACTSEG_OUT_DIR/bundle_segmentations | xargs -n 1 basename | cut -d "." -f 1)
+# $singularity_mrtrix3 \
+# /bin/bash -c "$CMD_BUNDLETRACTOGRAM; $CMD_BUNDLETDI; $CMD_BUNDLEFIXELMASK"
 
 popd
 

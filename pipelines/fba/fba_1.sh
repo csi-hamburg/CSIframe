@@ -101,9 +101,9 @@ for sub in ${input_subject_array[@]};do
     RESPONSE_WM="$DATA_DIR/qsirecon/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_space-T1w_desc-wmFOD_ss3tcsd.txt"
     RESPONSE_GM="$DATA_DIR/qsirecon/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_space-T1w_desc-gmFOD_ss3tcsd.txt"
     RESPONSE_CSF="$DATA_DIR/qsirecon/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_space-T1w_desc-csfFOD_ss3tcsd.txt"
-    ln -sr $RESPONSE_WM $RESPONSE_WM_DIR
-    ln -sr $RESPONSE_GM $RESPONSE_GM_DIR
-    ln -sr $RESPONSE_CSF $RESPONSE_CSF_DIR
+    [ -f $RESPONSE_WM ] && ln -srf $RESPONSE_WM $RESPONSE_WM_DIR
+    [ -f $RESPONSE_WM ] && ln -srf $RESPONSE_GM $RESPONSE_GM_DIR
+    [ -f $RESPONSE_WM ] && ln -srf $RESPONSE_CSF $RESPONSE_CSF_DIR
 
 done
 
