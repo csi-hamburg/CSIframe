@@ -3,7 +3,7 @@
 # Run pipeline
 # FIXME: --output-spaces
 CMD="
-   singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR/:/tmp \
+   singularity run --cleanenv --userns -B $PROJ_DIR -B $(readlink -f $ENV_DIR) -B $TMP_DIR/:/tmp \
    $ENV_DIR/smriprep-0.8.0rc2 \
     data/raw_bids data participant \
     -w /tmp \
