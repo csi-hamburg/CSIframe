@@ -150,10 +150,24 @@ elif [ $PIPELINE == "xcpengine" ];then
 
 
 elif [ $PIPELINE == "freewater" ];then
-	export SUBJS_PER_NODE=4
-	export ANALYSIS_LEVEL=subject
-	batch_time="02:00:00"
-	partition="std"
+
+	echo "Which pipeline level do you want to perform? (core/2mni)"
+	echo "For default ('core') leave empty"
+	read FW_LEVEL; export FW_LEVEL
+	[ -z $FW_LEVEL ] && export FW_LEVEL=core
+	export PIPELINE_SUFFIX=_${FW_LEVEL}
+
+	if [ $FW_LEVEL == core ];then
+		export SUBJS_PER_NODE=4
+		export ANALYSIS_LEVEL=subject
+		batch_time="02:00:00"
+		partition="std"
+	elif [ $FW_LEVEL == 2mni ];then
+		export SUBJS_PER_NODE=8
+		export ANALYSIS_LEVEL=subject
+		batch_time="03:00:00"
+		partition="std"
+	fi
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
@@ -196,7 +210,7 @@ elif [ $PIPELINE == "fba" ];then
 	elif [ $FBA_LEVEL == 3 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="07-00:00:00"
+		batch_time="03-00:00:00"
 		partition="big"
 	elif [ $FBA_LEVEL == 4 ];then
 		export SUBJS_PER_NODE=$subj_array_length
