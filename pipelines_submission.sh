@@ -158,13 +158,13 @@ elif [ $PIPELINE == "tbss" ];then
 	echo "Which TBSS pipeline would you like to run? Choose between 'enigma' and 'fmrib'"
 	read TBSS_PIPELINE; export TBSS_PIPELINE
 	
-	if [ $TBSS_PIPELINE != "enigma" ] && [ $TBSS_PIPELINE != "fmrib" ]; then
+	if [ $TBSS_PIPELINE != "enigma" ] && [ $TBSS_PIPELINE != "fmrib" ] && [ $TBSS_PIPELINE != "fixel" ]; then
 		echo "$TBSS_PIPELINE TBSS pipeline not supported."
 		exit
 	else
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="12:00:00"
+		batch_time="05:00:00"
 		partition="std"
 	fi
 
@@ -235,12 +235,12 @@ elif [ $PIPELINE == "psmd" ];then
 	if [ $PSMD_LEVEL == "subject" ]; then
 		export SUBJS_PER_NODE=1
 		export ANALYSIS_LEVEL=subject
-		batch_time="00:20:00"
+		batch_time="03:00:00"
 		partition="std"
 	elif [ $PSMD_LEVEL == "group" ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="00:10:00"
+		batch_time="00:30:00"
 		partition="std"
 	else
 	 	echo "$PSMD_LEVEL for $PIPELINE pipeline not supported."

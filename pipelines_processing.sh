@@ -15,7 +15,7 @@ umask u=rwx g=rwx
 SCRIPT_DIR=${SLURM_SUBMIT_DIR-$(dirname "$0")}
 export PROJ_DIR=$(realpath $SCRIPT_DIR/..) # project root; should be 1 level above code
 export CODE_DIR=$SCRIPT_DIR
-export PIPELINE_DIR=$PROJ_DIR/code/pipelines/$PIPELINE
+export PIPELINE_DIR=$CODE_DIR/pipelines/$PIPELINE
 export ENV_DIR=$PROJ_DIR/envs
 export DATA_DIR=$PROJ_DIR/data
 export DCM_DIR=$PROJ_DIR/data/dicoms
