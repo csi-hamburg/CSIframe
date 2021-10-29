@@ -55,7 +55,7 @@ elif [ $PIPELINE == "qsiprep" ];then
 	# Mind limitation by /scratch and memory capacity (23gb temporary files, 15gb max RAM usage)
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
-	batch_time="24:00:00"
+	batch_time="14:00:00"
 	partition="std" # ponder usage of gpu for eddy speed up
 	at_once=
 	
@@ -119,13 +119,13 @@ elif [ $PIPELINE == "fmriprep" ];then
 	at_once=
 
 	echo "Please enter specific templates if you want to use them."
-	echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym anat)"
+	echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym T1w)"
 	echo "or infant templates (MNIPediatricAsym:cohort-1:res-native)"
-	echo "Enter nothing to keep defaults (fsnative fsaverage MNI152NLin6Asym anat)"
+	echo "Enter nothing to keep defaults (fsnative fsaverage MNI152NLin6Asym T1w)"
 	read OUTPUT_SPACES; export OUTPUT_SPACES
 
 	if [ -z $OUTPUT_SPACES ];then
-		export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym"
+		export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym T1w"
 	fi
 
 	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '--anat-only'"
@@ -134,21 +134,40 @@ elif [ $PIPELINE == "fmriprep" ];then
 elif [ $PIPELINE == "xcpengine" ];then
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
-	batch_time="12:00:00"
+	batch_time="8:00:00"
 	partition="std"
 	at_once=
 
-elif [ $PIPELINE == "wmhprep" ];then
-	export SUBJS_PER_NODE=8
-	export ANALYSIS_LEVEL=subject
-	batch_time="04:00:00"
-	partition="std"
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
+
+	echo "Which xcpengine subanalysis do you want to use? (fc/struc)"
+	read MODIFIER; export MODIFIER
+
+	#echo "Pick design you want use"
+	#echo "Choose from $(ls $CODE_DIR/pipelines/xcpengine/*.dsn | xargs -n 1 basename)"
+	#read DESIGN; export DESIGN
+
 
 elif [ $PIPELINE == "freewater" ];then
-	export SUBJS_PER_NODE=4
-	export ANALYSIS_LEVEL=subject
-	batch_time="02:00:00"
-	partition="std"
+
+	echo "Which pipeline level do you want to perform? (core/2mni)"
+	echo "For default ('core') leave empty"
+	read FW_LEVEL; export FW_LEVEL
+	[ -z $FW_LEVEL ] && export FW_LEVEL=core
+	export PIPELINE_SUFFIX=_${FW_LEVEL}
+
+	if [ $FW_LEVEL == core ];then
+		export SUBJS_PER_NODE=4
+		export ANALYSIS_LEVEL=subject
+		batch_time="02:00:00"
+		partition="std"
+	elif [ $FW_LEVEL == 2mni ];then
+		export SUBJS_PER_NODE=8
+		export ANALYSIS_LEVEL=subject
+		batch_time="03:00:00"
+		partition="std"
+	fi
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
@@ -174,7 +193,7 @@ elif [ $PIPELINE == "tbss" ];then
 elif [ $PIPELINE == "fba" ];then
 
 
-	echo "Which FBA_LEVEL do you want to perform? (1/2/3/4)"
+	echo "Which FBA_LEVEL do you want to perform? (1/2/3/4/5)"
 	read FBA_LEVEL; export FBA_LEVEL
 	export PIPELINE_SUFFIX=_${FBA_LEVEL}
 
@@ -187,17 +206,22 @@ elif [ $PIPELINE == "fba" ];then
 		export SUBJS_PER_NODE=4
 		export ANALYSIS_LEVEL=subject
 		batch_time="12:00:00"
-		partition="big"
+		partition="std"
 	elif [ $FBA_LEVEL == 3 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="07-00:00:00"
+		batch_time="03-00:00:00"
 		partition="big"
 	elif [ $FBA_LEVEL == 4 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time="07-00:00:00"
 		partition="big"
+	elif [ $FBA_LEVEL == 5 ];then
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time="01-00:00:00"
+		partition="std"
 	elif [ -z $FBA_LEVEL ];then
 		echo "FBA level needs to be set"
 		exit 0
@@ -208,7 +232,7 @@ elif [ $PIPELINE == "fba" ];then
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
 
-elif [ $PIPELINE == "connectome_analysis" ];then
+elif [ $PIPELINE == "connectomics" ];then
 
 
 	echo "On which connectome flavor do you want to apply network analysis? (sc/fc)"
@@ -220,7 +244,7 @@ elif [ $PIPELINE == "connectome_analysis" ];then
 	fi
 
 	export SUBJS_PER_NODE=$subj_array_length
-	export ANALYSIS_LEVEL=group
+	export ANALYSIS_LEVEL=subject
 	batch_time="12:00:00"
 	partition="std"
 
@@ -250,16 +274,6 @@ elif [ $PIPELINE == "psmd" ];then
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
 
-elif [ $PIPELINE == "bianca" ];then
-	
-	export SUBJS_PER_NODE=16
-	export ANALYSIS_LEVEL=subject
-	batch_time="08:00:00"
-	partition="std"
-
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
-
 elif [ $PIPELINE == "obseg" ];then
 	
 	export SUBJS_PER_NODE=1
@@ -270,12 +284,10 @@ elif [ $PIPELINE == "obseg" ];then
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
 
-elif [ $PIPELINE == "lst" ];then
-	
-	echo "Which algorithm you want to start? Choose between 'lga' (lesion growth algorithm) and 'lpa' (lesion prediction algorithm)"
-	read ALGORITHM; export ALGORITHM
 
-	export SUBJS_PER_NODE=16
+elif [ $PIPELINE == "cat12" ];then
+	
+	export SUBJS_PER_NODE=8
 	export ANALYSIS_LEVEL=subject
 	batch_time="08:00:00"
 	partition="std"
@@ -283,6 +295,56 @@ elif [ $PIPELINE == "lst" ];then
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
 
+elif [ $PIPELINE == "wmh" ];then
+	
+	export SUBJS_PER_NODE=16
+	export ANALYSIS_LEVEL=subject
+	batch_time="04:00:00"
+	partition="std"
+
+	echo "which part of analysis you want to do? currently available: antsrnet / bianca / lga / lpa / samseg"
+	read ALGORITHM; export ALGORITHM
+
+	if [ $ALGORITHM == "samseg" ]; then
+
+		echo "samseg does not recommend any bias-correction. Automatically set to NO."
+		BIASCORR=n; export BIASCORR
+
+	else 
+
+		echo "do you want to perform bias-correction? (y/n)"
+		read BIASCORR; export BIASCORR
+
+	fi
+
+	[ $ALGORITHM == "antsrnet" ] && batch_time="00:30:00"
+	[ $ALGORITHM == "bianca" ] && batch_time="00:30:00"
+	[ $ALGORITHM == "lpa" ] && batch_time="00:10:00"
+
+	echo "do you want to play the masking game? (y/n) | Caution: this may sound like fun, but is no fun at all."
+	read MASKINGGAME; export MASKINGGAME
+
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
+	
+elif [ $PIPELINE == "statistics" ];then
+
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
+
+	echo "Which method do you want to perform? (cfe)"
+	read STAT_METHOD; export STAT_METHOD
+	export PIPELINE_SUFFIX=_${STAT_METHOD}
+
+	echo "Define hypothesis short (-> becomes name of subdirectory in data/statistics), e.g. 'cfe_group_comparison_postcovid_controls' or 'tfce_linear_relationship_fa_tmtb'"
+	read MODIFIER; export MODIFIER
+
+	if [ $STAT_METHOD == cfe ];then
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time="04:00:00"
+		partition="std"
+	fi
 else
 	
 	echo "Pipeline $PIPELINE not supported"
@@ -311,8 +373,8 @@ for batch in $(seq $batch_amount);do
 
 	# In case of interactive session source $script_path directly
 	if [ $INTERACTIVE == y ]; then
-		srun $script_path "${subj_batch_array[@]}" #&& exit 0
-		#source $script_path "${subj_batch_array[@]}" && exit 0
+		srun $script_path "${subj_batch_array[@]}"
+
 	elif [ $INTERACTIVE == n ]; then
 	    CMD="sbatch --job-name ${PIPELINE}${PIPELINE_SUFFIX} \
 	        --time ${batch_time} \

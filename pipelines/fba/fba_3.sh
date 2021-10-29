@@ -26,9 +26,11 @@ module load parallel
 FBA_DIR=$DATA_DIR/fba
 FBA_GROUP_DIR=$DATA_DIR/fba/derivatives
 TEMPLATE_SUBJECTS_TXT=$FBA_DIR/sourcedata/template_subjects.txt
+TEMPLATE_RANDOM_SUBJECTS_TXT=$FBA_DIR/sourcedata/random_template_subjects.txt
 container_mrtrix3=mrtrix3-3.0.2      
 container_mrtrix3tissue=mrtrix3tissue-5.2.8
 container_tractseg=tractseg-master
+export SINGULARITYENV_MRTRIX_TMPFILE_DIR=$TMP_DIR
 
 [ ! -d $FBA_GROUP_DIR ] && mkdir -p $FBA_GROUP_DIR
 singularity_mrtrix3="singularity run --cleanenv --userns \
@@ -63,21 +65,24 @@ parallel="parallel --ungroup --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/lo
 # Prepare group directories with symlinks of FODs and masks for population_template input 
 if [ -f $TEMPLATE_SUBJECTS_TXT ];then
     readarray template_subject_array < $TEMPLATE_SUBJECTS_TXT
+elif [ -f $TEMPLATE_RANDOM_SUBJECTS_TXT ];then
+    readarray template_subject_array < $TEMPLATE_RANDOM_SUBJECTS_TXT
 else
     template_subject_array=($(echo ${input_subject_array[@]} | sort -R | tail -40))
+    echo ${template_subject_array[@]} >> $TEMPLATE_RANDOM_SUBJECTS_TXT
 fi
 
 FOD_GROUP_DIR=$FBA_GROUP_DIR/template/fod_input
 MASK_GROUP_DIR=$FBA_GROUP_DIR/template/mask_input
 
-[ ! -d  ] && mkdir -p $FOD_GROUP_DIR $MASK_GROUP_DIR
+[ ! -d $FOD_GROUP_DIR ] && mkdir -p $FOD_GROUP_DIR $MASK_GROUP_DIR || rm -rf $FOD_GROUP_DIR/* $MASK_GROUP_DIR/*
 
 for sub in ${template_subject_array[@]};do
 
     DWI_MASK_UPSAMPLED_="$DATA_DIR/qsiprep/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_acq-AP_space-T1w_desc-brain_mask.nii.gz"
     FOD_WM_="$FBA_DIR/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_acq-AP_space-T1w_desc-responsemean_desc-preproc_desc-wmFODmtnormed_ss3tcsd.mif.gz"
-    ln -sr $FOD_WM_ $FOD_GROUP_DIR
-    ln -sr $DWI_MASK_UPSAMPLED_ $MASK_GROUP_DIR
+    [ -f $DWI_MASK_UPSAMPLED_ ] && ln -sr $FOD_WM_ $FOD_GROUP_DIR
+    [ -f $FOD_WM_ ] && ln -sr $DWI_MASK_UPSAMPLED_ $MASK_GROUP_DIR
 
 done
 

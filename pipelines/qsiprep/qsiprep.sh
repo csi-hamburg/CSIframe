@@ -4,17 +4,17 @@
 export MRTRIX_TMPFILE_DIR=$TMP_DIR
 
 CMD="
-   singularity run --cleanenv --userns -B $PROJ_DIR -B $TMP_DIR/:/tmp \
+   singularity run --cleanenv --userns -B $PROJ_DIR -B $(readlink -f $ENV_DIR) -B $TMP_DIR/:/tmp \
    $ENV_DIR/qsiprep-0.14.2 \
    data/raw_bids data participant \
    -w /tmp \
    --participant-label $1 \
-   --nthreads $SLURM_CPUS_PER_TASK \
    --skip-bids-validation \
    --bids-database-dir data/raw_bids/code/pybids_db \
    --use-syn-sdc \
    --force-syn \
-   --output-space T1w \
+   --output-space T1w template \
+   --template MNI152NLin2009cAsym \
    --nthreads $SLURM_CPUS_PER_TASK \
    --omp-nthreads $OMP_NTHREADS \
    --mem_mb $MEM_MB \

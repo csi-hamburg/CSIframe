@@ -1,0 +1,2 @@
+FLAIR_BRAIN='data/antsrnet_wmh/sub-0d7842f1/ses-1/anat//sub-0d7842f1_ses-1_desc-brain_FLAIR.nii.gz'
+T1_BRAIN_IN_FLAIR='data/antsrnet_wmh/sub-0d7842f1/ses-1/anat//sub-0d7842f1_ses-1_space-FLAIR_desc-brain_T1w.nii.gz'
