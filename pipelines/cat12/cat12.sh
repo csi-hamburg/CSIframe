@@ -33,8 +33,8 @@ singularity="singularity exec --cleanenv --no-home --userns -B $PROJ_DIR -B $WOR
 ##### STEP 1: SEGMENTATION & SMOOTHING
 ###############################################################################################################################################################
 # Define inputs
-T1=${1}_ses-${SESSION}_desc-preproc_T1w.nii.gz
-T1_orig=data/fmriprep/$1/ses-$SESSION/anat/$T1
+T1=${1}_ses-${SESSION}_T1w.nii.gz
+T1_orig=data/raw_bids/$1/ses-$SESSION/anat/$T1
 
 # Define outputs
 #cp -rf $T1_orig $TMP_DIR
@@ -42,7 +42,7 @@ T1_orig=data/fmriprep/$1/ses-$SESSION/anat/$T1
 GM_SEGMENTS=mri/mwp1T1.nii
 
 # Define commands
-CMD_CONVERT="mrconvert $T1_orig /tmp_dir/T1.nii"
+CMD_CONVERT="mrconvert $T1_orig /tmp_dir/T1.nii -force"
 CMD_SEGMENT="cat_standalone.sh -b $CAT_CODE_DIR/cat_standalone_segment.txt /tmp_dir/T1.nii"
 CMD_SMOOTH="cat_standalone.sh -b $CAT_CODE_DIR/cat_standalone_smooth.txt /tmp_dir/$GM_SEGMENTS"
 
