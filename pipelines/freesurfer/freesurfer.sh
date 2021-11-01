@@ -13,8 +13,6 @@ parallel="parallel --ungroup --delay 0.2 -j16 --joblog $CODE_DIR/log/parallel_ru
 
 if [ $SESSION == all ];then
 
-   for ses_dir in $(ls $BIDS_DIR/$1);do
-
       [ ! -d $TMP_OUT/$1/$ses_dir ]; mkdir -p $TMP_OUT/$1/$ses_dir
 
       CMD="
@@ -28,8 +26,6 @@ if [ $SESSION == all ];then
          -all"
          [ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
       $parallel "$CMD" ::: $(ls $BIDS_DIR/$1)
-
-   done
 
 else
 
