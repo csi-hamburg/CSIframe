@@ -31,10 +31,6 @@ singularity_mrtrix3="singularity run --cleanenv --userns \
     -B $SCRATCH_DIR:/tmp \
     $ENV_DIR/$container_mrtrix3" 
 
-foreach_="for_each -nthreads $SLURM_CPUS_PER_TASK ${input_subject_array[@]} :"
-parallel="parallel --ungroup --delay 0.2 -j$SUBJS_PER_NODE --joblog $CODE_DIR/log/parallel_runtask.log"
-
-
 #########################
 # CFE
 #########################

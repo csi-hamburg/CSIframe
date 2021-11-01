@@ -34,19 +34,19 @@ export SINGULARITYENV_MRTRIX_TMPFILE_DIR=$TMP_DIR
 
 [ ! -d $FBA_GROUP_DIR ] && mkdir -p $FBA_GROUP_DIR
 singularity_mrtrix3="singularity run --cleanenv --userns \
-    -B . \
+    -B $(readlink -f $ENV_DIR) \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
     $ENV_DIR/$container_mrtrix3" 
 
 singularity_mrtrix3tissue="singularity run --cleanenv --userns \
-    -B . \
+    -B $(readlink -f $ENV_DIR) \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
     $ENV_DIR/$container_mrtrix3tissue" 
 
 singularity_tractseg="singularity run --cleanenv --userns \
-    -B . \
+    -B $(readlink -f $ENV_DIR) \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
     $ENV_DIR/$container_tractseg" 

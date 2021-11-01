@@ -7,7 +7,7 @@ set -x
 #                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [pipelines which need to be run first]                                                                        #
-#       - LST (for lesion filling)                                                                                #
+#       - none (optional 'wmh' for lesion filling -> change paths accordingly)                                    #
 #   [container]                                                                                                   #
 #       - mrtrix-3.0.2.sif (mrconvert for nii.gz-->.nii; cause strange things occur when using gunzip on hummel)  #
 #       - cat12_standalone.sif                                                                                    #
@@ -37,8 +37,6 @@ T1=${1}_ses-${SESSION}_T1w.nii.gz
 T1_orig=$DATA_DIR/raw_bids/$1/ses-$SESSION/anat/$T1
 
 # Define outputs
-#cp -rf $T1_orig $TMP_DIR
-#gzip -dc $TMP_DIR/$T1 > $TMP_DIR/T1.nii
 GM_SEGMENTS=mri/mwp1T1.nii
 
 # Define commands

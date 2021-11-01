@@ -31,16 +31,19 @@ export SINGULARITYENV_MRTRIX_TMPFILE_DIR=$TMP_DIR
 
 [ ! -d $FBA_GROUP_DIR ] && mkdir -p $FBA_GROUP_DIR
 singularity_mrtrix3="singularity run --cleanenv --userns \
+    -B $(readlink -f $ENV_DIR) \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
     $ENV_DIR/$container_mrtrix3" 
 
 singularity_mrtrix3tissue="singularity run --cleanenv --userns \
+    -B $(readlink -f $ENV_DIR) \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
     $ENV_DIR/$container_mrtrix3tissue" 
 
 singularity_tractseg="singularity run --cleanenv --userns \
+    -B $(readlink -f $ENV_DIR) \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
     $ENV_DIR/$container_tractseg" 
@@ -114,7 +117,7 @@ CMD_AVG="mrmath $(ls -d -1 $FA_TEMP_DIR/fa/sub-*) mean $FA_AVG_TEMP --force"
 #$singularity_mrtrix3 $CMD_AVG
 
 #########################
-# FA_TEMP 2 MNI + ATLAS 2 TEMP
+# FA_AVG_TEMP 2 MNI + ATLAS 2 TEMP
 #########################
 
 # Input
@@ -254,6 +257,10 @@ FA="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz"
 FAt="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-FWcorrected_FA.nii.gz"
 MD="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_MD.nii.gz"
 MDt="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-FWcorrected_MD.nii.gz"
+AD="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_AD.nii.gz"
+ADt="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-FWcorrected_AD.nii.gz"
+RD="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_RD.nii.gz"
+RDt="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-FWcorrected_RD.nii.gz"
 FW="$FW_DIR/{}_ses-${SESSION}_space-T1w_FW.nii.gz"
 SUB2TEMP_WARP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_from-subject_to-fodtemplate_warp.mif"
 FA_AVG_TEMP="$FA_TEMP_DIR/FA_averaged.nii.gz"
@@ -264,6 +271,10 @@ FA_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-D
 FAt_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-FWcorrected_FA.nii.gz"
 MD_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_MD.nii.gz"
 MDt_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-FWcorrected_MD.nii.gz"
+AD_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_AD.nii.gz"
+ADt_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-FWcorrected_AD.nii.gz"
+RD_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_RD.nii.gz"
+RDt_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-FWcorrected_RD.nii.gz"
 FW_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_FW.nii.gz"
 
 
@@ -272,6 +283,10 @@ FW_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_FW.nii
 CMD_FAt2TEMP="mrtransform $FAt -warp $SUB2TEMP_WARP -interp nearest -datatype bit $FAt_TEMP -force"
 CMD_MD2TEMP="mrtransform $MD -warp $SUB2TEMP_WARP -interp nearest -datatype bit $MD_TEMP -force"
 CMD_MDt2TEMP="mrtransform $MDt -warp $SUB2TEMP_WARP -interp nearest -datatype bit $MDt_TEMP -force"
+CMD_AD2TEMP="mrtransform $AD -warp $SUB2TEMP_WARP -interp nearest -datatype bit $AD_TEMP -force"
+CMD_ADt2TEMP="mrtransform $ADt -warp $SUB2TEMP_WARP -interp nearest -datatype bit $ADt_TEMP -force"
+CMD_RD2TEMP="mrtransform $RD -warp $SUB2TEMP_WARP -interp nearest -datatype bit $RD_TEMP -force"
+CMD_RDt2TEMP="mrtransform $RDt -warp $SUB2TEMP_WARP -interp nearest -datatype bit $RDt_TEMP -force"
 CMD_FW2TEMP="mrtransform $FW -warp $SUB2TEMP_WARP -interp nearest -datatype bit $FW_TEMP -force"
 
 # Execution
@@ -279,4 +294,8 @@ CMD_FW2TEMP="mrtransform $FW -warp $SUB2TEMP_WARP -interp nearest -datatype bit 
 $parallel "$singularity_mrtrix3 $CMD_FAt2TEMP" ::: ${input_subject_array[@]}
 $parallel "$singularity_mrtrix3 $CMD_MD2TEMP" ::: ${input_subject_array[@]}
 $parallel "$singularity_mrtrix3 $CMD_MDt2TEMP" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_AD2TEMP" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_ADt2TEMP" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_RD2TEMP" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_RDt2TEMP" ::: ${input_subject_array[@]}
 $parallel "$singularity_mrtrix3 $CMD_FW2TEMP" ::: ${input_subject_array[@]}

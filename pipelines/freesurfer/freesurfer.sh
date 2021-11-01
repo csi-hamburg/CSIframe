@@ -23,7 +23,7 @@ if [ $SESSION == all ];then
          recon-all \
          -sd /tmp_out/$1/{} \
          -subjid $1 \
-         -i /tmp_in/$1/{}/anat/${1}_{}_*T1w.nii.gz \
+         -i /tmp_in/$1/{}/anat/${1}_{}_T1w.nii.gz \
          -debug \
          -all"
       $parallel $CMD ::: $(ls $BIDS_DIR/$1)
@@ -38,7 +38,7 @@ else
       recon-all \
       -sd /tmp_out \
       -subjid $1 \
-      -i /tmp_in/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-3dmprage_T1w.nii.gz \
+      -i /tmp_in/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_T1w.nii.gz \ # substitute session by * because of session mismatch and to match independent from sequence
       -debug \
       -all"
    $CMD
