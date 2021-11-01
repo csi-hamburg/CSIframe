@@ -9,16 +9,42 @@ TMP_OUT=$TMP_DIR/output
 #[ ! -f $DATA_DIR/freesurfer/$1/stats/aseg.stats ] && rm -rf $DATA_DIR/freesurfer/$1 || cp -rf $DATA_DIR/freesurfer/$1 $TMP_OUT/freesurfer
 export SINGULARITYENV_SUBJECTS_DIR=$TMP_OUT/freesurfer
 
-CMD="
-   singularity run --cleanenv --userns -B $PROJ_DIR -B $(readlink -f $ENV_DIR) -B $TMP_DIR:/tmp -B $TMP_IN:/tmp_in -B $TMP_OUT:/tmp_out \
-   $ENV_DIR/freesurfer-7.1.1 \
-   recon-all \
-   -sd /tmp_out \
-   -subjid $1 \
-   -i /tmp_in/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_T1w.nii.gz \
-   -debug \
-   -all"
-[ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
-$CMD
+if [ $SESSION == all ];then
+
+   for ses_dir in $(ls $BIDS_DIR/$1);do
+
+      [ ! -d $TMP_OUT/$1/$ses_dir ]; mkdir -p $TMP_OUT/$1/$ses_dir
+
+      CMD="
+         singularity run --cleanenv --userns -B $PROJ_DIR -B $(readlink -f $ENV_DIR) -B $TMP_DIR:/tmp -B $TMP_IN:/tmp_in -B $TMP_OUT:/tmp_out \
+         $ENV_DIR/freesurfer-7.1.1 \
+         recon-all \
+         -sd /tmp_out/$1/$ses_dir \
+         -subjid $1 \
+         -i /tmp_in/$1/$ses_dir/anat/${1}_${ses_dir}_*T1w.nii.gz \
+         -debug \
+         -all"
+         [ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
+      $CMD
+
+   done
+
+else
+
+   CMD="
+      singularity run --cleanenv --userns -B $PROJ_DIR -B $(readlink -f $ENV_DIR) -B $TMP_DIR:/tmp -B $TMP_IN:/tmp_in -B $TMP_OUT:/tmp_out \
+      $ENV_DIR/freesurfer-7.1.1 \
+      recon-all \
+      -sd /tmp_out \
+      -subjid $1 \
+      -i /tmp_in/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_*T1w.nii.gz \
+      -debug \
+      -all"
+   [ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
+   $CMD
+
+fi
+
+
 
 cp -ruvf $TMP_OUT/* $DATA_DIR/freesurfer
