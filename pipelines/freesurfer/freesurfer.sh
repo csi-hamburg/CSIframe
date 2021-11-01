@@ -13,7 +13,9 @@ parallel="parallel --ungroup --delay 0.2 -j16 --joblog $CODE_DIR/log/parallel_ru
 
 if [ $SESSION == all ];then
 
-      [ ! -d $TMP_OUT/$1/$ses_dir ]; mkdir -p $TMP_OUT/$1/$ses_dir
+      for ses_dir in $(ls $DATA_DIR/raw_bids/$1);do
+         [ ! -d $TMP_OUT/$1/$ses_dir ]; mkdir -p $TMP_OUT/$1/$ses_dir
+      done
 
       CMD="
          singularity run --cleanenv --userns -B $PROJ_DIR -B $(readlink -f $ENV_DIR) -B $TMP_DIR:/tmp -B $TMP_IN:/tmp_in -B $TMP_OUT:/tmp_out \
