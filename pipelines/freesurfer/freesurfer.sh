@@ -25,7 +25,7 @@ if [ $SESSION == all ];then
          -debug \
          -all"
          [ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
-      $parallel "$CMD" ::: $(ls $BIDS_DIR/$1)
+      $parallel $CMD ::: $(ls $BIDS_DIR/$1)
 
 else
 
