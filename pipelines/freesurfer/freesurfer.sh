@@ -30,6 +30,8 @@ if [ $SESSION == all ];then
 
 else
 
+   [ ! -d $TMP_OUT/$1/ses-${SESSION} ]; mkdir -p $TMP_OUT/$1/ses-${SESSION}
+
    CMD="
       singularity run --cleanenv --userns -B $PROJ_DIR -B $(readlink -f $ENV_DIR) -B $TMP_DIR:/tmp -B $TMP_IN:/tmp_in -B $TMP_OUT:/tmp_out \
       $ENV_DIR/freesurfer-7.1.1 \
