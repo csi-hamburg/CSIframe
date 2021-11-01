@@ -24,7 +24,6 @@ if [ $SESSION == all ];then
          -i /tmp_in/$1/{}/anat/${1}_{}_*T1w.nii.gz \
          -debug \
          -all"
-         [ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
       $parallel $CMD ::: $(ls $BIDS_DIR/$1)
 
 else
@@ -38,7 +37,6 @@ else
       -i /tmp_in/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_*T1w.nii.gz \
       -debug \
       -all"
-   [ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
    $CMD
 
 fi
