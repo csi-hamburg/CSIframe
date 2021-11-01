@@ -38,7 +38,7 @@ else
       recon-all \
       -sd /tmp_out \
       -subjid $1 \
-      -i /tmp_in/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_*T1w.nii.gz \
+      -i /tmp_in/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-3dmprage_T1w.nii.gz \
       -debug \
       -all"
    $CMD
