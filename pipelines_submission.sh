@@ -91,6 +91,19 @@ elif [ $PIPELINE == "smriprep" ];then
 		export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym anat"
 	fi
 
+elif [ $PIPELINE == "freesurfer" ];then
+	export SUBJS_PER_NODE=16
+	export ANALYSIS_LEVEL=subject
+	batch_time="1-00:00:00"
+	partition="std"
+	at_once=
+
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
+
+	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '-nofill'"
+	read MODIFIER; export MODIFIER
+
 elif [ $PIPELINE == "mriqc" ];then
 
 	echo "Choose between participant and group level anaylsis (participant/group)." 
