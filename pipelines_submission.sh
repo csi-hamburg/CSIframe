@@ -101,9 +101,6 @@ elif [ $PIPELINE == "freesurfer" ];then
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
 
-	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '-nofill'"
-	read MODIFIER; export MODIFIER
-
 elif [ $PIPELINE == "mriqc" ];then
 
 	echo "Choose between participant and group level anaylsis (participant/group)." 

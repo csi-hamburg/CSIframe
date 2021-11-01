@@ -19,7 +19,7 @@ if [ $SESSION == all ];then
          singularity run --cleanenv --userns -B $PROJ_DIR -B $(readlink -f $ENV_DIR) -B $TMP_DIR:/tmp -B $TMP_IN:/tmp_in -B $TMP_OUT:/tmp_out \
          $ENV_DIR/freesurfer-7.1.1 \
          recon-all \
-         -sd /tmp_out/$1/$ses_dir \
+         -sd /tmp_out/$1/{} \
          -subjid $1 \
          -i /tmp_in/$1/{}/anat/${1}_{}_*T1w.nii.gz \
          -debug \
