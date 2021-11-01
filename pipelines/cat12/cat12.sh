@@ -34,7 +34,7 @@ singularity="singularity exec --cleanenv --no-home --userns -B $PROJ_DIR -B $WOR
 ###############################################################################################################################################################
 # Define inputs
 T1=${1}_ses-${SESSION}_T1w.nii.gz
-T1_orig=data/raw_bids/$1/ses-$SESSION/anat/$T1
+T1_orig=$DATA_DIR/raw_bids/$1/ses-$SESSION/anat/$T1
 
 # Define outputs
 #cp -rf $T1_orig $TMP_DIR
