@@ -9,6 +9,8 @@ TMP_OUT=$TMP_DIR/output
 #[ ! -f $DATA_DIR/freesurfer/$1/stats/aseg.stats ] && rm -rf $DATA_DIR/freesurfer/$1 || cp -rf $DATA_DIR/freesurfer/$1 $TMP_OUT/freesurfer
 export SINGULARITYENV_SUBJECTS_DIR=$TMP_OUT/freesurfer
 
+parallel="parallel --ungroup --delay 0.2 -j16 --joblog $CODE_DIR/log/parallel_runtask.log"
+
 if [ $SESSION == all ];then
 
    for ses_dir in $(ls $BIDS_DIR/$1);do
@@ -21,11 +23,11 @@ if [ $SESSION == all ];then
          recon-all \
          -sd /tmp_out/$1/$ses_dir \
          -subjid $1 \
-         -i /tmp_in/$1/$ses_dir/anat/${1}_${ses_dir}_*T1w.nii.gz \
+         -i /tmp_in/$1/{}/anat/${1}_{}_*T1w.nii.gz \
          -debug \
          -all"
          [ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
-      $CMD
+      $parallel "$CMD" ::: $(ls $BIDS_DIR/$1)
 
    done
 
