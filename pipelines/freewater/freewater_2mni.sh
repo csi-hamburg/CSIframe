@@ -36,7 +36,7 @@ parallel="parallel --ungroup --delay 0.2 --joblog $CODE_DIR/log/parallel_runtask
 
 # Input
 #########################
-FA_MNI_TARGET="envs/standard/FSL_HCP1065_FA_1mm.nii.gz"
+FA_MNI_TARGET="$ENV_DIR/standard/FSL_HCP1065_FA_1mm.nii.gz"
 FA="$FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz"
 FAt="$FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-FWcorrected_FA.nii.gz"
 MD="$FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_MD.nii.gz"
