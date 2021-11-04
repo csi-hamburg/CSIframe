@@ -47,7 +47,7 @@ FW="$FW_DIR/${1}_ses-${SESSION}_space-T1w_FW.nii.gz"
 # Output
 #########################
 FA_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-DTINoNeg_FA.nii.gz"
-FA2MNI_WARP="$FW_DIR/${1}_ses-${SESSION}_from-T1w_to-MNI_Composite.h5"
+FA2MNI_WARP="$FW_DIR/${1}_ses-${SESSION}_desc-dwi_from-T1w_to-MNI_Composite.h5"
 FAt_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-FWcorrected_FA.nii.gz"
 MD_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-DTINoNeg_MD.nii.gz"
 MDt_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-FWcorrected_MD.nii.gz"
@@ -57,7 +57,7 @@ FW_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_FW.nii.gz"
 #########################
 CMD_TEMP2MNI="
 antsRegistration \
-    --output [ $FW_DIR/${1}_ses-${SESSION}_from-DWIinT1w_to-MNI_, $FA_MNI ] \
+    --output [ $FW_DIR/${1}_ses-${SESSION}_desc-dwi_from-T1w_to-MNI_, $FA_MNI ] \
     --collapse-output-transforms 0 \
     --dimensionality 3 \
     --initial-moving-transform [ $FA_MNI_TARGET, $FA, 1 ] \
