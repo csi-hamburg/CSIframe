@@ -25,6 +25,7 @@ singularity_mrtrix3="singularity run --cleanenv --userns \
     -B . \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
+    -B $(readlink -f $ENV_DIR) \
     $ENV_DIR/$container_mrtrix3" 
 
 parallel="parallel --ungroup --delay 0.2 --joblog $CODE_DIR/log/parallel_runtask.log"
