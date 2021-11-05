@@ -363,7 +363,7 @@ fi
 
 # Define batch script
 script_name="pipelines_parallelization.sh"
-script_path=$CODE_DIR/$script_name
+SCRIPT_PATH=$CODE_DIR/$script_name
 
 # If subject array length < subjects per node -> match subjects per node to array length
 [ $subj_array_length -lt $SUBJS_PER_NODE ] && export SUBJS_PER_NODE=$subj_array_length
@@ -381,9 +381,9 @@ for batch in $(seq $batch_amount);do
 	# Slice subj array from index $ITER for the amount of $SUBJS_PER_NODE subjects
 	subj_batch_array=${subj_array[@]:$ITER:$SUBJS_PER_NODE}
 
-	# In case of interactive session source $script_path directly
+	# In case of interactive session run $SCRIPT_PATH directly
 	if [ $INTERACTIVE == y ]; then
-		srun $script_path "${subj_batch_array[@]}"
+		srun $SCRIPT_PATH "${subj_batch_array[@]}"
 
 	elif [ $INTERACTIVE == n ]; then
 	    CMD="sbatch --job-name ${PIPELINE}${PIPELINE_SUFFIX} \
@@ -391,7 +391,7 @@ for batch in $(seq $batch_amount);do
 	        --partition $partition \
 	        --output $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).out" \
 	        --error $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).err" \
-	    	$script_path "${subj_batch_array[@]}""
+	    	$SCRIPT_PATH "${subj_batch_array[@]}""
 		$CMD
 	else
 		echo "\$INTERACTIVE is not 'y' or 'n'"
