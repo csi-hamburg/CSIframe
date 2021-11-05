@@ -113,7 +113,7 @@ $singularity_mrtrix3 \
 # And upper threshold to prevent too many false positives
 # Empirically derived from previous HCHS FBA
 thr4crossingfibres=0.06
-thr4fpcontrol=0.2
+thr4fpcontrol=0.18
 
 [ ! -d $FBA_GROUP_DIR/fixelmask ] && mkdir $FBA_GROUP_DIR/fixelmask
 

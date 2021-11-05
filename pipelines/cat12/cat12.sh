@@ -18,15 +18,12 @@ input_subject_array=($@)
 
 # Define environment
 #########################
-module load zip
-
 MRTRIX_VERSION=mrtrix3-3.0.2
 MRTRIX_CONTAINER=$ENV_DIR/$MRTRIX_VERSION
 CAT_VERSION=cat12_standalone
 CAT_CONTAINER=$ENV_DIR/$CAT_VERSION
 CAT_CODE_DIR=$CODE_DIR/pipelines/cat12/
 OUT_DIR=$DATA_DIR/cat12/$1; [ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
-#TMP_DIR=$TMP_DIR/cat12; [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
 singularity="singularity exec --cleanenv --no-home --userns -B $PROJ_DIR -B $WORK/:/home -B $TMP_DIR:/tmp_dir"
 
 ###############################################################################################################################################################
