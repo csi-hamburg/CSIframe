@@ -10,7 +10,7 @@ TMP_OUT=$TMP_DIR/output
 
 CMD="
    singularity run --cleanenv --userns -B $PROJ_DIR -B $(readlink -f $ENV_DIR) -B $TMP_DIR:/tmp -B $TMP_IN:/tmp_in -B $TMP_OUT:/tmp_out \
-   $ENV_DIR/fmriprep-21.0.0rc1 \
+   $ENV_DIR/fmriprep-20.2.6 \
    /tmp_in /tmp_out participant \
    -w /tmp \
    --participant-label $1 \
