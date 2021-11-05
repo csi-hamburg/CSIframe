@@ -25,6 +25,7 @@ singularity_mrtrix3="singularity run --cleanenv --userns \
     -B . \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
+    -B $(readlink -f $ENV_DIR) \
     $ENV_DIR/$container_mrtrix3" 
 
 parallel="parallel --ungroup --delay 0.2 --joblog $CODE_DIR/log/parallel_runtask.log"
@@ -36,7 +37,7 @@ parallel="parallel --ungroup --delay 0.2 --joblog $CODE_DIR/log/parallel_runtask
 
 # Input
 #########################
-FA_MNI_TARGET="envs/standard/FSL_HCP1065_FA_1mm.nii.gz"
+FA_MNI_TARGET="$ENV_DIR/standard/FSL_HCP1065_FA_1mm.nii.gz"
 FA="$FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz"
 FAt="$FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-FWcorrected_FA.nii.gz"
 MD="$FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_MD.nii.gz"
@@ -47,7 +48,7 @@ FW="$FW_DIR/${1}_ses-${SESSION}_space-T1w_FW.nii.gz"
 # Output
 #########################
 FA_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-DTINoNeg_FA.nii.gz"
-FA2MNI_WARP="$FW_DIR/${1}_ses-${SESSION}_from-T1w_to-MNI_Composite.h5"
+FA2MNI_WARP="$FW_DIR/${1}_ses-${SESSION}_desc-dwi_from-T1w_to-MNI_Composite.h5"
 FAt_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-FWcorrected_FA.nii.gz"
 MD_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-DTINoNeg_MD.nii.gz"
 MDt_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-FWcorrected_MD.nii.gz"
@@ -57,7 +58,7 @@ FW_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_FW.nii.gz"
 #########################
 CMD_TEMP2MNI="
 antsRegistration \
-    --output [ $FW_DIR/${1}_ses-${SESSION}_from-DWIinT1w_to-MNI_, $FA_MNI ] \
+    --output [ $FW_DIR/${1}_ses-${SESSION}_desc-dwi_from-T1w_to-MNI_, $FA_MNI ] \
     --collapse-output-transforms 0 \
     --dimensionality 3 \
     --initial-moving-transform [ $FA_MNI_TARGET, $FA, 1 ] \

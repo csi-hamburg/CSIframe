@@ -309,7 +309,7 @@ elif [ $PIPELINE == "wmh" ];then
 	
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
-	batch_time="04:00:00"
+	batch_time="02:00:00"
 	partition="std"
 
 	echo "which part of analysis you want to do? currently available: antsrnet / bianca / lga / lpa / samseg"
@@ -317,19 +317,27 @@ elif [ $PIPELINE == "wmh" ];then
 
 	if [ $ALGORITHM == "samseg" ]; then
 
+		batch_time="04:00:00"
+
 		echo "samseg does not recommend any bias-correction. Automatically set to NO."
 		BIASCORR=n; export BIASCORR
 
-	else 
+	elif [ $ALGORITHM == "lga" ]; then
+
+		echo "lga does not recommend any bias-correction. Automatically set to NO."
+		BIASCORR=n; export BIASCORR
+
+	elif [ $ALGORITHM == "lpa" ]; then
+
+		echo "lpa does not recommend any bias-correction. Automatically set to NO."
+		BIASCORR=n; export BIASCORR
+
+	else
 
 		echo "do you want to perform bias-correction? (y/n)"
 		read BIASCORR; export BIASCORR
 
 	fi
-
-	[ $ALGORITHM == "antsrnet" ] && batch_time="00:30:00"
-	[ $ALGORITHM == "bianca" ] && batch_time="00:30:00"
-	[ $ALGORITHM == "lpa" ] && batch_time="00:10:00"
 
 	echo "do you want to play the masking game? (y/n) | Caution: this may sound like fun, but is no fun at all."
 	read MASKINGGAME; export MASKINGGAME
