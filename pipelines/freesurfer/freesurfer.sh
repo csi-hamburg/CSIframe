@@ -26,11 +26,11 @@ if [ $SESSION == all ];then
          -i /tmp_in/$1/{}/anat/${1}_{}_T1w.nii.gz \
          -debug \
          -all"
-      $parallel $CMD ::: $(ls $BIDS_DIR/$1)
+      $parallel $CMD ::: $(ls $TMP_IN/$1)
 
 else
 
-   [ ! -d $TMP_OUT/$1/ses-${SESSION} ]; mkdir -p $TMP_OUT/$1/ses-${SESSION}
+   #[ ! -d $TMP_OUT/$1/ses-${SESSION} ]; mkdir -p $TMP_OUT/$1/ses-${SESSION}
 
    CMD="
       singularity run --cleanenv --userns -B $PROJ_DIR -B $(readlink -f $ENV_DIR) -B $TMP_DIR:/tmp -B $TMP_IN:/tmp_in -B $TMP_OUT:/tmp_out \
@@ -38,13 +38,12 @@ else
       recon-all \
       -sd /tmp_out \
       -subjid $1 \
-      -i /tmp_in/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_T1w.nii.gz \ # substitute session by * because of session mismatch and to match independent from sequence
+      -i /tmp_in/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_T1w.nii.gz \
       -debug \
       -all"
    $CMD
 
 fi
-
 
 
 cp -ruvf $TMP_OUT/* $DATA_DIR/freesurfer
