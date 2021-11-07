@@ -48,7 +48,7 @@ if [ $PIPELINE == "bidsify" ];then
 	read HEURISTIC; export HEURISTIC
 
 	echo "Do you want to deface participants? (y/n)"
-	read MODIFIER
+	read MODIFIER; export MODIFIER
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
