@@ -47,6 +47,9 @@ if [ $PIPELINE == "bidsify" ];then
 	echo "Choose from" $(ls $CODE_DIR/pipelines/bidsify/heudiconv_*.py | xargs -n 1 basename)
 	read HEURISTIC; export HEURISTIC
 
+	echo "Do you want to deface participants? (y/n)"
+	read MODIFIER
+
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
 
@@ -144,7 +147,7 @@ elif [ $PIPELINE == "fmriprep" ];then
 elif [ $PIPELINE == "xcpengine" ];then
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
-	batch_time="8:00:00"
+	batch_time="16:00:00"
 	partition="std"
 	at_once=
 
