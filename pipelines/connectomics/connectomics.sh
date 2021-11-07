@@ -33,7 +33,7 @@ for sub in ${input_subject_array[@]};do
         # Execute 
         for atlas in schaefer100x17 schaefer200x17 schaefer400x17; do
             matlab -nosplash -nodesktop -batch \
-            "addpath(genpath('$CODE_DIR/pipelines/connectomics/matlab_toolboxes')); connectomics('$sub','$INPUT_DIR', '$CONN_DIR', 'ses-$SESSION', $parpool_threads, '$atlas', 'sc', 'sift', '$TMP_DIR', '$ENV_DIR/standard/'); quit"
+            "addpath(genpath('$ENV_DIR/matlab_toolboxes')); addpath(genpath('$CODE_DIR/pipelines/connectomics'));connectomics('$sub','$INPUT_DIR', '$CONN_DIR', 'ses-$SESSION', $parpool_threads, '$atlas', 'sc', 'sift', '$TMP_DIR', '$ENV_DIR/standard/'); quit"
         done
 
 
