@@ -92,7 +92,7 @@ elif [ $PIPELINE == "smriprep" ];then
 	fi
 
 elif [ $PIPELINE == "freesurfer" ];then
-	export SUBJS_PER_NODE=16
+	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
 	batch_time="1-00:00:00"
 	partition="std"
