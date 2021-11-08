@@ -95,10 +95,10 @@ elif [ $PIPELINE == "smriprep" ];then
 	fi
 
 elif [ $PIPELINE == "freesurfer" ];then
-	export SUBJS_PER_NODE=16
+	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
-	batch_time="1-00:00:00"
-	partition="std"
+	batch_time="2-00:00:00"
+	partition="big"
 	at_once=
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
@@ -257,7 +257,7 @@ elif [ $PIPELINE == "connectomics" ];then
 	fi
 
 	export SUBJS_PER_NODE=$subj_array_length
-	export ANALYSIS_LEVEL=subject
+	export ANALYSIS_LEVEL=group
 	batch_time="1-00:00:00"
 	partition="std"
 

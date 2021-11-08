@@ -226,7 +226,7 @@ array_lo_eff_null = []
 array_cc_null = []
 
 % Permute null models for normalization
-parfor idx = 1:1000
+parfor idx = 1:100
     mat_null = null_model_und_sign(mat)
     glo_eff_null = efficiency_wei(mat_null)
     cc_null = mean(clustering_coef_wu_sign(mat_null))
