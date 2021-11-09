@@ -256,9 +256,9 @@ elif [ $PIPELINE == "connectomics" ];then
 		exit 0
 	fi
 
-	export SUBJS_PER_NODE=4
+	export SUBJS_PER_NODE=1
 	export ANALYSIS_LEVEL=subject
-	batch_time="01:00:00"
+	batch_time="00:30:00"
 	partition="std"
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
