@@ -39,7 +39,7 @@ CMD="
    -c /tmp/${1}_ses-${SESSION}_cohort_file.txt \
    -i /tmp \
    -r /tmp_in \
-   -o /tmp_out \
+   -o /tmp_out/xcpengine \
    -t 1"
 $CMD
 
