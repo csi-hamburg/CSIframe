@@ -75,8 +75,7 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
 # Subject level analysis #
 ##########################
 
-    mkdir -p $TMP_DIR/$1
-    pushd $TMP_DIR/$1
+    pushd $TMP_DIR
 
     # Define input data
 
@@ -130,15 +129,15 @@ popd
 
 elif [ $ANALYSIS_LEVEL == "group" ]; then
 
-   [ -d $PSMD_DIR/derivatives/ses-${SESSION}/dwi ] || mkdir PSMD_DIR/derivatives/ses-${SESSION}/dwi
-        
+    [ -d $PSMD_DIR/derivatives/ses-${SESSION}/dwi ] || mkdir -p $PSMD_DIR/derivatives/ses-${SESSION}/dwi
+
     pushd $PSMD_DIR
-    echo "Subject,PSMD_global,PSMD_left,PSMD_right" > $PSMD_DIR/derivatives/ses-${SESSION}/group_ses-${SESSION}_psmd.csv
+    echo "Subject,PSMD_global,PSMD_left,PSMD_right" > $PSMD_DIR/derivatives/ses-${SESSION}/dwi/group_ses-${SESSION}_psmd.csv
     
         for sub in $(ls -d sub-*); do
 
             tail -n 1 $PSMD_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_psmd.csv >> \
-            $PSMD_DIR/derivatives/ses-${SESSION}/group_ses-${SESSION}_psmd.csv
+            $PSMD_DIR/derivatives/ses-${SESSION}/dwi/group_ses-${SESSION}_psmd.csv
         
         done
 
