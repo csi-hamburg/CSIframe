@@ -256,7 +256,7 @@ elif [ $PIPELINE == "connectomics" ];then
 		exit 0
 	fi
 
-	export SUBJS_PER_NODE=1
+	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
 	batch_time="01:00:00"
 	partition="std"
