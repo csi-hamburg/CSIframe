@@ -247,7 +247,6 @@ elif [ $PIPELINE == "fba" ];then
 
 elif [ $PIPELINE == "connectomics" ];then
 
-
 	echo "On which connectome flavor do you want to apply network analysis? (sc/fc)"
 	read MODIFIER; export MODIFIER
 

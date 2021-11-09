@@ -176,8 +176,8 @@ CMD_TCKSIFT="tcksift $TRACTOGRAM $FOD_TEMPLATE $TRACTOGRAM_SIFT -term_number 200
 
 # Execution
 #########################
-# $singularity_mrtrix3 \
-# /bin/bash -c "$CMD_TCKGEN; $CMD_TCKSIFT"
+$singularity_mrtrix3 \
+/bin/bash -c "$CMD_TCKGEN; $CMD_TCKSIFT"
 
 
 #########################
@@ -212,15 +212,16 @@ CMD_TRACTEXTRACTION="tckedit $TRACTOGRAM_SIFT -include $TRACTSEG_OUT_DIR/endings
 CMD_BUNDLETRACTOGRAM="tckedit $TRACTSEG_DIR/bundles_sift_tck/* $BUNDLE_TRACTOGRAM -force"
 CMD_BUNDLETDI="tck2fixel $BUNDLE_TRACTOGRAM $FIXELMASK_FINAL $BUNDLE_FIXELMASK segmentation_bundle_tdi.mif -force"
 CMD_BUNDLEFIXELMASK="mrthreshold -abs 1 $BUNDLE_FIXELMASK/segmentation_bundle_tdi.mif $BUNDLE_FIXELMASK/segmentation_bundle_fixelmask.mif -force"
+CMD_PERBUNDLEFIXELMASKS="tck2fixel $TRACTSEG_OUT_DIR/TOM_trackings/{}.tck $FIXELMASK_FINAL $BUNDLE_FIXELMASK {}.mif -force"
 
 # Execution
 #########################
-# $singularity_tractseg \
-# /bin/bash -c "$CMD_TEMPLATEMASK; $CMD_TRACTSEG; $CMD_TRACTENDINGS; $CMD_TOM; $CMD_TRACTOGRAMS"
-# $parallel "$singularity_mrtrix3 $CMD_TRACTEXTRACTION" ::: $(ls $TRACTSEG_OUT_DIR/bundle_segmentations | xargs -n 1 basename | cut -d "." -f 1)
-# $singularity_mrtrix3 \
-# /bin/bash -c "$CMD_BUNDLETRACTOGRAM; $CMD_BUNDLETDI; $CMD_BUNDLEFIXELMASK"
-
+$singularity_tractseg \
+/bin/bash -c "$CMD_TEMPLATEMASK; $CMD_TRACTSEG; $CMD_TRACTENDINGS; $CMD_TOM; $CMD_TRACTOGRAMS"
+$parallel "$singularity_mrtrix3 $CMD_TRACTEXTRACTION" ::: $(ls $TRACTSEG_OUT_DIR/bundle_segmentations | xargs -n 1 basename | cut -d "." -f 1)
+$singularity_mrtrix3 \
+/bin/bash -c "$CMD_BUNDLETRACTOGRAM; $CMD_BUNDLETDI; $CMD_BUNDLEFIXELMASK"
+$parallel "$singularity_mrtrix3 $CMD_PERBUNDLEFIXELMASKS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
 popd
 
 
