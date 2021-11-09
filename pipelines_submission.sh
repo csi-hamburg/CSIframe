@@ -145,7 +145,7 @@ elif [ $PIPELINE == "fmriprep" ];then
 	read MODIFIER; export MODIFIER
 	
 elif [ $PIPELINE == "xcpengine" ];then
-	export SUBJS_PER_NODE=8
+	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
 	batch_time="16:00:00"
 	partition="std"
