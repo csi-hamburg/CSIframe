@@ -256,9 +256,9 @@ elif [ $PIPELINE == "connectomics" ];then
 		exit 0
 	fi
 
-	export SUBJS_PER_NODE=$subj_array_length
-	export ANALYSIS_LEVEL=group
-	batch_time="1-00:00:00"
+	export SUBJS_PER_NODE=1
+	export ANALYSIS_LEVEL=subject
+	batch_time="01:00:00"
 	partition="std"
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
@@ -270,9 +270,9 @@ elif [ $PIPELINE == "psmd" ];then
 	read PSMD_LEVEL
 
 	if [ $PSMD_LEVEL == "subject" ]; then
-		export SUBJS_PER_NODE=1
+		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
-		batch_time="00:20:00"
+		batch_time="02:00:00"
 		partition="std"
 	elif [ $PSMD_LEVEL == "group" ];then
 		export SUBJS_PER_NODE=$subj_array_length
