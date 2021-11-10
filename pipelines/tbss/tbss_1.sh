@@ -317,15 +317,15 @@ fi
 
 for MOD in $(echo $MODALITIES); do
 
-    X=`$singularity_fsl fslval $INPUT_DIR/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim1`
+    X=`$singularity_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim1`
     X=`echo "$X 2 - p" | dc -`
-    Y=`$singularity_fsl fslval $INPUT_DIR/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim2`
+    Y=`$singularity_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim2`
     Y=`echo "$Y 2 - p" | dc -`
-    Z=`$singularity_fsl fslval $INPUT_DIR/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim3`
+    Z=`$singularity_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim3`
     Z=`echo "$Z 2 - p" | dc -`
         
     $singularity_fsl fslmaths \
-        $INPUT_DIR/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-${SPACE}_${MOD} \
+        $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} \
         -min 1 -ero -roi 1 $X 1 $Y 1 $Z 0 1 \
         $TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_${MOD}
         
