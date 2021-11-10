@@ -306,6 +306,8 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
         echo ""
 
         exit
+    
+    fi
 
 fi
 
