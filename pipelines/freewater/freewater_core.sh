@@ -53,7 +53,7 @@ module load matlab/2019b
 # Define inputs and output
 ##########################
 
-FW_CODE_DIR=$DATA_DIR/freewater/code/Free-Water-master
+FW_CODE_DIR=$ENV_DIR/freewater/
 FW_OUTPUT_DIR=$DATA_DIR/freewater/$1/ses-${SESSION}/dwi
 
 # Check whether output directory already exists: yes > remove and create new output directory

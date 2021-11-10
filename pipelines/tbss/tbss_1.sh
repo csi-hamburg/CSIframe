@@ -283,7 +283,7 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
 
     INPUT_DIR=$FBA_DIR
     SPACE=fodtemplate
-    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_AD desc-FWcorrected_AD desc-DTINoNeg_RD \
+    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW desc-voxelmap_fd desc-voxelmap_fdc desc-voxelmap_logfc desc-voxelmap_complexity"
 
     # Check for necessary FBA pipeline output 
