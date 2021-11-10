@@ -187,17 +187,53 @@ elif [ $PIPELINE == "freewater" ];then
 
 elif [ $PIPELINE == "tbss" ];then
 	
-	echo "Which TBSS pipeline would you like to run? Choose between 'enigma' and 'fmrib'"
+	echo "Which TBSS pipeline would you like to run? Choose between 'mni' and 'fixel'"
 	read TBSS_PIPELINE; export TBSS_PIPELINE
 	
-	if [ $TBSS_PIPELINE != "enigma" ] && [ $TBSS_PIPELINE != "fmrib" ]; then
-		echo "$TBSS_PIPELINE TBSS pipeline not supported."
+	if [ $TBSS_PIPELINE != "mni" ] && [ $TBSS_PIPELINE != "fixel" ]; then
+		echo "$TBSS_PIPELINE TBSS pipeline is not supported."
 		exit
-	else
+	fi
+
+	echo "Which part of the TBSS pipeline do you want to perform? (1/2/3/4)"
+	read TBSS_LEVEL; export TBSS_LEVEL
+	export PIPELINE_SUFFIX=_${TBSS_LEVEL}
+
+	if [ $TBSS_LEVEL == 1 ]; then
+
+		export SUBJS_PER_NODE=16
+		export ANALYSIS_LEVEL=subject
+		batch_time="02:00:00"
+		partition="std"
+
+	elif [ $TBSS_LEVEL == 2 ]; then
+
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="12:00:00"
+		batch_time="02:00:00"
 		partition="std"
+
+	elif [ $TBSS_LEVEL == 3 ]; then
+
+		export SUBJS_PER_NODE=16
+		export ANALYSIS_LEVEL=subject
+		batch_time="02:00:00"
+		partition="std"
+	
+	elif [ $TBSS_LEVEL == 4 ]; then
+
+		echo "Please specify list of subjects whose skeletons you want to merge."
+		echo "If you want to merge all subjects type 'all', otherwise choose from the following options:"
+		
+		ls $DATA_DIR/${PIPELINE}_${TBSS_PIPELINE}/code/merge* | cut -d "_" -f 2 | cut -d "." -f 1
+		read TBSS_MERGE_LIST; export TBSS_MERGE_LIST
+
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time="6:00:00"
+		partition="std"
+	
+	
 	fi
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
@@ -276,7 +312,7 @@ elif [ $PIPELINE == "psmd" ];then
 	elif [ $PSMD_LEVEL == "group" ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="00:10:00"
+		batch_time="00:30:00"
 		partition="std"
 	else
 	 	echo "$PSMD_LEVEL for $PIPELINE pipeline not supported."

@@ -40,6 +40,10 @@ parallel="parallel --ungroup --delay 0.2 --joblog $CODE_DIR/log/parallel_runtask
 FA_MNI_TARGET="$ENV_DIR/standard/FSL_HCP1065_FA_1mm.nii.gz"
 FA="$FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz"
 FAt="$FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-FWcorrected_FA.nii.gz"
+AD="$FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_L1.nii.gz"
+ADt="$FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-FWcorrected_L1.nii.gz"
+RD="$FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_RD.nii.gz"
+RDt="$FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-FWcorrected_RD.nii.gz"
 MD="$FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_MD.nii.gz"
 MDt="$FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-FWcorrected_MD.nii.gz"
 FW="$FW_DIR/${1}_ses-${SESSION}_space-T1w_FW.nii.gz"
@@ -47,9 +51,13 @@ FW="$FW_DIR/${1}_ses-${SESSION}_space-T1w_FW.nii.gz"
 
 # Output
 #########################
-FA_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-DTINoNeg_FA.nii.gz"
 FA2MNI_WARP="$FW_DIR/${1}_ses-${SESSION}_desc-dwi_from-T1w_to-MNI_Composite.h5"
+FA_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-DTINoNeg_FA.nii.gz"
 FAt_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-FWcorrected_FA.nii.gz"
+AD_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-DTINoNeg_L1.nii.gz"
+ADt_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-FWcorrected_L1.nii.gz"
+RD_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-DTINoNeg_RD.nii.gz"
+RDt_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-FWcorrected_RD.nii.gz"
 MD_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-DTINoNeg_MD.nii.gz"
 MDt_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-FWcorrected_MD.nii.gz"
 FW_MNI="$FW_DIR/${1}_ses-${SESSION}_space-MNI_FW.nii.gz"
@@ -96,6 +104,34 @@ antsApplyTransforms -d 3 -e 3 -n Linear \
             -o $FAt_MNI \
             -t $FA2MNI_WARP
 "
+CMD_AD2MNI="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $AD \
+            -r $FA_MNI \
+            -o $AD_MNI \
+            -t $FA2MNI_WARP
+"
+CMD_ADt2MNI="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $ADt \
+            -r $FA_MNI \
+            -o $ADt_MNI \
+            -t $FA2MNI_WARP
+"
+CMD_RD2MNI="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $RD \
+            -r $FA_MNI \
+            -o $RD_MNI \
+            -t $FA2MNI_WARP
+"
+CMD_RDt2MNI="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $RDt \
+            -r $FA_MNI \
+            -o $RDt_MNI \
+            -t $FA2MNI_WARP
+"
 
 CMD_MD2MNI="
 antsApplyTransforms -d 3 -e 3 -n Linear \
@@ -125,6 +161,10 @@ antsApplyTransforms -d 3 -e 3 -n Linear \
 #########################
 $singularity_mrtrix3 $CMD_TEMP2MNI
 $singularity_mrtrix3 $CMD_FAt2MNI
+$singularity_mrtrix3 $CMD_AD2MNI
+$singularity_mrtrix3 $CMD_ADt2MNI
+$singularity_mrtrix3 $CMD_RD2MNI
+$singularity_mrtrix3 $CMD_RDt2MNI
 $singularity_mrtrix3 $CMD_MD2MNI
 $singularity_mrtrix3 $CMD_MDt2MNI
 $singularity_mrtrix3 $CMD_FW2MNI

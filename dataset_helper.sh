@@ -10,6 +10,7 @@
 source /sw/batch/init.sh
 module load parallel
 module load aws-cli
+module load zip
 source /work/fatx405/set_envs/miniconda
 source activate datalad
 
@@ -63,6 +64,7 @@ import() {
 	OUTPUT_PATH=$2
 	zip=$3
 	time=$4
+	IMPORT_TYPE=$5
 
 	# Define subject list
 	subs=$(ls $INPUT_PATH)
@@ -77,24 +79,26 @@ import() {
 		OUTPUT_PATH=$2
 		zip=$3
 		sub=$4
+		IMPORT_TYPE=$5
 
 		echo "Importing subject $sub"
 		echo "Sequences to import: $seqs"
 		OUTPUT_DIR=$OUTPUT_PATH/$sub
 		INPUT_DIR=$INPUT_PATH/$sub
 		for session in $(ls $INPUT_DIR/ses-* -d | xargs -n 1 basename);do
-			if [ $zip == y ];then #&& [ ! -f $OUTPUT_DIR/${session}.tar.gz ]
-				mkdir -p $OUTPUT_DIR
+			if [ $zip == y ];then
 				pushd $INPUT_DIR
 				
-				if [ -f $OUTPUT_DIR/${session}.tar.gz ]; then
-					tar -xf $OUTPUT_DIR/${session}.tar.gz
-					tar -uvf $OUTPUT_DIR/${session}.tar $session
-					tar -zvf $OUTPUT_DIR/${session}.tar
-
-				else
-				tar -czvf $OUTPUT_DIR/${session}.tar.gz $session
+				if [ $IMPORT_TYPE == "all" ]; then
+					mkdir -p $OUTPUT_DIR
+					tar -czvf $OUTPUT_DIR/${session}.tar.gz $session
 				
+				elif [ $IMPORT_TYPE == "update" ]; then
+					gunzip $OUTPUT_DIR/${session}.tar.gz
+					chmod 770 $OUTPUT_DIR/${session}.tar
+					tar -f $OUTPUT_DIR/${session}.tar -v -u $session
+					gzip $OUTPUT_DIR/${session}.tar
+					echo "$sub $session $(date +%d%m%Y)" >> $CODE_DIR/log/dicom_update_$(date +%d%m%Y).log
 				fi
 
 			elif [ $zip == n ];then
@@ -108,7 +112,7 @@ import() {
 
 	}
 	export -f import_loop
-	CMD="$parallel import_loop $INPUT_PATH $OUTPUT_PATH $zip {} ::: $subs"
+	CMD="$parallel import_loop $INPUT_PATH $OUTPUT_PATH $zip {} $IMPORT_TYPE ::: $subs"
 	echo $CMD
 
 	# Calculate with ~1h for 150 subjects
@@ -193,18 +197,22 @@ elif [ $PIPELINE == import_dcms ];then
 	## Import dicoms from dataset directory and convert them to tarballs
 	echo "Define path containing subject directories with DICOMs"
 	echo "data/dicoms/ subdataset should have been established (add_dcm_subds)"
-	echo "Assumed structure of this directory is dataset_directory/subject/(session)/sequence/DICOMS"
+	echo "Assumed structure of this directory is dataset_directory/subject/session/sequence/DICOMS"
 	echo "Before you proceed please make sure that subject directories are the only instances in dataset_directory"
 	read INPUT_PATH
 	OUTPUT_PATH=$DCM_DIR
 
+	echo "Would you like to update an existing import or perform a new import? (update/all)"
+	read IMPORT_TYPE
+	export IMPORT_TYPE
+	
 	echo "How much time do you want to allocate? e.g. '01:00:00' for one hour"
 	read time
 
 	echo "Converting subject dirs to tarballs and copying into data/dicoms"
 	export zip=y
 	
-	import $INPUT_PATH $OUTPUT_PATH $zip $time
+	import $INPUT_PATH $OUTPUT_PATH $zip $time $IMPORT_TYPE
 
 elif [ $PIPELINE == import_raw_bids ];then
 
