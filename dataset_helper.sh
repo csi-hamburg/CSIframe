@@ -290,14 +290,16 @@ elif [ $PIPELINE == if_in_s3 ];then
 	echo "What do you want to do with local clone if you found files remotely? (list/count/remove)"
 	read operation
 
-	if [ $operation==list ];then
-		aws s3 ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | xargs -n 4 echo
-	elif [ $operation==count];then
-		aws s3 ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | wc -l
-	elif [ $operation==remove];then
-		aws s3 ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | xargs -n 4 rm
+	pushd $DATA_DIR
+	if [ $operation == list ];then
+		aws s3 --endpoint-url https://s3-uhh.lzs.uni-hamburg.de ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | xargs -n 4 echo
+	elif [ $operation == count ];then
+		aws s3 --endpoint-url https://s3-uhh.lzs.uni-hamburg.de ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | wc -l
+	elif [ $operation == remove ];then
+		aws s3 --endpoint-url https://s3-uhh.lzs.uni-hamburg.de ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | xargs -n 4 rm
 	else echo $operation not provided. Please choose from list/count/remove
 	fi
+	popd
 
 elif [ $PIPELINE == create_participants_tsv ];then
 
