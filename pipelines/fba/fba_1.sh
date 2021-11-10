@@ -32,13 +32,13 @@ export SINGULARITYENV_MRTRIX_TMPFILE_DIR=$TMP_DIR
 
 [ ! -d $FBA_GROUP_DIR ] && mkdir -p $FBA_GROUP_DIR
 singularity_mrtrix3="singularity run --cleanenv --userns \
-    -B . \
+    -B $(readlink -f $ENV_DIR) \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
     $ENV_DIR/$container_mrtrix3" 
 
 singularity_mrtrix3tissue="singularity run --cleanenv --userns \
-    -B . \
+    -B $(readlink -f $ENV_DIR) \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
     $ENV_DIR/$container_mrtrix3tissue" 
@@ -59,8 +59,8 @@ DWI_MASK_NII="$DATA_DIR/qsiprep/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_spa
 # Output
 #########################
 DWI_PREPROC_MIF="/tmp/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.mif"
-DWI_PREPROC_UPSAMPLED_MIF="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_desc-upsampled_dwi.mif.gz"
-DWI_MASK_UPSAMPLED="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-upsampled_desc-brain_mask.mif.gz"
+DWI_PREPROC_UPSAMPLED_MIF="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_desc-upsampled_dwi.nii.gz"
+DWI_MASK_UPSAMPLED="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-upsampled_desc-brain_mask.nii.gz"
 RESPONSE_WM="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-responsemean_desc-preproc_desc-wmFODdhollander2019_ss3tcsd.txt"
 RESPONSE_GM="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-responsemean_desc-preproc_desc-gmFODdhollander2019_ss3tcsd.txt"
 RESPONSE_CSF="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_space-T1w_desc-responsemean_desc-preproc_desc-csfFODdhollander2019_ss3tcsd.txt"

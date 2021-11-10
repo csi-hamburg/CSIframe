@@ -23,7 +23,7 @@ echo "Script is run from $(realpath .); superdataset is assumed to be/become sub
 echo "Enter name of dataset concerned / to create; e.g. CSI_HCHS"
 read PROJ_NAME
 
-echo "What do you want to do? (setup_superdataset, add_data_subds, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, create_participants_tsv, add_lzs_s3_remote, create_pybids_db, templateflow_setup, export_from_datalad)"
+echo "What do you want to do? (setup_superdataset, add_data_subds, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, if_in_s3, create_participants_tsv, add_lzs_s3_remote, create_pybids_db, templateflow_setup, export_from_datalad)"
 read PIPELINE
 
 #################################################################
@@ -263,6 +263,7 @@ elif [ $PIPELINE == missing_outputs ];then
 		done
 
 		echo "Finished writing to $out_file"
+
 	elif [ $file_or_subdir == in_subdir ];then
 		echo "Please provide search term you are looking for; e.g. 'dwi.nii.gz'"
 		#echo "Please provide file or directory name you are looking for (search depth of 1, i.e. sub-xyz/?)"
@@ -278,6 +279,32 @@ elif [ $PIPELINE == missing_outputs ];then
 			#find . -mindepth 1 -maxdepth 1 -type d '!' -exec test -e "{}/${search}" ';' -print | grep sub | cut -d"/" -f 2 > $out_file
 		popd
 		done
+	fi
+
+elif [ $PIPELINE == if_in_s3 ];then
+
+	echo "Which S3 bucket do you want to look at?"
+	echo "Choose from: $(aws --endpoint-url https://s3-uhh.lzs.uni-hamburg.de s3 ls | awk '{print $3}')"
+	read bucket
+
+	# Define the subdataset concerned
+	echo "Please provide subdataset in data/ to work in; e.g. 'fmriprep mriqc'"
+	echo "Choose from: $(ls $PROJ_DIR/data)"
+	read subds
+
+	echo "Please provide search term you want to match; e.g. 'dwi.nii.gz'"
+	read identifier
+
+	echo "What do you want to do with local clone if you found files remotely? (list/count/remove)"
+	read operation
+
+	if [ $operation==list ];then
+		aws s3 ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | xargs -n 4 echo
+	elif [ $operation==count];then
+		aws s3 ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | wc -l
+	elif [ $operation==remove];then
+		aws s3 ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | xargs -n 4 rm
+	else echo $operation not provided. Please choose from list/count/remove
 	fi
 
 elif [ $PIPELINE == create_participants_tsv ];then

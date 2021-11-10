@@ -1,4 +1,3 @@
-from bids import BIDSLayout
 import os
 import glob
 import json

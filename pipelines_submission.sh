@@ -47,6 +47,9 @@ if [ $PIPELINE == "bidsify" ];then
 	echo "Choose from" $(ls $CODE_DIR/pipelines/bidsify/heudiconv_*.py | xargs -n 1 basename)
 	read HEURISTIC; export HEURISTIC
 
+	echo "Do you want to deface participants? (y/n)"
+	read MODIFIER; export MODIFIER
+
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
 
@@ -91,6 +94,16 @@ elif [ $PIPELINE == "smriprep" ];then
 		export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym anat"
 	fi
 
+elif [ $PIPELINE == "freesurfer" ];then
+	export SUBJS_PER_NODE=4
+	export ANALYSIS_LEVEL=subject
+	batch_time="2-00:00:00"
+	partition="big"
+	at_once=
+
+	echo "Which session do you want to process? e.g. '1' 'all'"
+	read SESSION; export SESSION
+
 elif [ $PIPELINE == "mriqc" ];then
 
 	echo "Choose between participant and group level anaylsis (participant/group)." 
@@ -134,7 +147,7 @@ elif [ $PIPELINE == "fmriprep" ];then
 elif [ $PIPELINE == "xcpengine" ];then
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
-	batch_time="8:00:00"
+	batch_time="16:00:00"
 	partition="std"
 	at_once=
 
@@ -200,8 +213,8 @@ elif [ $PIPELINE == "fba" ];then
 	if [ $FBA_LEVEL == 1 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="07-00:00:00"
-		partition="big"
+		batch_time="01-00:00:00"
+		partition="std"
 	elif [ $FBA_LEVEL == 2 ];then
 		export SUBJS_PER_NODE=4
 		export ANALYSIS_LEVEL=subject
@@ -234,7 +247,6 @@ elif [ $PIPELINE == "fba" ];then
 
 elif [ $PIPELINE == "connectomics" ];then
 
-
 	echo "On which connectome flavor do you want to apply network analysis? (sc/fc)"
 	read MODIFIER; export MODIFIER
 
@@ -243,9 +255,9 @@ elif [ $PIPELINE == "connectomics" ];then
 		exit 0
 	fi
 
-	export SUBJS_PER_NODE=$subj_array_length
+	export SUBJS_PER_NODE=1
 	export ANALYSIS_LEVEL=subject
-	batch_time="12:00:00"
+	batch_time="00:30:00"
 	partition="std"
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
@@ -257,7 +269,7 @@ elif [ $PIPELINE == "psmd" ];then
 	read PSMD_LEVEL
 
 	if [ $PSMD_LEVEL == "subject" ]; then
-		export SUBJS_PER_NODE=1
+		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
 		batch_time="03:00:00"
 		partition="std"
@@ -299,7 +311,7 @@ elif [ $PIPELINE == "wmh" ];then
 	
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
-	batch_time="04:00:00"
+	batch_time="02:00:00"
 	partition="std"
 
 	echo "which part of analysis you want to do? currently available: antsrnet / bianca / lga / lpa / samseg"
@@ -307,19 +319,27 @@ elif [ $PIPELINE == "wmh" ];then
 
 	if [ $ALGORITHM == "samseg" ]; then
 
+		batch_time="04:00:00"
+
 		echo "samseg does not recommend any bias-correction. Automatically set to NO."
 		BIASCORR=n; export BIASCORR
 
-	else 
+	elif [ $ALGORITHM == "lga" ]; then
+
+		echo "lga does not recommend any bias-correction. Automatically set to NO."
+		BIASCORR=n; export BIASCORR
+
+	elif [ $ALGORITHM == "lpa" ]; then
+
+		echo "lpa does not recommend any bias-correction. Automatically set to NO."
+		BIASCORR=n; export BIASCORR
+
+	else
 
 		echo "do you want to perform bias-correction? (y/n)"
 		read BIASCORR; export BIASCORR
 
 	fi
-
-	[ $ALGORITHM == "antsrnet" ] && batch_time="00:30:00"
-	[ $ALGORITHM == "bianca" ] && batch_time="00:30:00"
-	[ $ALGORITHM == "lpa" ] && batch_time="00:10:00"
 
 	echo "do you want to play the masking game? (y/n) | Caution: this may sound like fun, but is no fun at all."
 	read MASKINGGAME; export MASKINGGAME
@@ -353,7 +373,7 @@ fi
 
 # Define batch script
 script_name="pipelines_parallelization.sh"
-script_path=$CODE_DIR/$script_name
+SCRIPT_PATH=$CODE_DIR/$script_name
 
 # If subject array length < subjects per node -> match subjects per node to array length
 [ $subj_array_length -lt $SUBJS_PER_NODE ] && export SUBJS_PER_NODE=$subj_array_length
@@ -371,9 +391,9 @@ for batch in $(seq $batch_amount);do
 	# Slice subj array from index $ITER for the amount of $SUBJS_PER_NODE subjects
 	subj_batch_array=${subj_array[@]:$ITER:$SUBJS_PER_NODE}
 
-	# In case of interactive session source $script_path directly
+	# In case of interactive session run $SCRIPT_PATH directly
 	if [ $INTERACTIVE == y ]; then
-		srun $script_path "${subj_batch_array[@]}"
+		srun $SCRIPT_PATH "${subj_batch_array[@]}"
 
 	elif [ $INTERACTIVE == n ]; then
 	    CMD="sbatch --job-name ${PIPELINE}${PIPELINE_SUFFIX} \
@@ -381,7 +401,7 @@ for batch in $(seq $batch_amount);do
 	        --partition $partition \
 	        --output $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).out" \
 	        --error $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).err" \
-	    	$script_path "${subj_batch_array[@]}""
+	    	$SCRIPT_PATH "${subj_batch_array[@]}""
 		$CMD
 	else
 		echo "\$INTERACTIVE is not 'y' or 'n'"

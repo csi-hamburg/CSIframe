@@ -15,12 +15,20 @@ def infotodict(seqinfo):
     #
     # The "data" key creates sequential numbers which can be for naming sequences.
     # This is especially valuable if you run the same sequence multiple times at the scanner.
-    t1w_1 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-nssagfast_T1w')
-    t1w_2 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-3dmprage_T1w')
-    t1w_3 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-cssag3d_T1w')
-    t1w_4 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-cssags3d_T1w')
-    t1w_5 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-sag3d_T1w')
-    t1w_6 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-sags3d_T1w')
+
+    t1w_1 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_T1w')
+    t1w_2 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_T1w')
+    t1w_3 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_T1w')
+    t1w_4 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_T1w')
+    t1w_5 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_T1w')
+    t1w_6 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_T1w')
+
+    # t1w_1 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-nssagfast_T1w')
+    # t1w_2 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-3dmprage_T1w')
+    # t1w_3 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-cssag3d_T1w')
+    # t1w_4 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-cssags3d_T1w')
+    # t1w_5 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-sag3d_T1w')
+    # t1w_6 = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_desc-sags3d_T1w')
 
     # Section 1b: This data dictionary (below) should be revised by the user.
     # It uses the variables defines above as keys.
