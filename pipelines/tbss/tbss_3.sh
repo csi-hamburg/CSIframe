@@ -38,13 +38,13 @@ singularity_fsl="singularity run --cleanenv --userns \
 if [ $TBSS_PIPELINE == "fixel" ]; then
     
     SPACE=fodtemplate
-    MODALITIES="desc-FWcorrected_FA desc-DTINoNeg_AD desc-FWcorrected_AD desc-DTINoNeg_RD \
+    MODALITIES="desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW desc-voxelmap_fd desc-voxelmap_fdc desc-voxelmap_logfc desc-voxelmap_complexity"
 
 elif [ $TBSS_PIPELINE == "mni" ]; then 
 
     SPACE=MNI
-    MODALITIES="desc-FWcorrected_FA desc-DTINoNeg_AD desc-FWcorrected_AD desc-DTINoNeg_RD \
+    MODALITIES="desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW"
 
 fi

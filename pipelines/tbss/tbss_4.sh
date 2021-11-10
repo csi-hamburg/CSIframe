@@ -45,13 +45,13 @@ pip install -y pandas scipy seaborn matplotlib nibabel nilearn
 if [ $TBSS_PIPELINE == "mni" ]; then
 
     SPACE=MNI
-    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_AD desc-FWcorrected_AD desc-DTINoNeg_RD \
+    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW"
     
 elif [ $TBSS_PIPELINE == "fixel" ]; then
 
     SPACE=fodtemplate
-    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_AD desc-FWcorrected_AD desc-DTINoNeg_RD \
+    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW desc-voxelmap_fd desc-voxelmap_fdc \
                 desc-voxelmap_logfc desc-voxelmap_complexity"
 
@@ -200,7 +200,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
     # Reset MODALITIES omitting one modality (FW) for seperate run (necessary for csv file creation)
     ################################################################################################
 
-    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_AD desc-FWcorrected_AD desc-DTINoNeg_RD \
+    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD"
 
 
@@ -302,7 +302,7 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
     # Reset MODALITIES omitting one modality (desc-voxelmap_complexity) for seperate run (necessary for csv file creation)
     ######################################################################################################################
 
-    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_AD desc-FWcorrected_AD desc-DTINoNeg_RD \
+    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW desc-voxelmap_fd desc-voxelmap_fdc \
                 desc-voxelmap_logfc"
 
@@ -341,7 +341,7 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
 
 if [ $TBSS_PIPELINE == "fixel"]; then
 
-    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_AD desc-FWcorrected_AD desc-DTINoNeg_RD \
+    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW desc-voxelmap_fd desc-voxelmap_fdc \
                 desc-voxelmap_logfc desc-voxelmap_complexity"
     CSV=$MEAN_CSV
@@ -356,8 +356,8 @@ if [ $TBSS_PIPELINE == "fixel"]; then
 
         [ $MODALITY == "desc-DTINoNeg_FA" ] && MOD="FA"
         [ $MODALITY == "desc-FWcorrected_FA" ] && MOD="FAt"
-        [ $MODALITY == "desc-DTINoNeg_AD" ] && MOD="AD"
-        [ $MODALITY == "desc-FWcorrected_AD" ] && MOD="ADt"
+        [ $MODALITY == "desc-DTINoNeg_L1" ] && MOD="AD"
+        [ $MODALITY == "desc-FWcorrected_L1" ] && MOD="ADt"
         [ $MODALITY == "desc-DTINoNeg_RD" ] && MOD="RD"
         [ $MODALITY == "desc-FWcorrected_RD" ] && MOD="RDt"
         [ $MODALITY == "desc-DTINoNeg_MD" ] && MOD="MD"
@@ -380,7 +380,7 @@ if [ $TBSS_PIPELINE == "fixel"]; then
 
 elif [ $TBSS_PIPELINE == "mni"]; then
     
-    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_AD desc-FWcorrected_AD desc-DTINoNeg_RD \
+    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW"
     CSV=$ROI_CSV
 
@@ -394,8 +394,8 @@ elif [ $TBSS_PIPELINE == "mni"]; then
 
         [ $MODALITY == "desc-DTINoNeg_FA" ] && MOD="FA"
         [ $MODALITY == "desc-FWcorrected_FA" ] && MOD="FAt"
-        [ $MODALITY == "desc-DTINoNeg_AD" ] && MOD="AD"
-        [ $MODALITY == "desc-FWcorrected_AD" ] && MOD="ADt"
+        [ $MODALITY == "desc-DTINoNeg_L1" ] && MOD="AD"
+        [ $MODALITY == "desc-FWcorrected_L1" ] && MOD="ADt"
         [ $MODALITY == "desc-DTINoNeg_RD" ] && MOD="RD"
         [ $MODALITY == "desc-FWcorrected_RD" ] && MOD="RDt"
         [ $MODALITY == "desc-DTINoNeg_MD" ] && MOD="MD"
