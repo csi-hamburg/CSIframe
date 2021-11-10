@@ -136,7 +136,7 @@ REPORT=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_${MODALITY}
 if [ -f $FA_SKEL_MERGED ]; then
     
     echo ""
-    echo "TBSS Part 2 (tbss_2.sh) has already been run. Removing output of previous run first ..."
+    echo "TBSS Part 4 (tbss_4.sh) has already been run for merge list "$TBSS_MERGE_LIST". Removing output of previous run first ..."
     echo ""
 
     rm -rvf $DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton*
@@ -162,10 +162,11 @@ for MOD in $(echo $MODALITIES); do
         $singularity_fsl fslmerge \
             -t $MOD_SKEL_MERGED \
             $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*desc-skeleton*${MOD}.nii.gz
+        
 
     else
 
-        for sub in $(echo $TBSS_MERGE_LIST); do
+        for sub in $(echo $TBSS_DIR/code/merge_${TBSS_MERGE_LIST}.txt); do
 
             echo $MOD_SKEL >> $MERGE_LIST_MOD
         

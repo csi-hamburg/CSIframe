@@ -33,17 +33,19 @@ singularity_fsl="singularity run --cleanenv --userns \
     -B $(readlink -f $ENV_DIR) \
     $ENV_DIR/$container_fsl" 
 
-# Set pipeline specific variables; "" refers to *FW.nii.gz and "_desc-voxelmap" refers to FBA metrics
+# Set pipeline specific variables
 
 if [ $TBSS_PIPELINE == "fixel" ]; then
     
     SPACE=fodtemplate
-    DTIMETHODS=(_desc-DTINoNeg _desc-FWcorrected "" _desc-voxelmap)
+    MODALITIES="desc-FWcorrected_FA desc-DTINoNeg_AD desc-FWcorrected_AD desc-DTINoNeg_RD \
+                desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW desc-voxelmap_fd desc-voxelmap_fdc desc-voxelmap_logfc desc-voxelmap_complexity"
 
 elif [ $TBSS_PIPELINE == "mni" ]; then 
 
     SPACE=MNI
-    DTIMETHODS=(_desc-DTINoNeg _desc-FWcorrected "")
+    MODALITIES="desc-FWcorrected_FA desc-DTINoNeg_AD desc-FWcorrected_AD desc-DTINoNeg_RD \
+                desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW"
 
 fi
 
@@ -56,7 +58,7 @@ DER_DIR=$TBSS_DIR/derivatives/sub-all/ses-${SESSION}/dwi
 echo "TBSS_DIR = $TBSS_DIR"
 
 FA_ERODED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-DTINoNeg_FA.nii.gz
-MOD_ERODED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded${DTIMETHOD}_${MOD}.nii.gz
+MOD_ERODED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_${MOD}.nii.gz
 FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask.nii.gz
 FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA.nii.gz
 MEAN_FA_SKEL=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean_desc-DTINoNeg_FA.nii.gz
@@ -78,9 +80,9 @@ fi
 ########
 
 FA_MASKED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-brain_desc-DTINoNeg_FA.nii.gz
-MOD_MASKED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-brain${DTIMETHOD}_${MOD}.nii.gz
+MOD_MASKED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-brain_${MOD}.nii.gz
 FA_SKEL=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-DTINoNeg_FA.nii.gz
-MOD_SKEL=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton${DTIMETHOD}_${MOD}.nii.gz
+MOD_SKEL=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
 
 # Remove output of previous runs
 
@@ -143,32 +145,20 @@ echo ""
 echo "Masking other modalities and projecting onto FA skeleton."
 echo ""
 
-for DTIMETHOD in "${DTIMETHODS[@]}"; do
+for MOD in $(echo $MODALITIES); do
 
-    if [ $DTIMETHOD == "_desc-DTINoNeg" ]; then
-        MODALITIES="AD RD MD"
-    elif [ $DTIMETHOD == "_desc-FWcorrected" ]; then
-        MODALITIES="FAt ADt RDt MDt"
-    elif [ -z $DTIMETHOD ]; then
-        MODALITIES="FW"
-    elif [ $DTIMETHOD == "_desc-voxelmap" ];then
-        MODALITIES="fd fdc logfc complexity"
-    fi
-
-    for MOD in $(echo $MODALITIES); do
-
-        echo ""
-        echo $MOD
-        echo ""
+    echo ""
+    echo $MOD
+    echo ""
         
-        CMD_MASK="
+    CMD_MASK="
         fslmaths \
             $MOD_ERODED \
             -mas $FA_MASK \
             $MOD_MASKED;"
 
-        CMD_PROJ="
-            tbss_skeleton \
+    CMD_PROJ="
+        tbss_skeleton \
             -i $FA_MEAN \
             -p \
                 $thresh \
@@ -178,9 +168,7 @@ for DTIMETHOD in "${DTIMETHODS[@]}"; do
                 $MOD_SKEL \
             -a $MOD_MASKED"
         
-        $singularity_fsl "$CMD_MASK"
-        $singularity_fsl "$CMD_PROJ"
-
-    done
+    $singularity_fsl "$CMD_MASK"
+    $singularity_fsl "$CMD_PROJ"
 
 done
