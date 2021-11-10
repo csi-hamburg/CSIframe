@@ -88,6 +88,7 @@ singularity run --cleanenv --userns \
     -B . \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
+    -B $(readlink -f $ENV_DIR) \
     $ENV_DIR/mrtrix3-3.0.2 /bin/bash -c "$CMD_CONVERT"
 
 # Execute free-water pipeline
@@ -132,6 +133,7 @@ singularity run --cleanenv --userns \
    -B .\
    -B $PROJ_DIR \
    -B $SCRATCH_DIR:/tmp \
+   -B $(readlink -f $ENV_DIR) \
    $ENV_DIR/fsl-6.0.3 /bin/bash -c "$CMD_FWC"
 
 # Calculate negative eigenvalue corrected diffusion measures (note, L1 = AD)
@@ -157,4 +159,5 @@ singularity run --cleanenv --userns \
    -B . \
    -B $PROJ_DIR \
    -B $SCRATCH_DIR:/tmp \
+   -B $(readlink -f $ENV_DIR) \
    $ENV_DIR/fsl-6.0.3 /bin/bash -c "$CMD_NONEG"
