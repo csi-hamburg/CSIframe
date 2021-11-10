@@ -271,7 +271,7 @@ elif [ $PIPELINE == "psmd" ];then
 	if [ $PSMD_LEVEL == "subject" ]; then
 		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
-		batch_time="02:00:00"
+		batch_time="03:00:00"
 		partition="std"
 	elif [ $PSMD_LEVEL == "group" ];then
 		export SUBJS_PER_NODE=$subj_array_length
