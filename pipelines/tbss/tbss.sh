@@ -68,7 +68,7 @@ if [ $TBSS_PIPELINE == "enigma" ]; then
             --avg \
             --force \
             --verbose \
-            --ncpu 4" 
+            --ncpu 1" 
 
 elif [ $TBSS_PIPELINE == "fmrib" ]; then 
 
@@ -81,9 +81,14 @@ elif [ $TBSS_PIPELINE == "fmrib" ]; then
     # Define output directory
     #########################
 
-    TBSS_DIR=$DATA_DIR/tbss_fmrib
+    TBSS_DIR=$DATA_DIR/tbss_fmrib_scratch
     IMAGELIST=$TBSS_DIR/sourcedata/imagelist.csv
     CASELIST=$TBSS_DIR/sourcedata/caselist.csv
+
+    cp $PIPELINE_DIR/FMRIB58_FA_1mm.nii.gz $SCRATCH_DIR/FMRIB58_FA_1mm.nii.gz
+    cp $PIPELINE_DIR/FMRIB58_FA-skeleton_1mm.nii.gz $SCRATCH_DIR/FMRIB58_FA-skeleton_1mm.nii.gz 
+    FMRIB_FA=$SCRATCH_DIR/FMRIB58_FA_1mm.nii.gz
+    FMRIB_SKEL=$SCRATCH_DIR/FMRIB58_FA-skeleton_1mm.nii.gz
 
     # Remove previous run
     #####################
@@ -100,14 +105,15 @@ elif [ $TBSS_PIPELINE == "fmrib" ]; then
             --caselist $CASELIST \
             --input $IMAGELIST \
             --modality FA,FAt,AD,ADt,RD,RDt,MD,MDt,FW \
-            --fmrib \
+            --template $FMRIB_FA \
+            --skeleton $FMRIB_SKEL
             --labelMap /opt/fsl-6.0.4/data/atlases/JHU/JHU-ICBM-labels-1mm.nii.gz \
             --lut $PIPELINE_DIR/JHU-ICBM-LUT.txt \
             --outDir $TBSS_DIR \
             --avg \
             --force \
             --verbose \
-            --ncpu 4" 
+            --ncpu 32" 
 
 elif [ $TBSS_PIPELINE == "fixel"]; then
 
@@ -284,8 +290,8 @@ for sub in ${input_subject_array[@]}; do
         fi
 
     else
-
-        FA_IMAGE=$DATA_DIR/freewater/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz
+        cp $DATA_DIR/freewater/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz $SCRATCH_DIR/
+        FA_IMAGE=$SCRATCH_DIR/${sub}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz
         FAt_IMAGE=$DATA_DIR/freewater/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-T1w_desc-FWcorrected_FA.nii.gz
         AD_IMAGE=$DATA_DIR/freewater/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-T1w_desc-DTINoNeg_L1.nii.gz
         ADt_IMAGE=$DATA_DIR/freewater/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-T1w_desc-FWcorrected_L1.nii.gz
@@ -320,4 +326,5 @@ singularity run --cleanenv --userns \
     -B . \
     -B $PROJ_DIR \
     -B $TMP_DIR:/tmp \
+    -B $SCRATCH_DIR \
     $ENV_DIR/tbss_pnl-0.1.5 $CMD_TBSS
