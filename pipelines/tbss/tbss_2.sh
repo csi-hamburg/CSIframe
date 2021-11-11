@@ -55,7 +55,7 @@ echo "TBSS_DIR = $TBSS_DIR"
 
 files_complete=y
 
-for sub in $(ls $DATA_DIR/freewater/sub* -d | rev | cut -d "/" -f 1 | rev); do
+for sub in $(ls $DATA_DIR/freewater/sub*/ses-1/dwi/*T1w*DTINoNeg_FA.nii.gz | rev | cut -d "/" -f 1 | rev | cut -d "_" -f 1); do
   
     img=`ls $TBSS_SUBDIR/*desc-eroded*FA.nii.gz | head -n 1`
     [ -f $img ] || files_complete=n
