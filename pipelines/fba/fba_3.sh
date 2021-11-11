@@ -79,10 +79,10 @@ MASK_GROUP_DIR=$FBA_GROUP_DIR/template/mask_input
 
 for sub in ${template_subject_array[@]};do
 
-    DWI_MASK_UPSAMPLED_="$DATA_DIR/qsiprep/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_acq-AP_space-T1w_desc-brain_mask.nii.gz"
+    DWI_MASK_UPSAMPLED_="$DATA_DIR/fba/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_acq-AP_space-T1w_desc-upsampled_desc-brain_mask.nii.gz"
     FOD_WM_="$FBA_DIR/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_acq-AP_space-T1w_desc-responsemean_desc-preproc_desc-wmFODmtnormed_ss3tcsd.mif.gz"
-    [ -f $DWI_MASK_UPSAMPLED_ ] && ln -sr $FOD_WM_ $FOD_GROUP_DIR
-    [ -f $FOD_WM_ ] && ln -sr $DWI_MASK_UPSAMPLED_ $MASK_GROUP_DIR
+    [ -f $DWI_MASK_UPSAMPLED_ ] && ln -srf $FOD_WM_ $FOD_GROUP_DIR
+    [ -f $FOD_WM_ ] && ln -srf $DWI_MASK_UPSAMPLED_ $MASK_GROUP_DIR
 
 done
 
