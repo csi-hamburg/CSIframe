@@ -40,4 +40,4 @@ CMD="heudiconv
     -o $PIPELINE_DIR"
 
 # Execute command
-$singulartiy_heudiconv $CMD
+$singularity_heudiconv $CMD
