@@ -22,6 +22,7 @@ heudiconv=heudiconv-0.9.0
 singularity_heudiconv="singularity run --cleanenv --userns \
     -B . \
     -B $PROJ_DIR \
+    -B $TMP_DIR:/tmp
     -B $(readlink -f $ENV_DIR) \
     $ENV_DIR/$heudiconv" 
 
