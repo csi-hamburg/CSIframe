@@ -99,7 +99,7 @@ echo ""
 
 FA_MERGED=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-DTINoNeg_FA
 
-$singularity_fsl fslmerge -t $FA_MERGED $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*_desc-eroded_desc-DTINoNeg_FA
+$singularity_fsl fslmerge -t $FA_MERGED $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*_desc-eroded_desc-DTINoNeg_FA.nii.gz
 
 echo ""
 echo "Creating valid mask and mean FA ..."
