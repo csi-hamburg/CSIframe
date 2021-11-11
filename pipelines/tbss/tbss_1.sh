@@ -317,9 +317,9 @@ fi
 
 for MOD in $(echo $MODALITIES); do
 
-    X=`$singularity_fsl "fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim1"`; let X=$X-2
-    Y=`$singularity_fsl "fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim2"`; let Y=$Y-2
-    Z=`$singularity_fsl "fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim3"`; let Z=$Z-2
+    X=`$singularity_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim1 | head -n 1`; let X=$X-2
+    Y=`$singularity_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim2 | head -n 1`; let Y=$Y-2
+    Z=`$singularity_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim3 | head -n 1`; let Z=$Z-2
         
     $singularity_fsl fslmaths \
         $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} \
