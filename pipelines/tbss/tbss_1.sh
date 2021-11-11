@@ -84,7 +84,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
 
     # Set pipeline specific variables
     
-    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_AD desc-FWcorrected_AD desc-DTINoNeg_RD \
+    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW"
 
     # Check whether registration has already been performed 
@@ -317,9 +317,9 @@ fi
 
 for MOD in $(echo $MODALITIES); do
 
-    X=`$singularity_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim1`; let X=$X-2
-    Y=`$singularity_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim2`; let Y=$Y-2
-    Z=`$singularity_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim3`; let Z=$Z-2
+    X=`$singularity_fsl "fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim1"`; let X=$X-2
+    Y=`$singularity_fsl "fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim2"`; let Y=$Y-2
+    Z=`$singularity_fsl "fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim3"`; let Z=$Z-2
         
     $singularity_fsl fslmaths \
         $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} \
