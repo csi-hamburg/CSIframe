@@ -52,13 +52,13 @@ fi
 # Input
 #######
 TBSS_DIR=$DATA_DIR/tbss_${TBSS_PIPELINE}
-TBSS_SUBDIR=$TBSS_DIR/$1/ses-${SESSION}/dwi/
+TBSS_SUBDIR=$TBSS_DIR/$1/ses-${SESSION}/dwi
 DER_DIR=$TBSS_DIR/derivatives/sub-all/ses-${SESSION}/dwi
 
 echo "TBSS_DIR = $TBSS_DIR"
 
 FA_ERODED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-DTINoNeg_FA.nii.gz
-MOD_ERODED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_${MOD}.nii.gz
+#MOD_ERODED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_${MOD}.nii.gz
 FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask.nii.gz
 FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA.nii.gz
 MEAN_FA_SKEL=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean_desc-DTINoNeg_FA.nii.gz
@@ -80,9 +80,9 @@ fi
 ########
 
 FA_MASKED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-brain_desc-DTINoNeg_FA.nii.gz
-MOD_MASKED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-brain_${MOD}.nii.gz
+#MOD_MASKED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-brain_${MOD}.nii.gz
 FA_SKEL=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-DTINoNeg_FA.nii.gz
-MOD_SKEL=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+#MOD_SKEL=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
 
 # Remove output of previous runs
 
@@ -123,20 +123,15 @@ CMD_MASK_FA="
     fslmaths \
         $FA_ERODED \
         -mas $FA_MASK \
-        $FA_MASKED;"
+        $FA_MASKED"
         
 CMD_PROJ_FA="
     tbss_skeleton \
     -i $FA_MEAN \
-    -p \
-        $thresh \
-        $SKEL_DIST \
-        /opt/$container_fsl/data/standard/data/standard/LowerCingulum_1mm \
-        $FA_MASKED \
-        $FA_SKEL"
+    -p $thresh $SKEL_DIST $ENV_DIR/standard/LowerCingulum_1mm.nii.gz $FA_MASKED $FA_SKEL"
 
-$singularity_fsl "$CMD_MASK_FA"	
-$singularity_fsl "$CMD_PROJ_FA"
+$singularity_fsl $CMD_MASK_FA	
+$singularity_fsl $CMD_PROJ_FA
 
 # Mask individual preprocessed diffusion metrics maps with mean_FA_mask and project onto FA skeleton based on FA projection
 ###########################################################################################################################
@@ -150,25 +145,24 @@ for MOD in $(echo $MODALITIES); do
     echo ""
     echo $MOD
     echo ""
-        
+    
+    MOD_ERODED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_${MOD}.nii.gz
+    MOD_MASKED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-brain_${MOD}.nii.gz
+    MOD_SKEL=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+
     CMD_MASK="
         fslmaths \
             $MOD_ERODED \
             -mas $FA_MASK \
-            $MOD_MASKED;"
+            $MOD_MASKED"
 
     CMD_PROJ="
         tbss_skeleton \
             -i $FA_MEAN \
-            -p \
-                $thresh \
-                $SKEL_DIST \
-                /opt/$container_fsl/data/standard/data/standard/LowerCingulum_1mm \
-                $FA_MASKED \
-                $MOD_SKEL \
+            -p $thresh $SKEL_DIST $ENV_DIR/standard/LowerCingulum_1mm.nii.gz $FA_MASKED $MOD_SKEL \
             -a $MOD_MASKED"
         
-    $singularity_fsl "$CMD_MASK"
-    $singularity_fsl "$CMD_PROJ"
+    $singularity_fsl $CMD_MASK
+    $singularity_fsl $CMD_PROJ
 
 done

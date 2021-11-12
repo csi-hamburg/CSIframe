@@ -128,14 +128,14 @@ echo "##########################################################################
 echo "# Consider viewing mean_FA_skeleton to check whether the default or set threshold needs changing! #"
 echo "###################################################################################################"
 
-if [ -f $TBSS_DIR/code/thresh.txt]; then
+if [ -f $TBSS_DIR/code/thresh.txt ]; then
 
     thresh=`cat $TBSS_DIR/code/thresh.txt`
 
 else 
 
     thresh=0.2
-    echo $thres > $TBSS_DIR/code/thresh.txt
+    echo $thresh > $TBSS_DIR/code/thresh.txt
 	
 fi
 
@@ -145,7 +145,7 @@ echo ""
 
 SKELETON_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-meanFA_mask
 
-$singularity_fsl fslmaths $FA_SKELETON -thr $thresh -bin $SKELETON_MASK
+$singularity_fsl fslmaths $MEAN_FA_SKEL -thr $thresh -bin $SKELETON_MASK
 
 echo ""
 echo "Creating skeleton distancemap ..."
