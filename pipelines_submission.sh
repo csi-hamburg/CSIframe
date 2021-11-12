@@ -1,14 +1,13 @@
 #!/bin/sh
 
 ####################
-# submission script for distributed parallelism
-# subjects are submitted in batches depending on pipeline choice
+# Submission script for distributed parallelism
+# Subjects are submitted in batches depending on pipeline choice
 # arg1 - subject subset (if not provided all subjects will be processed)
-# e.g. srun pipelines_processing.sh bidsify 1 sub-test001 
+# e.g. bash pipelines_processing.sh sub-test001 
 ####################
 
-set -x
-
+echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
 echo "Is this an interactive session for testing purposes? (y/n)"
 read INTERACTIVE; export INTERACTIVE
 
@@ -22,15 +21,39 @@ export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
 
 # Read pipeline and session information in
+echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
 echo "Which pipeline do you want to execute?"
-echo "Please choose from: $(ls $CODE_DIR/pipelines)"
+echo "Please choose from: $(ls $CODE_DIR/pipelines | tr '\n' ' ')"
 read PIPELINE; export PIPELINE
 export PIPELINE_SUFFIX=""
 
+
+# Define session to process
+echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
+if [[ "aslprep fmriprep mriqc qsiprep smriprep" == *"$PIPELINE"* ]]; then
+	echo "aslprep, fmriprep, mriqc, qsiprep and smriprep do not require session input"
+else 
+	echo "Which session do you want to process?"
+	[ -d $BIDS_DIR ] && echo "Choose from: $(ls $DATA_DIR/raw_bids/sub-*/* -d | xargs -n 1 basename | sort | uniq | cut -d "-" -f 2 | tr '\n' ' ') $([[ "bidsify freesurfer" == *"$PIPELINE"* ]] && echo -e "all")"
+	read SESSION; export SESSION
+fi
+
+
 # Define subjects
-input_subject_array=($@)
-subj_array=(${input_subject_array[@]-$(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename)}) 
-subj_array_length=${#subj_array[@]}
+echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
+if [ $# != 0 ];then
+	input_subject_array=($@)
+    echo "Processing subjects ${input_subject_array[@]}"
+	sleep 1
+else
+	subj_array=(${input_subject_array[@]-$(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename)})
+	subj_array_length=${#subj_array[@]}
+	[ -d $BIDS_DIR ] && echo "No subjects as arguments supplied." && echo "Reading subjects from $BIDS_DIR" && sleep 1
+fi
+
+#input_subject_array=($@)
+#subj_array=(${input_subject_array[@]-$(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename)}) 
+#subj_array_length=${#subj_array[@]}
 
 # Empirical job config
 if [ $PIPELINE == "bidsify" ];then
@@ -39,20 +62,22 @@ if [ $PIPELINE == "bidsify" ];then
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="04:00:00"
 	partition_default="std"
-	at_once=
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
+	echo "Reading subjects from $DCM_DIR"
 	subj_array=(${input_subject_array[@]-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata -e README | xargs -n 1 basename)}) # subjects in data/dicoms
 	subj_array_length=${#subj_array[@]}
 
-	echo "What heuristic do you want to apply?"
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
+	echo "Which heuristic do you want to apply?"
 	echo "Choose from" $(ls $CODE_DIR/pipelines/bidsify/heudiconv_*.py | xargs -n 1 basename)
 	read HEURISTIC; export HEURISTIC
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Do you want to deface participants? (y/n)"
 	read MODIFIER; export MODIFIER
 
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
-
+	
 elif [ $PIPELINE == "qsiprep" ];then
 	
 	# Mind limitation by /scratch and memory capacity (23gb temporary files, 15gb max RAM usage)
@@ -60,12 +85,13 @@ elif [ $PIPELINE == "qsiprep" ];then
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="14:00:00"
 	partition_default="std" # ponder usage of gpu for eddy speed up
-	at_once=
-	
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
 	echo "What is the desired output resolution? e.g. '1.3'"
 	echo "Leave empty if you want to use default (2)"
 	read $OUTPUT_RESOLUTION; [ -z $OUTPUT_RESOLUTION ] && export OUTPUT_RESOLUTION=2
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "If you want to perform connectome reconstruction after preprocessing (i.e. qsiprep incl. qsirecon) please provide reconstruction pipeline (mrtrix_singleshell_ss3t, mrtrix_multishell_msmt)"
 	echo "Leave empty if you want to use default (mrtrix_singleshell_ss3t)"
 	read RECON; export RECON
@@ -74,6 +100,7 @@ elif [ $PIPELINE == "qsiprep" ];then
 		export RECON=mrtrix_singleshell_ss3t
 	fi
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Choose additional arguments you want to provide to qsiprep call; e.g. '--dwi-only'"
 	read MODIFIER; export MODIFIER
 
@@ -82,8 +109,8 @@ elif [ $PIPELINE == "smriprep" ];then
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="23:00:00"
 	partition_default="std"
-	at_once=
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Please enter specific templates if you want to use them."
 	echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym anat)"
 	echo "or infant templates (MNIPediatricAsym:cohort-1:res-native)"
@@ -101,11 +128,9 @@ elif [ $PIPELINE == "freesurfer" ];then
 	partition_default="big"
 	at_once=
 
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
-
 elif [ $PIPELINE == "mriqc" ];then
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Choose between participant and group level anaylsis (participant/group)." 
 	echo "Please make sure participant level is finished before running group level analysis."
 	read MRIQC_LEVEL; export MRIQC_LEVEL
@@ -115,22 +140,21 @@ elif [ $PIPELINE == "mriqc" ];then
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="24:00:00"
 		partition_default="std"
-		at_once=
 	elif [ $MRIQC_LEVEL == "group" ]; then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time_default="01:00:00"
 		partition_default="std"
-		at_once=
 	fi
 
 elif [ $PIPELINE == "fmriprep" ];then
+	
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="1-00:00:00"
 	partition_default="std"
-	at_once=
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Please enter specific templates if you want to use them."
 	echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym T1w)"
 	echo "or infant templates (MNIPediatricAsym:cohort-1:res-native)"
@@ -141,29 +165,24 @@ elif [ $PIPELINE == "fmriprep" ];then
 		export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym T1w"
 	fi
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '--anat-only'"
 	read MODIFIER; export MODIFIER
 	
 elif [ $PIPELINE == "xcpengine" ];then
+	
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="16:00:00"
 	partition_default="std"
-	at_once=
 
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
-
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Which xcpengine subanalysis do you want to use? (fc/struc)"
 	read MODIFIER; export MODIFIER
 
-	#echo "Pick design you want use"
-	#echo "Choose from $(ls $CODE_DIR/pipelines/xcpengine/*.dsn | xargs -n 1 basename)"
-	#read DESIGN; export DESIGN
-
-
 elif [ $PIPELINE == "freewater" ];then
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Which pipeline level do you want to perform? (core/2mni)"
 	echo "For default ('core') leave empty"
 	read FW_LEVEL; export FW_LEVEL
@@ -182,11 +201,9 @@ elif [ $PIPELINE == "freewater" ];then
 		partition_default="std"
 	fi
 
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
-
 elif [ $PIPELINE == "tbss" ];then
-	
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
 	echo "Which TBSS pipeline would you like to run? Choose between 'mni' and 'fixel'"
 	read TBSS_PIPELINE; export TBSS_PIPELINE
 	
@@ -195,6 +212,7 @@ elif [ $PIPELINE == "tbss" ];then
 		exit
 	fi
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Which part of the TBSS pipeline do you want to perform? (1/2/3/4)"
 	read TBSS_LEVEL; export TBSS_LEVEL
 	export PIPELINE_SUFFIX=_${TBSS_LEVEL}
@@ -222,6 +240,7 @@ elif [ $PIPELINE == "tbss" ];then
 	
 	elif [ $TBSS_LEVEL == 4 ]; then
 
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 		echo "Please specify list of subjects whose skeletons you want to merge."
 		echo "If you want to merge all subjects type 'all', otherwise choose from the following options:"
 		
@@ -233,15 +252,11 @@ elif [ $PIPELINE == "tbss" ];then
 		batch_time_default="6:00:00"
 		partition_default="std"
 	
-	
 	fi
-
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
 
 elif [ $PIPELINE == "fba" ];then
 
-
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
 	echo "Which FBA_LEVEL do you want to perform? (1/2/3/4/5)"
 	read FBA_LEVEL; export FBA_LEVEL
 	export PIPELINE_SUFFIX=_${FBA_LEVEL}
@@ -276,13 +291,9 @@ elif [ $PIPELINE == "fba" ];then
 		exit 0
 	fi
 
-
-
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
-
 elif [ $PIPELINE == "connectomics" ];then
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
 	echo "On which connectome flavor do you want to apply network analysis? (sc/fc)"
 	read MODIFIER; export MODIFIER
 
@@ -296,11 +307,9 @@ elif [ $PIPELINE == "connectomics" ];then
 	batch_time_default="1-00:00:00"
 	partition_default="std"
 
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
-
 elif [ $PIPELINE == "psmd" ];then
 	
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "On which level you like to run the PSMD pipeline? Choose between 'subject' and 'group'. Subject level needs to be run first."
 	read PSMD_LEVEL
 
@@ -319,19 +328,12 @@ elif [ $PIPELINE == "psmd" ];then
 	 	exit
 	 fi
 
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
-
 elif [ $PIPELINE == "obseg" ];then
 	
 	export SUBJS_PER_NODE=1
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="03:00:00"
 	partition_default="std"
-
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
-
 
 elif [ $PIPELINE == "cat12" ];then
 	
@@ -340,9 +342,6 @@ elif [ $PIPELINE == "cat12" ];then
 	batch_time_default="08:00:00"
 	partition_default="std"
 
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
-
 elif [ $PIPELINE == "wmh" ];then
 	
 	export SUBJS_PER_NODE=16
@@ -350,6 +349,7 @@ elif [ $PIPELINE == "wmh" ];then
 	batch_time_default="02:00:00"
 	partition_default="std"
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "which part of analysis you want to do? currently available: antsrnet / bianca / lga / lpa / samseg"
 	read ALGORITHM; export ALGORITHM
 
@@ -379,19 +379,15 @@ elif [ $PIPELINE == "wmh" ];then
 
 	echo "do you want to play the masking game? (y/n) | Caution: this may sound like fun, but is no fun at all."
 	read MASKINGGAME; export MASKINGGAME
-
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
 	
 elif [ $PIPELINE == "statistics" ];then
 
-	echo "Which session do you want to process? e.g. '1' 'all'"
-	read SESSION; export SESSION
-
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
 	echo "Which method do you want to perform? (cfe)"
 	read STAT_METHOD; export STAT_METHOD
 	export PIPELINE_SUFFIX=_${STAT_METHOD}
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
 	echo "Define hypothesis short (-> becomes name of subdirectory in data/statistics), e.g. 'cfe_group_comparison_postcovid_controls' or 'tfce_linear_relationship_fa_tmtb'"
 	read MODIFIER; export MODIFIER
 
@@ -408,11 +404,13 @@ else
 fi
 
 # Set batch time to allocate and partition
+echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
 echo "How much time do you want to allocate? Default is $(echo $batch_time_default)"
 echo "Leave empty to choose default"
 read batch_time
 [ -z $batch_time ] && batch_time=$batch_time_default
 
+echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
 echo "Which partition do you want to submit to? Default is $(echo $partition_default)"
 echo "Leave empty to choose default"
 read partition
@@ -424,6 +422,7 @@ SCRIPT_PATH=$CODE_DIR/$script_name
 
 # If subject array length < subjects per node -> match subjects per node to array length
 [ $subj_array_length -lt $SUBJS_PER_NODE ] && export SUBJS_PER_NODE=$subj_array_length
+echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 echo Submitting $subj_array_length subjects for $PIPELINE processing
 
 batch_amount=$(($subj_array_length / $SUBJS_PER_NODE))
