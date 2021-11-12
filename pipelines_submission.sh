@@ -249,18 +249,18 @@ elif [ $PIPELINE == "fba" ];then
 	if [ $FBA_LEVEL == 1 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="01-00:00:00"
-		partition="std"
+		batch_time="03-00:00:00"
+		partition="stl"
 	elif [ $FBA_LEVEL == 2 ];then
 		export SUBJS_PER_NODE=4
 		export ANALYSIS_LEVEL=subject
-		batch_time="12:00:00"
+		batch_time="24:00:00"
 		partition="std"
 	elif [ $FBA_LEVEL == 3 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time="03-00:00:00"
-		partition="big"
+		partition="stl"
 	elif [ $FBA_LEVEL == 4 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
@@ -269,8 +269,8 @@ elif [ $PIPELINE == "fba" ];then
 	elif [ $FBA_LEVEL == 5 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="01-00:00:00"
-		partition="std"
+		batch_time="03-00:00:00"
+		partition="stl"
 	elif [ -z $FBA_LEVEL ];then
 		echo "FBA level needs to be set"
 		exit 0
