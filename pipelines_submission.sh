@@ -37,7 +37,7 @@ if [ $PIPELINE == "bidsify" ];then
 	
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
-	batch_time="04:00:00"
+	batch_time_default="04:00:00"
 	partition="std"
 	at_once=
 	subj_array=(${input_subject_array[@]-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata -e README | xargs -n 1 basename)}) # subjects in data/dicoms
@@ -58,7 +58,7 @@ elif [ $PIPELINE == "qsiprep" ];then
 	# Mind limitation by /scratch and memory capacity (23gb temporary files, 15gb max RAM usage)
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
-	batch_time="14:00:00"
+	batch_time_default="14:00:00"
 	partition="std" # ponder usage of gpu for eddy speed up
 	at_once=
 	
@@ -80,7 +80,7 @@ elif [ $PIPELINE == "qsiprep" ];then
 elif [ $PIPELINE == "smriprep" ];then
 	export SUBJS_PER_NODE=8 
 	export ANALYSIS_LEVEL=subject
-	batch_time="23:00:00"
+	batch_time_default="23:00:00"
 	partition="std"
 	at_once=
 
@@ -97,7 +97,7 @@ elif [ $PIPELINE == "smriprep" ];then
 elif [ $PIPELINE == "freesurfer" ];then
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
-	batch_time="2-00:00:00"
+	batch_time_default="2-00:00:00"
 	partition="big"
 	at_once=
 
@@ -113,13 +113,13 @@ elif [ $PIPELINE == "mriqc" ];then
 	if [ $MRIQC_LEVEL == "participant" ]; then
 		export SUBJS_PER_NODE=4
 		export ANALYSIS_LEVEL=subject
-		batch_time="24:00:00"
+		batch_time_default="24:00:00"
 		partition="std"
 		at_once=
 	elif [ $MRIQC_LEVEL == "group" ]; then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="01:00:00"
+		batch_time_default="01:00:00"
 		partition="std"
 		at_once=
 	fi
@@ -127,7 +127,7 @@ elif [ $PIPELINE == "mriqc" ];then
 elif [ $PIPELINE == "fmriprep" ];then
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
-	batch_time="1-00:00:00"
+	batch_time_default="1-00:00:00"
 	partition="std"
 	at_once=
 
@@ -147,7 +147,7 @@ elif [ $PIPELINE == "fmriprep" ];then
 elif [ $PIPELINE == "xcpengine" ];then
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
-	batch_time="16:00:00"
+	batch_time_default="16:00:00"
 	partition="std"
 	at_once=
 
@@ -173,12 +173,12 @@ elif [ $PIPELINE == "freewater" ];then
 	if [ $FW_LEVEL == core ];then
 		export SUBJS_PER_NODE=4
 		export ANALYSIS_LEVEL=subject
-		batch_time="02:00:00"
+		batch_time_default="02:00:00"
 		partition="std"
 	elif [ $FW_LEVEL == 2mni ];then
 		export SUBJS_PER_NODE=8
 		export ANALYSIS_LEVEL=subject
-		batch_time="03:00:00"
+		batch_time_default="03:00:00"
 		partition="std"
 	fi
 
@@ -203,21 +203,21 @@ elif [ $PIPELINE == "tbss" ];then
 
 		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
-		batch_time="02:00:00"
+		batch_time_default="02:00:00"
 		partition="std"
 
 	elif [ $TBSS_LEVEL == 2 ]; then
 
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="02:00:00"
+		batch_time_default="02:00:00"
 		partition="std"
 
 	elif [ $TBSS_LEVEL == 3 ]; then
 
 		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
-		batch_time="02:00:00"
+		batch_time_default="02:00:00"
 		partition="std"
 	
 	elif [ $TBSS_LEVEL == 4 ]; then
@@ -230,7 +230,7 @@ elif [ $PIPELINE == "tbss" ];then
 
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="6:00:00"
+		batch_time_default="6:00:00"
 		partition="std"
 	
 	
@@ -249,27 +249,27 @@ elif [ $PIPELINE == "fba" ];then
 	if [ $FBA_LEVEL == 1 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="03-00:00:00"
+		batch_time_default="03-00:00:00"
 		partition="stl"
 	elif [ $FBA_LEVEL == 2 ];then
 		export SUBJS_PER_NODE=4
 		export ANALYSIS_LEVEL=subject
-		batch_time="24:00:00"
+		batch_time_default="24:00:00"
 		partition="std"
 	elif [ $FBA_LEVEL == 3 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="03-00:00:00"
+		batch_time_default="03-00:00:00"
 		partition="stl"
 	elif [ $FBA_LEVEL == 4 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="07-00:00:00"
+		batch_time_default="07-00:00:00"
 		partition="big"
 	elif [ $FBA_LEVEL == 5 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="03-00:00:00"
+		batch_time_default="03-00:00:00"
 		partition="stl"
 	elif [ -z $FBA_LEVEL ];then
 		echo "FBA level needs to be set"
@@ -293,7 +293,7 @@ elif [ $PIPELINE == "connectomics" ];then
 
 	export SUBJS_PER_NODE=$subj_array_length
 	export ANALYSIS_LEVEL=group
-	batch_time="1-00:00:00"
+	batch_time_default="1-00:00:00"
 	partition="std"
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
@@ -307,12 +307,12 @@ elif [ $PIPELINE == "psmd" ];then
 	if [ $PSMD_LEVEL == "subject" ]; then
 		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
-		batch_time="03:00:00"
+		batch_time_default="03:00:00"
 		partition="std"
 	elif [ $PSMD_LEVEL == "group" ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="00:30:00"
+		batch_time_default="00:30:00"
 		partition="std"
 	else
 	 	echo "$PSMD_LEVEL for $PIPELINE pipeline not supported."
@@ -326,7 +326,7 @@ elif [ $PIPELINE == "obseg" ];then
 	
 	export SUBJS_PER_NODE=1
 	export ANALYSIS_LEVEL=subject
-	batch_time="03:00:00"
+	batch_time_default="03:00:00"
 	partition="std"
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
@@ -337,7 +337,7 @@ elif [ $PIPELINE == "cat12" ];then
 	
 	export SUBJS_PER_NODE=8
 	export ANALYSIS_LEVEL=subject
-	batch_time="08:00:00"
+	batch_time_default="08:00:00"
 	partition="std"
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
@@ -347,7 +347,7 @@ elif [ $PIPELINE == "wmh" ];then
 	
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
-	batch_time="02:00:00"
+	batch_time_default="02:00:00"
 	partition="std"
 
 	echo "which part of analysis you want to do? currently available: antsrnet / bianca / lga / lpa / samseg"
@@ -355,7 +355,7 @@ elif [ $PIPELINE == "wmh" ];then
 
 	if [ $ALGORITHM == "samseg" ]; then
 
-		batch_time="04:00:00"
+		batch_time_default="04:00:00"
 
 		echo "samseg does not recommend any bias-correction. Automatically set to NO."
 		BIASCORR=n; export BIASCORR
@@ -398,7 +398,7 @@ elif [ $PIPELINE == "statistics" ];then
 	if [ $STAT_METHOD == cfe ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time="04:00:00"
+		batch_time_default="04:00:00"
 		partition="std"
 	fi
 else
@@ -406,6 +406,11 @@ else
 	echo "Pipeline $PIPELINE not supported"
 	exit
 fi
+
+echo "How much time do you want to allocate? Default is $(echo $batch_time)"
+echo "Leave empty to choose default"
+read batch_time
+[ -z $batch_time ] && batch_time = $batch_time_default
 
 # Define batch script
 script_name="pipelines_parallelization.sh"
