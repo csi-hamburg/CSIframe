@@ -265,8 +265,7 @@ elif [ $PIPELINE == missing_outputs ];then
 		echo "Finished writing to $out_file"
 
 	elif [ $file_or_subdir == in_subdir ];then
-		echo "Please provide search term you are looking for; e.g. 'dwi.nii.gz'"
-		#echo "Please provide file or directory name you are looking for (search depth of 1, i.e. sub-xyz/?)"
+		echo "Please provide search term pattern you want to match; e.g. 'dwi.nii.gz' will match everything with that string."
 		read search
 
 		for ds in ${subds[@]};do
