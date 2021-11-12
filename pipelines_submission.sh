@@ -38,7 +38,7 @@ if [ $PIPELINE == "bidsify" ];then
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="04:00:00"
-	partition="std"
+	partition_default="std"
 	at_once=
 	subj_array=(${input_subject_array[@]-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata -e README | xargs -n 1 basename)}) # subjects in data/dicoms
 	subj_array_length=${#subj_array[@]}
@@ -59,7 +59,7 @@ elif [ $PIPELINE == "qsiprep" ];then
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="14:00:00"
-	partition="std" # ponder usage of gpu for eddy speed up
+	partition_default="std" # ponder usage of gpu for eddy speed up
 	at_once=
 	
 	echo "What is the desired output resolution? e.g. '1.3'"
@@ -81,7 +81,7 @@ elif [ $PIPELINE == "smriprep" ];then
 	export SUBJS_PER_NODE=8 
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="23:00:00"
-	partition="std"
+	partition_default="std"
 	at_once=
 
 	echo "Please enter specific templates if you want to use them."
@@ -98,7 +98,7 @@ elif [ $PIPELINE == "freesurfer" ];then
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="2-00:00:00"
-	partition="big"
+	partition_default="big"
 	at_once=
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
@@ -114,13 +114,13 @@ elif [ $PIPELINE == "mriqc" ];then
 		export SUBJS_PER_NODE=4
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="24:00:00"
-		partition="std"
+		partition_default="std"
 		at_once=
 	elif [ $MRIQC_LEVEL == "group" ]; then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time_default="01:00:00"
-		partition="std"
+		partition_default="std"
 		at_once=
 	fi
 
@@ -128,7 +128,7 @@ elif [ $PIPELINE == "fmriprep" ];then
 	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="1-00:00:00"
-	partition="std"
+	partition_default="std"
 	at_once=
 
 	echo "Please enter specific templates if you want to use them."
@@ -148,7 +148,7 @@ elif [ $PIPELINE == "xcpengine" ];then
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="16:00:00"
-	partition="std"
+	partition_default="std"
 	at_once=
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
@@ -174,12 +174,12 @@ elif [ $PIPELINE == "freewater" ];then
 		export SUBJS_PER_NODE=4
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="02:00:00"
-		partition="std"
+		partition_default="std"
 	elif [ $FW_LEVEL == 2mni ];then
 		export SUBJS_PER_NODE=8
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="03:00:00"
-		partition="std"
+		partition_default="std"
 	fi
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
@@ -204,21 +204,21 @@ elif [ $PIPELINE == "tbss" ];then
 		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="02:00:00"
-		partition="std"
+		partition_default="std"
 
 	elif [ $TBSS_LEVEL == 2 ]; then
 
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time_default="02:00:00"
-		partition="std"
+		partition_default="std"
 
 	elif [ $TBSS_LEVEL == 3 ]; then
 
 		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="02:00:00"
-		partition="std"
+		partition_default="std"
 	
 	elif [ $TBSS_LEVEL == 4 ]; then
 
@@ -231,7 +231,7 @@ elif [ $PIPELINE == "tbss" ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time_default="6:00:00"
-		partition="std"
+		partition_default="std"
 	
 	
 	fi
@@ -250,27 +250,27 @@ elif [ $PIPELINE == "fba" ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time_default="03-00:00:00"
-		partition="stl"
+		partition_default="stl"
 	elif [ $FBA_LEVEL == 2 ];then
 		export SUBJS_PER_NODE=4
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="24:00:00"
-		partition="std"
+		partition_default="std"
 	elif [ $FBA_LEVEL == 3 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time_default="03-00:00:00"
-		partition="stl"
+		partition_default="stl"
 	elif [ $FBA_LEVEL == 4 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time_default="07-00:00:00"
-		partition="big"
+		partition_default="big"
 	elif [ $FBA_LEVEL == 5 ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time_default="03-00:00:00"
-		partition="stl"
+		partition_default="stl"
 	elif [ -z $FBA_LEVEL ];then
 		echo "FBA level needs to be set"
 		exit 0
@@ -294,7 +294,7 @@ elif [ $PIPELINE == "connectomics" ];then
 	export SUBJS_PER_NODE=$subj_array_length
 	export ANALYSIS_LEVEL=group
 	batch_time_default="1-00:00:00"
-	partition="std"
+	partition_default="std"
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
@@ -308,12 +308,12 @@ elif [ $PIPELINE == "psmd" ];then
 		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="03:00:00"
-		partition="std"
+		partition_default="std"
 	elif [ $PSMD_LEVEL == "group" ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time_default="00:30:00"
-		partition="std"
+		partition_default="std"
 	else
 	 	echo "$PSMD_LEVEL for $PIPELINE pipeline not supported."
 	 	exit
@@ -327,7 +327,7 @@ elif [ $PIPELINE == "obseg" ];then
 	export SUBJS_PER_NODE=1
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="03:00:00"
-	partition="std"
+	partition_default="std"
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
@@ -338,7 +338,7 @@ elif [ $PIPELINE == "cat12" ];then
 	export SUBJS_PER_NODE=8
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="08:00:00"
-	partition="std"
+	partition_default="std"
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
@@ -348,7 +348,7 @@ elif [ $PIPELINE == "wmh" ];then
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="02:00:00"
-	partition="std"
+	partition_default="std"
 
 	echo "which part of analysis you want to do? currently available: antsrnet / bianca / lga / lpa / samseg"
 	read ALGORITHM; export ALGORITHM
@@ -399,7 +399,7 @@ elif [ $PIPELINE == "statistics" ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time_default="04:00:00"
-		partition="std"
+		partition_default="std"
 	fi
 else
 	
@@ -407,10 +407,16 @@ else
 	exit
 fi
 
-echo "How much time do you want to allocate? Default is $(echo $batch_time)"
+# Set batch time to allocate and partition
+echo "How much time do you want to allocate? Default is $(echo $batch_time_default)"
 echo "Leave empty to choose default"
 read batch_time
-[ -z $batch_time ] && batch_time = $batch_time_default
+[ -z $batch_time ] && batch_time=$batch_time_default
+
+echo "Which partition do you want to submit to? Default is $(echo $partition_default)"
+echo "Leave empty to choose default"
+read partition
+[ -z $partition ] && partition=$partition_default
 
 # Define batch script
 script_name="pipelines_parallelization.sh"
