@@ -88,11 +88,9 @@ elif [ $PIPELINE == "qsiprep" ];then
 	read $OUTPUT_RESOLUTION; [ -z $OUTPUT_RESOLUTION ] && export OUTPUT_RESOLUTION=2
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
-	echo "If you want to perform connectome reconstruction after preprocessing (i.e. qsiprep incl. qsirecon) please provide reconstruction pipeline (mrtrix_singleshell_ss3t, mrtrix_multishell_msmt)"
-	echo "Leave empty if you want to use default (mrtrix_singleshell_ss3t)"
+	echo "Which reconstruction pipeline do you want to apply after preprocessing? (mrtrix_singleshell_ss3t, mrtrix_multishell_msmt)"
+	echo "Leave empty if you want to use none"
 	read RECON; export RECON
-
-	[ -z $RECON ] && export RECON=mrtrix_singleshell_ss3t
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Choose additional arguments you want to provide to qsiprep call; e.g. '--dwi-only'"
