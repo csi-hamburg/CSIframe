@@ -31,7 +31,7 @@ FBA_DIR=$DATA_DIR/fba
 FBA_GROUP_DIR=$FBA_DIR/derivatives; [ ! -d $FBA_GROUP_DIR ] && mkdir -p $FBA_GROUP_DIR
 TEMPLATE_SUBJECTS_TXT=$FBA_DIR/sourcedata/template_subjects.txt
 TEMPLATE_RANDOM_SUBJECTS_TXT=$FBA_DIR/sourcedata/random_template_subjects.txt
-export SINGULARITYENV_MRTRIX_TMPFILE_DIR=$TMP_DIR
+export SINGULARITYENV_MRTRIX_TMPFILE_DIR=/tmp
 
 
 container_mrtrix3=mrtrix3-3.0.2      
@@ -92,8 +92,8 @@ CMD_MRTRANSFORM="mrtransform $DWI_MASK_UPSAMPLED -warp $SUB2TEMP_WARP -interp ne
 
 # Execution
 #########################
-$parallel "$singularity_mrtrix3tissue $CMD_MRREGISTER" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3tissue $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
+#$parallel "$singularity_mrtrix3tissue $CMD_MRREGISTER" ::: ${input_subject_array[@]}
+#$parallel "$singularity_mrtrix3tissue $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
 
 
 #########################
@@ -107,12 +107,10 @@ FOD_TEMPLATE="$FBA_GROUP_DIR/template/wmfod_template.mif"
 # Output
 #########################
 TEMPLATE_MASK="$FBA_GROUP_DIR/template/wmfod_template_mask.mif"
-TRACTOGRAM="$FBA_GROUP_DIR/template/template_tractogram_20_million.tck"
-TRACTOGRAM_SIFT="$FBA_GROUP_DIR/template/template_tractogram_20_million_sift.tck"
 
 # Command
 #########################
-CMD_TEMPLATEMASK="mrmath $FBA_DIR/*/ses-$SESSION/dwi/*_ses-${SESSION}_space-fodtemplate_desc-brain_mask.nii.gz min $TEMPLATE_MASK -datatype bit -force"
+#CMD_TEMPLATEMASK="mrmath $FBA_DIR/*/ses-$SESSION/dwi/*_ses-${SESSION}_space-fodtemplate_desc-brain_mask.nii.gz min $TEMPLATE_MASK -datatype bit -force"
 
 # Execution
 #########################
@@ -191,8 +189,8 @@ CMD_TCKSIFT="tcksift $TRACTOGRAM $FOD_TEMPLATE $TRACTOGRAM_SIFT -term_number 200
 
 # Execution
 #########################
-$singularity_mrtrix3 \
-/bin/bash -c "$CMD_TCKGEN; $CMD_TCKSIFT"
+#$singularity_mrtrix3 \
+#/bin/bash -c "$CMD_TCKGEN; $CMD_TCKSIFT"
 
 
 #########################
