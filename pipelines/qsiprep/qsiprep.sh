@@ -38,7 +38,7 @@ singularity_qsiprep="singularity run --cleanenv --userns \
 [ -d $TMP_OUT ] && mkdir -p $TMP_OUT/qsiprep $TMP_OUT/qsirecon
 
 # $MRTRIX_TMPFILE_DIR should be big and writable
-export MRTRIX_TMPFILE_DIR=$TMP_DIR
+export MRTRIX_TMPFILE_DIR=/tmp
 
 # Pipeline execution
 ##################################
