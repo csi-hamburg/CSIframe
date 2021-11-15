@@ -9,6 +9,7 @@ set -x
 #       - wmh (WMH masks and FLAIR in MNI)                                                                        #
 #   [optional]                                                                                                    #
 #       - freewater (FA, MD, FW)                                                                                  #
+#       - fba (FD, FC)                                                                                            #
 #       - fmriprep & xcpengine (ReHo)                                                                             #
 #       - aslprep (CBF, CBV)                                                                                      #
 #   [container]                                                                                                   #
