@@ -421,18 +421,20 @@ else
 	exit
 fi
 
-# Set batch time to allocate and partition
-echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
-echo "How much time do you want to allocate? Default is $(echo $batch_time_default)"
-echo "Leave empty to choose default"
-read batch_time
-[ -z $batch_time ] && batch_time=$batch_time_default
+if [ $INTERACTIVE != y ];then
+	# Set batch time to allocate and partition
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
+	echo "How much time do you want to allocate? Default is $(echo $batch_time_default)"
+	echo "Leave empty to choose default"
+	read batch_time
+	[ -z $batch_time ] && batch_time=$batch_time_default
 
-echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
-echo "Which partition do you want to submit to? Default is $(echo $partition_default)"
-echo "Leave empty to choose default"
-read partition
-[ -z $partition ] && partition=$partition_default
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
+	echo "Which partition do you want to submit to? Default is $(echo $partition_default)"
+	echo "Leave empty to choose default"
+	read partition
+	[ -z $partition ] && partition=$partition_default
+fi
 
 # Define batch script
 script_name="02_pipelines_batch.sh"

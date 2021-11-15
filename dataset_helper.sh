@@ -303,7 +303,7 @@ elif [ $PIPELINE == if_in_s3 ];then
 	elif [ $operation == count ];then
 		aws s3 --endpoint-url https://s3-uhh.lzs.uni-hamburg.de ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | wc -l
 	elif [ $operation == remove ];then
-		aws s3 --endpoint-url https://s3-uhh.lzs.uni-hamburg.de ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | xargs -n 4 rm
+		aws s3 --endpoint-url https://s3-uhh.lzs.uni-hamburg.de ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | xargs -n 1 rm
 	else echo $operation not provided. Please choose from list/count/remove
 	fi
 	popd
