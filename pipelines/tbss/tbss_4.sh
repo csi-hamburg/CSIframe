@@ -280,8 +280,11 @@ if [ $TBSS_PIPELINE == "mni" ]; then
                 let index=$i+1
                 ROI=`sed -n ${index}p $CODE_DIR/pipelines/tbss/JHU-ICBM-LUT.txt | awk '{print $2}'`
 
+                # Input skeleton
+                MOD_SKEL=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+
                 # Output skeleton (masked by ROI)
-                MOD_SKEL_ROI=$TBSS_DIR/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-JHU_label-${ROI}_${MOD}.nii.gz
+                MOD_SKEL_ROI=$TBSS_DIR/$sub/ses-${SESSION}/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-JHU_label-${ROI}_${MOD}.nii.gz
 
                 CMD_ROI="fslmaths \
                             /opt/$container_fsl/data/atlases/JHU/JHU-ICBM-FA-1mm.nii.gz \
@@ -293,7 +296,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
                 CMD_ROI_MEAN="fslstats $MOD_SKEL_ROI -M"
 
                 $singularity_fsl "$CMD_ROI"
-                mean_roi=`$singularity_fsl "$CMD_ROI_MEAN"`
+                mean_roi=`$singularity_fsl "$CMD_ROI_MEAN" | tail -n 1`
                 echo -e "$mean_roi," >> $ROI_CSV
             
             done
@@ -301,7 +304,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
             # Calculate mean across entire skeleton
 
             CMD_MEAN="fslstats $MOD_SKEL -M"
-            mean=`$singularity_fsl "$CMD_MEAN"`
+            mean=`$singularity_fsl "$CMD_MEAN" | tail -n 1`
             echo -e "$mean," >> $ROI_CSV
 
         done
@@ -314,6 +317,12 @@ if [ $TBSS_PIPELINE == "mni" ]; then
 
             let index=$i+1
             ROI=`sed -n ${index}p $CODE_DIR/pipelines/tbss/JHU-ICBM-LUT.txt | awk '{print $2}'`
+            
+            # Input skeleton
+            MOD_SKEL=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+            
+            # Output skeleton (masked by ROI)
+            MOD_SKEL_ROI=$TBSS_DIR/$sub/ses-${SESSION}/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-JHU_label-${ROI}_${MOD}.nii.gz
 
             CMD_ROI="fslmaths \
                         /opt/$container_fsl/data/atlases/JHU/JHU-ICBM-FA-1mm.nii.gz \
@@ -325,7 +334,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
             CMD_ROI_MEAN="fslstats $MOD_SKEL_ROI -M"
 
             $singularity_fsl "$CMD_ROI"
-            mean_roi=`$singularity_fsl "$CMD_ROI_MEAN"`
+            mean_roi=`$singularity_fsl "$CMD_ROI_MEAN" | tail -n 1`
             echo -e "$mean_roi," >> $ROI_CSV
 
         done
@@ -333,7 +342,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
         # Calculate mean across entire skeleton
 
         CMD_MEAN="fslstats $MOD_SKEL -M"
-        mean=`$singularity_fsl "$CMD_MEAN"`
+        mean=`$singularity_fsl "$CMD_MEAN" | tail -n 1`
         echo "$mean" >> $ROI_CSV
 
     done
@@ -366,8 +375,11 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
 
         for MOD in $(echo $MODALITIES); do
 
+            # Input skeleton
+            MOD_SKEL=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+            
             CMD_MEAN="fslstats $MOD_SKEL -M"
-            mean=`$singularity_fsl "$CMD_MEAN"`
+            mean=`$singularity_fsl "$CMD_MEAN" | tail -n 1`
             echo -n "$mean," >> $MEAN_CSV
         
         done
@@ -376,8 +388,11 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
 
         MOD="desc-voxelmap_complexity"
 
+        # Input skeleton
+        MOD_SKEL=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+
         CMD_MEAN="fslstats $MOD_SKEL -M"
-            mean=`$singularity_fsl "$CMD_MEAN"`
+            mean=`$singularity_fsl "$CMD_MEAN" | tail -n 1`
             echo "$mean" >> $MEAN_CSV
     
     done
@@ -404,7 +419,7 @@ if [ $TBSS_PIPELINE == "fixel"]; then
 
         HISTFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_histogram.png
         BOXFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_boxplot.png
-        ZSCORE=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_label-JHU_${MOD}_zscores.csv
+        ZSCORE=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean_zscores.csv
         
         # Command 
 
@@ -465,7 +480,7 @@ elif [ $TBSS_PIPELINE == "mni"]; then
 
         HISTFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_histogram.png
         BOXFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_boxplot.png
-        ZSCORE=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_label-JHU_${MOD}_zscores.csv
+        ZSCORE=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_label-JHU_desc-mean_zscores.csv
 
         # Command
 
