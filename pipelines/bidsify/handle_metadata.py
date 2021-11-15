@@ -2,6 +2,7 @@ import os
 import glob
 import json
 import sys
+import pandas as pd
 
 subject=sys.argv[1]
 if not subject.startswith('sub-'): subject = 'sub-' + subject
