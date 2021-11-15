@@ -206,24 +206,24 @@ done
 # Create overlay of skeleton and respective modality for each subject for QC purposes #
 #######################################################################################
 
-for sub in $(cat $CASELIST); do
+# for sub in $(cat $CASELIST); do
     
-    for MOD in $(echo $MODALITIES); do
+#     for MOD in $(echo $MODALITIES); do
 
-        # Input for overlay creation and ROI analyses
+#         # Input for overlay creation and ROI analyses
 
-        MOD_ERODED=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-eroded_${MOD}.nii.gz
-        MOD_SKEL=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+#         MOD_ERODED=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-eroded_${MOD}.nii.gz
+#         MOD_SKEL=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
 
-        # Output
+#         # Output
 
-        OVERLAY=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}_overlay.png
+#         OVERLAY=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}_overlay.png
 
-        $singularity_miniconda python $PIPELINE_DIR/overlay.py $MOD_ERODED $MOD_SKEL $OVERLAY
+#         $singularity_miniconda python $PIPELINE_DIR/overlay.py $MOD_ERODED $MOD_SKEL $OVERLAY
 
-    done
+#     done
 
-done
+# done
     
 #################
 # Read out ROIs #

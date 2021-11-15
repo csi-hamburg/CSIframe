@@ -101,7 +101,6 @@ else
       --overwrite \
       --grouping all \
       --outdir /bids"
-
       singularity run --cleanenv --userns \
       --home $PWD \
       -B $CODE_DIR:/code \
