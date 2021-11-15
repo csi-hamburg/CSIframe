@@ -63,21 +63,19 @@ def merge_two_dicts(x, y):
     z.update(y)    # modifies z with y's keys and values & returns None
     return z
 
-# read the json file with asl, deltam and Mzeroscan metadata extra 
+# read the json file with asl and Mzeroscan metadata extra 
 jsontemp=readjson(jsontemp)
 
 #change to subjectid directory 
 os.chdir(bids_dir+'/'+subject_id)
 
-# get the asl,deltam and mzeroscan 
+# get the asl and mzeroscan 
 asl=glob.glob(session_id+'/perf/'+subject_id+'*_asl.nii.gz')
 asl_j=glob.glob(session_id+'/perf/'+subject_id+'*_asl.json')
-dm=glob.glob(session_id+'/perf/'+subject_id+'*_deltam.nii.gz')
-dm_j=glob.glob(session_id+'/perf/'+subject_id+'*_deltam.json')
 m0=glob.glob(session_id+'/perf/'+subject_id+'*_m0scan.nii.gz')
 m0_j=glob.glob(session_id+'/perf/'+subject_id+'*_m0scan.json')
 
-#edit json file and write tsv for asl and deltam 
+# edit json file and write tsv for asl
 for i in range(0,len(asl)):
     print(asl[i])
     asl_nj=merge_two_dicts(readjson(asl_j[i]),jsontemp['asl'])
@@ -86,21 +84,12 @@ for i in range(0,len(asl)):
     df=pd.DataFrame(asllist)
     df.to_csv(os.path.splitext(asl_j[i])[0]+'context.tsv',index=False,sep='\t',header=False)
 
-for i in range(0,len(dm)):
-    dm_nj=merge_two_dicts(readjson(dm_j[i]),jsontemp['deltam'])
-    writejson(dm_nj,dm_j[i])
-
 # create "IntendedFor" dictionary for *m0scan.json
 intfor = {"IntendedFor": f"{session_id}/perf/{subject_id}_{session_id}_asl.nii.gz"}
 
+# edit json file and write tsv for m0
 for i in range(0,len(m0)):
     m0_nj=merge_two_dicts(readjson(m0_j[i]),jsontemp['m0scan'])
     writejson(m0_nj,m0_j[i])
     m0_nj2=merge_two_dicts(readjson(m0_j[i]),intfor)
     writejson(m0_nj2,m0_j[i])
-
-#mzero edit json
-
-allasl=asl+dm
-allasl_j=asl_j+dm_j
-print(allasl_j)

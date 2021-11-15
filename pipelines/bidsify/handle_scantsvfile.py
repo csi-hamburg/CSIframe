@@ -1,32 +1,55 @@
 import pandas as pd
 import glob
+import os
+import sys
 import random
 import string
 import numpy as np
 from numpy.random import randn
 np.random.seed(42)
 
-subject=sys.argv[1]
+subject = sys.argv[1]
+session = sys.argv[2]
+bids_dir = sys.argv[3]
+
 if not subject.startswith('sub-'): subject = 'sub-' + subject
 
-# Make list of the scans.tsv files to edit
-print("Found sessions:", glob.glob(f"data/raw_bids/{subject}/ses-*"))
-tsv_path=glob.glob(f'data/raw_bids/{subject}/ses-*/*_scans.tsv')
-print(f'Editing scans.tsv metadata of {subject}:', tsv_path)
+# Define path of scans.tsv file to edit
 
-df = pd.read_csv(tsv_path[0], sep = '\t')
+tsv_path = f'{bids_dir}/{subject}/ses-{session}/{subject}_ses-{session}_scans.tsv'
+print(f'Editing scans.tsv metadata of {subject} for ses-{session}:', tsv_path)
 
-# append to each tsv file ASL-Nifti file
-df2 = pd.DataFrame([[f'perf/{subject}_ses-1_asl.nii.gz', "NaN", "NaN", 'NaN']], columns = df.columns)
+# Read in scans.tsv
 
-if not (df['filename'] == f'perf/{subject}_ses-1_asl.nii.gz').any():
-    df= df.append(df2)
+df = pd.read_csv(tsv_path, sep = '\t')
 
-# For each tsv substitute contents of problematic metadata fields with new data
+# Substitute contents of problematic metadata fields with new data
+
 df[['acq_time','operator']]="NaN"
+
 def enter_random(x):
     y=''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
     return y
-df['randstr']=df['randstr'].apply(enter_random)
 
-df.to_csv(tsv_path[0], sep='\t', index=False)
+df['randstr'] = df['randstr'].apply(enter_random)
+
+# Check if ASL data is present and update tsv file accordingly
+
+if os.path.exists(f'{bids_dir}/{subject}/ses-{session}/perf/{subject}_ses-{session}_asl.nii.gz'):
+    
+    df_append = pd.DataFrame([[f'perf/{subject}_ses-{session}_asl.nii.gz', "NaN", "NaN", 'NaN']], columns = df.columns)
+    
+    if not (df['filename'] == f'perf/{subject}_ses-{session}_asl.nii.gz').any():
+        df = df.append(df_append)
+
+    drop_control = df[df['filename'] == f'perf/{subject}_ses-{session}_desc-control_asl.nii.gz'].index
+    df.drop(axis = 0, index = drop_control, inplace = True)
+
+    drop_label = df[df['filename'] == f'perf/{subject}_ses-{session}_desc-label_asl.nii.gz'].index
+    df.drop(axis = 0, index = drop_control, inplace = True)
+
+
+
+# Write updated scans.tsv
+
+df.to_csv(tsv_path, sep='\t', index=False)
