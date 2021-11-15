@@ -63,13 +63,13 @@ def merge_two_dicts(x, y):
     z.update(y)    # modifies z with y's keys and values & returns None
     return z
 
-# read the json file with asl, deltam and Mzeroscan metadata extra 
+# read the json file with asl and Mzeroscan metadata extra 
 jsontemp=readjson(jsontemp)
 
 #change to subjectid directory 
 os.chdir(bids_dir+'/'+subject_id)
 
-# get the asl,deltam and mzeroscan 
+# get the asl and mzeroscan 
 asl=glob.glob(session_id+'/perf/'+subject_id+'*_asl.nii.gz')
 asl_j=glob.glob(session_id+'/perf/'+subject_id+'*_asl.json')
 m0=glob.glob(session_id+'/perf/'+subject_id+'*_m0scan.nii.gz')
