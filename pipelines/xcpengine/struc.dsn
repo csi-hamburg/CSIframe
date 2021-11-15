@@ -34,7 +34,7 @@
 ###################################################################
 
 analysis=struc
-design=code/pipelines/xcpengine/struc.dsn
+design=/work/fatx405/projects/CSI_TEST/code/pipelines/xcpengine/struc.dsn
 sequence=anatomical
 standard=MNI%1x1x1
 

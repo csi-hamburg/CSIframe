@@ -145,30 +145,135 @@ $singularity $FSL_CONTAINER \
 
 
 ###############################################################################################################################################################
-##### STEP 4: REGSITER FLAIR IN T1 & RUN ANTSRNET
+##### STEP 4: RUN LESION SEGMENTATION TOOLBOX
 ###############################################################################################################################################################
-# Define inputs
-FLAIR=data/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_FLAIR.nii.gz
-T1=data/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-preproc_T1w.nii.gz
-T1_MASK=data/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-brain_mask.nii.gz
+module load matlab/2019b
+###############################################################################################################################################################
 
+# Define inputs
+T1=data/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-preproc_T1w.nii.gz
+FLAIR=data/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_FLAIR.nii.gz
 
 # Define outputs
-FLAIR_IN_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_FLAIR.nii.gz
-FLAIR_TO_T1_WARP=$OUT_DIR/${1}_ses-${SESSION}_from-FLAIR_to-T1_mode-image_xfm.txt
-FLAIR_BIASCORR=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-biascorr_FLAIR.nii.gz
-FLAIR_BRAIN=data/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_space-T1_desc-brain_FLAIR.nii.gz
-
+T1_nii_name=${1}_ses-${SESSION}_desc-preproc_T1w.nii
+T1_nii=$OUT_DIR/$T1_nii_name
+FLAIR_nii_name=${1}_ses-${SESSION}_FLAIR.nii
+FLAIR_nii=$OUT_DIR/$FLAIR_nii_name
 
 # Define commands
-CMD_FLAIR_TO_T1="flirt -in $FLAIR -ref $T1 -omat $FLAIR_TO_T1_WARP -out $FLAIR_IN_T1 -v"
-CMD_BIASCORR_FLAIR="N4BiasFieldCorrection -d 3 -i $FLAIR_IN_T1 -x $T1_MASK_IN_FLAIR -o $FLAIR_BIASCORR --verbose 1"
-CMD_MASK_FLAIR="flsmaths $FLAIR -mul $T1_MASK $FLAIR_BRAIN"
+CMD_convert_T1="mri_convert $T1 $T1_nii"
+CMD_convert_FLAIR="mri_convert $FLAIR $FLAIR_nii"
 
-CMD_ANTSRNET="R -e '(sysuMediaWmhSegmentation())'"
+# Execute
+$singularity $FREESURFER_CONTAINER \
+/bin/bash -c "$CMD_convert_T1; $CMD_convert_FLAIR"
 
-# Execute 
 
+if [ $ALGORITHM == "lga" ]; then
+
+    # ps_LST_lga   Lesion segmentation by a lesion growth algorithm (LGA)
+    # Part of the LST toolbox, www.statistical-modelling.de/lst.html
+    # 
+    # ps_LST_lga Lesion segmentation by the LGA requires a T1 and a FLAIR 
+    # image. Furthermore, the user has to specify an initial threshold
+    # (kappa). See Schmidt et al. (2012) for details.
+    # 
+    # This routine produces lesion probability maps (ples...), coregistered
+    # bias corrected versions of the FLAIR inputs, a .mat-file with
+    # information about the segmentation that is needed for a re-run of the 
+    # algorithm, and a HTML report along with a folder if this option has 
+    # been chosen desired.
+    # 
+    # ps_LST_lga asks the user for the input images (T1 and FLAIR) and sets
+    # kappa to its default value (0.3). MRF parameter is set to 1 and, number 
+    # of maximum iterations are 50 and a HTML report is produced.
+    # 
+    # ps_LST_lga(Vt1, Vf2, kappa, phi, maxiter, html) performs lesion 
+    # segmentation for the image volumes given in Vt1 and Vf2. Both must be 
+    # characters like a call from from spm_select. Initial thresholds are 
+    # colectedInitial in kappa, MRF parameter in phi, number of maximum 
+    # iterations in maxiter and a dummy for the HTML report in html. If the
+    # last four arguments are missing they are replaced by their default
+    # values, see above.
+    # 
+    # ps_LST_lga(job) Same as above but with job being a harvested job data
+    # structure (see matlabbatch help).
+    #
+    # References
+    # P. Schmidt, Gaser C., Arsic M., Buck D., F�rschler A., Berthele A., 
+    # Hoshi M., Ilg R., Schmid V.J., Zimmer C., Hemmer B., and M�hlau M. An 
+    # automated tool for detec- tion of FLAIR-hyperintense white-matter 
+    # lesions in Multiple Sclerosis. NeuroImage, 59:3774?3783, 2012.
+
+    # set an initial threshold for WMH segmentation
+    
+    # if not specified differently, following options of LGA algoritm are set: a MRT parameter in phi (default 1), the number of maximum iterations in maxiter (default 50) and HTML report (default yes).
+    # ps_LST_lga(Vt1, Vf2, kappa, phi, maxiter, html)
+
+    ###############################################################################################################################################################
+    # Outputs generated:
+        # lesion probability maps (ples...) in T1
+        # coregistered bias corrected version of the FLAIR inputs
+        # a .mat-file with information about the segmentation that is needed for a re-run of the algorithm 
+        # a HTML report along with a folder if this option has been chosen desired
+    ###############################################################################################################################################################
+
+    kappa=0.15
+
+    # Execute 
+    matlab -nosplash -nodesktop -nojvm -batch \
+    "addpath(genpath('$ENV_DIR/spm12')); ps_LST_lga('/work/fatx405/projects/CSI_TEST/data/lst/$1/ses-${SESSION}/anat/$T1_nii_name', '/work/fatx405/projects/CSI_TEST/data/lst/$1/ses-${SESSION}/anat/$FLAIR_nii_name', $kappa); quit"
+
+fi
+
+###############################################################################################################################################################
+###############################################################################################################################################################
+
+if [ $ALGORITHM == "lpa" ]; then
+
+    # ps_LST_lpa   Lesion segmentation by a lesion predicialgorithm (LGA)
+    # Part of the LST toolbox, www.statistical-modelling.de/lst.html
+    #
+    # ps_LST_lpa Lesion segmentation by the LPA requires a FLAIR image only. 
+    # However, the user is free to choose an additional image that serves as 
+    # a reference image during a coregistration step before the main lesion 
+    # segmentation. This may be helpful if the dimension of the FLAIR image 
+    # is low or if the goal of the lesion segmentation is to fill lesions in 
+    # T1 images. Beside that no additional parameters need to be set. No
+    # other parameters need to be set by the user.
+    #
+    # This routine produces lesion probability maps (ples...), [coregistered]
+    # bias corrected versions of the FLAIR inputs, a .mat-file with
+    # information about the segmentation that is needed for a re-run of the 
+    # algorithm, and a HTML report along with a folder if this option has 
+    # been chosen desired. See the documentation for details.
+    #
+    # ps_LST_lpa asks the user for the input images (FLAIR and optional
+    # reference images). A HTML report is produced by default.
+    #
+    # ps_LST_lpa(Vf2, Vref, html) performs lesion 
+    # segmentation for the FLAIR volumes given in Vf2 and reference volumes 
+    # given in Vref. The letter can be left empty. If specified, both must be
+    # characters like a call from from spm_select. The last argument is  a 
+    # dummy for the HTML reports. If the last argument ismissing it is
+    # replaced by its default value, see above.
+    #
+    # ps_LST_lpa(job) Same as above but with job being a harvested job data
+    # structure (see matlabbatch help).
+
+    ###############################################################################################################################################################
+    # Outputs generated:
+        # lesion probability maps (ples...) in FLAIR and - if given - in reference space (T1)
+        # coregistered bias corrected version of the FLAIR inputs
+        # a .mat-file with information about the segmentation that is needed for a re-run of the algorithm 
+        # a HTML report along with a folder if this option has been chosen desired
+    ###############################################################################################################################################################
+
+    # Execute 
+    matlab -nosplash -nodesktop -nojvm -batch \
+    "addpath(genpath('$ENV_DIR/spm12')); ps_LST_lpa('/work/fatx405/projects/CSI_TEST/data/lst/$1/ses-${SESSION}/anat/$FLAIR_nii_name', '/work/fatx405/projects/CSI_TEST/data/lst/$1/ses-${SESSION}/anat/$T1_nii_name'); quit"
+
+fi
 ###############################################################################################################################################################
 
 

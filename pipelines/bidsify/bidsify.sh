@@ -29,31 +29,35 @@ if [ "$SESSION" == "all" ];then
 
       [ -d $BIDS_DIR/sub-${1} ] && chmod 770 -R $BIDS_DIR/sub-${1}
 
-      # Deface	
-      singularity="singularity run --cleanenv --userns -B . -B $TMP_DIR/:/tmp"
+      # Defacing
+      if [ $MODIFIER==y ];then
 
-      T1=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T1w.nii.gz
-      CMD_T1="pydeface $T1 --outfile $T1 --force --verbose"
-      if [ -f $T1 ];then
-         $singularity \
-         $ENV_DIR/pydeface-2.0.0 \
-         /bin/bash -c "$CMD_T1"
-      fi
+         # Deface	
+         singularity="singularity run --cleanenv --userns -B . -B $TMP_DIR/:/tmp"
 
-      T2=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T2w.nii.gz
-      CMD_T2="pydeface $T2 --outfile $T2 --force --verbose"
-      if [ -f $T2 ];then
-         $singularity \
-         $ENV_DIR/pydeface-2.0.0 \
-         $CMD_T2
-      fi
+         T1=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T1w.nii.gz
+         CMD_T1="pydeface $T1 --outfile $T1 --force --verbose"
+         if [ -f $T1 ];then
+            $singularity \
+            $ENV_DIR/pydeface-2.0.0 \
+            /bin/bash -c "$CMD_T1"
+         fi
 
-      FLAIR=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_FLAIR.nii.gz
-      CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force --verbose"
-      if [ -f $FLAIR ];then
-         $singularity \
-         $ENV_DIR/pydeface-2.0.0 \
-         $CMD_FLAIR
+         T2=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T2w.nii.gz
+         CMD_T2="pydeface $T2 --outfile $T2 --force --verbose"
+         if [ -f $T2 ];then
+            $singularity \
+            $ENV_DIR/pydeface-2.0.0 \
+            $CMD_T2
+         fi
+
+         FLAIR=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_FLAIR.nii.gz
+         CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force --verbose"
+         if [ -f $FLAIR ];then
+            $singularity \
+            $ENV_DIR/pydeface-2.0.0 \
+            $CMD_FLAIR
+         fi
       fi
    done
 
@@ -84,30 +88,31 @@ else
    # Deface	
    singularity="singularity run --cleanenv --userns -B . -B $TMP_DIR/:/tmp"
 
-   T1=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T1w.nii.gz
-   CMD_T1="pydeface $T1 --outfile $T1 --force --verbose"
-   if [ -f $T1 ];then
-      $singularity \
-      $ENV_DIR/pydeface-2.0.0 \
-      /bin/bash -c "$CMD_T1"
-   fi
+   if [ $MODIFIER==y ];then
+      T1=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T1w.nii.gz
+      CMD_T1="pydeface $T1 --outfile $T1 --force --verbose"
+      if [ -f $T1 ];then
+         $singularity \
+         $ENV_DIR/pydeface-2.0.0 \
+         /bin/bash -c "$CMD_T1"
+      fi
 
-   T2=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T2w.nii.gz
-   CMD_T2="pydeface $T2 --outfile $T2 --force --verbose"
-   if [ -f $T2 ];then
-      $singularity \
-      $ENV_DIR/pydeface-2.0.0 \
-      $CMD_T2
-   fi
+      T2=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T2w.nii.gz
+      CMD_T2="pydeface $T2 --outfile $T2 --force --verbose"
+      if [ -f $T2 ];then
+         $singularity \
+         $ENV_DIR/pydeface-2.0.0 \
+         $CMD_T2
+      fi
 
-   FLAIR=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_FLAIR.nii.gz
-   CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force --verbose"
-   if [ -f $FLAIR ];then
-      $singularity \
-      $ENV_DIR/pydeface-2.0.0 \
-      $CMD_FLAIR
+      FLAIR=$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_FLAIR.nii.gz
+      CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force --verbose"
+      if [ -f $FLAIR ];then
+         $singularity \
+         $ENV_DIR/pydeface-2.0.0 \
+         $CMD_FLAIR
+      fi
    fi
-
 fi
 
 # Remove problematic metadata from json sidecars
