@@ -7,8 +7,8 @@ import matplotlib as plt
 mod = sys.argv[1]
 csv = sys.argv[2]
 histfig = sys.argv [3]
-boxfix = sys.argv [4]
-zcore = sys.argv[5]
+boxfig = sys.argv [4]
+zscore = sys.argv[5]
 
 # Read in CSV file containing mean across skeleton
 df = pd.read_csv(f"{csv}")

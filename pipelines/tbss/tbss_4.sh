@@ -284,28 +284,28 @@ if [ $TBSS_PIPELINE == "mni" ]; then
                 MOD_SKEL=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
 
                 # Output skeleton (masked by ROI)
-                MOD_SKEL_ROI=$TBSS_DIR/$sub/ses-${SESSION}/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-JHU_label-${ROI}_${MOD}.nii.gz
+                MOD_SKEL_ROI=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-JHU_label-${ROI}_${MOD}.nii.gz
 
                 CMD_ROI="fslmaths \
-                            /opt/$container_fsl/data/atlases/JHU/JHU-ICBM-FA-1mm.nii.gz \
+                            /opt/$container_fsl/data/atlases/JHU/JHU-ICBM-labels-1mm.nii.gz \
                             -thr $i \
                             -uthr $i \
-                            -mul $MOD_SKEL \
-                            $MOD_SKEL_ROI"
+                            -bin \
+                            -mul $MOD_SKEL $MOD_SKEL_ROI"
                     
                 CMD_ROI_MEAN="fslstats $MOD_SKEL_ROI -M"
 
-                $singularity_fsl "$CMD_ROI"
-                mean_roi=`$singularity_fsl "$CMD_ROI_MEAN" | tail -n 1`
-                echo -e "$mean_roi," >> $ROI_CSV
+                $singularity_fsl $CMD_ROI
+                mean_roi=`$singularity_fsl $CMD_ROI_MEAN | tail -n 1`
+                echo -n "$mean_roi," >> $ROI_CSV
             
             done
 
             # Calculate mean across entire skeleton
 
             CMD_MEAN="fslstats $MOD_SKEL -M"
-            mean=`$singularity_fsl "$CMD_MEAN" | tail -n 1`
-            echo -e "$mean," >> $ROI_CSV
+            mean=`$singularity_fsl $CMD_MEAN | tail -n 1`
+            echo -n "$mean," >> $ROI_CSV
 
         done
 
@@ -322,27 +322,27 @@ if [ $TBSS_PIPELINE == "mni" ]; then
             MOD_SKEL=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
             
             # Output skeleton (masked by ROI)
-            MOD_SKEL_ROI=$TBSS_DIR/$sub/ses-${SESSION}/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-JHU_label-${ROI}_${MOD}.nii.gz
+            MOD_SKEL_ROI=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-JHU_label-${ROI}_${MOD}.nii.gz
 
             CMD_ROI="fslmaths \
-                        /opt/$container_fsl/data/atlases/JHU/JHU-ICBM-FA-1mm.nii.gz \
+                        /opt/$container_fsl/data/atlases/JHU/JHU-ICBM-labels-1mm.nii.gz \
                         -thr $i \
                         -uthr $i \
-                        -mul $MOD_SKEL \
-                        $MOD_SKEL_ROI"
+                        -bin \
+                        -mul $MOD_SKEL $MOD_SKEL_ROI"
                     
             CMD_ROI_MEAN="fslstats $MOD_SKEL_ROI -M"
 
-            $singularity_fsl "$CMD_ROI"
-            mean_roi=`$singularity_fsl "$CMD_ROI_MEAN" | tail -n 1`
-            echo -e "$mean_roi," >> $ROI_CSV
+            $singularity_fsl $CMD_ROI
+            mean_roi=`$singularity_fsl $CMD_ROI_MEAN | tail -n 1`
+            echo -n "$mean_roi," >> $ROI_CSV
 
         done
 
         # Calculate mean across entire skeleton
 
         CMD_MEAN="fslstats $MOD_SKEL -M"
-        mean=`$singularity_fsl "$CMD_MEAN" | tail -n 1`
+        mean=`$singularity_fsl $CMD_MEAN | tail -n 1`
         echo "$mean" >> $ROI_CSV
 
     done
@@ -379,7 +379,7 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
             MOD_SKEL=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
             
             CMD_MEAN="fslstats $MOD_SKEL -M"
-            mean=`$singularity_fsl "$CMD_MEAN" | tail -n 1`
+            mean=`$singularity_fsl $CMD_MEAN | tail -n 1`
             echo -n "$mean," >> $MEAN_CSV
         
         done
@@ -392,7 +392,7 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
         MOD_SKEL=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
 
         CMD_MEAN="fslstats $MOD_SKEL -M"
-            mean=`$singularity_fsl "$CMD_MEAN" | tail -n 1`
+            mean=`$singularity_fsl $CMD_MEAN | tail -n 1`
             echo "$mean" >> $MEAN_CSV
     
     done

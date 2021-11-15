@@ -24,14 +24,23 @@
 ###################
 
 module load singularity
-container_fsl=fsl-6.0.3
 
+container_fsl=fsl-6.0.3
 singularity_fsl="singularity run --cleanenv --userns \
     -B . \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
     -B $(readlink -f $ENV_DIR) \
     $ENV_DIR/$container_fsl" 
+
+container_miniconda=miniconda-csi
+singularity_miniconda=" singularity run --cleanenv --userns \
+    -B . \
+    -B $PROJ_DIR \
+    -B $SCRATCH_DIR:/tmp \
+    -B $(readlink -f $ENV_DIR) \
+    -B /usw
+    /usw/fatx405/csi_envs/$container_miniconda"
 
 # Set pipeline specific variables
 
@@ -164,5 +173,45 @@ for MOD in $(echo $MODALITIES); do
         
     $singularity_fsl $CMD_MASK
     $singularity_fsl $CMD_PROJ
+
+done
+
+#######################################################################################
+# Create overlay of skeleton and respective modality for each subject for QC purposes #
+#######################################################################################
+
+# Reset MODALITIES (include desc-DTINoNeg_FA)
+#############################################
+
+if [ $TBSS_PIPELINE == "mni" ]; then
+
+    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
+                desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW"
+    
+elif [ $TBSS_PIPELINE == "fixel" ]; then
+
+    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
+                desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW desc-voxelmap_fd desc-voxelmap_fdc \
+                desc-voxelmap_logfc desc-voxelmap_complexity"
+
+fi
+
+# Create overlay
+################
+
+for MOD in $(echo $MODALITIES); do
+
+    # Input for overlay creation and ROI analyses
+
+    MOD_ERODED=$TBSS_DIR/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_${MOD}.nii.gz
+    MOD_SKEL=$TBSS_DIR/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+
+    # Output
+
+    OVERLAY=$TBSS_DIR/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}_overlay.png
+
+    $singularity_miniconda python $PIPELINE_DIR/overlay.py $MOD_ERODED $MOD_SKEL $OVERLAY
+
+    done
 
 done
