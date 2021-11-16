@@ -238,7 +238,7 @@ elif [ $PIPELINE == "tbss" ];then
 
 		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
-		batch_time_default="02:00:00"
+		batch_time_default="04:00:00"
 		partition_default="std"
 	
 	elif [ $TBSS_LEVEL == 4 ]; then
@@ -252,7 +252,7 @@ elif [ $PIPELINE == "tbss" ];then
 
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time_default="6:00:00"
+		batch_time_default="4:00:00"
 		partition_default="std"
 	
 	fi
