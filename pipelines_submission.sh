@@ -309,41 +309,79 @@ elif [ $PIPELINE == "wmh" ];then
 	
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
-	batch_time="02:00:00"
 	partition="std"
-
-	echo "which part of analysis you want to do? currently available: antsrnet / bianca / lga / lpa / samseg"
-	read ALGORITHM; export ALGORITHM
-
-	if [ $ALGORITHM == "samseg" ]; then
-
-		batch_time="04:00:00"
-
-		echo "samseg does not recommend any bias-correction. Automatically set to NO."
-		BIASCORR=n; export BIASCORR
-
-	elif [ $ALGORITHM == "lga" ]; then
-
-		echo "lga does not recommend any bias-correction. Automatically set to NO."
-		BIASCORR=n; export BIASCORR
-
-	elif [ $ALGORITHM == "lpa" ]; then
-
-		echo "lpa does not recommend any bias-correction. Automatically set to NO."
-		BIASCORR=n; export BIASCORR
-
-	else
-
-		echo "do you want to perform bias-correction? (y/n)"
-		read BIASCORR; export BIASCORR
-
-	fi
-
-	echo "do you want to play the masking game? (y/n) | Caution: this may sound like fun, but is no fun at all."
-	read MASKINGGAME; export MASKINGGAME
 
 	echo "Which session do you want to process? e.g. '1' 'all'"
 	read SESSION; export SESSION
+
+	echo "Which ANALYSIS PART do you want to perform? currently available are: 01_prep / 02_segment / 03_combine / 04_postproc / eval"
+	read PIPELINE_SUFFIX
+	export PIPELINE_SUFFIX=_${PIPELINE_SUFFIX}
+
+	if [ $PIPELINE_SUFFIX == "_01_prep" ]; then
+
+		batch_time="04:00:00"
+
+	elif [ $PIPELINE_SUFFIX == "_02_segment" ]; then
+	
+		echo "Which SEGMENTATION ALGORITHM do you want to use? currently available: antsrnet / bianca / lga / lpa / samseg"
+		read ALGORITHM; export ALGORITHM
+
+		if [ $ALGORITHM == "samseg" ]; then
+
+			batch_time="03:00:00"
+			export SUBJS_PER_NODE=8
+
+			echo "this algorithm does not recommend any bias-correction. Automatically set to NO."
+			BIASCORR=n; export BIASCORR
+		
+		elif [ $ALGORITHM == "lga" ] || [ $ALGORITHM == "lpa" ]; then
+
+			batch_time="12:00:00"
+			export SUBJS_PER_NODE=8
+
+			echo "this algorithm does not recommend any bias-correction. Automatically set to NO."
+			BIASCORR=n; export BIASCORR
+
+		elif [ $ALGORITHM == "bianca" ] || [ $ALGORITHM == "antsrnet" ]; then
+
+			batch_time="01:00:00"
+
+			echo "do you want to perform bias-correction on the FLAIR image? (y/n)"
+			read BIASCORR; export BIASCORR
+
+		fi
+
+	elif [ $PIPELINE_SUFFIX == "_03_combine" ]; then
+
+		batch_time="00:02:00"
+	
+		echo "this script combines the segmented masks of different algorithms. not more than two lesion masks can be combined, sorry."
+		echo "which is the first algorithm? currently available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
+		read ALGORITHM1; export ALGORITHM1
+
+		echo "which is the second algorithm? please do not name the same algorithm twice. available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
+		read ALGORITHM2; export ALGORITHM2
+		
+		[ $ALGORITHM1 == $ALGORITHM2 ] && echo "$ALGORITHM1 == $ALGORITHM2 ... stupid" && exit 1
+
+		ALGORITHM=${ALGORITHM1}X${ALGORITHM2}
+		export ALGORITHM
+
+	elif [ $PIPELINE_SUFFIX == "_eval" ]; then 
+
+		batch_time="01:00:00"
+		echo "which output do you want to evaluate? Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)" 
+		read ALGORITHM; export ALGORITHM
+
+
+	elif [ $PIPELINE_SUFFIX == "_04_postproc" ]; then 
+
+		batch_time="00:05:00"
+		echo "which output do you want to evaluate? Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)" 
+		read ALGORITHM; export ALGORITHM
+
+	fi
 	
 elif [ $PIPELINE == "statistics" ];then
 
