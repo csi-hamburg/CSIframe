@@ -3,10 +3,12 @@
 ###################################################################################################################
 # FBA based on https://mrtrix.readthedocs.io/en/latest/fixel_based_analysis/st_fibre_density_cross-section.html   #
 #                                                                                                                 #
+# Step 2: FOD estimation                                                                                          #
+#                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [pipelines which need to be run first]                                                                        #
 #       - qsiprep                                                                                                 #
-#       - previous fba steps
+#       - previous fba steps                                                                                      #
 #   [container]                                                                                                   #
 #       - mrtrix3-3.0.2.sif                                                                                       #
 #       - mrtrix3tissue-5.2.8.sif                                                                                 #

@@ -61,8 +61,13 @@ if [ $PIPELINE == "bidsify" ];then
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
 	echo "Reading subjects from $DCM_DIR"
-	subj_array=(${(@)-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata -e README | xargs -n 1 basename)}) # subjects in data/dicoms
+	subj_array=(${@-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata -e README | xargs -n 1 basename)}) # subjects in data/dicoms
 	subj_array_length=${#subj_array[@]}
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
+	echo "Which bidsify pipeline do you want to perform? Leave empty for core or type 'asl'."
+	read BIDSIFY_PIPE; export BIDSIFY_PIPE
+	export PIPELINE_SUFFIX=_${BIDSIFY_PIPE}
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
 	echo "Which heuristic do you want to apply?"
@@ -114,11 +119,28 @@ elif [ $PIPELINE == "smriprep" ];then
 
 elif [ $PIPELINE == "freesurfer" ];then
 	
-	export SUBJS_PER_NODE=4
-	export ANALYSIS_LEVEL=subject
-	batch_time_default="2-00:00:00"
-	partition_default="big"
-	at_once=
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Which pipeline level do you want to perform? (reconall/sub2avg)"
+	echo "For default ('reconall') leave empty"
+	read FS_LEVEL; export FS_LEVEL
+	[ -z $FS_LEVEL ] && export FS_LEVEL=reconall
+	export PIPELINE_SUFFIX=_${FS_LEVEL}
+
+	if [ $FS_LEVEL == reconall ];then
+
+		export SUBJS_PER_NODE=4
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="2-00:00:00"
+		partition_default="big"
+
+	elif [ $FS_LEVEL == sub2avg ];then
+
+		export SUBJS_PER_NODE=16
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="03:00:00"
+		partition_default="std"
+
+	fi
 
 elif [ $PIPELINE == "mriqc" ];then
 
@@ -421,18 +443,20 @@ else
 	exit
 fi
 
-# Set batch time to allocate and partition
-echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
-echo "How much time do you want to allocate? Default is $(echo $batch_time_default)"
-echo "Leave empty to choose default"
-read batch_time
-[ -z $batch_time ] && batch_time=$batch_time_default
+if [ $INTERACTIVE != y ];then
+	# Set batch time to allocate and partition
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
+	echo "How much time do you want to allocate? Default is $(echo $batch_time_default)"
+	echo "Leave empty to choose default"
+	read batch_time
+	[ -z $batch_time ] && batch_time=$batch_time_default
 
-echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
-echo "Which partition do you want to submit to? Default is $(echo $partition_default)"
-echo "Leave empty to choose default"
-read partition
-[ -z $partition ] && partition=$partition_default
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
+	echo "Which partition do you want to submit to? Default is $(echo $partition_default)"
+	echo "Leave empty to choose default"
+	read partition
+	[ -z $partition ] && partition=$partition_default
+fi
 
 # Define batch script
 script_name="02_pipelines_batch.sh"

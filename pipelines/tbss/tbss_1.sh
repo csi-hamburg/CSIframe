@@ -68,6 +68,7 @@ fi
 
 mkdir -p $TBSS_DIR/sourcedata
 mkdir -p $TBSS_DIR/derivatives
+mkdir -p $TBSS_DIR/code
 mkdir -p $TBSS_SUBDIR
 
 ###############################

@@ -3,6 +3,8 @@
 ###################################################################################################################
 # FBA based on https://mrtrix.readthedocs.io/en/latest/fixel_based_analysis/st_fibre_density_cross-section.html   #
 #                                                                                                                 #
+# Step 3: Population template creation                                                                            #
+#                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [pipelines which need to be run first]                                                                        #
 #       - qsiprep                                                                                                 #

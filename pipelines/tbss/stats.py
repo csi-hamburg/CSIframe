@@ -7,19 +7,19 @@ import matplotlib as plt
 mod = sys.argv[1]
 csv = sys.argv[2]
 histfig = sys.argv [3]
-boxfix = sys.argv [4]
-zcore = sys.argv[5]
+boxfig = sys.argv [4]
+zscore = sys.argv[5]
 
 # Read in CSV file containing mean across skeleton
 df = pd.read_csv(f"{csv}")
 
 # Histogram
-hist = sns.displot(df[f'MEAN_{mod}'], kde=True)
+hist = sns.displot(df[f'mean_{mod}'], kde=True)
 hist.savefig(f'{histfig}')
 plt.pyplot.close()
 
 # Boxplot
-box = sns.boxplot(df[f'MEAN_{mod}'])
+box = sns.boxplot(df[f'mean_{mod}'])
 plt.pyplot.savefig(f'{boxfig}')
 
 # Calculate zscores for outlier detection

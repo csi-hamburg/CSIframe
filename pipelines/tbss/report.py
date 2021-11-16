@@ -1,5 +1,6 @@
 import os
 import sys
+import glob
 
 tbss_dir = sys.argv[1]
 ses = sys.argv[2]

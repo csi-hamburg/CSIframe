@@ -56,7 +56,7 @@ create_data_subds () {
 	subds=$1
 	mkdir $DATA_DIR/$subds
 	echo "Dataset README" >> $DATA_DIR/$subds/README.md
-	[ -f $BIDS_DIR/dataset_description.json ] && cp $BIDS_DIR/dataset_description.json $DATA_DIR/$subds 
+	[ -f $ENV_DIR/standard/dataset_description.json ] && cp $ENV_DIR/standard/dataset_description.json $DATA_DIR/$subds 
 	}
 
 import() {
@@ -132,7 +132,6 @@ if [ $PIPELINE == setup_superdataset ];then
 	mkdir $PROJ_DIR
 	pushd $PROJ_DIR
 	touch README.md
-	touch CHANGELOG.md
 
 	# Create code subdataset and insert copy of this script
 	
@@ -145,9 +144,9 @@ if [ $PIPELINE == setup_superdataset ];then
 	# Clone envs subdataset from source
 	echo "Where to clone envs/ from?"
 	echo "Please provide absolute Path to datalad dataset or github URL; e.g. https://github.com/csi-hamburg/csi_envs"
-	read envs_source
+	read ENVS_SOURCE
 
-	datalad clone $envs_source $ENV_DIR
+	ln -rs $ENVS_SOURCE envs
 
 elif [ $PIPELINE == add_data_subds ];then
 
@@ -303,7 +302,7 @@ elif [ $PIPELINE == if_in_s3 ];then
 	elif [ $operation == count ];then
 		aws s3 --endpoint-url https://s3-uhh.lzs.uni-hamburg.de ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | wc -l
 	elif [ $operation == remove ];then
-		aws s3 --endpoint-url https://s3-uhh.lzs.uni-hamburg.de ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | xargs -n 4 rm
+		aws s3 --endpoint-url https://s3-uhh.lzs.uni-hamburg.de ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | xargs -n 1 rm
 	else echo $operation not provided. Please choose from list/count/remove
 	fi
 	popd
