@@ -14,6 +14,7 @@ singularity="singularity run --cleanenv --userns -B $(readlink -f $ENV_DIR) -B $
 ###############################################################################################################################################################
 
 # Set output directories
+ALGORITHM=${ALGORITHM1}X${ALGORITHM2}
 OUT_DIR=data/$PIPELINE/$1/ses-${SESSION}/anat/
 ALGORITHM_OUT_DIR=$OUT_DIR/$ALGORITHM/
 
