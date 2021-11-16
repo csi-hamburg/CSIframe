@@ -3,10 +3,18 @@
 ###################################################################################################################
 # FBA based on https://mrtrix.readthedocs.io/en/latest/fixel_based_analysis/st_fibre_density_cross-section.html   #
 #                                                                                                                 #
+# Step 4:                                                                                                         #
+#       - Warp of individual FODs to group template                                                               #
+#       - Population template mask                                                                                #
+#       - Analysis fixel mask                                                                                     #
+#       - Tractography                                                                                            #
+#       - Tract segmentation with TractSeg (https://github.com/MIC-DKFZ/TractSeg)                                 #
+#       - Fixel metrics                                                                                           #
+#                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [pipelines which need to be run first]                                                                        #
 #       - qsiprep                                                                                                 #
-#       - previous fba steps
+#       - previous fba steps                                                                                      #
 #   [container]                                                                                                   #
 #       - mrtrix3-3.0.2.sif                                                                                       #
 #       - mrtrix3tissue-5.2.8.sif                                                                                 #
@@ -149,23 +157,39 @@ FIXELMASK_FINAL="$FBA_GROUP_DIR/fixelmask/06_fixelmask_final"
 # Command
 #########################
 
+# Derive fixelmask from FOD template and apply threshold respecting crossing fibres
 CMD_FIXMASKCROSSINGFB="[ -d $FIXELMASK_CROSSFB ] && rm -rf $FIXELMASK_CROSSFB/*; fod2fixel -force -mask $TEMPLATE_MASK -fmls_peak_value $thr4crossingfibres $FOD_TEMPLATE $FIXELMASK_CROSSFB"
+
+# Derive fixelmask from FOD template and apply threshold excluding false positives
 CMD_FIXMASKFALSEPOS="[ -d $FIXELMASK_FALSEPOS ] && rm -rf $FIXELMASK_FALSEPOS/*; fod2fixel -force -mask $TEMPLATE_MASK -fmls_peak_value $thr4fpcontrol $FOD_TEMPLATE $FIXELMASK_FALSEPOS"
+
+# Derive fixelmask from FOD template and apply threshold excluding false positives
 CMD_VOXMASKFALSEPOS="fixel2voxel $FIXELMASK_FALSEPOS/directions.mif count - | mrthreshold - -abs 0.9 $VOXELMASK_FALSEPOS -force"
+
+# Create crop voxelmask for cropping crossing fibres fixelmask from false-positive fixelmask (excluding false positives)
 CMD_CROPMASK="[ -d $FIXELMASK_CROP ] && rm -rf $FIXELMASK_CROP/*; voxel2fixel $VOXELMASK_FALSEPOS $FIXELMASK_CROSSFB $FIXELMASK_CROP fixelmask_crop.mif -force"
+
+# Crop crossing-fibres fixelmask with cropping voxelmask
 CMD_CROP_CROSSFB="fixelcrop $FIXELMASK_CROSSFB $FIXELMASK_CROP/fixelmask_crop.mif $FIXELMASK_CROSSFB_CROPPED -force"
+
+
 if [ -f $EXCLUSION_MASK ];then
+    
+    # If manually created exclusion mask exists use it for further refining the fixelmask
     CMD_EXCLUSIONFIXELMASK="voxel2fixel $EXCLUSION_MASK $FIXELMASK_CROP $FIXELMASK_EXCLUSIONMASK fixelmask_exclusion.mif -force"
     CMD_CROP_FINAL="fixelcrop $FIXELMASK_CROSSFB_CROPPED $FIXELMASK_EXCLUSIONMASK/fixelmask_exclusionmask.mif $FIXELMASK_FINAL -force"
+
 else
+
+    # Without exclusion mask just take mask ( + crossing fibres, - false positives ) as final fixel mask 
     CMD_EXCLUSIONFIXELMASK="echo 'No manual exclusion mask!'"
     CMD_CROP_FINAL="cp -rf $FIXELMASK_CROSSFB_CROPPED $FIXELMASK_FINAL"
 fi
 
 # Execution
 #########################
-$singularity_mrtrix3 \
-/bin/bash -c "$CMD_FIXMASKCROSSINGFB; $CMD_FIXMASKFALSEPOS; $CMD_VOXMASKFALSEPOS; $CMD_CROPMASK; $CMD_EXCLUSIONFIXELMASK; $CMD_CROP_CROSSFB; $CMD_CROP_FINAL"
+#$singularity_mrtrix3 \
+#/bin/bash -c "$CMD_FIXMASKCROSSINGFB; $CMD_FIXMASKFALSEPOS; $CMD_VOXMASKFALSEPOS; $CMD_CROPMASK; $CMD_EXCLUSIONFIXELMASK; $CMD_CROP_CROSSFB; $CMD_CROP_FINAL"
 
 
 #########################
@@ -216,25 +240,49 @@ pushd $TRACTSEG_DIR/
 
 # Command
 #########################
-CMD_TEMPLATEMASK="sh2peaks $FOD_TEMPLATE $TEMPLATE_SHPEAKS -force"
+
+# Derive SH peaks from FOD template
+CMD_TEMPLATEPEAKS="sh2peaks $FOD_TEMPLATE $TEMPLATE_SHPEAKS -force"
+
+# Perform tract segmentation
 CMD_TRACTSEG="TractSeg -i $TEMPLATE_SHPEAKS --output_type tract_segmentation"
+
+# Perform tract ending segmentation
 CMD_TRACTENDINGS="TractSeg -i $TEMPLATE_SHPEAKS --output_type endings_segmentation"
+
+# Perform tract orientation mapping
 CMD_TOM="TractSeg -i $TEMPLATE_SHPEAKS --output_type TOM"
-CMD_TRACTOGRAMS="Tracking -i $TEMPLATE_SHPEAKS --tracking_format tck"
+
+# Derive bundle tractograms
+CMD_TRACTOGRAMS="Tracking -i $TEMPLATE_SHPEAKS --tracking_format tck" #"Tracking -i $FOD_TEMPLATE_TRACTSEGDIR --track_FODs iFOD2 --tracking_format tck" <- symlink to FOD_TEMPLATE in $TRACTSEG_DIR
+
+# Extract sifted bundle tractograms (separateac from above) from sifted tractogram   
 CMD_TRACTEXTRACTION="tckedit $TRACTOGRAM_SIFT -include $TRACTSEG_OUT_DIR/endings_segmentations/{}_b.nii.gz -include $TRACTSEG_OUT_DIR/endings_segmentations/{}_e.nii.gz -mask $TRACTSEG_OUT_DIR/bundle_segmentations/{}.nii.gz $TRACTSEG_DIR/bundles_sift_tck/{}.tck -force"
+
+# Create tractogram of all anatomically predefined (and sifted) bundles
 CMD_BUNDLETRACTOGRAM="tckedit $TRACTSEG_DIR/bundles_sift_tck/* $BUNDLE_TRACTOGRAM -force"
-CMD_BUNDLETDI="tck2fixel $BUNDLE_TRACTOGRAM $FIXELMASK_FINAL $BUNDLE_FIXELMASK segmentation_bundle_tdi.mif -force"
-CMD_BUNDLEFIXELMASK="mrthreshold -abs 1 $BUNDLE_FIXELMASK/segmentation_bundle_tdi.mif $BUNDLE_FIXELMASK/segmentation_bundle_fixelmask.mif -force"
-CMD_PERBUNDLEFIXELMASKS="tck2fixel $TRACTSEG_OUT_DIR/TOM_trackings/{}.tck $FIXELMASK_FINAL $BUNDLE_FIXELMASK {}.mif -force"
+
+# Derive bundle fixel mask of all-bundle tractogram (encodes tract density; TDI)
+CMD_BUNDLETDI="tck2fixel $BUNDLE_TRACTOGRAM $FIXELMASK_FINAL $BUNDLE_FIXELMASK all_bundle_tdi.mif -force"
+
+# Binarize all-bundle TDI fixel mask with threshold
+CMD_BUNDLEFIXELMASK="mrthreshold -abs 1 $BUNDLE_FIXELMASK/all_bundle_tdi.mif $BUNDLE_FIXELMASK/all_bundle_fixelmask.mif -force"
+
+# Derive bundle fixel mask for each individual bundle tractogram (encode TDI)
+CMD_PERBUNDLETDIS="tck2fixel $TRACTSEG_DIR/bundles_sift_tck/{}.tck $FIXELMASK_FINAL $BUNDLE_FIXELMASK {}_tdi.mif -force"  #"tck2fixel $TRACTSEG_OUT_DIR/TOM_trackings/{}.tck $FIXELMASK_FINAL $BUNDLE_FIXELMASK {}.mif -force" <- TractSeg bug -> tracts displaced; instead use sifted bundles
+
+# Binarize individual bundle TDI fixel masks with threshold
+CMD_PERBUNDLEFIXELMASKS="mrthreshold -abs 1 $BUNDLE_FIXELMASK/{}_tdi.mif $BUNDLE_FIXELMASK/{}_fixelmask.mif -force"
 
 # Execution
 #########################
-$singularity_tractseg \
-/bin/bash -c "$CMD_TEMPLATEMASK; $CMD_TRACTSEG; $CMD_TRACTENDINGS; $CMD_TOM; $CMD_TRACTOGRAMS"
-$parallel "$singularity_mrtrix3 $CMD_TRACTEXTRACTION" ::: $(ls $TRACTSEG_OUT_DIR/bundle_segmentations | xargs -n 1 basename | cut -d "." -f 1)
-$singularity_mrtrix3 \
-/bin/bash -c "$CMD_BUNDLETRACTOGRAM; $CMD_BUNDLETDI; $CMD_BUNDLEFIXELMASK"
-$parallel "$singularity_mrtrix3 $CMD_PERBUNDLEFIXELMASKS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
+#$singularity_tractseg \
+#/bin/bash -c "$CMD_TEMPLATEPEAKS; $CMD_TRACTSEG; $CMD_TRACTENDINGS; $CMD_TOM; $CMD_TRACTOGRAMS"
+#$parallel "$singularity_mrtrix3 $CMD_TRACTEXTRACTION" ::: $(ls $TRACTSEG_OUT_DIR/bundle_segmentations | xargs -n 1 basename | cut -d "." -f 1)
+#$singularity_mrtrix3 \
+#/bin/bash -c "$CMD_BUNDLETRACTOGRAM; $CMD_BUNDLETDI; $CMD_BUNDLEFIXELMASK"
+#$parallel "$singularity_mrtrix3 $CMD_PERBUNDLETDIS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
+#$parallel "$singularity_mrtrix3 $CMD_PERBUNDLEFIXELMASKS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
 popd
 
 
@@ -275,15 +323,15 @@ CMD_FDC="mrcalc $FD_DIR/{}.mif $FC_DIR/{}.mif -mult $FDC_DIR/{}.mif -force"
 
 # Execution
 #########################
-$parallel "$singularity_mrtrix3 $CMD_FOD2TEMPLATE" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3 $CMD_SUBJECTFOD2FIXEL" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3 $CMD_REORIENTFIXELS" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3 $CMD_FD" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3 $CMD_FC" ::: ${input_subject_array[@]}
-cp $FC_DIR/index.mif $FC_DIR/directions.mif $LOG_FC_DIR
-cp $FC_DIR/index.mif $FC_DIR/directions.mif $FDC_DIR
-$parallel "$singularity_mrtrix3 $CMD_LOG_FC" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3 $CMD_FDC" ::: ${input_subject_array[@]}
+#$parallel "$singularity_mrtrix3 $CMD_FOD2TEMPLATE" ::: ${input_subject_array[@]}
+#$parallel "$singularity_mrtrix3 $CMD_SUBJECTFOD2FIXEL" ::: ${input_subject_array[@]}
+#$parallel "$singularity_mrtrix3 $CMD_REORIENTFIXELS" ::: ${input_subject_array[@]}
+#$parallel "$singularity_mrtrix3 $CMD_FD" ::: ${input_subject_array[@]}
+#$parallel "$singularity_mrtrix3 $CMD_FC" ::: ${input_subject_array[@]}
+#cp $FC_DIR/index.mif $FC_DIR/directions.mif $LOG_FC_DIR
+#cp $FC_DIR/index.mif $FC_DIR/directions.mif $FDC_DIR
+#$parallel "$singularity_mrtrix3 $CMD_LOG_FC" ::: ${input_subject_array[@]}
+#$parallel "$singularity_mrtrix3 $CMD_FDC" ::: ${input_subject_array[@]}
 
 
 #########################
@@ -319,4 +367,4 @@ CMD_FILTER_FDC="fixelfilter $FDC_DIR smooth $FDC_SMOOTH_DIR -matrix $FIXELCONNEC
 # Execution
 #########################
 $singularity_mrtrix3 \
-/bin/bash -c "$CMD_FIXELCONNECTIVITY; $CMD_FILTER_FD; $CMD_FILTER_LOG_FC; $CMD_FILTER_FDC"
+/bin/bash -c "$CMD_FILTER_FD; $CMD_FILTER_LOG_FC; $CMD_FILTER_FDC" #$CMD_FIXELCONNECTIVITY;

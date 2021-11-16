@@ -74,6 +74,8 @@ if [ "$SESSION" == "all" ]; then
             
             mv -v $BIDS_DIR/sub-${1}/ses-${SESSION}/perf/sub-${1}_ses-${SESSION}_desc-label_asl.json $BIDS_DIR/sub-${1}/ses-${SESSION}/perf/sub-${1}_ses-${SESSION}_asl.json
             rm -v $BIDS_DIR/sub-${1}/ses-${SESSION}/perf/sub-${1}_ses-${SESSION}_desc-control_asl.json
+            rm -v $BIDS_DIR/sub-${1}/ses-${SESSION}/perf/sub-${1}_ses-${SESSION}_desc-control_asl.nii.gz
+            rm -v $BIDS_DIR/sub-${1}/ses-${SESSION}/perf/sub-${1}_ses-${SESSION}_desc-label_asl.nii.gz
 
             # Add extra metadata to json-files necessary for ASL-Preparation
             
@@ -101,6 +103,7 @@ else
       --overwrite \
       --grouping all \
       --outdir /bids"
+
       singularity run --cleanenv --userns \
       --home $PWD \
       -B $CODE_DIR:/code \
@@ -130,10 +133,13 @@ else
       
       mv -v $BIDS_DIR/sub-${1}/ses-${SESSION}/perf/sub-${1}_ses-${SESSION}_desc-label_asl.json $BIDS_DIR/sub-${1}/ses-${SESSION}/perf/sub-${1}_ses-${SESSION}_asl.json
       rm -v $BIDS_DIR/sub-${1}/ses-${SESSION}/perf/sub-${1}_ses-${SESSION}_desc-control_asl.json
+      rm -v $BIDS_DIR/sub-${1}/ses-${SESSION}/perf/sub-${1}_ses-${SESSION}_desc-control_asl.nii.gz
+      rm -v $BIDS_DIR/sub-${1}/ses-${SESSION}/perf/sub-${1}_ses-${SESSION}_desc-label_asl.nii.gz
 
       # Add extra metadata to json-files necessary for ASL-Preparation
       
       [ -d $BIDS_DIR/sub-${1}/ses-${SESSION}/perf ] && chmod 770 -Rv $BIDS_DIR/sub-${1}/ses-${SESSION}/perf
+      
       $singularity_miniconda python $PIPELINE_DIR/edit_aslbids_hchs.py -s sub-${1} -t ses-${SESSION} -b $BIDS_DIR -j $PIPELINE_DIR/metadataextra_hchs.json
       
       # Edit scans.tsv file to reflect available asl data and eliminate problematic metadata
