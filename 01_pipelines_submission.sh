@@ -119,11 +119,28 @@ elif [ $PIPELINE == "smriprep" ];then
 
 elif [ $PIPELINE == "freesurfer" ];then
 	
-	export SUBJS_PER_NODE=4
-	export ANALYSIS_LEVEL=subject
-	batch_time_default="2-00:00:00"
-	partition_default="big"
-	at_once=
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Which pipeline level do you want to perform? (reconall/sub2avg)"
+	echo "For default ('reconall') leave empty"
+	read FS_LEVEL; export FS_LEVEL
+	[ -z $FS_LEVEL ] && export FS_LEVEL=reconall
+	export PIPELINE_SUFFIX=_${FS_LEVEL}
+
+	if [ $FS_LEVEL == reconall ];then
+
+		export SUBJS_PER_NODE=4
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="2-00:00:00"
+		partition_default="big"
+
+	elif [ $FS_LEVEL == sub2avg ];then
+
+		export SUBJS_PER_NODE=16
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="03:00:00"
+		partition_default="std"
+
+	fi
 
 elif [ $PIPELINE == "mriqc" ];then
 
