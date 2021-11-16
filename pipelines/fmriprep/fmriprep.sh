@@ -1,16 +1,49 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+###################################################################################################################
+# fMRI preprocessing (https://fmriprep.org/en/stable/)                                                            #
+#                                                                                                                 #
+# Pipeline specific dependencies:                                                                                 #
+#   [pipelines which need to be run first]                                                                        #
+#       - none                                                                                                    #
+#   [container]                                                                                                   #
+#       - fmriprep-20.2.6.sif                                                                                     #
+###################################################################################################################
+
+# Get verbose outputs
+set -x
+
+# Define subject specific temporary directory on $SCRATCH_DIR
+export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
+TMP_IN=$TMP_DIR/input;                 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN
+TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
+
+###################################################################################################################
+
+# Pipeline-specific environment
+##################################
+
+# Singularity container version and command
+container_fmriprep=fmriprep-20.2.6
+singularity_fmriprep="singularity run --cleanenv --userns \
+    -B $PROJ_DIR \
+    -B $(readlink -f $ENV_DIR) \
+    -B $TMP_DIR/:/tmp \
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
+    $ENV_DIR/$container_fmriprep" 
 
 # To make I/O more efficient read/write outputs from/to scratch #
-TMP_IN=$TMP_DIR/input
-TMP_OUT=$TMP_DIR/output
-[ ! -d $TMP_IN ] && mkdir -p $TMP_IN && cp -rf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
-[ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT/freesurfer
+[ -d $TMP_IN ] && cp -rf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
+[ -d $TMP_OUT ] && mkdir -p $TMP_OUT/freesurfer
 [ ! -f $DATA_DIR/freesurfer/$1/stats/aseg.stats ] && rm -rf $DATA_DIR/freesurfer/$1 || cp -rf $DATA_DIR/freesurfer/$1 $TMP_OUT/freesurfer
 
+# Pipeline execution
+##################################
 
+# Define command
 CMD="
-   singularity run --cleanenv --userns -B $PROJ_DIR -B $(readlink -f $ENV_DIR) -B $TMP_DIR:/tmp -B $TMP_IN:/tmp_in -B $TMP_OUT:/tmp_out \
-   $ENV_DIR/fmriprep-21.0.0rc1 \
+   $singularity_fmriprep \
    /tmp_in /tmp_out participant \
    -w /tmp \
    --participant-label $1 \
@@ -30,11 +63,12 @@ CMD="
    --skip_bids_validation \
    --fs-license-file envs/freesurfer_license.txt"
 [ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
-$CMD
 
+# Execute command
+eval $CMD
+
+# Copy outputs to $DATA_DIR
 cp -ruvf $TMP_OUT/freesurfer $DATA_DIR
 cp -ruvf $TMP_OUT/sub-* $DATA_DIR/fmriprep
 cp -ruvf $TMP_OUT/d* $DATA_DIR/fmriprep
 cp -ruvf $TMP_OUT/logs $DATA_DIR/fmriprep
-
-#--bids-database-dir data/raw_bids/code/pybids_db \
