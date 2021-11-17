@@ -118,7 +118,7 @@ TEMPLATE_MASK="$FBA_GROUP_DIR/template/wmfod_template_mask.mif"
 
 # Command
 #########################
-#CMD_TEMPLATEMASK="mrmath $FBA_DIR/*/ses-$SESSION/dwi/*_ses-${SESSION}_space-fodtemplate_desc-brain_mask.nii.gz min $TEMPLATE_MASK -datatype bit -force"
+CMD_TEMPLATEMASK="mrmath $FBA_DIR/*/ses-$SESSION/dwi/*_ses-${SESSION}_space-fodtemplate_desc-brain_mask.nii.gz min $TEMPLATE_MASK -datatype bit -force"
 
 # Execution
 #########################
