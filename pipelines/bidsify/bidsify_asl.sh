@@ -22,13 +22,13 @@ singularity_miniconda="singularity run --cleanenv --userns \
 ##############################################################
 
 # for testing purposes
-BIDS_DIR=$DATA_DIR/raw_bids_asl
+BIDS_DIR=$DATA_DIR/raw_bids
 
 echo $SESSION out
 
 if [ "$SESSION" == "all" ]; then
 
-      export SESSIONS=$(ls $DCM_DIR/$1/ses-* -d | xargs -n 1 basename | cut -d'.' -f 1 | cut -d'-' -f 2)
+     export SESSIONS=$(ls $DCM_DIR/$1/ses-* -d | xargs -n 1 basename | cut -d'.' -f 1 | cut -d'-' -f 2)
    
       for SESSION in $SESSIONS; do
       
