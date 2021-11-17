@@ -165,3 +165,33 @@ CMD_DIST="
         -o $SKEL_DIST"
 
 $singularity_fsl /bin/bash -c "$CMD_DIST"
+
+########################################################################################
+# Create ROI masks of JHU ICBM-DTI-81 white-matter labels atlas for MNI branch of TBSS #
+########################################################################################
+
+if [ $TBSS_PIPELINE == "mni" ]; then
+
+mkdir $DER_DIR/JHU
+
+    for i in $(seq 1 48); do
+
+        let index=$i+1
+        ROI=`sed -n ${index}p $CODE_DIR/pipelines/tbss/JHU-ICBM-LUT.txt | awk '{print $2}'`
+
+        # Input atlas
+        ATLAS=/opt/$container_fsl/data/atlases/JHU/JHU-ICBM-labels-1mm.nii.gz
+
+        # Output ROI mask
+        JHU_ROI=$DER_DIR/JHU/atlas-JHU-ICBM-DTI-81_label-${ROI}.nii.gz
+        
+        CMD_ROI="fslmaths \
+            $ATLAS \
+            -thr $i \
+            -uthr $i \
+            -bin \
+            $JHU_ROI"
+
+        $singularity_fsl $CMD_ROI
+
+    done
