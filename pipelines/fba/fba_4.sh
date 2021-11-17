@@ -100,8 +100,8 @@ CMD_MRTRANSFORM="mrtransform $DWI_MASK_UPSAMPLED -warp $SUB2TEMP_WARP -interp ne
 
 # Execution
 #########################
-#$parallel "$singularity_mrtrix3tissue $CMD_MRREGISTER" ::: ${input_subject_array[@]}
-#$parallel "$singularity_mrtrix3tissue $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3tissue $CMD_MRREGISTER" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3tissue $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
 
 
 #########################
@@ -188,8 +188,8 @@ fi
 
 # Execution
 #########################
-#$singularity_mrtrix3 \
-#/bin/bash -c "$CMD_FIXMASKCROSSINGFB; $CMD_FIXMASKFALSEPOS; $CMD_VOXMASKFALSEPOS; $CMD_CROPMASK; $CMD_EXCLUSIONFIXELMASK; $CMD_CROP_CROSSFB; $CMD_CROP_FINAL"
+$singularity_mrtrix3 \
+/bin/bash -c "$CMD_FIXMASKCROSSINGFB; $CMD_FIXMASKFALSEPOS; $CMD_VOXMASKFALSEPOS; $CMD_CROPMASK; $CMD_EXCLUSIONFIXELMASK; $CMD_CROP_CROSSFB; $CMD_CROP_FINAL"
 
 
 #########################
@@ -213,8 +213,8 @@ CMD_TCKSIFT="tcksift $TRACTOGRAM $FOD_TEMPLATE $TRACTOGRAM_SIFT -term_number 200
 
 # Execution
 #########################
-#$singularity_mrtrix3 \
-#/bin/bash -c "$CMD_TCKGEN; $CMD_TCKSIFT"
+$singularity_mrtrix3 \
+/bin/bash -c "$CMD_TCKGEN; $CMD_TCKSIFT"
 
 
 #########################
@@ -276,13 +276,13 @@ CMD_PERBUNDLEFIXELMASKS="mrthreshold -abs 1 $BUNDLE_FIXELMASK/{}_tdi.mif $BUNDLE
 
 # Execution
 #########################
-#$singularity_tractseg \
-#/bin/bash -c "$CMD_TEMPLATEPEAKS; $CMD_TRACTSEG; $CMD_TRACTENDINGS; $CMD_TOM; $CMD_TRACTOGRAMS"
-#$parallel "$singularity_mrtrix3 $CMD_TRACTEXTRACTION" ::: $(ls $TRACTSEG_OUT_DIR/bundle_segmentations | xargs -n 1 basename | cut -d "." -f 1)
-#$singularity_mrtrix3 \
-#/bin/bash -c "$CMD_BUNDLETRACTOGRAM; $CMD_BUNDLETDI; $CMD_BUNDLEFIXELMASK"
-#$parallel "$singularity_mrtrix3 $CMD_PERBUNDLETDIS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
-#$parallel "$singularity_mrtrix3 $CMD_PERBUNDLEFIXELMASKS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
+$singularity_tractseg \
+/bin/bash -c "$CMD_TEMPLATEPEAKS; $CMD_TRACTSEG; $CMD_TRACTENDINGS; $CMD_TOM; $CMD_TRACTOGRAMS"
+$parallel "$singularity_mrtrix3 $CMD_TRACTEXTRACTION" ::: $(ls $TRACTSEG_OUT_DIR/bundle_segmentations | xargs -n 1 basename | cut -d "." -f 1)
+$singularity_mrtrix3 \
+/bin/bash -c "$CMD_BUNDLETRACTOGRAM; $CMD_BUNDLETDI; $CMD_BUNDLEFIXELMASK"
+$parallel "$singularity_mrtrix3 $CMD_PERBUNDLETDIS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
+$parallel "$singularity_mrtrix3 $CMD_PERBUNDLEFIXELMASKS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
 popd
 
 
@@ -323,15 +323,15 @@ CMD_FDC="mrcalc $FD_DIR/{}.mif $FC_DIR/{}.mif -mult $FDC_DIR/{}.mif -force"
 
 # Execution
 #########################
-#$parallel "$singularity_mrtrix3 $CMD_FOD2TEMPLATE" ::: ${input_subject_array[@]}
-#$parallel "$singularity_mrtrix3 $CMD_SUBJECTFOD2FIXEL" ::: ${input_subject_array[@]}
-#$parallel "$singularity_mrtrix3 $CMD_REORIENTFIXELS" ::: ${input_subject_array[@]}
-#$parallel "$singularity_mrtrix3 $CMD_FD" ::: ${input_subject_array[@]}
-#$parallel "$singularity_mrtrix3 $CMD_FC" ::: ${input_subject_array[@]}
-#cp $FC_DIR/index.mif $FC_DIR/directions.mif $LOG_FC_DIR
-#cp $FC_DIR/index.mif $FC_DIR/directions.mif $FDC_DIR
-#$parallel "$singularity_mrtrix3 $CMD_LOG_FC" ::: ${input_subject_array[@]}
-#$parallel "$singularity_mrtrix3 $CMD_FDC" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_FOD2TEMPLATE" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_SUBJECTFOD2FIXEL" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_REORIENTFIXELS" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_FD" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_FC" ::: ${input_subject_array[@]}
+cp $FC_DIR/index.mif $FC_DIR/directions.mif $LOG_FC_DIR
+cp $FC_DIR/index.mif $FC_DIR/directions.mif $FDC_DIR
+$parallel "$singularity_mrtrix3 $CMD_LOG_FC" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_FDC" ::: ${input_subject_array[@]}
 
 
 #########################
