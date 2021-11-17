@@ -28,9 +28,9 @@ def infotodict(seqinfo):
     # Define test criteria to check that each dicom sequence is correct. seqinfo (s) refers to information in dicominfo.tsv.
 
     for idx, s in enumerate(seqinfo):
-        if ('ss_TE00_TI1700' == s.dcm_dir_name) and (s.series_files > 24):
+        if ('ss_TE00_TI1700' == s.series_description) and (s.series_files > 24):
             info[control_asl].append(s.series_id)
-        if ('ns_TE00_TI1700' == s.dcm_dir_name):
+        if ('ns_TE00_TI1700' == s.series_description):
             info[label_asl].append(s.series_id)
         if ('M0' in s.protocol_name):
             info[m0scan].append(s.series_id)
