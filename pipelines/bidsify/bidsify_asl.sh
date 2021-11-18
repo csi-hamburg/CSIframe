@@ -22,7 +22,7 @@ singularity_miniconda="singularity run --cleanenv --userns \
 ##############################################################
 
 # for testing purposes
-BIDS_DIR=$DATA_DIR/raw_bids
+#BIDS_DIR=$DATA_DIR/raw_bids
 
 echo $SESSION out
 
