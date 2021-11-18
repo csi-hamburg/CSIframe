@@ -38,6 +38,7 @@ CMD="heudiconv
     -ss $session \
     -f convertall \
     -c none \
+    -g all \
     -o $PIPELINE_DIR"
 
 # Execute command
