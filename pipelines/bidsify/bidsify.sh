@@ -105,7 +105,7 @@ if [ "$SESSION" == "all" ];then
       [ -d $BIDS_DIR/sub-${1} ] && chmod 770 -R $BIDS_DIR/sub-${1} $BIDS_DIR/.heudiconv
 
 
-      if [ $MODIFIER==y ];then
+      if [ $MODIFIER == y ];then
 
          #########################
          # DEFACING
@@ -160,7 +160,7 @@ else
    # Amend permissions for defacing (-> w)
    [ -d $BIDS_DIR/sub-${1} ] && chmod 770 -R $BIDS_DIR/sub-${1}
    
-   if [ $MODIFIER==y ];then
+   if [ $MODIFIER == y ];then
 
       #########################
       # DEFACING
