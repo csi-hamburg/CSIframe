@@ -177,7 +177,6 @@ elif [ $PIPELINE == 'convert_containers' ];then
 	done
 
 elif [ $PIPELINE == add_ses_dcm ];then
-
 	## Insert session to single session dcm directory
 	echo "Assumed path containing subject directories with DICOMs is $PROJ_DIR"
 	echo "Assumed structure of this directory is dataset_directory/subject/sequence/DICOMS"

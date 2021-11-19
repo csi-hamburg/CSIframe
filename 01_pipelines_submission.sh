@@ -67,7 +67,7 @@ if [ $PIPELINE == "bidsify" ];then
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
 	echo "Which bidsify pipeline do you want to perform? Leave empty for core or type 'asl'."
 	read BIDSIFY_PIPE; export BIDSIFY_PIPE
-	export PIPELINE_SUFFIX=_${BIDSIFY_PIPE}
+	[ -z $BIDSIFY_PIPE ] && export PIPELINE_SUFFIX="" || export PIPELINE_SUFFIX=_${BIDSIFY_PIPE}
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
 	echo "Which heuristic do you want to apply?"
