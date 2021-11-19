@@ -1,5 +1,4 @@
 import pandas as pd
-import glob
 import os
 import sys
 import random
@@ -23,6 +22,21 @@ print(f'Editing scans.tsv metadata of {subject} for ses-{session}:', tsv_path)
 
 df = pd.read_csv(tsv_path, sep = '\t')
 
+# Check if ASL data is present and update tsv file accordingly
+
+if os.path.exists(f'{bids_dir}/{subject}/ses-{session}/perf/{subject}_ses-{session}_asl.nii.gz'):
+
+    drop_control = df[df['filename'] == f'perf/{subject}_ses-{session}_desc-control_asl.nii.gz'].index
+    df.drop(axis=0, index=drop_control, inplace=True)
+
+    drop_label = df[df['filename'] == f'perf/{subject}_ses-{session}_desc-label_asl.nii.gz'].index
+    df.drop(axis=0, index=drop_label, inplace=True)
+
+    df_append = pd.DataFrame([[f'perf/{subject}_ses-{session}_asl.nii.gz', "NaN", "NaN", 'NaN']], columns = df.columns)
+    
+    if not (df['filename'] == f'perf/{subject}_ses-{session}_asl.nii.gz').any():
+        df = df.append(df_append)
+
 # Substitute contents of problematic metadata fields with new data
 
 df[['acq_time','operator']]="NaN"
@@ -32,23 +46,6 @@ def enter_random(x):
     return y
 
 df['randstr'] = df['randstr'].apply(enter_random)
-
-# Check if ASL data is present and update tsv file accordingly
-
-if os.path.exists(f'{bids_dir}/{subject}/ses-{session}/perf/{subject}_ses-{session}_asl.nii.gz'):
-    
-    df_append = pd.DataFrame([[f'perf/{subject}_ses-{session}_asl.nii.gz', "NaN", "NaN", 'NaN']], columns = df.columns)
-    
-    if not (df['filename'] == f'perf/{subject}_ses-{session}_asl.nii.gz').any():
-        df = df.append(df_append)
-
-    drop_control = df[df['filename'] == f'perf/{subject}_ses-{session}_desc-control_asl.nii.gz'].index
-    df.drop(axis = 0, index = drop_control, inplace = True)
-
-    drop_label = df[df['filename'] == f'perf/{subject}_ses-{session}_desc-label_asl.nii.gz'].index
-    df.drop(axis = 0, index = drop_control, inplace = True)
-
-
 
 # Write updated scans.tsv
 
