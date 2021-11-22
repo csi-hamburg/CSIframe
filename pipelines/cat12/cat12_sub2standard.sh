@@ -43,7 +43,7 @@ singularity_connectome_workbench="singularity run --cleanenv --userns \
     $ENV_DIR/$container_connectome_workbench" 
 
 # To make I/O more efficient read/write outputs from/to scratch 
-[ -d $TMP_IN ] && cp -rf $DATA_DIR/cat12/$1 $DATA_DIR/standard/fsaverage7 $ENV_DIR/standard/fsaverage5 $ENV_DIR/standard/fsaverage6 $TMP_IN 
+[ -d $TMP_IN ] && cp -rf $DATA_DIR/cat12/$1 $ENV_DIR/standard/fsaverage7 $ENV_DIR/standard/fsaverage5 $ENV_DIR/standard/fsaverage6 $TMP_IN 
 [ ! -d $TMP_OUT/ ] && mkdir -p $TMP_OUT
 
 
