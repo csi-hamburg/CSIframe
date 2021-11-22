@@ -56,6 +56,7 @@ CMD_THICK2FSAVG="
    mri_surf2surf \
    --srcsubject $1 
    --trgsubject fsaverage7 \
+   --surfreg rh.sphere.T1.gii \
    --hemi {} \
    --sval $1/surf/{}.thickness.T1 \
    --tval $1/surf/{}.fsaverage.thickness.T1.gii \
@@ -88,11 +89,11 @@ CMD_FSAVG2FSLR="
     $singularity_connectome_workbench \
     wb_command \
     -metric-resample \
-    $TMP_IN/$1/surf/{1}.fsaverage.thickness.gii \
+    $TMP_IN/$1/surf/{1}.fsaverage.thickness.T1.gii \
     $ENV_DIR/standard/fsaverage/tpl-fsaverage_hemi-{2}_den-164k_desc-std_sphere.surf.gii \
     $ENV_DIR/standard/fsLR/tpl-fsLR_space-fsaverage_hemi-{2}_den-{3}_sphere.surf.gii \
     ADAP_BARY_AREA \
-    $TMP_IN/$1/surf/{1}.fsLR{3}.thickness.func.gii \
+    $TMP_IN/$1/surf/{1}.fsLR{3}.thickness.T1.func.gii \
     -area-metrics \
     $ENV_DIR/standard/fsaverage/tpl-fsaverage_hemi-{2}_den-164k_desc-vaavg_midthickness.shape.gii \
     $ENV_DIR/standard/fsLR/tpl-fsLR_hemi-{2}_den-{3}_desc-vaavg_midthickness.shape.gii
