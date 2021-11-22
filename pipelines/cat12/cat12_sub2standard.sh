@@ -56,7 +56,7 @@ CMD_THICK2FSAVG="
    mri_surf2surf \
    --srcsubject $1 
    --trgsubject fsaverage7 \
-   --surfreg rh.sphere.T1.gii \
+   --surfreg rh.sphere.reg.T1.gii \
    --hemi {} \
    --sval $1/surf/{}.thickness.T1 \
    --tval $1/surf/{}.fsaverage.thickness.T1.gii \
