@@ -169,21 +169,21 @@ CMD_VOXMASKFALSEPOS="fixel2voxel $FIXELMASK_FALSEPOS/directions.mif count - | mr
 # Create crop voxelmask for cropping crossing fibres fixelmask from false-positive fixelmask (excluding false positives)
 CMD_CROPMASK="[ -d $FIXELMASK_CROP ] && rm -rf $FIXELMASK_CROP/*; voxel2fixel $VOXELMASK_FALSEPOS $FIXELMASK_CROSSFB $FIXELMASK_CROP fixelmask_crop.mif -force"
 
-# Crop crossing-fibres fixelmask with cropping voxelmask
-CMD_CROP_CROSSFB="fixelcrop $FIXELMASK_CROSSFB $FIXELMASK_CROP/fixelmask_crop.mif $FIXELMASK_CROSSFB_CROPPED -force"
+# Crop crossing-fibres fixelmask with crop voxelmask
+CMD_CROP_CROSSFB="[ -d $FIXELMASK_CROSSFB_CROP ] && rm -rf $FIXELMASK_CROSSFB_CROP; fixelcrop $FIXELMASK_CROSSFB $FIXELMASK_CROP/fixelmask_crop.mif $FIXELMASK_CROSSFB_CROPPED -force"
 
 
 if [ -f $EXCLUSION_MASK ];then
     
     # If manually created exclusion mask exists use it for further refining the fixelmask
-    CMD_EXCLUSIONFIXELMASK="voxel2fixel $EXCLUSION_MASK $FIXELMASK_CROP $FIXELMASK_EXCLUSIONMASK fixelmask_exclusion.mif -force"
-    CMD_CROP_FINAL="fixelcrop $FIXELMASK_CROSSFB_CROPPED $FIXELMASK_EXCLUSIONMASK/fixelmask_exclusionmask.mif $FIXELMASK_FINAL -force"
+    CMD_EXCLUSIONFIXELMASK="[ -d $FIXELMASK_EXCLUSIONMASK ] && rm -rf $FIXELMASK_EXCLUSIONMASK; voxel2fixel $EXCLUSION_MASK $FIXELMASK_CROP $FIXELMASK_EXCLUSIONMASK fixelmask_exclusion.mif -force"
+    CMD_CROP_FINAL="[ -d $FIXELMASK_FINAL ] && rm -rf $FIXELMASK_FINAL; fixelcrop $FIXELMASK_CROSSFB_CROPPED $FIXELMASK_EXCLUSIONMASK/fixelmask_exclusionmask.mif $FIXELMASK_FINAL -force"
 
 else
 
     # Without exclusion mask just take mask ( + crossing fibres, - false positives ) as final fixel mask 
     CMD_EXCLUSIONFIXELMASK="echo 'No manual exclusion mask!'"
-    CMD_CROP_FINAL="cp -rf $FIXELMASK_CROSSFB_CROPPED $FIXELMASK_FINAL"
+    CMD_CROP_FINAL="cp -ruvf $FIXELMASK_CROSSFB_CROPPED $FIXELMASK_FINAL"
 fi
 
 # Execution

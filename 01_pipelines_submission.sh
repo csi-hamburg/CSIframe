@@ -380,6 +380,11 @@ elif [ $PIPELINE == "cat12" ];then
 	batch_time_default="08:00:00"
 	partition_default="std"
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
+	echo "Which cat pipeline do you want to perform? Leave empty for core or type 'sub2standard'."
+	read CAT_PIPE; export CAT_PIPE
+	[ -z $CAT_PIPE ] && export PIPELINE_SUFFIX="" || export PIPELINE_SUFFIX=_${CAT_PIPE}
+
 elif [ $PIPELINE == "wmh" ];then
 	
 	export SUBJS_PER_NODE=16
