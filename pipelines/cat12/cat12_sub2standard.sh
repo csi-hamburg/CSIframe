@@ -55,7 +55,7 @@ CMD_THICK2FSAVG="
    $singularity_connectome_workbench \
    mri_surf2surf \
    --srcsubject $1 
-   --trgsubject fsaverage \
+   --trgsubject fsaverage7 \
    --hemi {} \
    --sval $1/surf/{}.thickness.T1 \
    --tval $1/surf/{}.fsaverage.thickness.T1.gii \
