@@ -67,7 +67,7 @@ if [ $PIPELINE == "bidsify" ];then
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
 	echo "Which bidsify pipeline do you want to perform? Leave empty for core or type 'asl'."
 	read BIDSIFY_PIPE; export BIDSIFY_PIPE
-	export PIPELINE_SUFFIX=_${BIDSIFY_PIPE}
+	[ -z $BIDSIFY_PIPE ] && export PIPELINE_SUFFIX="" || export PIPELINE_SUFFIX=_${BIDSIFY_PIPE}
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
 	echo "Which heuristic do you want to apply?"
@@ -255,7 +255,7 @@ elif [ $PIPELINE == "tbss" ];then
 
 		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
-		batch_time_default="02:00:00"
+		batch_time_default="04:00:00"
 		partition_default="std"
 	
 	elif [ $TBSS_LEVEL == 4 ]; then
@@ -269,7 +269,7 @@ elif [ $PIPELINE == "tbss" ];then
 
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time_default="6:00:00"
+		batch_time_default="4:00:00"
 		partition_default="std"
 	
 	fi
@@ -379,6 +379,11 @@ elif [ $PIPELINE == "cat12" ];then
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="08:00:00"
 	partition_default="std"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
+	echo "Which cat pipeline do you want to perform? Leave empty for core or type 'sub2standard'."
+	read CAT_PIPE; export CAT_PIPE
+	[ -z $CAT_PIPE ] && export PIPELINE_SUFFIX="" || export PIPELINE_SUFFIX=_${CAT_PIPE}
 
 elif [ $PIPELINE == "wmh" ];then
 	
