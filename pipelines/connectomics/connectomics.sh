@@ -23,6 +23,8 @@ CONN_DIR=$DATA_DIR/connectomics
 
 # Max threads for hpc matlab set to 16 by admins
 parpool_threads=16
+#parpool_threads=$SLURM_CPUS_PER_TASK
+#[ $parpool_threads -ge 16 ] && parpool_threads=16
 
 for sub in ${input_subject_array[@]};do
 
