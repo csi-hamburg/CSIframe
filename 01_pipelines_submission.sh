@@ -74,7 +74,7 @@ if [ $PIPELINE == "bidsify" ];then
 	read MODIFIER; export MODIFIER
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
-	echo "Do you want to bidsify ASL data? (y/n)."
+	echo "Do you want to edit ASL meta data? (y/n)"
 	read ASL; export ASL
 	
 	if [ $ASL == "y" ]; then
@@ -83,6 +83,7 @@ if [ $PIPELINE == "bidsify" ];then
 		echo "Which ASL metadata do you want to add?"
 		echo "Choose from" $(ls $ENV_DIR/bidsify/metadataextra_*.json | xargs -n 1 basename)
 		read METADATA_EXTRA; export METADATA_EXTRA
+		
 	fi
 
 elif [ $PIPELINE == "qsiprep" ];then
