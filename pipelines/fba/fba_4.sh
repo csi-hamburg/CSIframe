@@ -100,8 +100,8 @@ CMD_MRTRANSFORM="mrtransform $DWI_MASK_UPSAMPLED -warp $SUB2TEMP_WARP -interp ne
 
 # Execution
 #########################
-$parallel "$singularity_mrtrix3tissue $CMD_MRREGISTER" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3tissue $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
+#$parallel "$singularity_mrtrix3tissue $CMD_MRREGISTER" ::: ${input_subject_array[@]}
+#$parallel "$singularity_mrtrix3tissue $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
 
 
 #########################
@@ -122,8 +122,8 @@ CMD_TEMPLATEMASK="mrmath $FBA_DIR/*/ses-$SESSION/dwi/*_ses-${SESSION}_space-fodt
 
 # Execution
 #########################
-$singularity_mrtrix3 \
-/bin/bash -c "$CMD_TEMPLATEMASK"
+#$singularity_mrtrix3 \
+#/bin/bash -c "$CMD_TEMPLATEMASK"
 
 
 #########################
@@ -184,11 +184,12 @@ else
     # Without exclusion mask just take mask ( + crossing fibres, - false positives ) as final fixel mask 
     CMD_EXCLUSIONFIXELMASK="echo 'No manual exclusion mask!'"
     CMD_CROP_FINAL="cp -ruvf $FIXELMASK_CROSSFB_CROPPED $FIXELMASK_FINAL"
+
 fi
 
 # Execution
 #########################
-$singularity_mrtrix3 $CMD_FIXMASKCROSSINGFB; $CMD_FIXMASKFALSEPOS; $CMD_VOXMASKFALSEPOS; $CMD_CROPMASK; $CMD_EXCLUSIONFIXELMASK; $CMD_CROP_CROSSFB; $CMD_CROP_FINAL
+#$singularity_mrtrix3 $CMD_FIXMASKCROSSINGFB; $CMD_FIXMASKFALSEPOS; $CMD_VOXMASKFALSEPOS; $CMD_CROPMASK; $CMD_EXCLUSIONFIXELMASK; $CMD_CROP_CROSSFB; $CMD_CROP_FINAL
 
 #########################
 # TRACTOGRAPHY
@@ -211,8 +212,8 @@ CMD_TCKSIFT="tcksift $TRACTOGRAM $FOD_TEMPLATE $TRACTOGRAM_SIFT -term_number 200
 
 # Execution
 #########################
-$singularity_mrtrix3 \
-/bin/bash -c "$CMD_TCKGEN; $CMD_TCKSIFT"
+#$singularity_mrtrix3 \
+#/bin/bash -c "$CMD_TCKGEN; $CMD_TCKSIFT"
 
 
 #########################
@@ -274,13 +275,13 @@ CMD_PERBUNDLEFIXELMASKS="mrthreshold -abs 1 $BUNDLE_FIXELMASK/{}_tdi.mif $BUNDLE
 
 # Execution
 #########################
-$singularity_tractseg \
-/bin/bash -c "$CMD_TEMPLATEPEAKS; $CMD_TRACTSEG; $CMD_TRACTENDINGS; $CMD_TOM; $CMD_TRACTOGRAMS"
-$parallel "$singularity_mrtrix3 $CMD_TRACTEXTRACTION" ::: $(ls $TRACTSEG_OUT_DIR/bundle_segmentations | xargs -n 1 basename | cut -d "." -f 1)
-$singularity_mrtrix3 \
-/bin/bash -c "$CMD_BUNDLETRACTOGRAM; $CMD_BUNDLETDI; $CMD_BUNDLEFIXELMASK"
-$parallel "$singularity_mrtrix3 $CMD_PERBUNDLETDIS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
-$parallel "$singularity_mrtrix3 $CMD_PERBUNDLEFIXELMASKS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
+#$singularity_tractseg \
+#/bin/bash -c "$CMD_TEMPLATEPEAKS; $CMD_TRACTSEG; $CMD_TRACTENDINGS; $CMD_TOM; $CMD_TRACTOGRAMS"
+#$parallel "$singularity_mrtrix3 $CMD_TRACTEXTRACTION" ::: $(ls $TRACTSEG_OUT_DIR/bundle_segmentations | xargs -n 1 basename | cut -d "." -f 1)
+#$singularity_mrtrix3 \
+#/bin/bash -c "$CMD_BUNDLETRACTOGRAM; $CMD_BUNDLETDI; $CMD_BUNDLEFIXELMASK"
+#$parallel "$singularity_mrtrix3 $CMD_PERBUNDLETDIS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
+#$parallel "$singularity_mrtrix3 $CMD_PERBUNDLEFIXELMASKS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
 popd
 
 

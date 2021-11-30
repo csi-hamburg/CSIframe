@@ -108,7 +108,7 @@ FOD_TEMPLATE="$FBA_GROUP_DIR/template/wmfod_template.mif"
 
 # Command
 #########################
-CMD_POPTEMP="population_template $FOD_GROUP_DIR -mask_dir $MASK_GROUP_DIR $FOD_TEMPLATE -voxel_size 1.25 -force"
+CMD_POPTEMP="population_template $FOD_GROUP_DIR -mask_dir $MASK_GROUP_DIR $FOD_TEMPLATE -scratch /tmp -voxel_size 1.25 -force"
 
 # Execution
 #########################

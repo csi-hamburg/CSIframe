@@ -33,8 +33,8 @@
 ###################################################################
 
 analysis=fc_$(whoami)
-design=/work/fatx405/projects/CSI_TEST/code/pipelines/xcpengine/fc-aroma-gsr.dsn
-sequence=fc-rest
+design=/work/fatx405/projects/CSI_DEV/code/pipelines/xcpengine/fc-aroma-gsr.dsn
+sequence=anatomical
 standard=MNI%2x2x2
 
 ###################################################################
