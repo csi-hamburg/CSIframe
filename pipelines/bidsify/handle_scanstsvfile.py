@@ -26,16 +26,16 @@ df = pd.read_csv(tsv_path, sep = '\t')
 
 if os.path.exists(f'{bids_dir}/{subject}/ses-{session}/perf/{subject}_ses-{session}_asl.nii.gz'):
 
-    drop_control = df[df['filename'] == f'perf/{subject}_ses-{session}_desc-control_asl.nii.gz'].index
-    df.drop(axis=0, index=drop_control, inplace=True)
+    drop_asl = df[df['filename'].str.contains('asl')].index
+    drop_m0 = df[df['filename'].str.contains('m0scan')].index
 
-    drop_label = df[df['filename'] == f'perf/{subject}_ses-{session}_desc-label_asl.nii.gz'].index
-    df.drop(axis=0, index=drop_label, inplace=True)
+    df.drop(axis = 0, index = drop_asl, inplace = True)
+    df.drop(axis = 0, index = drop_m0, inplace = True)
 
-    df_append = pd.DataFrame([[f'perf/{subject}_ses-{session}_asl.nii.gz', "NaN", "NaN", 'NaN']], columns = df.columns)
+    df_append = pd.DataFrame([[f'perf/{subject}_ses-{session}_asl.nii.gz', "NaN", "NaN", 'NaN'],
+        [f'perf/{subject}_ses-{session}_m0scan.nii.gz', "NaN", "NaN", 'NaN']], columns = df.columns)
     
-    if not (df['filename'] == f'perf/{subject}_ses-{session}_asl.nii.gz').any():
-        df = df.append(df_append)
+    df = df.append(df_append)
 
 # Substitute contents of problematic metadata fields with new data
 
