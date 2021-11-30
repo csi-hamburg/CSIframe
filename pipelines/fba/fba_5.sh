@@ -75,8 +75,6 @@ parallel="parallel --ungroup --delay 0.2 -j16 --joblog $CODE_DIR/log/parallel_ru
 # Define subject array
 input_subject_array=($@)
 
-
-
 #########################
 # FIXEL METRICS 2 VOXEL
 #########################
@@ -324,3 +322,175 @@ $parallel $singularity_mrtrix3 $CMD_ADt2TEMP ::: ${input_subject_array[@]}
 $parallel $singularity_mrtrix3 $CMD_RD2TEMP ::: ${input_subject_array[@]}
 $parallel $singularity_mrtrix3 $CMD_RDt2TEMP ::: ${input_subject_array[@]}
 $parallel $singularity_mrtrix3 $CMD_FW2TEMP ::: ${input_subject_array[@]}
+
+###################################
+# Read out ROIs in template space #
+###################################
+
+# Get tracktseg ROIs
+####################
+
+FIXEL_ROIS=(`ls $FBA_GROUP_DIR/tractseg/bundles_fixelmask/*fixelmask.mif | rev | cut -d "/" -f 1 | cut -d "_" -f 2- | rev`)
+
+# Create CSV
+############
+
+for sub in $(echo ${input_subject_array[@]}); do
+
+    if [ -f $FD_SMOOTH_DIR/$sub.mif ]; then
+
+        ROI_CSV=$FBA_DIR/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-fodtemplate_desc-tractseg_desc-roi_means.csv
+        echo -n "sub_id," > $ROI_CSV
+
+        # Tractseg ROIs
+
+        for MOD in fd logfc fdc complexity FA FAt AD ADt RD RDt MD MDt; do
+        
+            echo -n "fba_AF_left_mean_$MOD,fba_AF_right_mean_$MOD,fba_all_bundle_mean_$MOD,fba_ATR_left_mean_$MOD,fba_ATR_right_mean_$MOD,\
+            fba_CA_mean_$MOD,fba_CC_1_mean_$MOD,fba_CC_2_mean_$MOD,fba_CC_3_mean_$MOD,fba_CC_4_mean_$MOD,fba_CC_5_mean_$MOD,fba_CC_6_mean_$MOD,\
+            fba_CC_7_mean_$MOD,fba_CC_mean_$MOD,fba_CG_left_mean_$MOD,fba_CG_right_mean_$MOD,fba_CST_left_mean_$MOD,fba_CST_right_mean_$MOD,fba_FPT_left_mean_$MOD,\
+            fba_FPT_right_mean_$MOD,fba_FX_left_mean_$MOD,fba_FX_right_mean_$MOD,fba_ICP_left_mean_$MOD,fba_ICP_right_mean_$MOD,fba_IFO_left_mean_$MOD,\
+            fba_IFO_right_mean_$MOD,fba_ILF_left_mean_$MOD,fba_ILF_right_mean_$MOD,fba_MCP_mean_$MOD,fba_MLF_left_mean_$MOD,fba_MLF_right_mean_$MOD,\
+            fba_OR_left_mean_$MOD,fba_OR_right_mean_$MOD,fba_POPT_left_mean_$MOD,fba_POPT_right_mean_$MOD,fba_SCP_left_mean_$MOD,fba_SCP_right_mean_$MOD,fba_SLF_III_left_mean_$MOD,\
+            fba_SLF_III_right_mean_$MOD,fba_SLF_II_left_mean_$MOD,fba_SLF_II_right_mean_$MOD,fba_SLF_I_left_mean_$MOD,fba_SLF_I_right_mean_$MOD,\
+            fba_ST_FO_left_mean_$MOD,fba_ST_FO_right_mean_$MOD,fba_ST_OCC_left_mean_$MOD,fba_ST_OCC_right_mean_$MOD,fba_ST_PAR_left_mean_$MOD,\
+            fba_ST_PAR_right_mean_$MOD,fba_ST_POSTC_left_mean_$MOD,fba_ST_POSTC_right_mean_$MOD,fba_ST_PREC_left_mean_$MOD,fba_PREC_right_mean_$MOD,\
+            fba_ST_PREF_left_mean_$MOD,fba_ST_PREF_right_mean_$MOD,fba_ST_PREM_left_mean_$MOD,fba_ST_PREM_right_mean_$MOD,fba_STR_left_mean_$MOD,fba_STR_right_mean_$MOD,\
+            fba_T_OCC_left_mean_$MOD,fba_T_OCC_right_mean_$MOD,fba_T_PAR_left_mean_$MOD,fba_T_PAR_right_mean_$MOD,fba_T_POSTC_left_mean_$MOD,fba_T_POSTC_right_mean_$MOD,\
+            fba_T_PREC_left_mean_$MOD,fba_T_PREC_right_mean_$MOD,fba_T_PREF_left_mean_$MOD,fba_T_PREF_right_mean_$MOD,fba_T_PREM_left_mean_$MOD,fba_T_PREM_right_mean_$MOD,\
+            fba_UF_left_mean_$MOD,fba_UF_right_mean_$MOD" >> $ROI_CSV
+
+        done
+
+        echo "fba_AF_left_mean_FW,fba_AF_right_mean_FW,fba_all_bundle_mean_FW,fba_ATR_left_mean_FW,fba_ATR_right_mean_FW,\
+        fba_CA_mean_FW,fba_CC_1_mean_FW,fba_CC_2_mean_FW,fba_CC_3_mean_FW,fba_CC_4_mean_FW,fba_CC_5_mean_FW,fba_CC_6_mean_FW,\
+        fba_CC_7_mean_FW,fba_CC_mean_FW,fba_CG_left_mean_FW,fba_CG_right_mean_FW,fba_CST_left_mean_FW,fba_CST_right_mean_FW,fba_FPT_left_mean_FW,\
+        fba_FPT_right_mean_FW,fba_FX_left_mean_FW,fba_FX_right_mean_FW,fba_ICP_left_mean_FW,fba_ICP_right_mean_FW,fba_IFO_left_mean_FW,\
+        fba_IFO_right_mean_FW,fba_ILF_left_mean_FW,fba_ILF_right_mean_FW,fba_MCP_mean_FW,fba_MLF_left_mean_FW,fba_MLF_right_mean_FW,\
+        fba_OR_left_mean_FW,fba_OR_right_mean_FW,fba_POPT_left_mean_FW,fba_POPT_right_mean_FW,fba_SCP_left_mean_FW,fba_SCP_right_mean_FW,fba_SLF_III_left_mean_FW,\
+        fba_SLF_III_right_mean_FW,fba_SLF_II_left_mean_FW,fba_SLF_II_right_mean_FW,fba_SLF_I_left_mean_FW,fba_SLF_I_right_mean_FW,\
+        fba_ST_FO_left_mean_FW,fba_ST_FO_right_mean_FW,fba_ST_OCC_left_mean_FW,fba_ST_OCC_right_mean_FW,fba_ST_PAR_left_mean_FW,\
+        fba_ST_PAR_right_mean_FW,fba_ST_POSTC_left_mean_FW,fba_ST_POSTC_right_mean_FW,fba_ST_PREC_left_mean_FW,fba_PREC_right_mean_FW,\
+        fba_ST_PREF_left_mean_FW,fba_ST_PREF_right_mean_FW,fba_ST_PREM_left_mean_FW,fba_ST_PREM_right_mean_FW,fba_STR_left_mean_FW,fba_STR_right_mean_FW,\
+        fba_T_OCC_left_mean_FW,fba_T_OCC_right_mean_FW,fba_T_PAR_left_mean_FW,fba_T_PAR_right_mean_FW,fba_T_POSTC_left_mean_FW,fba_T_POSTC_right_mean_FW,\
+        fba_T_PREC_left_mean_FW,fba_T_PREC_right_mean_FW,fba_T_PREF_left_mean_FW,fba_T_PREF_right_mean_FW,fba_T_PREM_left_mean_FW,fba_T_PREM_right_mean_FW,\
+        fba_UF_left_mean_FW,fba_UF_right_mean_FW" >> $ROI_CSV
+    fi
+
+done
+
+# Extract ROIs
+##############
+
+for ROI in $(echo ${FIXEL_ROIS[@]}); do
+
+    FIXEL_MASK=$FBA_GROUP_DIR/tractseg/bundles_fixelmask/${ROI}_fixelmask.mif
+    VOXEL_MASK=$FBA_GROUP_DIR/tractseg/tractseg_output/bundle_segmentations/${ROI}.nii.gz
+
+    # Fixel metrics
+    CMD_ROI_FD="mrstats -output mean -mask $FIXEL_MASK $FD_SMOOTH_DIR/{}.mif | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_fd.txt"
+    CMD_ROI_LOG_FC="mrstats -output mean -mask $FIXEL_MASK $LOG_FC_SMOOTH_DIR/{}.mif | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_logfc.txt"
+    CMD_ROI_FDC="mrstats -output mean -mask $FIXEL_MASK $FDC_SMOOTH_DIR/{}.mif | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_fdc.txt"
+
+    # Voxel metrics
+    CMD_ROI_COMPLEXITY="mrstats -output mean -mask $VOXEL_MASK $COMPLEXITY_VOXEL | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_complexity.txt"
+    CMD_ROI_FA="mrstats -output mean -mask $VOXEL_MASK $FA_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_FA.txt"
+    CMD_ROI_FAt="mrstats -output mean -mask $VOXEL_MASK $FAt_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_FAt.txt"
+    CMD_ROI_AD="mrstats -output mean -mask $VOXEL_MASK $AD_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_AD.txt"
+    CMD_ROI_ADt="mrstats -output mean -mask $VOXEL_MASK $ADt_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_ADt.txt"
+    CMD_ROI_RD="mrstats -output mean -mask $VOXEL_MASK $RD_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_RD.txt"
+    CMD_ROI_RDt="mrstats -output mean -mask $VOXEL_MASK $RDt_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_RDt.txt"
+    CMD_ROI_MD="mrstats -output mean -mask $VOXEL_MASK $MD_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_MD.txt"
+    CMD_ROI_MDt="mrstats -output mean -mask $VOXEL_MASK $MDt_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_MDt.txt"
+    CMD_ROI_FW="mrstats -output mean -mask $VOXEL_MASK $FW_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_FW.txt"
+
+    # Run commands in parallel
+    $parallel $singularity_mrtrix3 $CMD_ROI_FD ::: ${input_subject_array[@]}
+    $parallel $singularity_mrtrix3 $CMD_ROI_LOG_FC ::: ${input_subject_array[@]}
+    $parallel $singularity_mrtrix3 $CMD_ROI_FDC ::: ${input_subject_array[@]}
+    $parallel $singularity_mrtrix3 $CMD_ROI_COMPLEXITY ::: ${input_subject_array[@]}
+    $parallel $singularity_mrtrix3 $CMD_ROI_FA ::: ${input_subject_array[@]}
+    $parallel $singularity_mrtrix3 $CMD_ROI_FAt ::: ${input_subject_array[@]}
+    $parallel $singularity_mrtrix3 $CMD_ROI_AD ::: ${input_subject_array[@]}
+    $parallel $singularity_mrtrix3 $CMD_ROI_ADt ::: ${input_subject_array[@]}
+    $parallel $singularity_mrtrix3 $CMD_ROI_RD ::: ${input_subject_array[@]}
+    $parallel $singularity_mrtrix3 $CMD_ROI_RDt ::: ${input_subject_array[@]}
+    $parallel $singularity_mrtrix3 $CMD_ROI_MD ::: ${input_subject_array[@]}
+    $parallel $singularity_mrtrix3 $CMD_ROI_MDt ::: ${input_subject_array[@]}
+    $parallel $singularity_mrtrix3 $CMD_ROI_FW ::: ${input_subject_array[@]}
+
+done
+
+# Ammend outputs to CSV on subject level
+########################################
+
+for sub in $(echo ${input_subject_array[@]}); do
+
+    if [ -f $FD_SMOOTH_DIR/$sub.mif ]; then
+
+        ROI_CSV=$FBA_DIR/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-fodtemplate_desc-tractseg_desc-roi_means.csv
+        echo -n "$sub," >> $ROI_CSV
+
+        for MOD in fd logfc fdc complexity FA FAt AD ADt RD RDt MD MDt; do
+        
+            for ROI in $(echo ${FIXEL_ROIS[@]}); do
+
+            MEAN=`cat $TMP_OUT/${sub}_fba_${ROI}_mean_$MOD.txt`
+            echo -n "$MEAN," >> $ROI_CSV
+
+            done
+        
+        done
+
+        MOD="FW"
+        
+        for ROI in $(echo ${FIXEL_ROIS[@]:0:72}); do
+        
+            MEAN=`cat $TMP_OUT/${sub}_fba_${ROI}_mean_$MOD.txt`
+            echo -n "$MEAN," >> $ROI_CSV
+
+        done
+
+        ROI="UF_right"
+        MEAN=`cat $TMP_OUT/${sub}_fba_${ROI}_mean_$MOD.txt`
+        echo "$MEAN" >> $ROI_CSV
+    fi
+done
+
+###############################
+# Combine CSVs on group level #
+###############################
+
+# Get subject to extract columm names from csv
+##############################################
+
+for sub in $(echo ${input_subject_array[@]}); do
+
+    ROI_CSV=$FBA_DIR/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-fodtemplate_desc-tractseg_desc-roi_means.csv
+    RAND_SUB=$sub
+    
+    [ -f $ROI_CSV ] && break
+
+done
+
+ROI_CSV_RAND=$FBA_DIR/$RAND_SUB/ses-$SESSION/dwi/${RAND_SUB}_ses-${SESSION}_space-fodtemplate_desc-tractseg_desc-roi_means.csv
+
+# Output
+########
+
+[ ! -d $FBA_GROUP_DIR/ses-$SESSION ] && mkdir -p $FBA_GROUP_DIR/ses-$SESSION/dwi
+
+ROI_CSV_COMBINED=$FBA_GROUP_DIR/ses-$SESSION/dwi/ses-${SESSION}_space-fodtemplate_desc-tractseg_desc-roi_means.csv
+
+# Create CSV
+############
+
+head -n 1 $ROI_CSV_RAND > $ROI_CSV_COMBINED
+
+for sub in $(echo ${input_subject_array[@]}); do
+    
+    ROI_CSV=$FBA_DIR/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-fodtemplate_desc-tractseg_desc-roi_means.csv
+    
+    [ -f $ROI_CSV ] && tail -n 1 $ROI_CSV >> $ROI_CSV_COMBINED
+
+done
