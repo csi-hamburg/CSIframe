@@ -20,6 +20,11 @@
 #       - report.py                                                           #  
 ###############################################################################
 
+# Get verbose outputs
+set -x
+
+###############################################################################
+
 ########################################################
 # PART 4 - merging of skeletons and quality assessment #
 ########################################################
@@ -80,6 +85,8 @@ echo "sub_id,source" > $TBSS_DIR/sourcedata/sourcedata.csv
 
 files_complete=y
 
+[ -f $CASELIST ] && rm -rvf $CASELIST
+
 for sub in $(ls $TBSS_DIR/sub*/ses-$SESSION/dwi/*_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-DTINoNeg_FA.nii.gz | rev | cut -d "/" -f 1 | rev | cut -d "_" -f 1); do
 
     img=`ls $TBSS_DIR/$sub/ses-$SESSION/dwi/*desc-skeleton*FA.nii.gz | head -n 1`
@@ -116,12 +123,10 @@ if [ -f $FA_SKEL_MERGED ]; then
     echo ""
 
     rm -rvf $DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-DTINoNeg*
-    rm -rvf $DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-FWCorrected*
-    rm -rvf $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*_overlay.png
-    rm -rvf $DER_DIR/*.png
-    rm -rvf $DER_DIR/*.csv
+    rm -rvf $DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-FWcorrected*
     rm -rvf $DER_DIR/*.html
     rm -rvf $DER_DIR/*.txt
+    rm -rvf $DER_DIR/*.pdf
 
     if [ $TBSS_PIPELINE == "fixel" ]; then
 
@@ -175,8 +180,8 @@ done
 # Get random subject to extract columm names from csv
 #####################################################
 
-CASELIST_ARRAY=(`sort - R $CASELIST`)
-RAND_SUB=`echo $CASLIST_ARRAY[1]`
+CASELIST_ARRAY=(`sort -R $CASELIST`)
+RAND_SUB=`echo ${CASELIST_ARRAY[1]}`
 
 if [ $TBSS_PIPELINE == "mni" ]; then
 
@@ -202,7 +207,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
     
     done
 
-if [ $TBSS_PIPELINE == "fixel" ]; then
+elif [ $TBSS_PIPELINE == "fixel" ]; then
 
     # Input
     #######
@@ -226,11 +231,13 @@ if [ $TBSS_PIPELINE == "fixel" ]; then
     
     done
 
+fi
+
 ###############################################################################################
 # Make boxplot and histogram of mean across skeleton for each modality and create html report #
 ###############################################################################################
 
-if [ $TBSS_PIPELINE == "fixel"]; then
+if [ $TBSS_PIPELINE == "fixel" ]; then
 
     MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW desc-voxelmap_fd desc-voxelmap_fdc \
@@ -250,7 +257,7 @@ if [ $TBSS_PIPELINE == "fixel"]; then
         
         # Command 
 
-        $singularity_miniconda python stats.py $TBSS_PIPELINE $MOD $CSV $HISTFIG $BOXFIG $ZSCORE
+        $singularity_miniconda python $PIPELINE_DIR/stats.py $TBSS_PIPELINE $MOD $CSV $HISTFIG $BOXFIG $ZSCORE
 
     done
 
@@ -282,17 +289,11 @@ if [ $TBSS_PIPELINE == "fixel"]; then
 
         REPORT=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_${MODALITY}_report.html
 
-        $singularity_miniconda python report.py \
-            $TBSS_DIR \
-            $SESSSION \
-            $SPACE \
-            $MODALITY \
-            $HISTFIG \
-            $BOXFIG \
-            $REPORT
+        $singularity_miniconda python $PIPELINE_DIR/report.py $TBSS_DIR $SESSION $SPACE $MODALITY $HISTFIG $BOXFIG $REPORT
+
     done
 
-elif [ $TBSS_PIPELINE == "mni"]; then
+elif [ $TBSS_PIPELINE == "mni" ]; then
     
     MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW"
@@ -307,11 +308,10 @@ elif [ $TBSS_PIPELINE == "mni"]; then
 
         HISTFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_histogram.png
         BOXFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_boxplot.png
-        ZSCORE=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_label-JHU_desc-mean_zscores.csv
 
         # Command
 
-        $singularity_miniconda python stats.py $TBSS_PIPELINE $MOD $CSV $HISTFIG $BOXFIG $ZSCORE
+        $singularity_miniconda python $PIPELINE_DIR/stats.py $TBSS_PIPELINE $MOD $CSV $HISTFIG $BOXFIG $ZSCORE
 
     done
 
@@ -330,14 +330,17 @@ elif [ $TBSS_PIPELINE == "mni"]; then
         [ $MODALITY == "desc-FWcorrected_MD" ] && MOD="MDt"
         [ $MODALITY == "FW" ] && MOD="FW"
 
-        $singularity_miniconda python report.py \
-            $TBSS_DIR \
-            $SESSSION \
-            $SPACE \
-            $MODALITY \
-            $HISTFIG \
-            $BOXFIG \
-            $REPORT
+        # Input: stats figures
+
+        HISTFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_histogram.png
+        BOXFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_boxplot.png
+
+        # Output: HTML report
+
+        REPORT=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_${MODALITY}_report.html
+
+        $singularity_miniconda python $PIPELINE_DIR/report.py $TBSS_DIR $SESSION $SPACE $MODALITY $HISTFIG $BOXFIG $REPORT
+
     done
 
 fi

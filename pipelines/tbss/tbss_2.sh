@@ -172,7 +172,7 @@ $singularity_fsl /bin/bash -c "$CMD_DIST"
 
 if [ $TBSS_PIPELINE == "mni" ]; then
 
-mkdir $DER_DIR/JHU
+    mkdir $DER_DIR/JHU
 
     for i in $(seq 1 48); do
 
@@ -195,3 +195,5 @@ mkdir $DER_DIR/JHU
         $singularity_fsl $CMD_ROI
 
     done
+
+fi
