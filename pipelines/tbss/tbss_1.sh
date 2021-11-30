@@ -69,7 +69,6 @@ fi
 mkdir -p $TBSS_DIR/sourcedata
 mkdir -p $TBSS_DIR/derivatives
 mkdir -p $TBSS_DIR/code
-mkdir -p $TBSS_SUBDIR
 
 ###############################
 # Definition of TBSS pipeline #
@@ -87,14 +86,32 @@ if [ $TBSS_PIPELINE == "mni" ]; then
     
     MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW"
-
-    # Check whether registration has already been performed 
-    #######################################################
-        
+    
+    # Check for necessary freewater pipeline output 
+    ###############################################
+    
     echo ""
     echo "Processing $1"
     echo ""
+
+    if [ -f $FW_DIR/${1}_ses-${SESSION}_space-${SPACE}_desc-DTINoNeg_FA.nii.gz ]; then 
+
+        mkdir -p $TBSS_SUBDIR
+        
+    else
+
+        echo ""
+        echo "$1 does not have necessary freewater output. Please run freewater pipeline first. Exiting ..."
+        echo ""
+
+        exit
     
+    fi
+
+
+    # Check whether registration has already been performed 
+    #######################################################
+
     if [ -f $FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-DTINoNeg_FA.nii.gz ]; then
 
         echo ""

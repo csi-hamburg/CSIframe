@@ -14,8 +14,9 @@ def infotodict(seqinfo):
     ###################################################################################################################################################################
     # For each sequence, define a variable using the create_key function: variable = create_key(output_directory_path_and_name). "data" creates sequential numbers which can be for naming sequences.
     #data = create_key('run-{item:03d}')
-    label_asl = create_key('sub-{subject}/{session}/perf/sub-{subject}_{session}_desc-label_asl')
-    control_asl = create_key('sub-{subject}/{session}/perf/sub-{subject}_{session}_desc-control_asl')
+    
+    control_asl = create_key('sub-{subject}/{session}/perf/sub-{subject}_{session}_run-1_asl')
+    label_asl = create_key('sub-{subject}/{session}/perf/sub-{subject}_{session}_run-2_asl')
     m0scan = create_key('sub-{subject}/{session}/perf/sub-{subject}_{session}_m0scan')
 
     # The data dictionary below uses the variables defined above as keys

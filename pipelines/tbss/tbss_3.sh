@@ -16,9 +16,18 @@
 #       - fsl-6.0.3                                                           #  
 ###############################################################################
 
-########################################################
-# PART 3 - projection of diffusion metrics on skeleton #
-########################################################
+# Get verbose outputs
+set -x
+
+# Define subject specific temporary directory on $SCRATCH_DIR
+export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
+TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
+
+###############################################################################
+
+############################################################################
+# PART 3 - projection of diffusion metrics on skeleton and readout of ROIs #
+############################################################################
 
 # Setup environment
 ###################
@@ -30,6 +39,7 @@ singularity_fsl="singularity run --cleanenv --userns \
     -B . \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
+    -B $TMP_OUT \
     -B $(readlink -f $ENV_DIR) \
     $ENV_DIR/$container_fsl" 
 
@@ -38,6 +48,7 @@ singularity_miniconda=" singularity run --cleanenv --userns \
     -B . \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
+    -B $TMP_OUT \
     -B $(readlink -f $ENV_DIR) \
     -B /usw
     /usw/fatx405/csi_envs/$container_miniconda"
@@ -67,7 +78,6 @@ DER_DIR=$TBSS_DIR/derivatives/sub-all/ses-${SESSION}/dwi
 echo "TBSS_DIR = $TBSS_DIR"
 
 FA_ERODED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-DTINoNeg_FA.nii.gz
-#MOD_ERODED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_${MOD}.nii.gz
 FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask.nii.gz
 FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA.nii.gz
 MEAN_FA_SKEL=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean_desc-DTINoNeg_FA.nii.gz
@@ -89,9 +99,7 @@ fi
 ########
 
 FA_MASKED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-brain_desc-DTINoNeg_FA.nii.gz
-#MOD_MASKED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-brain_${MOD}.nii.gz
 FA_SKEL=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-DTINoNeg_FA.nii.gz
-#MOD_SKEL=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
 
 # Remove output of previous runs
 
@@ -202,17 +210,15 @@ fi
 for MOD in $(echo $MODALITIES); do
 
     # Input for overlay creation and ROI analyses
-
-    MOD_ERODED=$TBSS_DIR/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_${MOD}.nii.gz
-    MOD_SKEL=$TBSS_DIR/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+ 
+    MOD_MASKED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-brain_${MOD}.nii.gz
+    MOD_SKEL=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
 
     # Output
 
-    OVERLAY=$TBSS_DIR/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}_overlay.png
+    OVERLAY=$TBSS_SUBDIR//${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}_overlay.png
 
-    $singularity_miniconda python $PIPELINE_DIR/overlay.py $MOD_ERODED $MOD_SKEL $OVERLAY
-
-    done
+    $singularity_miniconda python $PIPELINE_DIR/overlay.py $MOD_MASKED $MOD_SKEL $OVERLAY
 
 done
 
@@ -250,7 +256,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
         tbssmni_SS-R_mean_$MOD,tbssmni_SS-L_mean_$MOD,tbssmni_EC-R_mean_$MOD,tbssmni_EC-L_mean_$MOD,tbssmni_CGC-R_mean_$MOD,\
         tbssmni_CGC-L_mean_$MOD,tbssmni_CGH-R_mean_$MOD,tbssmni_CGH-L_mean_$MOD,tbssmni_FX_ST-R_mean_$MOD,tbssmni_FX_ST-L_mean_$MOD,tbssmni_SLF-R_mean_$MOD,\
         tbssmni_SLF-L_mean_$MOD,tbssmni_SFO-R_mean_$MOD,tbssmni_SFO-L_mean_$MOD,tbssmni_UNC-R_mean_$MOD,tbssmni_UNC-L_mean_$MOD,\
-        tbssmni_TAP-R_mean_$MOD,tbssmni_TAP-L_mean_$MOD,tbssmni_skeleton_mean_$MOD" >> $ROI_CSV
+        tbssmni_TAP-R_mean_$MOD,tbssmni_TAP-L_mean_$MOD,tbssmni_skeleton_mean_$MOD," >> $ROI_CSV
     done
 
         echo "tbssmni_MI-CP_mean_FW,tbssmni_P-CT_mean_FW,tbssmni_GCC_mean_FW,tbssmni_BCC_mean_FW,tbssmni_SCC_mean_FW,tbssmni_FX_mean_FW,tbssmni_CST-R_mean_FW,\
@@ -278,7 +284,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
             JHU_ROI=$DER_DIR/JHU/atlas-JHU-ICBM-DTI-81_label-${ROI}.nii.gz
 
             # Output skeleton (masked by ROI)
-            MOD_SKEL_ROI=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-JHU_label-${ROI}_${MOD}.nii.gz
+            MOD_SKEL_ROI=$TMP_OUT/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-JHU_label-${ROI}_${MOD}.nii.gz
 
             CMD_ROI="fslmaths $JHU_ROI -mul $MOD_SKEL $MOD_SKEL_ROI"
             CMD_ROI_MEAN="fslstats $MOD_SKEL_ROI -M"
@@ -310,7 +316,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
         JHU_ROI=$DER_DIR/JHU/atlas-JHU-ICBM-DTI-81_label-${ROI}.nii.gz
 
         # Output skeleton (masked by ROI)
-        MOD_SKEL_ROI=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-JHU_label-${ROI}_${MOD}.nii.gz
+        MOD_SKEL_ROI=$TMP_OUT/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-JHU_label-${ROI}_${MOD}.nii.gz
 
         CMD_ROI="fslmaths $JHU_ROI -mul $MOD_SKEL $MOD_SKEL_ROI"
         CMD_ROI_MEAN="fslstats $MOD_SKEL_ROI -M"
@@ -318,7 +324,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
         $singularity_fsl $CMD_ROI
         mean_roi=`$singularity_fsl $CMD_ROI_MEAN | tail -n 1`
         echo -n "$mean_roi," >> $ROI_CSV
-                
+    
     done
 
 

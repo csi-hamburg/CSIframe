@@ -1,6 +1,6 @@
 {   "asllabel": ["volume_type","control","control","control","control","label","label","label","label"],
     "asl" : { "ArterialSpinLabelingType": "PCASL",
-            "AcquisitionVoxelSize": "2 x 2 x 4",
+            "AcquisitionVoxelSize": [1.875,1.875,4],
             "BackgroundSuppressionPulseTime":"", 
             "PCASLType":"balanced",
             "LabelingDuration": 2,
@@ -16,7 +16,7 @@
             "BackgroundSuppressionNumberPulses": 5,
             "M0Type": "Separate",
             "M0Scale": 0.1 } ,
-    "m0scan": { "AcquisitionVoxelSize": "2 x 2 x 4",
+    "m0scan": { "AcquisitionVoxelSize": [1.875,1.875,4],
             "PhaseEncodingDirection": "i",
             "RepetitionTimePreparation": 4 }
 }
