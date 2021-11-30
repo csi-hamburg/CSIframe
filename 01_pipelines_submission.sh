@@ -176,7 +176,7 @@ elif [ $PIPELINE == "fmriprep" ];then
 	echo "Please enter specific templates if you want to use them."
 	echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym T1w)"
 	echo "or infant templates (MNIPediatricAsym:cohort-1:res-native)"
-	echo "Enter nothing to keep defaults (fsnative fsaverage MNI152NLin6Asym T1w)"
+	echo "Enter nothing to keep defaults (fsnative fsaverage MNI152NLin6Asym T1w func)"
 	read OUTPUT_SPACES; export OUTPUT_SPACES
 
 	[ -z $OUTPUT_SPACES ] && export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym T1w func"
@@ -193,7 +193,7 @@ elif [ $PIPELINE == "xcpengine" ];then
 	partition_default="std"
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
-	echo "Which xcpengine subanalysis do you want to use? (fc/struc)"
+	echo "Which xcpengine subanalysis do you want to use? (fc_36pspkreg/fc_aromagsr/struc)"
 	read MODIFIER; export MODIFIER
 
 elif [ $PIPELINE == "freewater" ];then
