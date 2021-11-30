@@ -56,7 +56,7 @@ if [ $SESSION == all ];then
       recon-all \
       -sd /tmp_out/ \
       -subjid {} \
-      -i /tmp_in/{}/{}_T1w.nii.gz \
+      -i /tmp_in/{}/anat/{}_T1w.nii.gz \
       -debug \
       -all"
    $parallel $CMD ::: $(ls $TMP_IN)
