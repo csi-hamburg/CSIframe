@@ -72,7 +72,7 @@ else
       $singularity_freesurfer \
       recon-all \
       -sd /tmp_out \
-      -subjid $1 \
+      -subjid $sub_ses_dir \
       -i /tmp_in/$sub_ses_dir/anat/${1}_ses-${SESSION}_T1w.nii.gz \
       -debug \
       -all"
