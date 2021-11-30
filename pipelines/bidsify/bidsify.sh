@@ -20,7 +20,9 @@
 #                                                                                                                 #
 # The following files are dataset specific and must be present in $ENV_DIR/bidsify/                               #
 #  - heudiconv_*.py                                                                                               #
-#  - metadataextra_*.py                                                                                           #                       
+#  - metadataextra_*.py                                                                                           #
+#                                                                                                                 #
+# In case of different acquisitions define subjects corresponding to heuristic/metadataextra during submission    #
 ###################################################################################################################
 
 # Get verbose outputs
@@ -98,58 +100,60 @@ fi
 
 for SESSION in $SESSIONS; do
 
-   # Command
-   #########################
-
-   CMD_HEUDICONV="
-   heudiconv \
-   --dicom_dir_template /dcm/{subject}/ses-{session}.tar.gz\
-   --subjects $1 \
-   --ses $SESSION \
-   --bids notop \
-   --heuristic /code/pipelines/bidsify/$HEURISTIC\
-   --converter dcm2niix \
-   --minmeta \
-   --overwrite\
-   --grouping all \
-   --outdir /bids"
-
-   # Execution
-   #########################
-
-   $singularity_heudiconv $CMD_HEUDICONV
-
-   # Amend permissions for defacing (-> w)
-   [ -d $BIDS_DIR/sub-${1} ] && chmod 770 -R $BIDS_DIR/sub-${1} $BIDS_DIR/.heudiconv
-
-
-   if [ $MODIFIER == y ];then
-
-      #########################
-      # DEFACING
-      #########################
-
-      # Input
-      #########################   
-      T1="$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T1w.nii.gz"
-      T2="$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T2w.nii.gz"
-      FLAIR="$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_FLAIR.nii.gz"
-
+   if [ $ASL == "n" ]; then
+      
       # Command
-      #########################   
-      CMD_T1="pydeface $T1 --outfile $T1 --force --verbose"
-      CMD_T2="pydeface $T2 --outfile $T2 --force --verbose"
-      CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force --verbose"
+      #########################
+
+      CMD_HEUDICONV="
+      heudiconv \
+      --dicom_dir_template /dcm/{subject}/ses-{session}.tar.gz\
+      --subjects $1 \
+      --ses $SESSION \
+      --bids notop \
+      --heuristic /code/pipelines/bidsify/$HEURISTIC\
+      --converter dcm2niix \
+      --minmeta \
+      --overwrite\
+      --grouping all \
+      --outdir /bids"
 
       # Execution
-      #########################   
-      [ -f $T1 ] && $singularity_pydeface $CMD_T1
-      [ -f $T2 ] && $singularity_pydeface $CMD_T2
-      [ -f $FLAIR ] && $singularity_pydeface $CMD_FLAIR
+      #########################
 
-   fi
+      $singularity_heudiconv $CMD_HEUDICONV
 
-   if [ $ASL == "y" ]; then
+      # Amend permissions for defacing (-> w)
+      [ -d $BIDS_DIR/sub-${1} ] && chmod 770 -R $BIDS_DIR/sub-${1} $BIDS_DIR/.heudiconv
+
+
+      if [ $MODIFIER == y ];then
+
+         #########################
+         # DEFACING
+         #########################
+
+         # Input
+         #########################   
+         T1="$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T1w.nii.gz"
+         T2="$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T2w.nii.gz"
+         FLAIR="$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_FLAIR.nii.gz"
+
+         # Command
+         #########################   
+         CMD_T1="pydeface $T1 --outfile $T1 --force --verbose"
+         CMD_T2="pydeface $T2 --outfile $T2 --force --verbose"
+         CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force --verbose"
+
+         # Execution
+         #########################   
+         [ -f $T1 ] && $singularity_pydeface $CMD_T1
+         [ -f $T2 ] && $singularity_pydeface $CMD_T2
+         [ -f $FLAIR ] && $singularity_pydeface $CMD_FLAIR
+
+      fi
+
+   elif [ $ASL == "y" ]; then
 
       #####################################################################
       # Modify ASL output to comply with BIDS standard / aslprep pipeline #
@@ -160,8 +164,8 @@ for SESSION in $SESSIONS; do
       
       #####################################################################################################################################################
       # MIND # Make sure that ASL heudiconv output is numbered according to the order of acquisition (run-01, run-02 .. etc.) > defined in heuristic file #
-      ######## This will reflect the (alphabetical) order fsl merges the files and must therefore reflect the order of volumes in the aslcontext.tsv file #
-      #        which is defined in the metadataextra file.                                                                                                #
+      ######## This will reflect the (alphabetical) order in which fsl merges the files and must therefore reflect the order of volumes in the            #
+      #        aslcontext.tsv file which is defined in the metadataextra.json file.                                                                       #                             #
       #####################################################################################################################################################
       
       # Commands
