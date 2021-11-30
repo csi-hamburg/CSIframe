@@ -100,8 +100,8 @@ CMD_MRTRANSFORM="mrtransform $DWI_MASK_UPSAMPLED -warp $SUB2TEMP_WARP -interp ne
 
 # Execution
 #########################
-$parallel "$singularity_mrtrix3tissue $CMD_MRREGISTER" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3tissue $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
+#$parallel "$singularity_mrtrix3tissue $CMD_MRREGISTER" ::: ${input_subject_array[@]}
+#$parallel "$singularity_mrtrix3tissue $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
 
 
 #########################
@@ -122,8 +122,8 @@ CMD_TEMPLATEMASK="mrmath $FBA_DIR/*/ses-$SESSION/dwi/*_ses-${SESSION}_space-fodt
 
 # Execution
 #########################
-$singularity_mrtrix3 \
-/bin/bash -c "$CMD_TEMPLATEMASK"
+#$singularity_mrtrix3 \
+#/bin/bash -c "$CMD_TEMPLATEMASK"
 
 
 #########################
@@ -169,28 +169,27 @@ CMD_VOXMASKFALSEPOS="fixel2voxel $FIXELMASK_FALSEPOS/directions.mif count - | mr
 # Create crop voxelmask for cropping crossing fibres fixelmask from false-positive fixelmask (excluding false positives)
 CMD_CROPMASK="[ -d $FIXELMASK_CROP ] && rm -rf $FIXELMASK_CROP/*; voxel2fixel $VOXELMASK_FALSEPOS $FIXELMASK_CROSSFB $FIXELMASK_CROP fixelmask_crop.mif -force"
 
-# Crop crossing-fibres fixelmask with cropping voxelmask
-CMD_CROP_CROSSFB="fixelcrop $FIXELMASK_CROSSFB $FIXELMASK_CROP/fixelmask_crop.mif $FIXELMASK_CROSSFB_CROPPED -force"
+# Crop crossing-fibres fixelmask with crop voxelmask
+CMD_CROP_CROSSFB="[ -d $FIXELMASK_CROSSFB_CROP ] && rm -rf $FIXELMASK_CROSSFB_CROP; fixelcrop $FIXELMASK_CROSSFB $FIXELMASK_CROP/fixelmask_crop.mif $FIXELMASK_CROSSFB_CROPPED -force"
 
 
 if [ -f $EXCLUSION_MASK ];then
     
     # If manually created exclusion mask exists use it for further refining the fixelmask
-    CMD_EXCLUSIONFIXELMASK="voxel2fixel $EXCLUSION_MASK $FIXELMASK_CROP $FIXELMASK_EXCLUSIONMASK fixelmask_exclusion.mif -force"
-    CMD_CROP_FINAL="fixelcrop $FIXELMASK_CROSSFB_CROPPED $FIXELMASK_EXCLUSIONMASK/fixelmask_exclusionmask.mif $FIXELMASK_FINAL -force"
+    CMD_EXCLUSIONFIXELMASK="[ -d $FIXELMASK_EXCLUSIONMASK ] && rm -rf $FIXELMASK_EXCLUSIONMASK; voxel2fixel $EXCLUSION_MASK $FIXELMASK_CROP $FIXELMASK_EXCLUSIONMASK fixelmask_exclusion.mif -force"
+    CMD_CROP_FINAL="[ -d $FIXELMASK_FINAL ] && rm -rf $FIXELMASK_FINAL; fixelcrop $FIXELMASK_CROSSFB_CROPPED $FIXELMASK_EXCLUSIONMASK/fixelmask_exclusionmask.mif $FIXELMASK_FINAL -force"
 
 else
 
     # Without exclusion mask just take mask ( + crossing fibres, - false positives ) as final fixel mask 
     CMD_EXCLUSIONFIXELMASK="echo 'No manual exclusion mask!'"
-    CMD_CROP_FINAL="cp -rf $FIXELMASK_CROSSFB_CROPPED $FIXELMASK_FINAL"
+    CMD_CROP_FINAL="cp -ruvf $FIXELMASK_CROSSFB_CROPPED $FIXELMASK_FINAL"
+
 fi
 
 # Execution
 #########################
-$singularity_mrtrix3 \
-/bin/bash -c "$CMD_FIXMASKCROSSINGFB; $CMD_FIXMASKFALSEPOS; $CMD_VOXMASKFALSEPOS; $CMD_CROPMASK; $CMD_EXCLUSIONFIXELMASK; $CMD_CROP_CROSSFB; $CMD_CROP_FINAL"
-
+#$singularity_mrtrix3 $CMD_FIXMASKCROSSINGFB; $CMD_FIXMASKFALSEPOS; $CMD_VOXMASKFALSEPOS; $CMD_CROPMASK; $CMD_EXCLUSIONFIXELMASK; $CMD_CROP_CROSSFB; $CMD_CROP_FINAL
 
 #########################
 # TRACTOGRAPHY
@@ -213,8 +212,8 @@ CMD_TCKSIFT="tcksift $TRACTOGRAM $FOD_TEMPLATE $TRACTOGRAM_SIFT -term_number 200
 
 # Execution
 #########################
-$singularity_mrtrix3 \
-/bin/bash -c "$CMD_TCKGEN; $CMD_TCKSIFT"
+#$singularity_mrtrix3 \
+#/bin/bash -c "$CMD_TCKGEN; $CMD_TCKSIFT"
 
 
 #########################
@@ -276,13 +275,13 @@ CMD_PERBUNDLEFIXELMASKS="mrthreshold -abs 1 $BUNDLE_FIXELMASK/{}_tdi.mif $BUNDLE
 
 # Execution
 #########################
-$singularity_tractseg \
-/bin/bash -c "$CMD_TEMPLATEPEAKS; $CMD_TRACTSEG; $CMD_TRACTENDINGS; $CMD_TOM; $CMD_TRACTOGRAMS"
-$parallel "$singularity_mrtrix3 $CMD_TRACTEXTRACTION" ::: $(ls $TRACTSEG_OUT_DIR/bundle_segmentations | xargs -n 1 basename | cut -d "." -f 1)
-$singularity_mrtrix3 \
-/bin/bash -c "$CMD_BUNDLETRACTOGRAM; $CMD_BUNDLETDI; $CMD_BUNDLEFIXELMASK"
-$parallel "$singularity_mrtrix3 $CMD_PERBUNDLETDIS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
-$parallel "$singularity_mrtrix3 $CMD_PERBUNDLEFIXELMASKS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
+#$singularity_tractseg \
+#/bin/bash -c "$CMD_TEMPLATEPEAKS; $CMD_TRACTSEG; $CMD_TRACTENDINGS; $CMD_TOM; $CMD_TRACTOGRAMS"
+#$parallel "$singularity_mrtrix3 $CMD_TRACTEXTRACTION" ::: $(ls $TRACTSEG_OUT_DIR/bundle_segmentations | xargs -n 1 basename | cut -d "." -f 1)
+#$singularity_mrtrix3 \
+#/bin/bash -c "$CMD_BUNDLETRACTOGRAM; $CMD_BUNDLETDI; $CMD_BUNDLEFIXELMASK"
+#$parallel "$singularity_mrtrix3 $CMD_PERBUNDLETDIS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
+#$parallel "$singularity_mrtrix3 $CMD_PERBUNDLEFIXELMASKS" ::: $(ls $TRACTSEG_OUT_DIR/TOM_trackings | xargs -n 1 basename | cut -d "." -f 1)
 popd
 
 

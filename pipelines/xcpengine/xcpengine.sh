@@ -49,13 +49,21 @@ if [ $MODIFIER == struc ];then
 
    design=struc.dsn
 
-elif [ $MODIFIER == fc ];then
+elif [ $MODIFIER == fc_36pspkreg ];then
 
    BOLD_IMG=$1/ses-$SESSION/func/${1}_ses-${SESSION}_task-rest_space-MNI152NLin6Asym_desc-preproc_bold.nii.gz
    echo "id0,img" > $COHORT_FILE
    echo "$1,$BOLD_IMG" >> $COHORT_FILE
 
    design=fc-36p_spkreg.dsn
+
+elif [ $MODIFIER == fc_aromagsr ];then
+
+   BOLD_IMG=$1/ses-$SESSION/func/${1}_ses-${SESSION}_task-rest_space-MNI152NLin6Asym_desc-preproc_bold.nii.gz
+   echo "id0,img" > $COHORT_FILE
+   echo "$1,$BOLD_IMG" >> $COHORT_FILE
+
+   design=fc-aroma-gsr.dsn
 
 fi
 

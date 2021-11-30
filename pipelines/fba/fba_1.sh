@@ -95,7 +95,7 @@ CMD_SUBDIR="[ ! -d $FBA_DIR/{}/ses-$SESSION/dwi/ ] && mkdir -p $FBA_DIR/{}/ses-$
 CMD_CONVERT="mrconvert $DWI_PREPROC_NII -grad $DWI_PREPROC_GRAD_TABLE $DWI_PREPROC_MIF -force"
 CMD_UPSAMPLE_DWI="mrgrid $DWI_PREPROC_MIF regrid -vox 1.25 $DWI_PREPROC_UPSAMPLED -force"
 CMD_UPSAMPLE_MASK="mrgrid $DWI_MASK_NII regrid -vox 1.25 $DWI_MASK_UPSAMPLED -force"
-CMD_DWI2RESPONSE="dwi2response dhollander -nthreads 16 $DWI_PREPROC_UPSAMPLED $RESPONSE_WM $RESPONSE_GM $RESPONSE_CSF -mask $DWI_MASK_UPSAMPLED -force"
+CMD_DWI2RESPONSE="dwi2response dhollander -nthreads 16 -scratch /tmp $DWI_PREPROC_UPSAMPLED $RESPONSE_WM $RESPONSE_GM $RESPONSE_CSF -mask $DWI_MASK_UPSAMPLED -force"
 
 # Execution
 #########################

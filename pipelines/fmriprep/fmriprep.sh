@@ -69,6 +69,4 @@ eval $CMD
 
 # Copy outputs to $DATA_DIR
 cp -ruvf $TMP_OUT/freesurfer $DATA_DIR
-cp -ruvf $TMP_OUT/sub-* $DATA_DIR/fmriprep
-cp -ruvf $TMP_OUT/d* $DATA_DIR/fmriprep
-cp -ruvf $TMP_OUT/logs $DATA_DIR/fmriprep
+cp -ruvf $TMP_OUT/fmriprep $DATA_DIR
