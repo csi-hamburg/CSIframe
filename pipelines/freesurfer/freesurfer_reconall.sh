@@ -41,7 +41,7 @@ if [ $SESSION == all ];then
 
    for ses in $(ls $BIDS_DIR/$1);do
       sub_ses_dir=${1}_${ses}
-      [ -d $TMP_IN/$sub_ses_dir ] && cp -rf $BIDS_DIR/$1/$ses $TMP_IN/$sub_ses_dir 
+      [ ! -d $TMP_IN/$sub_ses_dir ] && cp -rf $BIDS_DIR/$1/$ses $TMP_IN/$sub_ses_dir 
       [ ! -d $TMP_OUT/ ] && mkdir -p $TMP_OUT
    done
 
@@ -66,7 +66,7 @@ else
    #export SESSIONS=($SESSION)
    sub_ses_dir=${1}_${SESSION}
 
-   [ -d $TMP_IN/$sub_ses_dir ] && cp -rf $BIDS_DIR/$1/$ses $TMP_IN/$sub_ses_dir 
+   [ ! -d $TMP_IN/$sub_ses_dir ] && cp -rf $BIDS_DIR/$1/$ses $TMP_IN/$sub_ses_dir 
 
    CMD="
       $singularity_freesurfer \
