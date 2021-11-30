@@ -66,7 +66,7 @@ else
    #export SESSIONS=($SESSION)
    sub_ses_dir=${1}_ses-${SESSION}
 
-   [ ! -d $TMP_IN/$sub_ses_dir ] && cp -rf $BIDS_DIR/$1/$ses $TMP_IN/$sub_ses_dir 
+   [ ! -d $TMP_IN/$sub_ses_dir ] && cp -rf $BIDS_DIR/$1/$SESSION $TMP_IN/$sub_ses_dir 
 
    CMD="
       $singularity_freesurfer \
