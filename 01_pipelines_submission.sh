@@ -64,21 +64,27 @@ if [ $PIPELINE == "bidsify" ];then
 	subj_array=(${@-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata -e README | xargs -n 1 basename)}) # subjects in data/dicoms
 	subj_array_length=${#subj_array[@]}
 
-	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
-	echo "Which bidsify pipeline do you want to perform? Leave empty for core or type 'asl'."
-	read BIDSIFY_PIPE; export BIDSIFY_PIPE
-	[ -z $BIDSIFY_PIPE ] && export PIPELINE_SUFFIX="" || export PIPELINE_SUFFIX=_${BIDSIFY_PIPE}
-
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
 	echo "Which heuristic do you want to apply?"
-	echo "Choose from" $(ls $CODE_DIR/pipelines/bidsify/heudiconv_*.py | xargs -n 1 basename)
+	echo "Choose from" $(ls $ENV_DIR/bidsify/heudiconv_*.py | xargs -n 1 basename)
 	read HEURISTIC; export HEURISTIC
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Do you want to deface participants? (y/n)"
 	read MODIFIER; export MODIFIER
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
+	echo "Do you want to bidsify ASL data? (y/n)."
+	read ASL; export ASL
 	
+	if [ $ASL == "y" ]; then
+
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
+		echo "Which ASL metadata do you want to add?"
+		echo "Choose from" $(ls $ENV_DIR/bidsify/metadataextra_*.json | xargs -n 1 basename)
+		read METADATA_EXTRA; export METADATA_EXTRA
+	fi
+
 elif [ $PIPELINE == "qsiprep" ];then
 	
 	# Mind limitation by /scratch and memory capacity (23gb temporary files, 15gb max RAM usage)
