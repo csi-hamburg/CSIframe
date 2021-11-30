@@ -101,10 +101,10 @@ CMD_FIX2VOX_COMPLEXITY="fixel2voxel $FD_SMOOTH_DIR/{}.mif complexity $COMPLEXITY
 
 # Execution
 #########################
-#$parallel "$singularity_mrtrix3 $CMD_FIX2VOX_FD" ::: ${input_subject_array[@]}
-#$parallel "$singularity_mrtrix3 $CMD_FIX2VOX_LOG_FC" ::: ${input_subject_array[@]}
-#$parallel "$singularity_mrtrix3 $CMD_FIX2VOX_FDC" ::: ${input_subject_array[@]}
-#$parallel "$singularity_mrtrix3 $CMD_FIX2VOX_COMPLEXITY" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_FIX2VOX_FD" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_FIX2VOX_LOG_FC" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_FIX2VOX_FDC" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3 $CMD_FIX2VOX_COMPLEXITY" ::: ${input_subject_array[@]}
 
 
 #########################
@@ -134,9 +134,9 @@ CMD_AVG="mrmath $(ls -d -1 $FA_TEMP_DIR/fa/sub-*) mean $FA_AVG_TEMP --force"
 
 # Execution
 #########################
-#$parallel "$singularity_mrtrix3 $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
-#$parallel "[ -f $FA_TEMP ] && ln -srf $FA_TEMP $FA_TEMP_DIR/fa" ::: ${input_subject_array[@]}
-#$singularity_mrtrix3 $CMD_AVG
+$parallel "$singularity_mrtrix3 $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
+$parallel "[ -f $FA_TEMP ] && ln -srf $FA_TEMP $FA_TEMP_DIR/fa" ::: ${input_subject_array[@]}
+$singularity_mrtrix3 $CMD_AVG
 
 #########################
 # FA_AVG_TEMP 2 MNI + ATLAS 2 TEMP
@@ -200,7 +200,7 @@ antsApplyTransforms -d 3 -e 3 -n Linear \
 
 # Execution
 #########################
-#$singularity_mrtrix3 $CMD_TEMP2MNI
+$singularity_mrtrix3 $CMD_TEMP2MNI
 $parallel $singularity_mrtrix3 $CMD_ATLAS2TEMP ::: 100 200 400 600 ::: 7 17
 
 
@@ -272,7 +272,7 @@ $parallel $singularity_mrtrix3 $CMD_COMPLEXITY2MNI ::: ${input_subject_array[@]}
 #########################
 
 FW_DIR="$DATA_DIR/freewater/{}/ses-$SESSION/dwi/"
-[ ! -d $FW_DIR ] && echo Please run freewater core pipeline first
+[ ! -d $FW_DIR ] && echo Please run freewater core pipeline first && exit 1
 
 # Input
 #########################

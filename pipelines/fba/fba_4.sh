@@ -164,13 +164,13 @@ CMD_FIXMASKCROSSINGFB="[ -d $FIXELMASK_CROSSFB ] && rm -rf $FIXELMASK_CROSSFB/*;
 CMD_FIXMASKFALSEPOS="[ -d $FIXELMASK_FALSEPOS ] && rm -rf $FIXELMASK_FALSEPOS/*; fod2fixel -force -mask $TEMPLATE_MASK -fmls_peak_value $thr4fpcontrol $FOD_TEMPLATE $FIXELMASK_FALSEPOS"
 
 # Derive fixelmask from FOD template and apply threshold excluding false positives
-CMD_VOXMASKFALSEPOS="fixel2voxel $FIXELMASK_FALSEPOS/directions.mif count - | mrthreshold - -abs 0.9 $VOXELMASK_FALSEPOS -force"
+CMD_VOXMASKFALSEPOS="fixel2voxel $FIXELMASK_FALSEPOS/directions.mif count $VOXELMASK_FALSEPOS -force; mrthreshold $VOXELMASK_FALSEPOS -abs 0.9 $VOXELMASK_FALSEPOS -force"
 
 # Create crop voxelmask for cropping crossing fibres fixelmask from false-positive fixelmask (excluding false positives)
 CMD_CROPMASK="[ -d $FIXELMASK_CROP ] && rm -rf $FIXELMASK_CROP/*; voxel2fixel $VOXELMASK_FALSEPOS $FIXELMASK_CROSSFB $FIXELMASK_CROP fixelmask_crop.mif -force"
 
 # Crop crossing-fibres fixelmask with crop voxelmask
-CMD_CROP_CROSSFB="[ -d $FIXELMASK_CROSSFB_CROP ] && rm -rf $FIXELMASK_CROSSFB_CROP; fixelcrop $FIXELMASK_CROSSFB $FIXELMASK_CROP/fixelmask_crop.mif $FIXELMASK_CROSSFB_CROPPED -force"
+CMD_CROP_CROSSFB="[ -d $FIXELMASK_CROSSFB_CROPPED ] && rm -rf $FIXELMASK_CROSSFB_CROPPED; fixelcrop $FIXELMASK_CROSSFB $FIXELMASK_CROP/fixelmask_crop.mif $FIXELMASK_CROSSFB_CROPPED -force"
 
 
 if [ -f $EXCLUSION_MASK ];then
@@ -183,13 +183,18 @@ else
 
     # Without exclusion mask just take mask ( + crossing fibres, - false positives ) as final fixel mask 
     CMD_EXCLUSIONFIXELMASK="echo 'No manual exclusion mask!'"
-    CMD_CROP_FINAL="cp -ruvf $FIXELMASK_CROSSFB_CROPPED $FIXELMASK_FINAL"
-
+    CMD_CROP_FINAL="[ -d $FIXELMASK_FINAL ] && rm -rf $FIXELMASK_FINAL; cp -ruvf $FIXELMASK_CROSSFB_CROPPED $FIXELMASK_FINAL"
 fi
 
 # Execution
 #########################
-#$singularity_mrtrix3 $CMD_FIXMASKCROSSINGFB; $CMD_FIXMASKFALSEPOS; $CMD_VOXMASKFALSEPOS; $CMD_CROPMASK; $CMD_EXCLUSIONFIXELMASK; $CMD_CROP_CROSSFB; $CMD_CROP_FINAL
+$singularity_mrtrix3 /bin/bash -c "$CMD_FIXMASKCROSSINGFB"
+$singularity_mrtrix3 /bin/bash -c "$CMD_FIXMASKFALSEPOS"
+$singularity_mrtrix3 /bin/bash -c "$CMD_VOXMASKFALSEPOS"
+$singularity_mrtrix3 /bin/bash -c "$CMD_CROPMASK"
+$singularity_mrtrix3 /bin/bash -c "$CMD_EXCLUSIONFIXELMASK"
+$singularity_mrtrix3 /bin/bash -c "$CMD_CROP_CROSSFB"
+$singularity_mrtrix3 /bin/bash -c "$CMD_CROP_FINAL"
 
 #########################
 # TRACTOGRAPHY
@@ -308,13 +313,13 @@ FD_DIR=$FBA_GROUP_DIR/fd
 FC_DIR=$FBA_GROUP_DIR/fc
 LOG_FC_DIR=$FBA_GROUP_DIR/log_fc
 FDC_DIR=$FBA_GROUP_DIR/fdc
-[ ! -d $FD_DIR ] && mkdir -p $FD_DIR $FC_DIR $LOG_FC_DIR $FDC_DIR
+[ ! -d $FD_DIR ] && mkdir -p $FD_DIR $FC_DIR $LOG_FC_DIR $FDC_DIR || rm -rf $FD_DIR/* $FC_DIR/* $LOG_FC_DIR/* $FDC_DIR/*
 
 # Command
 #########################
 CMD_FOD2TEMPLATE="mrtransform $FOD_WM -warp $SUB2TEMP_WARP -reorient_fod no $FOD_WM_TEMP_NOREORIENT -force"
-CMD_SUBJECTFOD2FIXEL="[ -d $FIXELMASK_NOREORIENT ] && rm -rf $FIXELMASK_NOREORIENT/*; fod2fixel -mask $TEMPLATE_MASK $FOD_WM_TEMP_NOREORIENT $FIXELMASK_NOREORIENT -afd fd.mif -force"
-CMD_REORIENTFIXELS="[ -d $FIXELMASK_REORIENT ] && rm -rf $FIXELMASK_REORIENT/*; fixelreorient $FIXELMASK_NOREORIENT $SUB2TEMP_WARP $FIXELMASK_REORIENT -force"
+CMD_SUBJECTFOD2FIXEL="fod2fixel -mask $TEMPLATE_MASK $FOD_WM_TEMP_NOREORIENT $FIXELMASK_NOREORIENT -afd fd.mif -force"
+CMD_REORIENTFIXELS="fixelreorient $FIXELMASK_NOREORIENT $SUB2TEMP_WARP $FIXELMASK_REORIENT -force"
 CMD_FD="fixelcorrespondence -force $FIXELMASK_REORIENT/fd.mif $FIXELMASK_FINAL $FD_DIR {}.mif -force"
 CMD_FC="warp2metric $SUB2TEMP_WARP -fc $FIXELMASK_FINAL $FC_DIR {}.mif -force"
 CMD_LOG_FC="mrcalc $FC_DIR/{}.mif -log $LOG_FC_DIR/{}.mif -force"
@@ -322,15 +327,21 @@ CMD_FDC="mrcalc $FD_DIR/{}.mif $FC_DIR/{}.mif -mult $FDC_DIR/{}.mif -force"
 
 # Execution
 #########################
-$parallel "$singularity_mrtrix3 $CMD_FOD2TEMPLATE" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3 $CMD_SUBJECTFOD2FIXEL" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3 $CMD_REORIENTFIXELS" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3 $CMD_FD" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3 $CMD_FC" ::: ${input_subject_array[@]}
-cp $FC_DIR/index.mif $FC_DIR/directions.mif $LOG_FC_DIR
-cp $FC_DIR/index.mif $FC_DIR/directions.mif $FDC_DIR
-$parallel "$singularity_mrtrix3 $CMD_LOG_FC" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3 $CMD_FDC" ::: ${input_subject_array[@]}
+$parallel $singularity_mrtrix3 $CMD_FOD2TEMPLATE ::: ${input_subject_array[@]}
+$parallel "[ -d $FIXELMASK_NOREORIENT ] && rm -rf $FIXELMASK_NOREORIENT/*" ::: ${input_subject_array[@]}
+$parallel $singularity_mrtrix3 $CMD_SUBJECTFOD2FIXEL ::: ${input_subject_array[@]}
+$parallel "[ -d $FIXELMASK_REORIENT ] && rm -rf $FIXELMASK_REORIENT/*" ::: ${input_subject_array[@]}
+$parallel $singularity_mrtrix3 $CMD_REORIENTFIXELS ::: ${input_subject_array[@]}
+[ -d $FD_DIR ] && rm -rf $FD_DIR/*
+$parallel -j1 $singularity_mrtrix3 $CMD_FD ::: ${input_subject_array[@]}
+[ -d $FC_DIR ] && rm -rf $FC_DIR/*
+$parallel -j1 $singularity_mrtrix3 $CMD_FC ::: ${input_subject_array[@]}
+[ -d $LOG_FC_DIR ] && rm -rf $LOG_FC_DIR/*
+cp -ruvf $FC_DIR/index.mif $FC_DIR/directions.mif $LOG_FC_DIR
+$parallel $singularity_mrtrix3 $CMD_LOG_FC ::: ${input_subject_array[@]}
+[ -d $FDC_DIR ] && rm -rf $FDC_DIR/*
+cp -ruvf $FC_DIR/index.mif $FC_DIR/directions.mif $FDC_DIR
+$parallel $singularity_mrtrix3 $CMD_FDC ::: ${input_subject_array[@]}
 
 
 #########################
@@ -349,12 +360,12 @@ FDC_DIR=$FBA_GROUP_DIR/fdc
 # Output
 #########################
 FIXELCONNECTIVITY_MAT=$FBA_GROUP_DIR/matrix
-[ ! -d $FIXELCONNECTIVITY_MAT ] && mkdir $FIXELCONNECTIVITY_MAT
+[ ! -d $FIXELCONNECTIVITY_MAT ] && mkdir $FIXELCONNECTIVITY_MAT || rm -rf $FIXELCONNECTIVITY_MAT/*
 
 FD_SMOOTH_DIR=$FBA_GROUP_DIR/fd_smooth
 LOG_FC_SMOOTH_DIR=$FBA_GROUP_DIR/log_fc_smooth
 FDC_SMOOTH_DIR=$FBA_GROUP_DIR/fdc_smooth
-[ ! -d $FD_SMOOTH_DIR ] && mkdir -p $FD_SMOOTH_DIR $LOG_FC_SMOOTH_DIR $FDC_SMOOTH_DIR
+[ ! -d $FD_SMOOTH_DIR ] && mkdir -p $FD_SMOOTH_DIR $LOG_FC_SMOOTH_DIR $FDC_SMOOTH_DIR || rm -rf $FD_SMOOTH_DIR/* $LOG_FC_SMOOTH_DIR/* $FDC_SMOOTH_DIR/*
 
 # Command
 #########################
@@ -366,4 +377,4 @@ CMD_FILTER_FDC="fixelfilter $FDC_DIR smooth $FDC_SMOOTH_DIR -matrix $FIXELCONNEC
 # Execution
 #########################
 $singularity_mrtrix3 \
-/bin/bash -c "$CMD_FILTER_FD; $CMD_FILTER_LOG_FC; $CMD_FILTER_FDC" #$CMD_FIXELCONNECTIVITY;
+/bin/bash -c "$CMD_FIXELCONNECTIVITY; $CMD_FILTER_FD; $CMD_FILTER_LOG_FC; $CMD_FILTER_FDC"
