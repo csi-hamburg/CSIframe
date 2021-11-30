@@ -56,30 +56,29 @@ if [ $SESSION == all ];then
       recon-all \
       -sd /tmp_out/ \
       -subjid {} \
-      -i /tmp_in/{}/anat/{}_T1w.nii.gz \
+      -i /tmp_in/{}/{}_T1w.nii.gz \
       -debug \
       -all"
    $parallel $CMD ::: $(ls $TMP_IN)
 
-   [ ! -d $DATA_DIR/freesurfer_multisession ] && mkdir -p $DATA_DIR/freesurfer_multisession
-   cp -ruvf $TMP_OUT/* $DATA_DIR/freesurfer_multisession
-
 else
 
    #export SESSIONS=($SESSION)
+   sub_ses_dir=${1}_${SESSION}
+
+   [ -d $TMP_IN/$sub_ses_dir ] && cp -rf $BIDS_DIR/$1/$ses $TMP_IN/$sub_ses_dir 
 
    CMD="
       $singularity_freesurfer \
       recon-all \
       -sd /tmp_out \
       -subjid $1 \
-      -i /tmp_in/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_T1w.nii.gz \
+      -i /tmp_in/$sub_ses_dir/anat/${1}_ses-${SESSION}_T1w.nii.gz \
       -debug \
       -all"
    $CMD
 
-   cp -ruvf $TMP_OUT/* $DATA_DIR/freesurfer
-   
 fi
 
-
+[ ! -d $DATA_DIR/freesurfer_multisession ] && mkdir -p $DATA_DIR/freesurfer_multisession
+cp -ruvf $TMP_OUT/* $DATA_DIR/freesurfer_multisession
