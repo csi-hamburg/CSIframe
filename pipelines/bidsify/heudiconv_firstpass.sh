@@ -17,6 +17,15 @@ export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
 export TMPDIR=$WORK/tmp
 
+heudiconv=heudiconv-0.9.0
+
+singularity_heudiconv="singularity run --cleanenv --userns \
+    -B . \
+    -B $PROJ_DIR \
+    -B $TMP_DIR:/tmp
+    -B $(readlink -f $ENV_DIR) \
+    $ENV_DIR/$heudiconv" 
+
 echo "Provide session"
 read session
 subs=($@)
@@ -29,7 +38,8 @@ CMD="heudiconv
     -ss $session \
     -f convertall \
     -c none \
+    -g all \
     -o $PIPELINE_DIR"
 
 # Execute command
-$CMD
+$singularity_heudiconv $CMD

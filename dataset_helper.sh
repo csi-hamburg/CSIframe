@@ -10,6 +10,7 @@
 source /sw/batch/init.sh
 module load parallel
 module load aws-cli
+module load zip
 source /work/fatx405/set_envs/miniconda
 source activate datalad
 
@@ -22,7 +23,7 @@ echo "Script is run from $(realpath .); superdataset is assumed to be/become sub
 echo "Enter name of dataset concerned / to create; e.g. CSI_HCHS"
 read PROJ_NAME
 
-echo "What do you want to do? (setup_superdataset, add_data_subds, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, create_participants_tsv, add_lzs_s3_remote, create_pybids_db, templateflow_setup, export_from_datalad)"
+echo "What do you want to do? (setup_superdataset, add_data_subds, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, if_in_s3, create_participants_tsv, add_lzs_s3_remote, create_pybids_db, templateflow_setup, export_from_datalad)"
 read PIPELINE
 
 #################################################################
@@ -55,7 +56,7 @@ create_data_subds () {
 	subds=$1
 	mkdir $DATA_DIR/$subds
 	echo "Dataset README" >> $DATA_DIR/$subds/README.md
-	[ -f $BIDS_DIR/dataset_description.json ] && cp $BIDS_DIR/dataset_description.json $DATA_DIR/$subds 
+	[ -f $ENV_DIR/standard/dataset_description.json ] && cp $ENV_DIR/standard/dataset_description.json $DATA_DIR/$subds 
 	}
 
 import() {
@@ -63,6 +64,7 @@ import() {
 	OUTPUT_PATH=$2
 	zip=$3
 	time=$4
+	IMPORT_TYPE=$5
 
 	# Define subject list
 	subs=$(ls $INPUT_PATH)
@@ -77,24 +79,26 @@ import() {
 		OUTPUT_PATH=$2
 		zip=$3
 		sub=$4
+		IMPORT_TYPE=$5
 
 		echo "Importing subject $sub"
 		echo "Sequences to import: $seqs"
 		OUTPUT_DIR=$OUTPUT_PATH/$sub
 		INPUT_DIR=$INPUT_PATH/$sub
 		for session in $(ls $INPUT_DIR/ses-* -d | xargs -n 1 basename);do
-			if [ $zip == y ];then #&& [ ! -f $OUTPUT_DIR/${session}.tar.gz ]
-				mkdir -p $OUTPUT_DIR
+			if [ $zip == y ];then
 				pushd $INPUT_DIR
 				
-				if [ -f $OUTPUT_DIR/${session}.tar.gz ]; then
-					tar -xf $OUTPUT_DIR/${session}.tar.gz
-					tar -uvf $OUTPUT_DIR/${session}.tar $session
-					tar -zvf $OUTPUT_DIR/${session}.tar
-
-				else
-				tar -czvf $OUTPUT_DIR/${session}.tar.gz $session
+				if [ $IMPORT_TYPE == "all" ]; then
+					mkdir -p $OUTPUT_DIR
+					tar -czvf $OUTPUT_DIR/${session}.tar.gz $session
 				
+				elif [ $IMPORT_TYPE == "update" ]; then
+					gunzip $OUTPUT_DIR/${session}.tar.gz
+					chmod 770 $OUTPUT_DIR/${session}.tar
+					tar -f $OUTPUT_DIR/${session}.tar -v -u $session
+					gzip $OUTPUT_DIR/${session}.tar
+					echo "$sub $session $(date +%d%m%Y)" >> $CODE_DIR/log/dicom_update_$(date +%d%m%Y).log
 				fi
 
 			elif [ $zip == n ];then
@@ -108,7 +112,7 @@ import() {
 
 	}
 	export -f import_loop
-	CMD="$parallel import_loop $INPUT_PATH $OUTPUT_PATH $zip {} ::: $subs"
+	CMD="$parallel import_loop $INPUT_PATH $OUTPUT_PATH $zip {} $IMPORT_TYPE ::: $subs"
 	echo $CMD
 
 	# Calculate with ~1h for 150 subjects
@@ -128,7 +132,6 @@ if [ $PIPELINE == setup_superdataset ];then
 	mkdir $PROJ_DIR
 	pushd $PROJ_DIR
 	touch README.md
-	touch CHANGELOG.md
 
 	# Create code subdataset and insert copy of this script
 	
@@ -141,9 +144,9 @@ if [ $PIPELINE == setup_superdataset ];then
 	# Clone envs subdataset from source
 	echo "Where to clone envs/ from?"
 	echo "Please provide absolute Path to datalad dataset or github URL; e.g. https://github.com/csi-hamburg/csi_envs"
-	read envs_source
+	read ENVS_SOURCE
 
-	datalad clone $envs_source $ENV_DIR
+	ln -rs $ENVS_SOURCE envs
 
 elif [ $PIPELINE == add_data_subds ];then
 
@@ -174,7 +177,6 @@ elif [ $PIPELINE == 'convert_containers' ];then
 	done
 
 elif [ $PIPELINE == add_ses_dcm ];then
-
 	## Insert session to single session dcm directory
 	echo "Assumed path containing subject directories with DICOMs is $PROJ_DIR"
 	echo "Assumed structure of this directory is dataset_directory/subject/sequence/DICOMS"
@@ -193,18 +195,22 @@ elif [ $PIPELINE == import_dcms ];then
 	## Import dicoms from dataset directory and convert them to tarballs
 	echo "Define path containing subject directories with DICOMs"
 	echo "data/dicoms/ subdataset should have been established (add_dcm_subds)"
-	echo "Assumed structure of this directory is dataset_directory/subject/(session)/sequence/DICOMS"
+	echo "Assumed structure of this directory is dataset_directory/subject/session/sequence/DICOMS"
 	echo "Before you proceed please make sure that subject directories are the only instances in dataset_directory"
 	read INPUT_PATH
 	OUTPUT_PATH=$DCM_DIR
 
+	echo "Would you like to update an existing import or perform a new import? (update/all)"
+	read IMPORT_TYPE
+	export IMPORT_TYPE
+	
 	echo "How much time do you want to allocate? e.g. '01:00:00' for one hour"
 	read time
 
 	echo "Converting subject dirs to tarballs and copying into data/dicoms"
 	export zip=y
 	
-	import $INPUT_PATH $OUTPUT_PATH $zip $time
+	import $INPUT_PATH $OUTPUT_PATH $zip $time $IMPORT_TYPE
 
 elif [ $PIPELINE == import_raw_bids ];then
 
@@ -255,9 +261,9 @@ elif [ $PIPELINE == missing_outputs ];then
 		done
 
 		echo "Finished writing to $out_file"
+
 	elif [ $file_or_subdir == in_subdir ];then
-		echo "Please provide search term you are looking for; e.g. 'dwi.nii.gz'"
-		#echo "Please provide file or directory name you are looking for (search depth of 1, i.e. sub-xyz/?)"
+		echo "Please provide search term pattern you want to match; e.g. 'dwi.nii.gz' will match everything with that string."
 		read search
 
 		for ds in ${subds[@]};do
@@ -271,6 +277,34 @@ elif [ $PIPELINE == missing_outputs ];then
 		popd
 		done
 	fi
+
+elif [ $PIPELINE == if_in_s3 ];then
+
+	echo "Which S3 bucket do you want to look at?"
+	echo "Choose from: $(aws --endpoint-url https://s3-uhh.lzs.uni-hamburg.de s3 ls | awk '{print $3}')"
+	read bucket
+
+	# Define the subdataset concerned
+	echo "Please provide subdataset in data/ to work in; e.g. 'fmriprep mriqc'"
+	echo "Choose from: $(ls $PROJ_DIR/data)"
+	read subds
+
+	echo "Please provide search term you want to match; e.g. 'dwi.nii.gz'"
+	read identifier
+
+	echo "What do you want to do with local clone if you found files remotely? (list/count/remove)"
+	read operation
+
+	pushd $DATA_DIR
+	if [ $operation == list ];then
+		aws s3 --endpoint-url https://s3-uhh.lzs.uni-hamburg.de ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | xargs -n 4 echo
+	elif [ $operation == count ];then
+		aws s3 --endpoint-url https://s3-uhh.lzs.uni-hamburg.de ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | wc -l
+	elif [ $operation == remove ];then
+		aws s3 --endpoint-url https://s3-uhh.lzs.uni-hamburg.de ls s3://$bucket/$subds/ --recursive | grep $identifier | awk '{print $4}' | xargs -n 1 rm
+	else echo $operation not provided. Please choose from list/count/remove
+	fi
+	popd
 
 elif [ $PIPELINE == create_participants_tsv ];then
 

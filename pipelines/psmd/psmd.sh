@@ -75,15 +75,7 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
 # Subject level analysis #
 ##########################
 
-#cd $DATA_DIR/freewater
-
-#for sub in $(ls -d sub-*); do
-
-    # echo "###################"
-    # echo "Processing $sub ..."
-    # echo "###################"
-
-    cd $SCRATCH_DIR
+    pushd $TMP_DIR
 
     # Define input data
 
@@ -111,6 +103,7 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
         -B . \
         -B $PROJ_DIR \
         -B $SCRATCH_DIR:/tmp \
+        -B $(readlink -f $ENV_DIR) \
         $ENV_DIR/psmd-1.8.2 $CMD_PSMD_GLOBAL`
     PSMD_RESULT_GLOBAL=`echo $PSMD_OUTPUT_GLOBAL | grep "PSMD is" | grep -Eo "[0-9]+\.[0-9][0-9]+"`
 
@@ -119,6 +112,7 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
         -B . \
         -B $PROJ_DIR \
         -B $SCRATCH_DIR:/tmp \
+        -B $(readlink -f $ENV_DIR) \
         $ENV_DIR/psmd-1.8.2 $CMD_PSMD_HEMI`
     PSMD_RESULT_HEMI=`echo $PSMD_OUTPUT_HEMI | grep "PSMD is" | grep -Eo "[0-9]+\.[0-9]+\,[0-9]+\.[0-9]+"`
 
@@ -127,9 +121,7 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
     echo "Subject,PSMD_global,PSMD_left,PSMD_right" > $PSMD_DIR/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_psmd.csv
     echo $1,$PSMD_RESULT_GLOBAL,$PSMD_RESULT_HEMI >> $PSMD_DIR/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_psmd.csv
 
-#done
-
-cd $CODE_DIR
+popd
 
 ########################
 # Group level analysis #
@@ -137,27 +129,18 @@ cd $CODE_DIR
 
 elif [ $ANALYSIS_LEVEL == "group" ]; then
 
-    #cho "Please confirm PSMD has been run on participant level (y/n)."
-    #read PSMD_RUN
+    [ -d $PSMD_DIR/derivatives/ses-${SESSION}/dwi ] || mkdir -p $PSMD_DIR/derivatives/ses-${SESSION}/dwi
 
-    #if [ $PSMD_RUN == "y" ]; then
-
-        cd $PSMD_DIR
-        echo "Subject,PSMD_global,PSMD_left,PSMD_right" > $PSMD_DIR/group_ses-${SESSION}_psmd.csv
+    pushd $PSMD_DIR
+    echo "Subject,PSMD_global,PSMD_left,PSMD_right" > $PSMD_DIR/derivatives/ses-${SESSION}/dwi/group_ses-${SESSION}_psmd.csv
     
         for sub in $(ls -d sub-*); do
 
-            tail -n 1 $PSMD_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_psmd.csv >> $PSMD_DIR/group_ses-${SESSION}_psmd.csv
+            tail -n 1 $PSMD_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_psmd.csv >> \
+            $PSMD_DIR/derivatives/ses-${SESSION}/dwi/group_ses-${SESSION}_psmd.csv
         
         done
 
-        cd $CODE_DIR 
-
-    #elif [ $PSMD_RUN == "n" ]; then
-
-    #    echo "Please run PSMD on participant level first. Exiting ..."
-    #    exit
-    
-    #fi
+    popd
 
 fi
