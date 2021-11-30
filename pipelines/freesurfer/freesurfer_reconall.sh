@@ -33,33 +33,40 @@ singularity_freesurfer="singularity run --cleanenv --userns \
     -B $TMP_OUT:/tmp_out \
     $ENV_DIR/$container_freesurfer" 
 
-
-# To make I/O more efficient read/write outputs from/to scratch 
-[ -d $TMP_IN ] && cp -rf $BIDS_DIR/$1 $TMP_IN 
-[ ! -d $TMP_OUT/ ] && mkdir -p $TMP_OUT
-
-
 export SINGULARITYENV_SUBJECTS_DIR=$TMP_OUT/freesurfer
 
 parallel="parallel --ungroup --delay 0.2 -j16 --joblog $CODE_DIR/log/parallel_runtask.log"
 
 if [ $SESSION == all ];then
 
-      for ses_dir in $(ls $DATA_DIR/raw_bids/$1);do
-         [ ! -d $TMP_OUT/$1/$ses_dir ]; mkdir -p $TMP_OUT/$1/$ses_dir
-      done
+   for ses in $(ls $BIDS_DIR/$1);do
+      sub_ses_dir=${1}_${ses}
+      [ -d $TMP_IN/$sub_ses_dir ] && cp -rf $BIDS_DIR/$1/$ses $TMP_IN/$sub_ses_dir 
+      [ ! -d $TMP_OUT/ ] && mkdir -p $TMP_OUT
+   done
 
-      CMD="
-         $singularity_freesurfer \
-         recon-all \
-         -sd /tmp_out/$1/{} \
-         -subjid $1 \
-         -i /tmp_in/$1/{}/anat/${1}_{}_T1w.nii.gz \
-         -debug \
-         -all"
-      $parallel $CMD ::: $(ls $TMP_IN/$1)
+   #SESSIONS+=($sub_ses_dir)
+
+   #for ses_dir in $(ls $DATA_DIR/raw_bids/$1);do
+   #      [ ! -d $TMP_OUT/$1/$ses_dir ]; mkdir -p $TMP_OUT/$1/$ses_dir
+   #   done
+
+   CMD="
+      $singularity_freesurfer \
+      recon-all \
+      -sd /tmp_out/ \
+      -subjid {} \
+      -i /tmp_in/{}/anat/{}_T1w.nii.gz \
+      -debug \
+      -all"
+   #$parallel $CMD ::: $(ls $TMP_IN)
+
+   [ ! -d $DATA_DIR/freesurfer_multisession ]; mkdir $DATA_DIR/freesurfer_multisession
+   cp -ruvf $TMP_OUT/* $DATA_DIR/freesurfer_multisession
 
 else
+
+   #export SESSIONS=($SESSION)
 
    CMD="
       $singularity_freesurfer \
@@ -69,9 +76,10 @@ else
       -i /tmp_in/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_T1w.nii.gz \
       -debug \
       -all"
-   $CMD
+   #$CMD
+
+   cp -ruvf $TMP_OUT/* $DATA_DIR/freesurfer
 
 fi
 
 
-cp -ruvf $TMP_OUT/* $DATA_DIR/freesurfer
