@@ -192,6 +192,13 @@ elif [ $PIPELINE == "fmriprep" ];then
 	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '--anat-only'"
 	read MODIFIER; export MODIFIER
 	
+elif [ $PIPELINE == "aslprep" ]; then
+	
+	export SUBJS_PER_NODE=8
+	export ANALYSIS_LEVEL=subject
+	batch_time_default="10:00:00"
+	partition_default="std"
+
 elif [ $PIPELINE == "xcpengine" ];then
 	
 	export SUBJS_PER_NODE=16
@@ -351,8 +358,8 @@ elif [ $PIPELINE == "connectomics" ];then
 elif [ $PIPELINE == "psmd" ];then
 	
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
-	echo "On which level you like to run the PSMD pipeline? Choose between 'subject' and 'group'. Subject level needs to be run first."
-	read PSMD_LEVEL
+	echo "On which level you like to run the PSMD pipeline? (subject/group). Subject level needs to be run first."
+	read PSMD_LEVEL; export PSMD_LEVEL
 
 	if [ $PSMD_LEVEL == "subject" ]; then
 		
