@@ -59,9 +59,9 @@ if [ $SESSION == all ];then
       -i /tmp_in/{}/anat/{}_T1w.nii.gz \
       -debug \
       -all"
-   #$parallel $CMD ::: $(ls $TMP_IN)
+   $parallel $CMD ::: $(ls $TMP_IN)
 
-   [ ! -d $DATA_DIR/freesurfer_multisession ]; mkdir $DATA_DIR/freesurfer_multisession
+   [ ! -d $DATA_DIR/freesurfer_multisession ] && mkdir -p $DATA_DIR/freesurfer_multisession
    cp -ruvf $TMP_OUT/* $DATA_DIR/freesurfer_multisession
 
 else
@@ -76,10 +76,10 @@ else
       -i /tmp_in/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_T1w.nii.gz \
       -debug \
       -all"
-   #$CMD
+   $CMD
 
    cp -ruvf $TMP_OUT/* $DATA_DIR/freesurfer
-
+   
 fi
 
 
