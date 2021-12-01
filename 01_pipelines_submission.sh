@@ -368,6 +368,10 @@ elif [ $PIPELINE == "psmd" ];then
 		batch_time_default="03:00:00"
 		partition_default="std"
 
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+		echo "Which input data do you want to use? (preprocessed/fitted)"
+		read MODIFIER; export MODIFIER
+
 	elif [ $PSMD_LEVEL == "group" ];then
 		
 		export SUBJS_PER_NODE=$subj_array_length
