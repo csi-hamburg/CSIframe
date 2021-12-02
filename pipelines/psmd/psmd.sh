@@ -1,87 +1,61 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+##################################################################################################
+# Submission script for PSMD (https://github.com/miac-research/psmd)                             #
+# Please check here for license and usage notes                                                  #
+#                                                                                                #
+# Citation for the PSMD pipeline:                                                                #
+# Baykara E. et al. A novel imaging marker for small vessel disease based on skeletonization of  #
+# white matter tracts and diffusion histograms. Annals of Neurology 2016. DOI: 10.1002/ana.24758 #
+#                                                                                                #
+# Pipeline specific dependencies:                                                                #
+#   [pipelines which need to be run first]                                                       #
+#       - qsiprep                                                                                #
+#       - freewater                                                                              #
+#   [container]                                                                                  #
+#       - psmd-1.8.2                                                                             #
+##################################################################################################
+
+# Get verbose outputs
 set -x
 
-# NOTICE: Parallelization does not work with psmd container, as the original psmd.sh script does not tolerate
-#         the /psmdtemp directory of a parallel run. Still use container for the sake of reproducibility, or 
-#         isolate PSMD calculation and integrate in TBSS pipeline?   
+# Define subject specific temporary directory on $SCRATCH_DIR
+export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
+TMP_IN=$TMP_DIR/input;                 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN
+TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
-######################################################################
-# Submission script for PSMD (https://github.com/miac-research/psmd) #
-#                                                                    #
-# Pipeline specific dependencies:                                    #
-#   [pipelines which need to be run first]                           #
-#       - qsiprep                                                    #
-#       - freewater                                                  #
-#   [container]                                                      #
-#       - psmd-1.8.2                                                 #
-######################################################################
+###################################################################################################################
 
-###################################################################################
-# IMPORTANT: This tool is NOT a medical device and for research use only!         #
-# Do NOT use this tool for diagnosis, prognosis, monitoring or any other          #
-# purpose in clinical use.                                                        #
-#                                                                                 #
-# This script is provided under the revised BSD (3-clause) license                #
-#                                                                                 #
-# Copyright (c) 2016-2020, Institute for Stroke and Dementia Research, Munich,    #
-# Germany, http://www.isd-muc.de                                                  #
-# Copyright (c) 2020, MIAC AG Basel, Switzerland, https://miac.swiss              #
-# All rights reserved.                                                            #
-#                                                                                 #
-# Redistribution and use in source and binary forms, with or without              #
-# modification, are permitted provided that the following conditions are met:     #
-#     * Redistributions of source code must retain the above copyright            #
-#       notice, this list of conditions and the following disclaimer.             #
-#     * Redistributions in binary form must reproduce the above copyright         #
-#       notice, this list of conditions and the following disclaimer in the       #
-#       documentation and/or other materials provided with the distribution.      #
-#     * Neither the name of the “Institute for Stroke and Dementia Research”      #
-#       nor the names of its contributors may be used to endorse or promote       #
-#       products derived from this software without specific prior written        #
-#       permission.                                                               #
-#                                                                                 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND #
-# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED   #
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE          #
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY            #
-# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES      #
-# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;    #
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND     #
-# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT      #
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS   #
-# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                    #
-###################################################################################
+# Define environment
+####################
 
-######################################################################################
-# The use of the software needs to be acknowledged through proper citations:         #
-#                                                                                    #
-# For the PSMD pipeline:                                                             #
-# Baykara E, Gesierich B, Adam R, Tuladhar AM, Biesbroek JM, Koek HL, Ropele S,      #
-# Jouvent E, Alzheimer’s Disease Neuroimaging Initiative (ADNI), Chabriat H,         #
-# Ertl-Wagner B, Ewers M, Schmidt R, de Leeuw FE, Biessels GJ, Dichgans M, Duering M #
-# A novel imaging marker for small vessel disease based on skeletonization of        #
-# white matter tracts and diffusion histograms                                       #
-# Annals of Neurology 2016, 80(4):581-92, DOI: 10.1002/ana.24758                     #
-#                                                                                    #
-# For FSL-TBSS:                                                                      #
-# Follow the guidelines at http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/TBSS                #
-######################################################################################
+container_mrtrix3=mrtrix3-3.0.2      
+container_psmd=psmd-1.8.2
 
-PSMD_DIR=$DATA_DIR/psmd
+singularity_mrtrix3="singularity run --cleanenv --userns \
+    -B $PROJ_DIR \
+    -B $(readlink -f $ENV_DIR) \
+    -B $TMP_DIR/:/tmp \
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
+    $ENV_DIR/$container_mrtrix3" 
+
+singularity_psmd="singularity run --cleanenv --userns \
+    -B $PROJ_DIR \
+    -B $(readlink -f $ENV_DIR) \
+    -B $TMP_DIR/:/tmp \
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
+    $ENV_DIR/$container_psmd" 
+
+#############################################
+# PSMD calculation - subject level analysis #
+#############################################
 
 if [ $ANALYSIS_LEVEL == "subject" ]; then
 
-##########################
-# Subject level analysis #
-##########################
-
-    pushd $TMP_DIR
-
-    # Define input data
-
-    FA_IMAGE=$DATA_DIR/freewater/$1/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz
-    MD_IMAGE=$DATA_DIR/freewater/$1/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_MD.nii.gz
-    SKELETON_MASK=$PIPELINE_DIR/skeleton_mask_2019.nii.gz
+    PSMD_DIR=$DATA_DIR/psmd_${MODIFIER}
+    [ -d $PSMD_DIR ] && mkdir 
 
     # Create output directory
 
@@ -96,43 +70,82 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
 
     fi
 
-    # Run PSMD calculation
+    pushd $TMP_DIR
 
-    CMD_PSMD_GLOBAL="psmd.sh -f $FA_IMAGE -m $MD_IMAGE -s $SKELETON_MASK -c"
-    PSMD_OUTPUT_GLOBAL=`singularity run --cleanenv --userns \
-        -B . \
-        -B $PROJ_DIR \
-        -B $SCRATCH_DIR:/tmp \
-        -B $(readlink -f $ENV_DIR) \
-        $ENV_DIR/psmd-1.8.2 $CMD_PSMD_GLOBAL`
+    if [ $MODIFIER == "preprocessed" ]; then
+    
+    # Run PSMD based on preprocessed DWI data (qsiprep output)
+    ##########################################################
+
+        # Define input data
+
+        INPUT_DWI=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.nii.gz
+        INPUT_DWI_MIF=$TMP_OUT/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.mif
+        INPUT_MASK=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-brain_mask.nii.gz
+        INPUT_BVEC_BVAL=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.b
+        INPUT_BVEC=$TMP_OUT/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi_desc-mrconvert.bvec
+        INPUT_BVAL=$TEM_OUT/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi_desc-mrconvert.bval
+        SKELETON_MASK=$PIPELINE_DIR/skeleton_mask_2019.nii.gz
+
+        # Convert bvals and bvecs from .b (mrtrix format) to .bval and .bvec (fsl format)
+
+        CMD_CONVERT="mrconvert \
+        -force \
+        -grad $INPUT_BVEC_BVAL \
+        -export_grad_fsl $INPUT_BVEC $INPUT_BVAL \
+        $INPUT_DWI $INPUT_DWI_MIF"
+
+        $singularity_mrtrix3 $CMD_CONVERT
+
+        # Define PSMD command
+
+        CMD_PSMD_GLOBAL="psmd.sh -p $INPUT_DWI -b $INPUT_BVAL -r $INPUT_BVEC -s $SKELETON_MASK -c"
+        CMD_PSMD_HEMI="psmd.sh -p $INPUT_DWI -b $INPUT_BVAL -r $INPUT_BVEC -s $SKELETON_MASK -g -c"
+
+    elif [ $MODIFIER == "fitted" ]; then
+
+    # Run PSMD based on already fitted DWI data (freewater output)
+    ##############################################################
+    
+        # Define input data
+
+        FA_IMAGE=$DATA_DIR/freewater/$1/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz
+        MD_IMAGE=$DATA_DIR/freewater/$1/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_MD.nii.gz
+        SKELETON_MASK=$PIPELINE_DIR/skeleton_mask_2019.nii.gz
+
+        # Define PSMD command
+        
+        CMD_PSMD_GLOBAL="psmd.sh -f $FA_IMAGE -m $MD_IMAGE -s $SKELETON_MASK -c"
+        CMD_PSMD_HEMI="psmd.sh -f $FA_IMAGE -m $MD_IMAGE -s $SKELETON_MASK -g -c"
+    
+    fi
+
+    # Execute PSMD commands and obtain CSV file
+    ###########################################
+
+    PSMD_OUTPUT_GLOBAL=`$singularity_psmd $CMD_PSMD_GLOBAL`
     PSMD_RESULT_GLOBAL=`echo $PSMD_OUTPUT_GLOBAL | grep "PSMD is" | grep -Eo "[0-9]+\.[0-9][0-9]+"`
 
-    CMD_PSMD_HEMI="psmd.sh -f $FA_IMAGE -m $MD_IMAGE -s $SKELETON_MASK -g -c"
-    PSMD_OUTPUT_HEMI=`singularity run --cleanenv --userns \
-        -B . \
-        -B $PROJ_DIR \
-        -B $SCRATCH_DIR:/tmp \
-        -B $(readlink -f $ENV_DIR) \
-        $ENV_DIR/psmd-1.8.2 $CMD_PSMD_HEMI`
+    PSMD_OUTPUT_HEMI=`$singularity_psmd $CMD_PSMD_HEMI`
     PSMD_RESULT_HEMI=`echo $PSMD_OUTPUT_HEMI | grep "PSMD is" | grep -Eo "[0-9]+\.[0-9]+\,[0-9]+\.[0-9]+"`
 
     # Create csv file with results
 
-    echo "Subject,PSMD_global,PSMD_left,PSMD_right" > $PSMD_DIR/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_psmd.csv
+    echo "sub_id,psmd_global,psmd_left,psmd_right" > $PSMD_DIR/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_psmd.csv
     echo $1,$PSMD_RESULT_GLOBAL,$PSMD_RESULT_HEMI >> $PSMD_DIR/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_psmd.csv
 
-popd
+    popd
 
-########################
-# Group level analysis #
-########################
+#######################################
+# Combine CSVs - group level analysis #
+#######################################
 
 elif [ $ANALYSIS_LEVEL == "group" ]; then
 
     [ -d $PSMD_DIR/derivatives/ses-${SESSION}/dwi ] || mkdir -p $PSMD_DIR/derivatives/ses-${SESSION}/dwi
 
     pushd $PSMD_DIR
-    echo "Subject,PSMD_global,PSMD_left,PSMD_right" > $PSMD_DIR/derivatives/ses-${SESSION}/dwi/group_ses-${SESSION}_psmd.csv
+    echo "sub_id,psmd_global,psmd_left,psmd_right" > $PSMD_DIR/derivatives/ses-${SESSION}/dwi/group_ses-${SESSION}_psmd.csv
     
         for sub in $(ls -d sub-*); do
 
