@@ -384,16 +384,16 @@ elif [ $PIPELINE == "psmd" ];then
 	echo "On which level you like to run the PSMD pipeline? (subject/group). Subject level needs to be run first."
 	read PSMD_LEVEL; export PSMD_LEVEL
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Which input data do you want to use? (preprocessed/fitted)"
+	read MODIFIER; export MODIFIER
+
 	if [ $PSMD_LEVEL == "subject" ]; then
 		
 		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="03:00:00"
 		partition_default="std"
-
-		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
-		echo "Which input data do you want to use? (preprocessed/fitted)"
-		read MODIFIER; export MODIFIER
 
 	elif [ $PSMD_LEVEL == "group" ];then
 		
