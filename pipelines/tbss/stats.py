@@ -12,6 +12,7 @@ boxfig = sys.argv[5]
 
 # Read in CSV file containing mean across skeleton
 df = pd.read_csv(f"{csv}")
+#col = [col for col in df.columns if f'tbss{branch}_skeleton_mean_{mod}' in col ]
 
 # Histogram
 hist = sns.displot(df[f'tbss{branch}_skeleton_mean_{mod}'], kde=True)
@@ -19,5 +20,5 @@ hist.savefig(f'{histfig}')
 plt.pyplot.close()
 
 # Boxplot
-box = sns.boxplot(df[f'tbss{branch}_skeleton_mean_{mod}'])
+box = sns.boxplot(data = df[f'tbss{branch}_skeleton_mean_{mod}'])
 plt.pyplot.savefig(f'{boxfig}')

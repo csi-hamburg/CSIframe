@@ -2,6 +2,8 @@
 
 ###########################################################
 # FSL TBSS implementation for parallelized job submission #
+#                                                         #
+# PART 4 - merging of skeletons and quality assessment    #
 ###########################################################
 
 ###############################################################################
@@ -15,7 +17,6 @@
 #       - tbss_3                                                              #
 #   [containers and code]                                                     #
 #       - fsl-6.0.3                                                           #
-#       - overlay.py                                                          #
 #       - stats.py                                                            #
 #       - report.py                                                           #  
 ###############################################################################
@@ -23,11 +24,11 @@
 # Get verbose outputs
 set -x
 
-###############################################################################
+# Define subject specific temporary directory on $SCRATCH_DIR
+export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
+TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
-########################################################
-# PART 4 - merging of skeletons and quality assessment #
-########################################################
+###############################################################################
 
 # Setup environment
 ###################
@@ -35,21 +36,22 @@ set -x
 module load singularity
 
 container_fsl=fsl-6.0.3
-singularity_fsl="singularity run --cleanenv --userns \
-    -B . \
+singularity_fsl="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
-    -B $SCRATCH_DIR:/tmp \
     -B $(readlink -f $ENV_DIR) \
-    $ENV_DIR/$container_fsl" 
+    -B $TMP_DIR/:/tmp \
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
+    $ENV_DIR/$container_fsl"
 
 container_miniconda=miniconda-csi
-singularity_miniconda=" singularity run --cleanenv --userns \
-    -B . \
+singularity_miniconda="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
-    -B $SCRATCH_DIR:/tmp \
     -B $(readlink -f $ENV_DIR) \
-    -B /usw
-    /usw/fatx405/csi_envs/$container_miniconda"
+    -B $TMP_DIR/:/tmp \
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
+    $ENV_DIR/$container_miniconda"
 
 # Set pipeline specific variables
 
@@ -127,6 +129,7 @@ if [ -f $FA_SKEL_MERGED ]; then
     rm -rvf $DER_DIR/*.html
     rm -rvf $DER_DIR/*.txt
     rm -rvf $DER_DIR/*.pdf
+    rm -rvf $DER_DIR/*.csv
 
     if [ $TBSS_PIPELINE == "fixel" ]; then
 
@@ -157,7 +160,6 @@ for MOD in $(echo $MODALITIES); do
             -t $MOD_SKEL_MERGED \
             $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*desc-skeleton*${MOD}.nii.gz
         
-
     else
 
         for sub in $(echo $TBSS_DIR/code/merge_${TBSS_MERGE_LIST}.txt); do
@@ -222,12 +224,12 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
     # Create CSV
     ############
 
-    head -n 1 $MEAN_CSV_RAND > $ROI_CSV_MERGED
+    head -n 1 $MEAN_CSV_RAND > $MEAN_CSV_MERGED
 
     for sub in $(cat $CASELIST); do
     
         MEAN_CSV=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_means.csv
-        tail -n 1 $MEAN_CSV >> $ROI_CSV_MERGED
+        tail -n 1 $MEAN_CSV >> $MEAN_CSV_MERGED
     
     done
 
@@ -253,11 +255,10 @@ if [ $TBSS_PIPELINE == "fixel" ]; then
 
         HISTFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_histogram.png
         BOXFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_boxplot.png
-        ZSCORE=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean_zscores.csv
         
         # Command 
 
-        $singularity_miniconda python $PIPELINE_DIR/stats.py $TBSS_PIPELINE $MOD $CSV $HISTFIG $BOXFIG $ZSCORE
+        $singularity_miniconda python $PIPELINE_DIR/stats.py "" $MOD $CSV $HISTFIG $BOXFIG
 
     done
 
@@ -311,7 +312,7 @@ elif [ $TBSS_PIPELINE == "mni" ]; then
 
         # Command
 
-        $singularity_miniconda python $PIPELINE_DIR/stats.py $TBSS_PIPELINE $MOD $CSV $HISTFIG $BOXFIG $ZSCORE
+        $singularity_miniconda python $PIPELINE_DIR/stats.py $TBSS_PIPELINE $MOD $CSV $HISTFIG $BOXFIG
 
     done
 
