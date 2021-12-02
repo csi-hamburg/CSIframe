@@ -221,9 +221,9 @@ elif [ $PIPELINE == "freewater" ];then
 
 	if [ $FW_LEVEL == core ];then
 
-		export SUBJS_PER_NODE=4
+		export SUBJS_PER_NODE=8
 		export ANALYSIS_LEVEL=subject
-		batch_time_default="02:00:00"
+		batch_time_default="06:00:00"
 		partition_default="std"
 
 	elif [ $FW_LEVEL == 2mni ];then
