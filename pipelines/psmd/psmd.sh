@@ -48,16 +48,19 @@ singularity_psmd="singularity run --cleanenv --userns \
     -B $TMP_OUT:/tmp_out \
     $ENV_DIR/$container_psmd" 
 
+# Define PSMD output directory
+##############################
+
+PSMD_DIR=$DATA_DIR/psmd_${MODIFIER}
+
 #############################################
 # PSMD calculation - subject level analysis #
 #############################################
 
 if [ $ANALYSIS_LEVEL == "subject" ]; then
 
-    PSMD_DIR=$DATA_DIR/psmd_${MODIFIER}
-    [ -d $PSMD_DIR ] && mkdir 
-
     # Create output directory
+    #########################
 
     if [ -d $PSMD_DIR/$1/ses-${SESSION} ]; then
         
@@ -74,8 +77,8 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
 
     if [ $MODIFIER == "preprocessed" ]; then
     
-    # Run PSMD based on preprocessed DWI data (qsiprep output)
-    ##########################################################
+        # Run PSMD based on preprocessed DWI data (qsiprep output)
+        ##########################################################
 
         # Define input data
 
@@ -84,7 +87,7 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
         INPUT_MASK=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-brain_mask.nii.gz
         INPUT_BVEC_BVAL=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.b
         INPUT_BVEC=$TMP_OUT/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi_desc-mrconvert.bvec
-        INPUT_BVAL=$TEM_OUT/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi_desc-mrconvert.bval
+        INPUT_BVAL=$TMP_OUT/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi_desc-mrconvert.bval
         SKELETON_MASK=$PIPELINE_DIR/skeleton_mask_2019.nii.gz
 
         # Convert bvals and bvecs from .b (mrtrix format) to .bval and .bvec (fsl format)
@@ -104,8 +107,8 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
 
     elif [ $MODIFIER == "fitted" ]; then
 
-    # Run PSMD based on already fitted DWI data (freewater output)
-    ##############################################################
+        # Run PSMD based on already fitted DWI data (freewater output)
+        ##############################################################
     
         # Define input data
 
