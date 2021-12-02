@@ -330,7 +330,7 @@ $parallel $singularity_mrtrix3 $CMD_FW2TEMP ::: ${input_subject_array[@]}
 # Get tracktseg ROIs
 ####################
 
-FIXEL_ROIS=(`ls $FBA_GROUP_DIR/tractseg/bundles_fixelmask/*fixelmask.mif | rev | cut -d "/" -f 1 | cut -d "_" -f 2- | rev`)
+FIXEL_ROIS=(`ls $FBA_GROUP_DIR/tractseg/tractseg_output/bundle_segmentations/*nii.gz | rev | cut -d "/" -f 1 | rev | cut -d "." -f 1`)
 
 # Create CSV
 ############
@@ -346,7 +346,7 @@ for sub in $(echo ${input_subject_array[@]}); do
 
         for MOD in fd logfc fdc complexity FA FAt AD ADt RD RDt MD MDt; do
         
-            echo -n "fba_AF_left_mean_$MOD,fba_AF_right_mean_$MOD,fba_all_bundle_mean_$MOD,fba_ATR_left_mean_$MOD,fba_ATR_right_mean_$MOD,\
+            echo -en "fba_AF_left_mean_$MOD,fba_AF_right_mean_$MOD,fba_ATR_left_mean_$MOD,fba_ATR_right_mean_$MOD,\
             fba_CA_mean_$MOD,fba_CC_1_mean_$MOD,fba_CC_2_mean_$MOD,fba_CC_3_mean_$MOD,fba_CC_4_mean_$MOD,fba_CC_5_mean_$MOD,fba_CC_6_mean_$MOD,\
             fba_CC_7_mean_$MOD,fba_CC_mean_$MOD,fba_CG_left_mean_$MOD,fba_CG_right_mean_$MOD,fba_CST_left_mean_$MOD,fba_CST_right_mean_$MOD,fba_FPT_left_mean_$MOD,\
             fba_FPT_right_mean_$MOD,fba_FX_left_mean_$MOD,fba_FX_right_mean_$MOD,fba_ICP_left_mean_$MOD,fba_ICP_right_mean_$MOD,fba_IFO_left_mean_$MOD,\
@@ -362,7 +362,7 @@ for sub in $(echo ${input_subject_array[@]}); do
 
         done
 
-        echo "fba_AF_left_mean_FW,fba_AF_right_mean_FW,fba_all_bundle_mean_FW,fba_ATR_left_mean_FW,fba_ATR_right_mean_FW,\
+        echo -e "fba_AF_left_mean_FW,fba_AF_right_mean_FW,fba_ATR_left_mean_FW,fba_ATR_right_mean_FW,\
         fba_CA_mean_FW,fba_CC_1_mean_FW,fba_CC_2_mean_FW,fba_CC_3_mean_FW,fba_CC_4_mean_FW,fba_CC_5_mean_FW,fba_CC_6_mean_FW,\
         fba_CC_7_mean_FW,fba_CC_mean_FW,fba_CG_left_mean_FW,fba_CG_right_mean_FW,fba_CST_left_mean_FW,fba_CST_right_mean_FW,fba_FPT_left_mean_FW,\
         fba_FPT_right_mean_FW,fba_FX_left_mean_FW,fba_FX_right_mean_FW,fba_ICP_left_mean_FW,fba_ICP_right_mean_FW,fba_IFO_left_mean_FW,\

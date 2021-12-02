@@ -291,7 +291,7 @@ elif [ $PIPELINE == "tbss" ];then
 elif [ $PIPELINE == "fba" ];then
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
-	echo "Which FBA_LEVEL do you want to perform? (1/2/3/4/5)"
+	echo "Which FBA_LEVEL do you want to perform? (1/2/3/4/5/6)"
 	read FBA_LEVEL; export FBA_LEVEL
 	export PIPELINE_SUFFIX=_${FBA_LEVEL}
 
@@ -329,6 +329,29 @@ elif [ $PIPELINE == "fba" ];then
 		export ANALYSIS_LEVEL=group
 		batch_time_default="03-00:00:00"
 		partition_default="stl"
+	
+	elif [ $FBA_LEVEL == 6 ];then
+
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
+		echo "On which level do you want to perform ROI extraction (subject/group)?"
+		echo "MIND: Subject level ROI extraction needs to be run first."
+		read ROI_LEVEL; export ROI_LEVEL
+
+		if [ $ROI_LEVEL == "subject" ]; then
+
+			export SUBJS_PER_NODE=16
+			export ANALYSIS_LEVEL=subject
+			batch_time_default="04:00:00"
+			partition_default="std"
+		
+		elif [ $ROI_LEVEL == "group" ]; then
+			
+			export SUBJS_PER_NODE=$subj_array_length
+			export ANALYSIS_LEVEL=group
+			batch_time_default="02:00:00"
+			partition_default="std"
+		
+		fi
 
 	elif [ -z $FBA_LEVEL ];then
 		
@@ -368,6 +391,10 @@ elif [ $PIPELINE == "psmd" ];then
 		batch_time_default="03:00:00"
 		partition_default="std"
 
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+		echo "Which input data do you want to use? (preprocessed/fitted)"
+		read MODIFIER; export MODIFIER
+
 	elif [ $PSMD_LEVEL == "group" ];then
 		
 		export SUBJS_PER_NODE=$subj_array_length
@@ -376,8 +403,9 @@ elif [ $PIPELINE == "psmd" ];then
 		partition_default="std"
 
 	else
+
 	 	echo "$PSMD_LEVEL for $PIPELINE pipeline not supported."
-	 	exit
+	 	exit 0
 	 fi
 
 elif [ $PIPELINE == "obseg" ];then
