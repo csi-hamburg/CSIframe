@@ -339,9 +339,9 @@ elif [ $PIPELINE == "fba" ];then
 
 		if [ $ROI_LEVEL == "subject" ]; then
 
-			export SUBJS_PER_NODE=16
+			export SUBJS_PER_NODE=32
 			export ANALYSIS_LEVEL=subject
-			batch_time_default="04:00:00"
+			batch_time_default="02:00:00"
 			partition_default="std"
 		
 		elif [ $ROI_LEVEL == "group" ]; then
