@@ -201,7 +201,7 @@ elif [ $PIPELINE == "aslprep" ]; then
 
 elif [ $PIPELINE == "xcpengine" ];then
 	
-	export SUBJS_PER_NODE=16
+	export SUBJS_PER_NODE=8
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="16:00:00"
 	partition_default="std"
@@ -384,16 +384,16 @@ elif [ $PIPELINE == "psmd" ];then
 	echo "On which level you like to run the PSMD pipeline? (subject/group). Subject level needs to be run first."
 	read PSMD_LEVEL; export PSMD_LEVEL
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Which input data do you want to use? (preprocessed/fitted)"
+	read MODIFIER; export MODIFIER
+
 	if [ $PSMD_LEVEL == "subject" ]; then
 		
 		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="03:00:00"
 		partition_default="std"
-
-		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
-		echo "Which input data do you want to use? (preprocessed/fitted)"
-		read MODIFIER; export MODIFIER
 
 	elif [ $PSMD_LEVEL == "group" ];then
 		
@@ -525,6 +525,7 @@ else
 fi
 
 if [ $INTERACTIVE != y ];then
+
 	# Set batch time to allocate and partition
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
 	echo "How much time do you want to allocate? Default is $(echo $batch_time_default)"
@@ -537,6 +538,12 @@ if [ $INTERACTIVE != y ];then
 	echo "Leave empty to choose default"
 	read partition
 	[ -z $partition ] && partition=$partition_default
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
+	echo "Do you want to provide additional flags for sbatch submission? e.g. '--hold' or '--dependency afterok:job_id' or '--begin=16:00'"
+	echo "Leave empty to choose default"
+	read optional_slurm_flags
+
 fi
 
 # Define batch script
@@ -569,7 +576,7 @@ for batch in $(seq $batch_amount);do
 
 	    CMD="sbatch --job-name ${PIPELINE}${PIPELINE_SUFFIX} \
 	        --time ${batch_time} \
-	        --partition $partition \
+	        --partition $partition $optional_slurm_flags \
 	        --output $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).out" \
 	        --error $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).err" \
 	    	$SCRIPT_PATH "${subj_batch_array[@]}""
