@@ -196,7 +196,7 @@ elif [ $PIPELINE == "aslprep" ]; then
 	
 	export SUBJS_PER_NODE=8
 	export ANALYSIS_LEVEL=subject
-	batch_time_default="10:00:00"
+	batch_time_default="03:00:00"
 	partition_default="std"
 
 elif [ $PIPELINE == "xcpengine" ];then
@@ -381,12 +381,21 @@ elif [ $PIPELINE == "connectomics" ];then
 elif [ $PIPELINE == "psmd" ];then
 	
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Which PSMD pipeline would you like to run? (miac/csi)"
+	read PSMD_PIPE; export PSMD_PIPE
+	export PIPELINE_SUFFIX=_${PSMD_PIPE}
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "On which level you like to run the PSMD pipeline? (subject/group). Subject level needs to be run first."
 	read PSMD_LEVEL; export PSMD_LEVEL
 
-	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
-	echo "Which input data do you want to use? (preprocessed/fitted)"
-	read MODIFIER; export MODIFIER
+	if [ $PSMD_PIPE == miac ]; then
+
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+		echo "Which input data do you want to use? (preprocessed/fitted)"
+		read MODIFIER; export MODIFIER
+	
+	fi
 
 	if [ $PSMD_LEVEL == "subject" ]; then
 		
