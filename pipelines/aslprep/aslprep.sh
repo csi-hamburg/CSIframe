@@ -68,7 +68,6 @@ CMD="
    --random-seed 42 \
    --skull-strip-t1w force \
    --notrack \
-   --stop-on-first-crash \
    --verbose"
 
 # Execute command
