@@ -194,7 +194,7 @@ elif [ $PIPELINE == "fmriprep" ];then
 	
 elif [ $PIPELINE == "aslprep" ]; then
 	
-	export SUBJS_PER_NODE=8
+	export SUBJS_PER_NODE=4
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="03:00:00"
 	partition_default="std"
