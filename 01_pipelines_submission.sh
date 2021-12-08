@@ -399,7 +399,7 @@ elif [ $PIPELINE == "psmd" ];then
 
 	if [ $PSMD_LEVEL == "subject" ]; then
 		
-		export SUBJS_PER_NODE=16
+		export SUBJS_PER_NODE=8
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="03:00:00"
 		partition_default="std"
