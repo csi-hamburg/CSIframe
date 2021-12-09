@@ -54,35 +54,42 @@ subj_array_length=${#subj_array[@]}
 # Empirical job config
 if [ $PIPELINE == "bidsify" ];then
 	
-	export SUBJS_PER_NODE=16
-	export ANALYSIS_LEVEL=subject
-	batch_time_default="04:00:00"
-	partition_default="std"
-
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
 	echo "Reading subjects from $DCM_DIR"
 	subj_array=(${@-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata -e README | xargs -n 1 basename)}) # subjects in data/dicoms
 	subj_array_length=${#subj_array[@]}
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
-	echo "Which heuristic do you want to apply?"
-	echo "Choose from" $(ls $ENV_DIR/bidsify/heudiconv_*.py | xargs -n 1 basename)
-	read HEURISTIC; export HEURISTIC
+	echo "Would you like to run heudiconv or edit ASL output of previous heudiconv run? (heudiconv/asl)"
+	read BIDS_PIPE; export BIDS_PIPE
 
-	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
-	echo "Do you want to deface participants? (y/n)"
-	read MODIFIER; export MODIFIER
+	if [ $BIDS_PIPE == "heudiconv" ]; then
 
-	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
-	echo "Do you want to edit ASL meta data? (y/n)"
-	read ASL; export ASL
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
+		echo "Which heuristic do you want to apply?"
+		echo "Choose from" $(ls $ENV_DIR/bidsify/heudiconv_*.py | xargs -n 1 basename)
+		read HEURISTIC; export HEURISTIC
+
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+		echo "Do you want to deface participants? (y/n)"
+		read MODIFIER; export MODIFIER
+
+		export SUBJS_PER_NODE=16
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="04:00:00"
+		partition_default="std"
 	
-	if [ $ASL == "y" ]; then
-
+	elif [ $BIDS_PIPE == "asl" ]; then
+	
 		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
 		echo "Which ASL metadata do you want to add?"
 		echo "Choose from" $(ls $ENV_DIR/bidsify/metadataextra_*.json | xargs -n 1 basename)
 		read METADATA_EXTRA; export METADATA_EXTRA
+
+		export SUBJS_PER_NODE=16
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="02:00:00"
+		partition_default="std"
 		
 	fi
 
