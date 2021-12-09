@@ -219,28 +219,10 @@ elif [ $PIPELINE == "xcpengine" ];then
 
 elif [ $PIPELINE == "freewater" ];then
 
-	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
-	echo "Which pipeline level do you want to perform? (core/2mni)"
-	echo "For default ('core') leave empty"
-	read FW_LEVEL; export FW_LEVEL
-	[ -z $FW_LEVEL ] && export FW_LEVEL=core
-	export PIPELINE_SUFFIX=_${FW_LEVEL}
-
-	if [ $FW_LEVEL == core ];then
-
-		export SUBJS_PER_NODE=8
-		export ANALYSIS_LEVEL=subject
-		batch_time_default="06:00:00"
-		partition_default="std"
-
-	elif [ $FW_LEVEL == 2mni ];then
-
-		export SUBJS_PER_NODE=8
-		export ANALYSIS_LEVEL=subject
-		batch_time_default="03:00:00"
-		partition_default="std"
-
-	fi
+	export SUBJS_PER_NODE=8
+	export ANALYSIS_LEVEL=subject
+	batch_time_default="06:00:00"
+	partition_default="std"
 
 elif [ $PIPELINE == "tbss" ];then
 
