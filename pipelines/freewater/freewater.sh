@@ -75,8 +75,8 @@ singularity_fsl="singularity run --cleanenv --no-home --userns \
     -B $TMP_OUT:/tmp_out \
     $ENV_DIR/$container_fsl" 
 
-# Define input and output
-##########################
+# Create output directory
+#########################
 
 FW_CODE_DIR=$ENV_DIR/freewater/
 FW_OUTPUT_DIR=$DATA_DIR/freewater/$1/ses-${SESSION}/dwi
@@ -94,20 +94,28 @@ else
 
 fi
 
-INPUT_DWI=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.nii.gz
-INPUT_DWI_MIF=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.mif
-INPUT_MASK=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-brain_mask.nii.gz
-INPUT_BVEC_BVAL=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.b
-INPUT_BVEC=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi_desc-mrconvert.bvec
-INPUT_BVAL=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi_desc-mrconvert.bval
-
 ###################################################################################################################
-#                                   Run free-water  pipeline                                                      #
+#                                   Run free-water pipeline                                                       #
 ###################################################################################################################
 
 ###################################################################################
 # Convert bvals and bvecs from .b (mrtrix format) to .bval and .bvec (fsl format) #
 ###################################################################################
+
+# Define input
+##############
+
+INPUT_DWI=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.nii.gz
+INPUT_MASK=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-brain_mask.nii.gz
+INPUT_BVEC_BVAL=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.b
+
+
+# Define output
+###############
+
+INPUT_DWI_MIF=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.mif
+INPUT_BVEC=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi_desc-mrconvert.bvec
+INPUT_BVAL=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi_desc-mrconvert.bval
 
 # Define command
 ################
@@ -142,11 +150,15 @@ popd
 # Estimate free-water corrected and negative eigenvalue corrected diffusion measures #
 ######################################################################################
 
-# Define inputs and outputs
-###########################
+# Define input 
+##############
 
 INPUT_TENSOR_CORRECTED=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_space-T1w_desc-FWCorrected_tensor.nii.gz
 INPUT_TENSOR_NONEG=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_tensor.nii.gz
+
+# Define output
+###############
+
 OUTPUT_FWC_DIFF=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_space-T1w_desc-FWcorrected
 OUTPUT_NONEG_DIFF=$FW_OUTPUT_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg
 
