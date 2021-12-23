@@ -97,7 +97,7 @@ elseif connectivity_type == 'fc'
     ones_upper(ones_upper==1) = A
     mat = ones_upper + ones_upper'
     mat(mat<0) = 0
-    region_labels=importdata(strcat(env_dir,atlas,"_labels.mat"))
+    region_labels=importdata(strcat(env_dir,'/schaefer/',atlas,"_labels.mat"))
 
 end
 
@@ -117,7 +117,7 @@ mat_nan(mat_null==0) = NaN
 % Degree
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-weighted_degree_labels = strcat(atlas, "_", connectivity_type, "_weighted_degree_", region_labels)
+weighted_degree_labels = strcat(connectivity_type, "_", atlas, "_weighted_degree_", region_labels)
 
 weighted_degree = strengths_und(mat)
 median_weighted_degree = median(weighted_degree)
@@ -131,7 +131,7 @@ connectivity = sum(reshape(mat_nan,1,[]), "omitnan")
 mean_connectivity = mean(reshape(mat_nan,1,[]), "omitnan")
 
 % Save labels and results in vectors 
-network_connectivity_labels = [strcat(atlas, "_" , connectivity_type, "_", char('summed_connectivity', 'mean_connectivity'))]'
+network_connectivity_labels = [strcat(connectivity_type, "_", atlas, "_", char('summed_connectivity', 'mean_connectivity'))]'
 network_connectivity = [connectivity(:), mean_connectivity(:)]
 
 network_segregation_labels = []
@@ -142,16 +142,16 @@ modQ_vector = []
 for net_idx = 1:numel(yeo_networks)
     
     % Define label vector containing variable names for dataframe
-    network_label=lower(strcat(atlas, "_", connectivity_type,  "_yeo_", yeo_networks(net_idx), "_", "within_connectivity"))
-    feeder_label=lower(strcat(atlas, "_", connectivity_type, "_yeo_", yeo_networks(net_idx), "_", "feeder_connectivity"))
-    periph_label=lower(strcat(atlas, "_", connectivity_type, "_yeo_", yeo_networks(net_idx), "_", "periph_connectivity"))
-    network_label_mean=lower(strcat(atlas, "_", connectivity_type, "_yeo_", yeo_networks(net_idx), "_", "within_connectivity_mean"))
-    feeder_label_mean=lower(strcat(atlas, "_", connectivity_type, "_yeo_", yeo_networks(net_idx), "_", "feeder_connectivity_mean"))
-    periph_label_mean=lower(strcat(atlas, "_", connectivity_type, "_yeo_", yeo_networks(net_idx), "_", "periph_connectivity_mean"))
+    network_label=lower(strcat(connectivity_type, "_", atlas, "_yeo_", yeo_networks(net_idx), "_", "within_connectivity"))
+    feeder_label=lower(strcat(connectivity_type, "_", atlas, "_yeo_", yeo_networks(net_idx), "_", "feeder_connectivity"))
+    periph_label=lower(strcat(connectivity_type, "_", atlas, "_yeo_", yeo_networks(net_idx), "_", "periph_connectivity"))
+    network_label_mean=lower(strcat( connectivity_type, "_", atlas, "_yeo_", yeo_networks(net_idx), "_", "within_connectivity_mean"))
+    feeder_label_mean=lower(strcat(connectivity_type, "_", atlas, "_yeo_", yeo_networks(net_idx), "_", "feeder_connectivity_mean"))
+    periph_label_mean=lower(strcat(connectivity_type, "_", atlas, "_yeo_", yeo_networks(net_idx), "_", "periph_connectivity_mean"))
     network_connectivity_labels = [network_connectivity_labels, network_label, feeder_label, periph_label ...
         network_label_mean, feeder_label_mean, periph_label_mean]
     
-    subnetwork_segregation_label=lower(strcat(atlas, "_yeo_", yeo_networks(net_idx), "_", "segregation"))
+    subnetwork_segregation_label=lower(strcat(connectivity_type, "_", atlas, "_yeo_", yeo_networks(net_idx), "_", "segregation"))
     network_segregation_labels = [network_segregation_labels, subnetwork_segregation_label]
     
     % Find indices that correspond with yeo network
@@ -202,9 +202,9 @@ end
 
 % Compute global segregation and modQ
 global_network_segregation = mean(network_segregation)
-global_network_segregation_label =lower(strcat(atlas, "_", connectivity_type, "_yeo_mean_segregation"))
+global_network_segregation_label =lower(strcat(connectivity_type, "_", atlas, "_yeo_mean_segregation"))
 
-modQ_label=lower(strcat(atlas, "_", connectivity_type,  "_yeo_modularityQ"))
+modQ_label=lower(strcat(connectivity_type, "_", atlas, "_yeo_modularityQ"))
 modQ = 1 / (2 * connectivity) * sum(modQ_vector)
 
 % Save labels and results in vectors 
@@ -239,7 +239,7 @@ glo_eff_norm = glo_eff / mean(array_glo_eff_null)
 cc_norm = mean_clust_coeff / mean(array_cc_null)
 
 % Save labels and results in vectors 
-glob_graph_labels = [glob_graph_labels, strcat(atlas, "_" , connectivity_type, "_", char('global_eff_norm', 'global_clust_coeff_norm',...
+glob_graph_labels = [glob_graph_labels, strcat(connectivity_type, "_", atlas, "_", char('global_eff_norm', 'global_clust_coeff_norm',...
     'small_world_propensity', 'density', 'median_weighted_degree'))']
 glob_graph_param = [glob_graph_param, glo_eff_norm, cc_norm, swp, density, median_weighted_degree]
 
@@ -254,10 +254,10 @@ modal_ctrl = modal_control(mat)'
 median_modal_ctrl = median(modal_ctrl)
 
 % Save labels and results in vectors
-glob_graph_labels = [glob_graph_labels, strcat(atlas, "_" , connectivity_type, "_", char('median_avg_ctrl', 'median_modal_ctrl'))']
+glob_graph_labels = [glob_graph_labels, strcat(connectivity_type, "_", atlas, "_", char('median_avg_ctrl', 'median_modal_ctrl'))']
 glob_graph_param = [glob_graph_param, median_avg_ctrl(:), median_modal_ctrl(:)]
-avg_control_labels = strcat(atlas, "_", connectivity_type, "_avg_control_", region_labels)
-modal_control_labels = strcat(atlas, "_", connectivity_type, "_mod_control_", region_labels)
+avg_control_labels = strcat(connectivity_type, "_", atlas,  "_avg_control_", region_labels)
+modal_control_labels = strcat(connectivity_type, "_", atlas, "_mod_control_", region_labels)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Prepare output structure array

@@ -162,6 +162,19 @@ INPUT_WMH_MASK=
 INTERMED_OUT=$PYRADIOMICS_DIR/$1/ses-$SESSION/anat/FW_intermed.csv
 OUT_WMH_CSV=$PYRADIOMICS_DIR/$1/ses-$SESSION/anat/FW.csv
 
+#########################
+# COMPLEXITY
+#########################
+
+# Input
+#########################
+INPUT=$DATA_DIR/fba
+INPUT_WMH_MASK=
+
+# Output
+#########################
+INTERMED_OUT=$PYRADIOMICS_DIR/$1/ses-$SESSION/anat/complexity_intermed.csv
+OUT_WMH_CSV=$PYRADIOMICS_DIR/$1/ses-$SESSION/anat/complexity.csv
 
 # Command
 #########################

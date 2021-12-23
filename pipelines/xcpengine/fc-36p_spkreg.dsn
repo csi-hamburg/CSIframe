@@ -33,7 +33,7 @@
 ###################################################################
 
 analysis=fc_$(whoami)
-design=/work/fatx405/projects/CSI_DEV/code/pipelines/xcpengine/fc-36p_spkreg.dsn
+design=/work/fatx405/projects/CSI_HCHS/code/pipelines/xcpengine/fc-36p_spkreg.dsn
 sequence=anatomical
 standard=MNI%2x2x2
 

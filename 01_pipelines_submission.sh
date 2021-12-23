@@ -54,31 +54,45 @@ subj_array_length=${#subj_array[@]}
 # Empirical job config
 if [ $PIPELINE == "bidsify" ];then
 	
-	export SUBJS_PER_NODE=16
-	export ANALYSIS_LEVEL=subject
-	batch_time_default="04:00:00"
-	partition_default="std"
-
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
 	echo "Reading subjects from $DCM_DIR"
 	subj_array=(${@-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata -e README | xargs -n 1 basename)}) # subjects in data/dicoms
 	subj_array_length=${#subj_array[@]}
 
-	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
-	echo "Which bidsify pipeline do you want to perform? Leave empty for core or type 'asl'."
-	read BIDSIFY_PIPE; export BIDSIFY_PIPE
-	export PIPELINE_SUFFIX=_${BIDSIFY_PIPE}
-
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
-	echo "Which heuristic do you want to apply?"
-	echo "Choose from" $(ls $CODE_DIR/pipelines/bidsify/heudiconv_*.py | xargs -n 1 basename)
-	read HEURISTIC; export HEURISTIC
+	echo "Would you like to run heudiconv or edit ASL output of previous heudiconv run? (heudiconv/asl)"
+	read BIDS_PIPE; export BIDS_PIPE
 
-	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
-	echo "Do you want to deface participants? (y/n)"
-	read MODIFIER; export MODIFIER
+	if [ $BIDS_PIPE == "heudiconv" ]; then
 
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
+		echo "Which heuristic do you want to apply?"
+		echo "Choose from" $(ls $ENV_DIR/bidsify/heudiconv_*.py | xargs -n 1 basename)
+		read HEURISTIC; export HEURISTIC
+
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+		echo "Do you want to deface participants? (y/n)"
+		read MODIFIER; export MODIFIER
+
+		export SUBJS_PER_NODE=16
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="04:00:00"
+		partition_default="std"
 	
+	elif [ $BIDS_PIPE == "asl" ]; then
+	
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
+		echo "Which ASL metadata do you want to add?"
+		echo "Choose from" $(ls $ENV_DIR/bidsify/metadataextra_*.json | xargs -n 1 basename)
+		read METADATA_EXTRA; export METADATA_EXTRA
+
+		export SUBJS_PER_NODE=16
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="02:00:00"
+		partition_default="std"
+		
+	fi
+
 elif [ $PIPELINE == "qsiprep" ];then
 	
 	# Mind limitation by /scratch and memory capacity (23gb temporary files, 15gb max RAM usage)
@@ -174,52 +188,41 @@ elif [ $PIPELINE == "fmriprep" ];then
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Please enter specific templates if you want to use them."
-	echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym T1w)"
+	echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
 	echo "or infant templates (MNIPediatricAsym:cohort-1:res-native)"
-	echo "Enter nothing to keep defaults (fsnative fsaverage MNI152NLin6Asym T1w)"
+	echo "Enter nothing to keep defaults (fsnative fsaverage MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
 	read OUTPUT_SPACES; export OUTPUT_SPACES
 
-	[ -z $OUTPUT_SPACES ] && export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym T1w"
+	[ -z $OUTPUT_SPACES ] && export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym MNI152NLin2009cAsym T1w func"
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '--anat-only'"
 	read MODIFIER; export MODIFIER
 	
+elif [ $PIPELINE == "aslprep" ]; then
+	
+	export SUBJS_PER_NODE=4
+	export ANALYSIS_LEVEL=subject
+	batch_time_default="03:00:00"
+	partition_default="std"
+
 elif [ $PIPELINE == "xcpengine" ];then
 	
-	export SUBJS_PER_NODE=16
+	export SUBJS_PER_NODE=8
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="16:00:00"
 	partition_default="std"
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
-	echo "Which xcpengine subanalysis do you want to use? (fc/struc)"
+	echo "Which xcpengine subanalysis do you want to use? (fc_36pspkreg/fc_aromagsr/struc)"
 	read MODIFIER; export MODIFIER
 
 elif [ $PIPELINE == "freewater" ];then
 
-	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
-	echo "Which pipeline level do you want to perform? (core/2mni)"
-	echo "For default ('core') leave empty"
-	read FW_LEVEL; export FW_LEVEL
-	[ -z $FW_LEVEL ] && export FW_LEVEL=core
-	export PIPELINE_SUFFIX=_${FW_LEVEL}
-
-	if [ $FW_LEVEL == core ];then
-
-		export SUBJS_PER_NODE=4
-		export ANALYSIS_LEVEL=subject
-		batch_time_default="02:00:00"
-		partition_default="std"
-
-	elif [ $FW_LEVEL == 2mni ];then
-
-		export SUBJS_PER_NODE=8
-		export ANALYSIS_LEVEL=subject
-		batch_time_default="03:00:00"
-		partition_default="std"
-
-	fi
+	export SUBJS_PER_NODE=8
+	export ANALYSIS_LEVEL=subject
+	batch_time_default="06:00:00"
+	partition_default="std"
 
 elif [ $PIPELINE == "tbss" ];then
 
@@ -255,7 +258,7 @@ elif [ $PIPELINE == "tbss" ];then
 
 		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
-		batch_time_default="02:00:00"
+		batch_time_default="04:00:00"
 		partition_default="std"
 	
 	elif [ $TBSS_LEVEL == 4 ]; then
@@ -269,7 +272,7 @@ elif [ $PIPELINE == "tbss" ];then
 
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time_default="6:00:00"
+		batch_time_default="4:00:00"
 		partition_default="std"
 	
 	fi
@@ -277,7 +280,7 @@ elif [ $PIPELINE == "tbss" ];then
 elif [ $PIPELINE == "fba" ];then
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
-	echo "Which FBA_LEVEL do you want to perform? (1/2/3/4/5)"
+	echo "Which FBA_LEVEL do you want to perform? (1/2/3/4/5/6)"
 	read FBA_LEVEL; export FBA_LEVEL
 	export PIPELINE_SUFFIX=_${FBA_LEVEL}
 
@@ -315,6 +318,29 @@ elif [ $PIPELINE == "fba" ];then
 		export ANALYSIS_LEVEL=group
 		batch_time_default="03-00:00:00"
 		partition_default="stl"
+	
+	elif [ $FBA_LEVEL == 6 ];then
+
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
+		echo "On which level do you want to perform ROI extraction (subject/group)?"
+		echo "MIND: Subject level ROI extraction needs to be run first."
+		read ROI_LEVEL; export ROI_LEVEL
+
+		if [ $ROI_LEVEL == "subject" ]; then
+
+			export SUBJS_PER_NODE=32
+			export ANALYSIS_LEVEL=subject
+			batch_time_default="02:00:00"
+			partition_default="std"
+		
+		elif [ $ROI_LEVEL == "group" ]; then
+			
+			export SUBJS_PER_NODE=$subj_array_length
+			export ANALYSIS_LEVEL=group
+			batch_time_default="02:00:00"
+			partition_default="std"
+		
+		fi
 
 	elif [ -z $FBA_LEVEL ];then
 		
@@ -344,12 +370,25 @@ elif [ $PIPELINE == "connectomics" ];then
 elif [ $PIPELINE == "psmd" ];then
 	
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
-	echo "On which level you like to run the PSMD pipeline? Choose between 'subject' and 'group'. Subject level needs to be run first."
-	read PSMD_LEVEL
+	echo "Which PSMD pipeline would you like to run? (miac/csi)"
+	read PSMD_PIPE; export PSMD_PIPE
+	export PIPELINE_SUFFIX=_${PSMD_PIPE}
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "On which level you like to run the PSMD pipeline? (subject/group). Subject level needs to be run first."
+	read PSMD_LEVEL; export PSMD_LEVEL
+
+	if [ $PSMD_PIPE == miac ]; then
+
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+		echo "Which input data do you want to use? (preprocessed/fitted)"
+		read MODIFIER; export MODIFIER
+	
+	fi
 
 	if [ $PSMD_LEVEL == "subject" ]; then
 		
-		export SUBJS_PER_NODE=16
+		export SUBJS_PER_NODE=8
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="03:00:00"
 		partition_default="std"
@@ -362,8 +401,9 @@ elif [ $PIPELINE == "psmd" ];then
 		partition_default="std"
 
 	else
+
 	 	echo "$PSMD_LEVEL for $PIPELINE pipeline not supported."
-	 	exit
+	 	exit 0
 	 fi
 
 elif [ $PIPELINE == "obseg" ];then
@@ -379,6 +419,11 @@ elif [ $PIPELINE == "cat12" ];then
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="08:00:00"
 	partition_default="std"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
+	echo "Which cat pipeline do you want to perform? Leave empty for core or type 'sub2standard'."
+	read CAT_PIPE; export CAT_PIPE
+	[ -z $CAT_PIPE ] && export PIPELINE_SUFFIX="" || export PIPELINE_SUFFIX=_${CAT_PIPE}
 
 elif [ $PIPELINE == "wmh" ];then
 	
@@ -555,6 +600,7 @@ else
 fi
 
 if [ $INTERACTIVE != y ];then
+
 	# Set batch time to allocate and partition
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
 	echo "How much time do you want to allocate? Default is $(echo $batch_time_default)"
@@ -567,6 +613,12 @@ if [ $INTERACTIVE != y ];then
 	echo "Leave empty to choose default"
 	read partition
 	[ -z $partition ] && partition=$partition_default
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
+	echo "Do you want to provide additional flags for sbatch submission? e.g. '--hold' or '--dependency afterok:job_id' or '--begin=16:00'"
+	echo "Leave empty to choose default"
+	read optional_slurm_flags
+
 fi
 
 # Define batch script
@@ -599,7 +651,7 @@ for batch in $(seq $batch_amount);do
 
 	    CMD="sbatch --job-name ${PIPELINE}${PIPELINE_SUFFIX} \
 	        --time ${batch_time} \
-	        --partition $partition \
+	        --partition $partition $optional_slurm_flags \
 	        --output $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).out" \
 	        --error $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).err" \
 	    	$SCRIPT_PATH "${subj_batch_array[@]}""

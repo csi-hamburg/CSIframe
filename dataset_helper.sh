@@ -177,7 +177,6 @@ elif [ $PIPELINE == 'convert_containers' ];then
 	done
 
 elif [ $PIPELINE == add_ses_dcm ];then
-
 	## Insert session to single session dcm directory
 	echo "Assumed path containing subject directories with DICOMs is $PROJ_DIR"
 	echo "Assumed structure of this directory is dataset_directory/subject/sequence/DICOMS"
@@ -270,7 +269,7 @@ elif [ $PIPELINE == missing_outputs ];then
 		for ds in ${subds[@]};do
 		pushd $DATA_DIR/$ds
 			arr_search=($(find $DATA_DIR/$ds -type f | grep $search | grep sub | cut -d'/' -f 8))
-			arr_template=($(ls $DATA_DIR/$template_dir/sub-* -d | cut -d'/' -f 8))
+			arr_template=($(ls $DATA_DIR/$template_dir/sub-*/ -d | rev | cut -d '/' -f 2 | rev))
 			echo "#####################################"
 			echo ${arr_search[@]} ${arr_template[@]} | tr ' ' '\n' | sort | uniq -u
 			echo ${arr_search[@]} ${arr_template[@]} | tr ' ' '\n' | sort | uniq -u > $out_file

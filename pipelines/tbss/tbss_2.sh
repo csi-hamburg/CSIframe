@@ -2,6 +2,8 @@
 
 ###########################################################
 # FSL TBSS implementation for parallelized job submission #
+#                                                         #
+# PART 2 - creation of mean FA and skeletonization        #
 ###########################################################
 
 ###############################################################################
@@ -15,9 +17,15 @@
 #       - fsl-6.0.3                                                           #  
 ###############################################################################
 
-####################################################
-# PART 2 - creation of mean FA and skeletonization #
-####################################################
+# Get verbose outputs
+set -x
+
+# Define subject specific temporary directory on $SCRATCH_DIR
+export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
+TMP_IN=$TMP_DIR/input;                 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN
+TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
+
+###################################################################################################################
 
 # Setup environment
 ###################
@@ -48,7 +56,6 @@ fi
 ################
 
 TBSS_DIR=$DATA_DIR/tbss_${TBSS_PIPELINE}
-TBSS_SUBDIR=$TBSS_DIR/$1/ses-${SESSION}/dwi/
 echo "TBSS_DIR = $TBSS_DIR"
 
 # Check if TBSS 1 has already been run for all subjects with freewater output
@@ -56,7 +63,9 @@ echo "TBSS_DIR = $TBSS_DIR"
 files_complete=y
 
 for sub in $(ls $DATA_DIR/freewater/sub*/ses-1/dwi/*T1w*DTINoNeg_FA.nii.gz | rev | cut -d "/" -f 1 | rev | cut -d "_" -f 1); do
-  
+    
+    TBSS_SUBDIR=$TBSS_DIR/$sub/ses-${SESSION}/dwi/
+
     img=`ls $TBSS_SUBDIR/*desc-eroded*FA.nii.gz | head -n 1`
     [ -f $img ] || files_complete=n
 
@@ -165,3 +174,35 @@ CMD_DIST="
         -o $SKEL_DIST"
 
 $singularity_fsl /bin/bash -c "$CMD_DIST"
+
+########################################################################################
+# Create ROI masks of JHU ICBM-DTI-81 white-matter labels atlas for MNI branch of TBSS #
+########################################################################################
+
+if [ $TBSS_PIPELINE == "mni" ]; then
+
+    mkdir $DER_DIR/JHU
+
+    for i in $(seq 1 48); do
+
+        let index=$i+1
+        ROI=`sed -n ${index}p $CODE_DIR/pipelines/tbss/JHU-ICBM-LUT.txt | awk '{print $2}'`
+
+        # Input atlas
+        ATLAS=/opt/$container_fsl/data/atlases/JHU/JHU-ICBM-labels-1mm.nii.gz
+
+        # Output ROI mask
+        JHU_ROI=$DER_DIR/JHU/atlas-JHU-ICBM-DTI-81_label-${ROI}.nii.gz
+        
+        CMD_ROI="fslmaths \
+            $ATLAS \
+            -thr $i \
+            -uthr $i \
+            -bin \
+            $JHU_ROI"
+
+        $singularity_fsl $CMD_ROI
+
+    done
+
+fi
