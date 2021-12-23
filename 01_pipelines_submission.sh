@@ -386,22 +386,22 @@ elif [ $PIPELINE == "wmh" ];then
 	export ANALYSIS_LEVEL=subject
 	partition_default="std"
 
-	echo "Which ANALYSIS PART do you want to perform? currently available are: 01_prep / 02_segment / 03_combine / 04_postproc / eval"
+	echo "Which ANALYSIS PART do you want to perform? currently available are: 01_prep / 02_segment / 03_combine / 04_postproc / eval / determine_thresh / threshold_finder_01 / threshold_finder_02 "
 	read WMH_LEVEL
 	export PIPELINE_SUFFIX=_${WMH_LEVEL}
 
-	if [ $WMH_LEVEL == "_01_prep" ]; then
+	if [ $WMH_LEVEL == "01_prep" ]; then
 
-		batch_time="04:00:00"
+		batch_time_default="05:00:00"
 
-	elif [ $WMH_LEVEL == "_02_segment" ]; then
+	elif [ $WMH_LEVEL == "02_segment" ]; then
 	
 		echo "Which SEGMENTATION ALGORITHM do you want to use? currently available: antsrnet / bianca / lga / lpa / samseg"
 		read ALGORITHM; export ALGORITHM
 
 		if [ $ALGORITHM == "samseg" ]; then
 
-			batch_time="03:00:00"
+			batch_time_default="03:30:00"
 			export SUBJS_PER_NODE=8
 
 			echo "this algorithm does not recommend any bias-correction. Automatically set to NO."
@@ -409,26 +409,33 @@ elif [ $PIPELINE == "wmh" ];then
 		
 		elif [ $ALGORITHM == "lga" ] || [ $ALGORITHM == "lpa" ]; then
 
-			batch_time="02:00:00"
+			batch_time_default="01:00:00"
 			export SUBJS_PER_NODE=8
 
 			echo "this algorithm does not recommend any bias-correction. Automatically set to NO."
 			BIASCORR=n; export BIASCORR
 
-		elif [ $ALGORITHM == "bianca" ] || [ $ALGORITHM == "antsrnet" ]; then
+		elif [ $ALGORITHM == "antsrnet" ]; then
 
-			batch_time="01:00:00"
-
+			batch_time_default="01:00:00"
 			echo "do you want to perform bias-correction on the FLAIR image? (y/n)"
 			read BIASCORR; export BIASCORR
 
+		elif [ $ALGORITHM == "bianca" ]; then
+
+			batch_time_default="05:00:00"
+			echo "because the data are training data, no bias correction happened. Automatically set to NO."
+			BIASCORR=n; export BIASCORR
+			export ANALYSIS_LEVEL=group
+			export SUBJS_PER_NODE=$subj_array_length
+
 		fi
 
-	elif [ $WMH_LEVEL == "_03_combine" ]; then
+	elif [ $WMH_LEVEL == "03_combine" ]; then
 
-		batch_time="00:02:00"
+		batch_time_default="00:02:00"
 	
-		echo "this script combines the segmented masks of different algorithms. not more than two lesion masks can be combined, sorry."
+		echo "this script combines the segmented masks of different algorithms."
 		echo "which is the first algorithm? currently available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
 		read ALGORITHM1; export ALGORITHM1
 
@@ -437,18 +444,88 @@ elif [ $PIPELINE == "wmh" ];then
 		
 		[ $ALGORITHM1 == $ALGORITHM2 ] && echo "$ALGORITHM1 == $ALGORITHM2 ... stupid" && exit 1
 
-	elif [ $WMH_LEVEL == "_eval" ]; then 
+	elif [ $WMH_LEVEL == "04_postproc" ]; then 
 
-		batch_time="01:00:00"
-		echo "which output do you want to evaluate? Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)" 
+		batch_time_default="00:05:00"
+		echo "which output do you want to process? Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)" 
 		read ALGORITHM; export ALGORITHM
 
 
-	elif [ $WMH_LEVEL == "_04_postproc" ]; then 
+	elif [ $WMH_LEVEL == "eval" ]; then 
 
-		batch_time="00:05:00"
-		echo "which output do you want to evaluate? Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)" 
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time_default="01:00:00"
+
+		echo "This script evaluates the segmented masks of different algorithms."
+		echo "Which algorithm do you want to evaluate? Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
 		read ALGORITHM; export ALGORITHM
+
+	elif [ $WMH_LEVEL == "determine_thresh" ]; then 
+
+		echo "which analysis level you want to perform? possible answers: subject / group. Please execute subject before group. Thx!"
+		read ANALYSIS_LEVEL; export ANALYSIS_LEVEL
+
+		SUBJS_PER_NODE=8
+		batch_time_default="01:00:00"
+		[ $ANALYSIS_LEVEL == "group" ] && export SUBJS_PER_NODE=$subj_array_length
+
+	elif [ $WMH_LEVEL == "threshold_finder_01" ]; then 
+
+		echo "Do you want to threshold masks of a single algorithm (then answer with 'single'), or do you want to threshold combined masks or multiple algorithms (then answer with 'multiple')?"
+		read ALGORITHM_COMBI; export ALGORITHM_COMBI
+
+		if [ $ALGORITHM_COMBI == "multiple" ]; then 
+
+			echo "which is the first algorithm?"
+			#"currently available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
+			read ALGORITHM1; export ALGORITHM1
+
+			echo "which is the second algorithm? please do not name the same algorithm twice." 
+			#"available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
+			read ALGORITHM2; export ALGORITHM2
+		
+			[ $ALGORITHM1 == $ALGORITHM2 ] && echo "$ALGORITHM1 == $ALGORITHM2 ... stupid" && exit 1
+
+		elif [ $ALGORITHM_COMBI == "single" ]; then 
+
+			echo "which algorithm do you want to find a threshold for? currently available: antsrnet / antsrnetbias / bianca / lga / lpa / samseg ."
+			read ALGORITHM; export ALGORITHM
+
+		fi
+
+		export ANALYSIS_LEVEL=subject
+		[ $ALGORITHM_COMBI == "single" ] && batch_time_default="01:00:00"
+		[ $ALGORITHM_COMBI == "multiple" ] && batch_time_default="02:30:00"
+		export SUBJS_PER_NODE=8
+
+	elif [ $WMH_LEVEL == "threshold_finder_02" ]; then 
+
+		echo "Do you want to threshold masks of a single algorithm (then answer with 'single'), or do you want to threshold combined masks or multiple algorithms (then answer with 'multiple')?"
+		read ALGORITHM_COMBI; export ALGORITHM_COMBI
+
+		if [ $ALGORITHM_COMBI == "multiple" ]; then 
+
+			echo "which is the first algorithm?"
+			#"currently available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
+			read ALGORITHM1; export ALGORITHM1
+
+			echo "which is the second algorithm? please do not name the same algorithm twice. "
+			#"available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
+			read ALGORITHM2; export ALGORITHM2
+		
+			[ $ALGORITHM1 == $ALGORITHM2 ] && echo "$ALGORITHM1 == $ALGORITHM2 ... stupid" && exit 1
+
+		elif [ $ALGORITHM_COMBI == "single" ]; then 
+
+			echo "which algorithm do you want to find a threshold for? currently available: antsrnet / antsrnetbias / bianca / lga / lpa / samseg ."
+			read ALGORITHM; export ALGORITHM
+
+		fi
+
+		export ANALYSIS_LEVEL=group
+		batch_time_default="06:00:00"
+		export SUBJS_PER_NODE=$subj_array_length
 
 	fi
 
