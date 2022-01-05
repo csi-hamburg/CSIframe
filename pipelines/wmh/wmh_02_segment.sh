@@ -119,80 +119,96 @@ if [ $ALGORITHM == "antsrnet" ]; then
 
 elif [ $ALGORITHM == "bianca" ]; then
 
-# IF SUBJECT IS NOT PART OF THE CLASSIFIER
 
-    # as determined with wmh_determine_thresh.sh
-    #[ $BIASCORR == n ] && threshold=0.8
-    #[ $BIASCORR == y ] && threshold=0.9
-
-    # Define inputs 
-    #[ $BIASCORR == n ] && FLAIR_BRAIN=$OUT_DIR/${1}_ses-${SESSION}_desc-brain_FLAIR.nii.gz
-    #[ $BIASCORR == y ] && FLAIR_BRAIN=$OUT_DIR/${1}_ses-${SESSION}_desc-biascorr_desc-brain_FLAIR.nii.gz
-    #T1_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii.gz
-    #CLASSIFIER=$DATA_DIR/$PIPELINE/sourcedata/classifierdata
-    # the classifier is trained on N=100 HCHS subjects.
-    # Input for the training was a brainextracted FLAIR, a T1 in FLAIR space, a mat file with the FLAIR-2-MNI warp and manually segmented WMH masks.
-    # Manually segmented WMH masks contain overlap of segmentation of Marvin and Carola.
-    # to have full documentation: the following command with the specified flags was executed for the training:
-    # bianca --singlefile=masterfile.txt --labelfeaturenum=4 --brainmaskfeaturenum=1 --querysubjectnum=1 --trainingnums=all --featuresubset=1,2 --matfeaturenum=3 \
-    # --trainingpts=2000 --nonlespts=10000 --selectpts=noborder -o sub-00012_bianca_output -v --saveclassifierdata=$SCRIPT_DIR/classifierdata
-    # the input for the bianca segmentation is from the training data in case the subject was part of the training dataset
-    #BRAINWITHOUTRIBBON_MASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brainwithoutribbon_mask.nii.gz
-    #MNI_TEMPLATE=$ENV_DIR/standard/tpl-MNI152NLin2009cAsym_res-01_desc-brain_T1w.nii.gz
-
-    # Define outputs
-    #[ $BIASCORR == n ] && FLAIR_IN_MNI_FLIRT=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-brain_FLAIR.nii.gz
-    #[ $BIASCORR == y ] && FLAIR_IN_MNI_FLIRT=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-biascorr_desc-brain_FLAIR.nii.gz
-    #FLAIR_TO_MNI_WARP_FLIRT=$OUT_DIR/${1}_ses-${SESSION}_from-FLAIR_to-MNI_flirtwarp.txt
-    #[ $BIASCORR == n ] && SEGMENTATION_raw=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_raw.nii.gz
-    #[ $BIASCORR == y ] && SEGMENTATION_raw=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}bias_mask_raw.nii.gz
-    #[ $BIASCORR == n ] && SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_sized.nii.gz
-    #[ $BIASCORR == y ] && SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}bias_mask_sized.nii.gz
-    #[ $BIASCORR == n ] && SEGMENTATION=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
-    #[ $BIASCORR == y ] && SEGMENTATION=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}bias_mask.nii.gz
-    #[ $BIASCORR == n ] && SEGMENTATION_FILTERED=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
-    #[ $BIASCORR == y ] && SEGMENTATION_FILTERED=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}bias_mask.nii.gz
+    # create a list with subjects which are part of the classifier / training
+    MAN_SEGMENTATION_DIR=$PROJ_DIR/../CSI_WMH_MASKS_HCHS_pseud/HCHS/
+    LIST_TRAINING=$DATA_DIR/$PIPELINE/derivatives/sublist_segmentation_training.csv
+    [ -f $LIST_TRAINING ] && rm $LIST_TRAINING
+    for sub in $(ls $MAN_SEGMENTATION_DIR/sub-* -d | xargs -n 1 basename); do echo $sub >> $LIST_TRAINING; done
+    [[ -n "${LISTTRAINING[$1]}" ]] && SUB_GROUP=training || SUB_GROUP=testing
 
 
-    # Write masterfile
-    #MASTERFILE=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_masterfile.txt
-    #echo "$FLAIR_BRAIN $T1_IN_FLAIR $FLAIR_TO_MNI_WARP_FLIRT" > $MASTERFILE
+    if [ $SUB_GROUP == training ]; then
+
+        # as determined with wmh_determine_thresh.sh
+        #threshold=0.8
+
+        # Define inputs
+        #BRAINWITHOUTRIBBON_MASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brainwithoutribbon_mask.nii.gz
+
+        # Define outputs
+        #SEGMENTATION_raw=$DATA_DIR/$PIPELINE/sourcedata/BIANCA_training/pseudomized_training_masks/${1}_bianca_output.nii.gz
+        #SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_sized.nii.gz
+        #SEGMENTATION=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
+        #SEGMENTATION_FILTERED=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
+
+
+        # Define commands
+        #CMD_threshold_segmentation="cluster --in=$SEGMENTATION_raw --thresh=$threshold --osize=$SEGMENTATION_sized"
+        #CMD_thresholdcluster_segmentation="fslmaths $SEGMENTATION_sized -thr 3 -bin $SEGMENTATION"
+        #CMD_MASKING_GAME="fslmaths $SEGMENTATION -mul $BRAINWITHOUTRIBBON_MASK_FLAIR $SEGMENTATION_FILTERED"
+
+        # Execute
+        #$singularity_fsl /bin/bash -c "$CMD_threshold_segmentation; $CMD_thresholdcluster_segmentation; $CMD_MASKING_GAME"
+
+
+    elif [ $SUB_GROUP == testing ]; then
+
+        # as determined with wmh_determine_thresh.sh
+        #[ $BIASCORR == n ] && threshold=0.8
+        #[ $BIASCORR == y ] && threshold=0.9
+
+        # Define inputs 
+        #[ $BIASCORR == n ] && FLAIR_BRAIN=$OUT_DIR/${1}_ses-${SESSION}_desc-brain_FLAIR.nii.gz
+        #[ $BIASCORR == y ] && FLAIR_BRAIN=$OUT_DIR/${1}_ses-${SESSION}_desc-biascorr_desc-brain_FLAIR.nii.gz
+        #T1_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii.gz
+        #CLASSIFIER=$DATA_DIR/$PIPELINE/sourcedata/classifierdata
+        # the classifier is trained on N=100 HCHS subjects.
+        # Input for the training was a brainextracted FLAIR, a T1 in FLAIR space, a mat file with the FLAIR-2-MNI warp and manually segmented WMH masks.
+        # Manually segmented WMH masks contain overlap of segmentation of Marvin and Carola.
+        # to have full documentation: the following command with the specified flags was executed for the training:
+        # bianca --singlefile=masterfile.txt --labelfeaturenum=4 --brainmaskfeaturenum=1 --querysubjectnum=1 --trainingnums=all --featuresubset=1,2 --matfeaturenum=3 \
+        # --trainingpts=2000 --nonlespts=10000 --selectpts=noborder -o sub-00012_bianca_output -v --saveclassifierdata=$SCRIPT_DIR/classifierdata
+        # the input for the bianca segmentation is from the training data in case the subject was part of the training dataset
+        #BRAINWITHOUTRIBBON_MASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brainwithoutribbon_mask.nii.gz
+        #MNI_TEMPLATE=$ENV_DIR/standard/tpl-MNI152NLin2009cAsym_res-01_desc-brain_T1w.nii.gz
+
+        # Define outputs
+        #[ $BIASCORR == n ] && FLAIR_IN_MNI_FLIRT=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-brain_FLAIR.nii.gz
+        #[ $BIASCORR == y ] && FLAIR_IN_MNI_FLIRT=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-biascorr_desc-brain_FLAIR.nii.gz
+        #FLAIR_TO_MNI_WARP_FLIRT=$OUT_DIR/${1}_ses-${SESSION}_from-FLAIR_to-MNI_flirtwarp.txt
+        #[ $BIASCORR == n ] && SEGMENTATION_raw=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_raw.nii.gz
+        #[ $BIASCORR == y ] && SEGMENTATION_raw=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}bias_mask_raw.nii.gz
+        #[ $BIASCORR == n ] && SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_sized.nii.gz
+        #[ $BIASCORR == y ] && SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}bias_mask_sized.nii.gz
+        #[ $BIASCORR == n ] && SEGMENTATION=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
+        #[ $BIASCORR == y ] && SEGMENTATION=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}bias_mask.nii.gz
+        #[ $BIASCORR == n ] && SEGMENTATION_FILTERED=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
+        #[ $BIASCORR == y ] && SEGMENTATION_FILTERED=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}bias_mask.nii.gz
+
+
+        # Write masterfile
+        #MASTERFILE=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_masterfile.txt
+        #echo "$FLAIR_BRAIN $T1_IN_FLAIR $FLAIR_TO_MNI_WARP_FLIRT" > $MASTERFILE
+        
+        # Define commands    
+        #CMD_FLIRT_FLAIR_TO_MNI="flirt -in $FLAIR_BRAIN -ref $MNI_TEMPLATE -out $FLAIR_IN_MNI_FLIRT -omat $FLAIR_TO_MNI_WARP_FLIRT"
+        #CMD_BIANCA="bianca --singlefile=$MASTERFILE --brainmaskfeaturenum=1 --querysubjectnum=1 --featuresubset=1,2 --matfeaturenum=3 -o $SEGMENTATION_raw -v --loadclassifierdata=$CLASSIFIER"
+        #CMD_threshold_segmentation="cluster --in=$SEGMENTATION_raw --thresh=$threshold --osize=$SEGMENTATION_sized"
+        #CMD_thresholdcluster_segmentation="fslmaths $SEGMENTATION_sized -thr 3 -bin $SEGMENTATION"
+        #CMD_MASKING_GAME="fslmaths $SEGMENTATION -mul $BRAINWITHOUTRIBBON_MASK_FLAIR $SEGMENTATION_FILTERED"
+        
+        # Execute
+        #$singularity_fsl /bin/bash -c "$CMD_FLIRT_FLAIR_TO_MNI; $CMD_BIANCA; $CMD_threshold_segmentation; $CMD_thresholdcluster_segmentation; $CMD_MASKING_GAME"
+
+
+    fi
+
     
-    # Define commands    
-    #CMD_FLIRT_FLAIR_TO_MNI="flirt -in $FLAIR_BRAIN -ref $MNI_TEMPLATE -out $FLAIR_IN_MNI_FLIRT -omat $FLAIR_TO_MNI_WARP_FLIRT"
-    #CMD_BIANCA="bianca --singlefile=$MASTERFILE --brainmaskfeaturenum=1 --querysubjectnum=1 --featuresubset=1,2 --matfeaturenum=3 -o $SEGMENTATION_raw -v --loadclassifierdata=$CLASSIFIER"
-    #CMD_threshold_segmentation="cluster --in=$SEGMENTATION_raw --thresh=$threshold --osize=$SEGMENTATION_sized"
-    #CMD_thresholdcluster_segmentation="fslmaths $SEGMENTATION_sized -thr 3 -bin $SEGMENTATION"
-    #CMD_MASKING_GAME="fslmaths $SEGMENTATION -mul $BRAINWITHOUTRIBBON_MASK_FLAIR $SEGMENTATION_FILTERED"
-    
-    # Execute
-    #$singularity_fsl /bin/bash -c "$CMD_FLIRT_FLAIR_TO_MNI; $CMD_BIANCA; $CMD_threshold_segmentation; $CMD_thresholdcluster_segmentation; $CMD_MASKING_GAME"
+elif [ $ALGORITHM == "LOCATE" ]; then
 
-    
-# IF SUBJECT IS PART OF THE CLASSIFIER
-    
-    # as determined with wmh_determine_thresh.sh
-    #threshold=0.8
+    # it is best to run this locally. It takes more than maximum batch time to run
 
-    # Define inputs
-    #BRAINWITHOUTRIBBON_MASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brainwithoutribbon_mask.nii.gz
-
-    # Define outputs
-    #SEGMENTATION_raw=$DATA_DIR/$PIPELINE/sourcedata/BIANCA_training/pseudomized_training_masks/${1}_bianca_output.nii.gz
-    #SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_sized.nii.gz
-    #SEGMENTATION=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
-    #SEGMENTATION_FILTERED=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
-
-
-    # Define commands
-    #CMD_threshold_segmentation="cluster --in=$SEGMENTATION_raw --thresh=$threshold --osize=$SEGMENTATION_sized"
-    #CMD_thresholdcluster_segmentation="fslmaths $SEGMENTATION_sized -thr 3 -bin $SEGMENTATION"
-    #CMD_MASKING_GAME="fslmaths $SEGMENTATION -mul $BRAINWITHOUTRIBBON_MASK_FLAIR $SEGMENTATION_FILTERED"
-
-    # Execute
-    #$singularity_fsl /bin/bash -c "$CMD_threshold_segmentation; $CMD_thresholdcluster_segmentation; $CMD_MASKING_GAME"
-
-# LOCATE
 
     # see https://git.fmrib.ox.ac.uk/vaanathi/LOCATE-BIANCA/-/blob/master/LOCATE_User_Manual_V1.1_20052018.pdf for documentation
 
@@ -226,7 +242,6 @@ elif [ $ALGORITHM == "bianca" ]; then
     for sub in $(ls $DATA_DIR/$PIPELINE/sub-* -d | xargs -n 1 basename); do
 
         OUT_DIR=$DATA_DIR/$PIPELINE/$sub/ses-${SESSION}/anat/
-
 
         # Define inputs
         MAN_SEGMENTATION_DIR=$PROJ_DIR/../CSI_WMH_MASKS_HCHS_pseud/HCHS/

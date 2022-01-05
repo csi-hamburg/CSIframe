@@ -471,6 +471,13 @@ elif [ $PIPELINE == "wmh" ];then
 			batch_time_default="05:00:00"
 			echo "because the data are training data, no bias correction happened. Automatically set to NO."
 			BIASCORR=n; export BIASCORR
+			export SUBJS_PER_NODE=$subj_array_length
+
+		elif [ $ALGORITHM == "LOCATE" ]; then
+
+			batch_time_default="05:00:00"
+			echo "because the data are training data, no bias correction happened. Automatically set to NO."
+			BIASCORR=n; export BIASCORR
 			export ANALYSIS_LEVEL=group
 			export SUBJS_PER_NODE=$subj_array_length
 
