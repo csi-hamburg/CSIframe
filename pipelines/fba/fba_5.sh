@@ -130,7 +130,7 @@ FA_AVG_TEMP="$FA_TEMP_DIR/FA_averaged.nii.gz"
 # Command
 #########################
 CMD_MRTRANSFORM="mrtransform $FA -warp $SUB2TEMP_WARP $FA_TEMP -force"
-CMD_AVG="mrmath $(ls -d -1 $FA_TEMP_DIR/fa/sub-*) mean $FA_AVG_TEMP --force"
+CMD_AVG="mrmath $(find $FA_TEMP_DIR -name "sub-*") mean $FA_AVG_TEMP --force"
 
 # Execution
 #########################
@@ -272,7 +272,6 @@ $parallel $singularity_mrtrix3 $CMD_COMPLEXITY2MNI ::: ${input_subject_array[@]}
 #########################
 
 FW_DIR="$DATA_DIR/freewater/{}/ses-$SESSION/dwi/"
-[ ! -d $FW_DIR ] && echo Please run freewater core pipeline first && exit 1
 
 # Input
 #########################

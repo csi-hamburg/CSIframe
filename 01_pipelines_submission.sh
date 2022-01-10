@@ -29,8 +29,8 @@ export PIPELINE_SUFFIX=""
 
 # Define session to process
 echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
-if [[ "aslprep fmriprep mriqc qsiprep smriprep" == *"$PIPELINE"* ]]; then
-	echo "aslprep, fmriprep, mriqc, qsiprep and smriprep do not require session input"
+if [[ "aslprep fmriprep mriqc qsiprep smriprep statistics" == *"$PIPELINE"* ]]; then
+	echo "aslprep, fmriprep, mriqc, qsiprep, smriprep and statistics do not require session input"
 else 
 	echo "Which session do you want to process?"
 	[ -d $BIDS_DIR ] && echo "Choose from: $(ls $DATA_DIR/raw_bids/sub-*/* -d | xargs -n 1 basename | sort | uniq | cut -d "-" -f 2 | tr '\n' ' ') $([[ "bidsify freesurfer" == *"$PIPELINE"* ]] && echo -e "all")"
@@ -512,8 +512,8 @@ elif [ $PIPELINE == "statistics" ];then
 		
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time_default="04:00:00"
-		partition_default="std"
+		batch_time_default="1-00:00:00"
+		partition_default="big"
 
 	fi
 else
