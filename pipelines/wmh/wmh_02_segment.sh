@@ -271,7 +271,7 @@ elif [ $ALGORITHM == "LOCATE" ]; then
             T1_LOCATE=$LOCATE_testing_dir/${sub}_feature_T1.nii.gz
             DISTANCEMAP=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_distancemap.nii.gz
             DISTANCEMAP_LOCATE=$LOCATE_testing_dir/${sub}_ventdistmap.nii.gz
-            SEGMENTATION_raw=$DATA_DIR/$PIPELINE/sourcedata/BIANCA_training/pseudomized_training_masks/${sub}_bianca_output.nii.gz
+            SEGMENTATION_raw=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_raw.nii.gz
             SEGMENTATION_raw_LOCATE=$LOCATE_testing_dir/${sub}_BIANCA_LPM.nii.gz
             T1_MASK_IN_FLAIR=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
             BRAINMASK_LOCATE=$LOCATE_testing_dir/${sub}_brainmask.nii.gz
@@ -302,6 +302,7 @@ elif [ $ALGORITHM == "LOCATE" ]; then
 
     # For 1)
     [ $LOCATE_LEVEL == validate ] && matlab -nosplash -nodesktop -nojvm -batch "addpath(genpath('$ENV_DIR/LOCATE-BIANCA')); LOCATE_LOO_testing('$LOCATE_training_dir'); quit"
+    SEGMENTATION=$ALGORITHM_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
 
     # For 2)
     [ $LOCATE_LEVEL == training ] && matlab -nosplash -nodesktop -nojvm -batch "addpath(genpath('$ENV_DIR/LOCATE-BIANCA')); LOCATE_training('$LOCATE_training_dir'); quit"
