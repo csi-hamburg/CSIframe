@@ -481,6 +481,10 @@ elif [ $PIPELINE == "wmh" ];then
 			export ANALYSIS_LEVEL=group
 			export SUBJS_PER_NODE=$subj_array_length
 
+			echo "Do you want to validate LOCATE, train LOCATE, or test LOCATE? answer with: 'validate', 'training', 'testing' \
+			Note: for validation and training, you need manual masks. For testing, you either need a classifier created with TRAINING or train first."
+			read LOCATE_LEVEL; export LOCATE_LEVEL
+
 		fi
 
 	elif [ $WMH_LEVEL == "03_combine" ]; then
