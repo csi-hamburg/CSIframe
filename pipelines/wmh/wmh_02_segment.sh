@@ -119,152 +119,196 @@ if [ $ALGORITHM == "antsrnet" ]; then
 
 elif [ $ALGORITHM == "bianca" ]; then
 
-# IF SUBJECT IS NOT PART OF THE CLASSIFIER
 
-    # as determined with wmh_determine_thresh.sh
-    #[ $BIASCORR == n ] && threshold=0.8
-    #[ $BIASCORR == y ] && threshold=0.9
-
-    # Define inputs 
-    #[ $BIASCORR == n ] && FLAIR_BRAIN=$OUT_DIR/${1}_ses-${SESSION}_desc-brain_FLAIR.nii.gz
-    #[ $BIASCORR == y ] && FLAIR_BRAIN=$OUT_DIR/${1}_ses-${SESSION}_desc-biascorr_desc-brain_FLAIR.nii.gz
-    #T1_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii.gz
-    #CLASSIFIER=$DATA_DIR/$PIPELINE/sourcedata/classifierdata
-    # the classifier is trained on N=100 HCHS subjects.
-    # Input for the training was a brainextracted FLAIR, a T1 in FLAIR space, a mat file with the FLAIR-2-MNI warp and manually segmented WMH masks.
-    # Manually segmented WMH masks contain overlap of segmentation of Marvin and Carola.
-    # to have full documentation: the following command with the specified flags was executed for the training:
-    # bianca --singlefile=masterfile.txt --labelfeaturenum=4 --brainmaskfeaturenum=1 --querysubjectnum=1 --trainingnums=all --featuresubset=1,2 --matfeaturenum=3 \
-    # --trainingpts=2000 --nonlespts=10000 --selectpts=noborder -o sub-00012_bianca_output -v --saveclassifierdata=$SCRIPT_DIR/classifierdata
-    # the input for the bianca segmentation is from the training data in case the subject was part of the training dataset
-    #BRAINWITHOUTRIBBON_MASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brainwithoutribbon_mask.nii.gz
-    #MNI_TEMPLATE=$ENV_DIR/standard/tpl-MNI152NLin2009cAsym_res-01_desc-brain_T1w.nii.gz
-
-    # Define outputs
-    #[ $BIASCORR == n ] && FLAIR_IN_MNI_FLIRT=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-brain_FLAIR.nii.gz
-    #[ $BIASCORR == y ] && FLAIR_IN_MNI_FLIRT=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-biascorr_desc-brain_FLAIR.nii.gz
-    #FLAIR_TO_MNI_WARP_FLIRT=$OUT_DIR/${1}_ses-${SESSION}_from-FLAIR_to-MNI_flirtwarp.txt
-    #[ $BIASCORR == n ] && SEGMENTATION_raw=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_raw.nii.gz
-    #[ $BIASCORR == y ] && SEGMENTATION_raw=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}bias_mask_raw.nii.gz
-    #[ $BIASCORR == n ] && SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_sized.nii.gz
-    #[ $BIASCORR == y ] && SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}bias_mask_sized.nii.gz
-    #[ $BIASCORR == n ] && SEGMENTATION=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
-    #[ $BIASCORR == y ] && SEGMENTATION=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}bias_mask.nii.gz
-    #[ $BIASCORR == n ] && SEGMENTATION_FILTERED=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
-    #[ $BIASCORR == y ] && SEGMENTATION_FILTERED=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}bias_mask.nii.gz
+    # create a list with subjects which are part of the classifier / training
+    MAN_SEGMENTATION_DIR=$PROJ_DIR/../CSI_WMH_MASKS_HCHS_pseud/HCHS/
+    LIST_TRAINING=$DATA_DIR/$PIPELINE/derivatives/sublist_segmentation_training.csv
+    [ -f $LIST_TRAINING ] && rm $LIST_TRAINING
+    for sub in $(ls $MAN_SEGMENTATION_DIR/sub-* -d | xargs -n 1 basename); do echo $sub >> $LIST_TRAINING; done
+    [[ -n "${LISTTRAINING[$1]}" ]] && SUB_GROUP=training || SUB_GROUP=testing
 
 
-    # Write masterfile
-    #MASTERFILE=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_masterfile.txt
-    #echo "$FLAIR_BRAIN $T1_IN_FLAIR $FLAIR_TO_MNI_WARP_FLIRT" > $MASTERFILE
+    if [ $SUB_GROUP == training ]; then
+        # the actual training with the creation of the classifier is already run
+
+        # as determined with wmh_determine_thresh.sh
+        threshold=0.8
+
+        # Define inputs
+        BRAINWITHOUTRIBBON_MASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brainwithoutribbon_mask.nii.gz
+
+        # Define outputs
+        SEGMENTATION_raw=$DATA_DIR/$PIPELINE/sourcedata/BIANCA_training/pseudomized_training_masks/${1}_bianca_output.nii.gz
+        SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_sized.nii.gz
+        SEGMENTATION=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
+        SEGMENTATION_FILTERED=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
+
+        # Define commands
+        CMD_threshold_segmentation="cluster --in=$SEGMENTATION_raw --thresh=$threshold --osize=$SEGMENTATION_sized"
+        CMD_thresholdcluster_segmentation="fslmaths $SEGMENTATION_sized -thr 3 -bin $SEGMENTATION"
+        CMD_MASKING_GAME="fslmaths $SEGMENTATION -mul $BRAINWITHOUTRIBBON_MASK_FLAIR $SEGMENTATION_FILTERED"
+
+        # Execute
+        $singularity_fsl /bin/bash -c "$CMD_threshold_segmentation; $CMD_thresholdcluster_segmentation; $CMD_MASKING_GAME"
+
+
+    elif [ $SUB_GROUP == testing ]; then
+
+        # as determined with wmh_determine_thresh.sh
+        threshold=0.8
+
+        # Define inputs 
+        FLAIR_BRAIN=$OUT_DIR/${1}_ses-${SESSION}_desc-brain_FLAIR.nii.gz
+        T1_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii.gz
+        CLASSIFIER=$DATA_DIR/$PIPELINE/sourcedata/classifierdata
+        # the classifier is trained on N=100 HCHS subjects.
+        # Input for the training was a brainextracted FLAIR, a T1 in FLAIR space, a mat file with the FLAIR-2-MNI warp and manually segmented WMH masks.
+        # Manually segmented WMH masks contain overlap of segmentation of Marvin and Carola.
+        # to have full documentation: the following command with the specified flags was executed for the training:
+        # bianca --singlefile=masterfile.txt --labelfeaturenum=4 --brainmaskfeaturenum=1 --querysubjectnum=1 --trainingnums=all --featuresubset=1,2 --matfeaturenum=3 \
+        # --trainingpts=2000 --nonlespts=10000 --selectpts=noborder -o sub-00012_bianca_output -v --saveclassifierdata=$SCRIPT_DIR/classifierdata
+        # the input for the bianca segmentation is from the training data in case the subject was part of the training dataset
+        BRAINWITHOUTRIBBON_MASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brainwithoutribbon_mask.nii.gz
+        MNI_TEMPLATE=$ENV_DIR/standard/tpl-MNI152NLin2009cAsym_res-01_desc-brain_T1w.nii.gz
+
+        # Define outputs
+        FLAIR_IN_MNI_FLIRT=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-brain_FLAIR.nii.gz
+        FLAIR_TO_MNI_WARP_FLIRT=$OUT_DIR/${1}_ses-${SESSION}_from-FLAIR_to-MNI_flirtwarp.txt
+        SEGMENTATION_raw=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_raw.nii.gz
+        SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_sized.nii.gz
+        SEGMENTATION=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
+        SEGMENTATION_FILTERED=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
+
+
+        # Write masterfile
+        MASTERFILE=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_masterfile.txt
+        echo "$FLAIR_BRAIN $T1_IN_FLAIR $FLAIR_TO_MNI_WARP_FLIRT" > $MASTERFILE
+        
+        # Define commands    
+        CMD_FLIRT_FLAIR_TO_MNI="flirt -in $FLAIR_BRAIN -ref $MNI_TEMPLATE -out $FLAIR_IN_MNI_FLIRT -omat $FLAIR_TO_MNI_WARP_FLIRT"
+        CMD_BIANCA="bianca --singlefile=$MASTERFILE --brainmaskfeaturenum=1 --querysubjectnum=1 --featuresubset=1,2 --matfeaturenum=3 -o $SEGMENTATION_raw -v --loadclassifierdata=$CLASSIFIER"
+        CMD_threshold_segmentation="cluster --in=$SEGMENTATION_raw --thresh=$threshold --osize=$SEGMENTATION_sized"
+        CMD_thresholdcluster_segmentation="fslmaths $SEGMENTATION_sized -thr 3 -bin $SEGMENTATION"
+        CMD_MASKING_GAME="fslmaths $SEGMENTATION -mul $BRAINWITHOUTRIBBON_MASK_FLAIR $SEGMENTATION_FILTERED"
+        
+        # Execute
+        $singularity_fsl /bin/bash -c "$CMD_FLIRT_FLAIR_TO_MNI; $CMD_BIANCA; $CMD_threshold_segmentation; $CMD_thresholdcluster_segmentation; $CMD_MASKING_GAME"
+
+
+    fi
+
     
-    # Define commands    
-    #CMD_FLIRT_FLAIR_TO_MNI="flirt -in $FLAIR_BRAIN -ref $MNI_TEMPLATE -out $FLAIR_IN_MNI_FLIRT -omat $FLAIR_TO_MNI_WARP_FLIRT"
-    #CMD_BIANCA="bianca --singlefile=$MASTERFILE --brainmaskfeaturenum=1 --querysubjectnum=1 --featuresubset=1,2 --matfeaturenum=3 -o $SEGMENTATION_raw -v --loadclassifierdata=$CLASSIFIER"
-    #CMD_threshold_segmentation="cluster --in=$SEGMENTATION_raw --thresh=$threshold --osize=$SEGMENTATION_sized"
-    #CMD_thresholdcluster_segmentation="fslmaths $SEGMENTATION_sized -thr 3 -bin $SEGMENTATION"
-    #CMD_MASKING_GAME="fslmaths $SEGMENTATION -mul $BRAINWITHOUTRIBBON_MASK_FLAIR $SEGMENTATION_FILTERED"
-    
-    # Execute
-    #$singularity_fsl /bin/bash -c "$CMD_FLIRT_FLAIR_TO_MNI; $CMD_BIANCA; $CMD_threshold_segmentation; $CMD_thresholdcluster_segmentation; $CMD_MASKING_GAME"
+elif [ $ALGORITHM == "LOCATE" ]; then
 
-    
-# IF SUBJECT IS PART OF THE CLASSIFIER
-    
-    # as determined with wmh_determine_thresh.sh
-    #threshold=0.8
-
-    # Define inputs
-    #BRAINWITHOUTRIBBON_MASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brainwithoutribbon_mask.nii.gz
-
-    # Define outputs
-    #SEGMENTATION_raw=$DATA_DIR/$PIPELINE/sourcedata/BIANCA_training/pseudomized_training_masks/${1}_bianca_output.nii.gz
-    #SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_sized.nii.gz
-    #SEGMENTATION=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
-    #SEGMENTATION_FILTERED=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
-
-
-    # Define commands
-    #CMD_threshold_segmentation="cluster --in=$SEGMENTATION_raw --thresh=$threshold --osize=$SEGMENTATION_sized"
-    #CMD_thresholdcluster_segmentation="fslmaths $SEGMENTATION_sized -thr 3 -bin $SEGMENTATION"
-    #CMD_MASKING_GAME="fslmaths $SEGMENTATION -mul $BRAINWITHOUTRIBBON_MASK_FLAIR $SEGMENTATION_FILTERED"
-
-    # Execute
-    #$singularity_fsl /bin/bash -c "$CMD_threshold_segmentation; $CMD_thresholdcluster_segmentation; $CMD_MASKING_GAME"
-
-# LOCATE
-
-    # see https://git.fmrib.ox.ac.uk/vaanathi/LOCATE-BIANCA/-/blob/master/LOCATE_User_Manual_V1.1_20052018.pdf for documentation
-
+    # it is best to run this locally. It takes more than maximum batch time to run
     source /work/bax0929/set_envs/fsl
     module load matlab
 
     LOCATE_installation=$ENV_DIR/LOCATE-BIANCA
 
+    LOCATE_working_dir=$DATA_DIR/$PIPELINE/MyLOCATE
+    [ ! -d $LOCATE_working_dir ] && mkdir -p $LOCATE_working_dir
+    LOCATE_training_dir=$LOCATE_working_dir/LOO_training_imgs
+    [ ! -d $LOCATE_training_dir ] && mkdir -p $LOCATE_training_dir
+    export $LOCATE_training_dir
+    LOCATE_testing_dir=$LOCATE_working_dir/LOO_testing_imgs
+    [ ! -d $LOCATE_testing_dir ] && mkdir -p $LOCATE_testing_dir
+    export $LOCATE_testing_dir
+
+    LIST_TRAINING=$DATA_DIR/$PIPELINE/derivatives/sublist_segmentation_training.csv
+    [ -f $LIST_TRAINING ] && rm $LIST_TRAINING
+    for sub in $(ls $MAN_SEGMENTATION_DIR/sub-* -d | xargs -n 1 basename); do echo $sub >> $LIST_TRAINING; done
+    [[ -n "${LISTTRAINING[$1]}" ]] && SUB_GROUP=training || SUB_GROUP=testing
+
+    if [ $SUB_GROUP == training ] ; then
+
+        for sub in $(ls $DATA_DIR/$PIPELINE/sub-* -d | xargs -n 1 basename); do
+
+            OUT_DIR=$DATA_DIR/$PIPELINE/$sub/ses-${SESSION}/anat/
+
+            # Define inputs
+            MAN_SEGMENTATION_DIR=$PROJ_DIR/../CSI_WMH_MASKS_HCHS_pseud/HCHS/
+            FLAIR_BRAIN=$OUT_DIR/${sub}_ses-${SESSION}_desc-brain_FLAIR.nii.gz
+            FLAIR_LOCATE=$LOCATE_training_dir/${sub}_feature_FLAIR.nii.gz 
+            T1_IN_FLAIR=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii.gz
+            T1_LOCATE=$LOCATE_training_dir/${sub}_feature_T1.nii.gz
+            SEGMENTATION_MAN=$MAN_SEGMENTATION_DIR/$sub/anat/${sub}_DC_FLAIR_label3.nii.gz
+            MANUAL_MASK_LOCATE=$LOCATE_training_dir/${sub}_manualmask.nii.gz
+            DISTANCEMAP=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_distancemap.nii.gz
+            DISTANCEMAP_LOCATE=$LOCATE_training_dir/${sub}_ventdistmap.nii.gz
+            SEGMENTATION_raw=$DATA_DIR/$PIPELINE/sourcedata/BIANCA_training/pseudomized_training_masks/${sub}_bianca_output.nii.gz
+            SEGMENTATION_raw_LOCATE=$LOCATE_training_dir/${sub}_BIANCA_LPM.nii.gz
+            T1_MASK_IN_FLAIR=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
+            BRAINMASK_LOCATE=$LOCATE_training_dir/${sub}_brainmask.nii.gz
+            BIANCAMASK_LOCATE=$LOCATE_training_dir/${sub}_biancamask.nii.gz
+
+            if [ -f $FLAIR_BRAIN ] && [ -f $T1_IN_FLAIR ] && [ -f $SEGMENTATION_MAN ] && [ -f $DISTANCEMAP ] && [ -f $SEGMENTATION_raw ] && [ -f $T1_MASK_IN_FLAIR ]; then
+            
+                cp $FLAIR_BRAIN $FLAIR_LOCATE
+                cp $T1_IN_FLAIR $T1_LOCATE
+                cp $SEGMENTATION_MAN $MANUAL_MASK_LOCATE
+                cp $DISTANCEMAP $DISTANCEMAP_LOCATE
+                cp $SEGMENTATION_raw $SEGMENTATION_raw_LOCATE
+                cp $T1_MASK_IN_FLAIR $BRAINMASK_LOCATE
+                cp $T1_MASK_IN_FLAIR $BIANCAMASK_LOCATE
+
+            # else we will not copy any of the files into the LOCATE directory because LOCATE cannot handle incomplete data of subjects, throws an error and stops
+
+            fi
+
+        done
+
+    if [ $SUB_GROUP == testing ] && [ $LOCATE_LEVEL == testing ]; then
+
+        for sub in $(ls $DATA_DIR/$PIPELINE/sub-* -d | xargs -n 1 basename); do
+
+            OUT_DIR=$DATA_DIR/$PIPELINE/$sub/ses-${SESSION}/anat/
+
+            # Define inputs
+            FLAIR_BRAIN=$OUT_DIR/${sub}_ses-${SESSION}_desc-brain_FLAIR.nii.gz
+            FLAIR_LOCATE=$LOCATE_testing_dir/${sub}_feature_FLAIR.nii.gz 
+            T1_IN_FLAIR=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii.gz
+            T1_LOCATE=$LOCATE_testing_dir/${sub}_feature_T1.nii.gz
+            DISTANCEMAP=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_distancemap.nii.gz
+            DISTANCEMAP_LOCATE=$LOCATE_testing_dir/${sub}_ventdistmap.nii.gz
+            SEGMENTATION_raw=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_raw.nii.gz
+            SEGMENTATION_raw_LOCATE=$LOCATE_testing_dir/${sub}_BIANCA_LPM.nii.gz
+            T1_MASK_IN_FLAIR=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
+            BRAINMASK_LOCATE=$LOCATE_testing_dir/${sub}_brainmask.nii.gz
+            BIANCAMASK_LOCATE=$LOCATE_testing_dir/${sub}_biancamask.nii.gz
+
+            if [ -f $FLAIR_BRAIN ] && [ -f $T1_IN_FLAIR ] && [ -f $DISTANCEMAP ] && [ -f $SEGMENTATION_raw ] && [ -f $T1_MASK_IN_FLAIR ]; then
+            
+                cp $FLAIR_BRAIN $FLAIR_LOCATE
+                cp $T1_IN_FLAIR $T1_LOCATE
+                cp $DISTANCEMAP $DISTANCEMAP_LOCATE
+                cp $SEGMENTATION_raw $SEGMENTATION_raw_LOCATE
+                cp $T1_MASK_IN_FLAIR $BRAINMASK_LOCATE
+                cp $T1_MASK_IN_FLAIR $BIANCAMASK_LOCATE
+
+            # else we will not copy any of the files into the LOCATE directory because LOCATE cannot handle incomplete data of subjects, throws an error and stops
+
+            fi
+
+        done
+
+    fi
+
+
     # LOCATE can run in 3 ways:
-        # 1) train and test the LOCAZE model on data with manual mask available (with leave one out validation). Then work with LOO directory
+        # 1) train and test the LOCATE model on data with manual mask available (with leave one out validation). Then work with LOO directory
         # 2) train the LOCATE model on data with manual mask available. Then work with training directory
         # 3) test the LOCATE model on data without manual mask, then work with apply directory
 
     # For 1)
-    LOCATE_working_dir=$DATA_DIR/$PIPELINE/MyLOCATE
-    [ ! -d $LOCATE_working_dir ] && mkdir -p $LOCATE_working_dir
-    LOCATE_LOO_dir=$LOCATE_working_dir/LOO_imgs_directory
-    [ ! -d $LOCATE_LOO_dir ] && mkdir -p $LOCATE_LOO_dir
-    export $LOCATE_LOO_dir
+    [ $LOCATE_LEVEL == validate ] && matlab -nosplash -nodesktop -nojvm -batch "addpath(genpath('$ENV_DIR/LOCATE-BIANCA')); LOCATE_LOO_testing('$LOCATE_training_dir'); quit"
+    SEGMENTATION=$ALGORITHM_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
 
     # For 2)
-    #LOCATE_training_dir=$LOCATE_working_dir/trainings_imgs_directory
-    #[ ! -d $LOCATE_training_dir ] && mkdir -p $LOCATE_training_dir
-    
+    [ $LOCATE_LEVEL == training ] && matlab -nosplash -nodesktop -nojvm -batch "addpath(genpath('$ENV_DIR/LOCATE-BIANCA')); LOCATE_training('$LOCATE_training_dir'); quit"
+
     # For 3)
-    #LOCATE_apply_dir=$LOCATE_working_dir/test_imgs_directory
-    #[ ! -d $LOCATE_apply_dir ] && mkdir -p $LOCATE_apply_dir
-
-    # try to run this locally
-
-    for sub in $(ls $DATA_DIR/$PIPELINE/sub-* -d | xargs -n 1 basename); do
-
-        OUT_DIR=$DATA_DIR/$PIPELINE/$sub/ses-${SESSION}/anat/
-
-
-        # Define inputs
-        MAN_SEGMENTATION_DIR=$PROJ_DIR/../CSI_WMH_MASKS_HCHS_pseud/HCHS/
-        FLAIR_BRAIN=$OUT_DIR/${sub}_ses-${SESSION}_desc-brain_FLAIR.nii.gz
-        FLAIR_LOCATE=$LOCATE_LOO_dir/${sub}_feature_FLAIR.nii.gz 
-        T1_IN_FLAIR=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii.gz
-        T1_LOCATE=$LOCATE_LOO_dir/${sub}_feature_T1.nii.gz
-        SEGMENTATION_MAN=$MAN_SEGMENTATION_DIR/$sub/anat/${sub}_DC_FLAIR_label3.nii.gz
-        MANUAL_MASK_LOCATE=$LOCATE_LOO_dir/${sub}_manualmask.nii.gz
-        DISTANCEMAP=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_distancemap.nii.gz
-        DISTANCEMAP_LOCATE=$LOCATE_LOO_dir/${sub}_ventdistmap.nii.gz
-        SEGMENTATION_raw=$DATA_DIR/$PIPELINE/sourcedata/BIANCA_training/pseudomized_training_masks/${sub}_bianca_output.nii.gz
-        SEGMENTATION_raw_LOCATE=$LOCATE_LOO_dir/${sub}_BIANCA_LPM.nii.gz
-        T1_MASK_IN_FLAIR=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
-        BRAINMASK_LOCATE=$LOCATE_LOO_dir/${sub}_brainmask.nii.gz
-        BIANCAMASK_LOCATE=$LOCATE_LOO_dir/${sub}_biancamask.nii.gz
-
-        if [ -f $FLAIR_BRAIN ] && [ -f $T1_IN_FLAIR ] && [ -f $SEGMENTATION_MAN ] && [ -f $DISTANCEMAP ] && [ -f $SEGMENTATION_raw ] && [ -f $T1_MASK_IN_FLAIR ]; then
-        
-            cp $FLAIR_BRAIN $FLAIR_LOCATE
-            cp $T1_IN_FLAIR $T1_LOCATE
-            cp $SEGMENTATION_MAN $MANUAL_MASK_LOCATE
-            cp $DISTANCEMAP $DISTANCEMAP_LOCATE
-            cp $SEGMENTATION_raw $SEGMENTATION_raw_LOCATE
-            cp $T1_MASK_IN_FLAIR $BRAINMASK_LOCATE
-            cp $T1_MASK_IN_FLAIR $BIANCAMASK_LOCATE
-
-        # else we will not copy any of the files into the LOCATE directory because LOCATE cannot handle incomplete data of subjects, throws an error and stops
-
-        fi
-
-    done
-
-    # Execute
-    matlab -nosplash -nodesktop -nojvm -batch "addpath(genpath('$ENV_DIR/LOCATE-BIANCA')); LOCATE_LOO_testing('$LOCATE_LOO_dir'); quit"
-
-
-
+    [ $LOCATE_LEVEL == testing ] && matlab -nosplash -nodesktop -nojvm -batch "addpath(genpath('$ENV_DIR/LOCATE-BIANCA')); LOCATE_testing('$LOCATE_testing_dir', '$LOCATE_training_dir'); quit"
 
 
 elif [ $ALGORITHM == "lga" ]; then

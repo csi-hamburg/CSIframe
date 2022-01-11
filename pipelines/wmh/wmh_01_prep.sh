@@ -99,7 +99,6 @@ T1_IN_FLAIR_nii=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii # 
 FLAIR_TO_T1_WARP=$OUT_DIR/${1}_ses-${SESSION}_from-T1_to-FLAIR_InverseComposite.h5
 FLAIR_nii=$OUT_DIR/${1}_ses-${SESSION}_FLAIR.nii # needed for lga + lpa algorithm
 FLAIR_BIASCORR=$OUT_DIR/${1}_ses-${SESSION}_desc-biascorr_FLAIR.nii.gz
-FLAIR_BIASCORR_nii=$OUT_DIR/${1}_ses-${SESSION}_desc-biascorr_FLAIR.nii
 FLAIR_BIASCORR_IN_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-biascorr_FLAIR.nii.gz
 FLAIR_BRAIN=$OUT_DIR/${1}_ses-${SESSION}_desc-brain_FLAIR.nii.gz
 FLAIR_BRAIN_BIASCORR=$OUT_DIR/${1}_ses-${SESSION}_desc-biascorr_desc-brain_FLAIR.nii.gz
@@ -148,7 +147,6 @@ CMD_FLAIR_BRAIN_IN_MNI="antsApplyTransforms -d 3 -i $FLAIR_BRAIN -r $MNI_TEMPLAT
 # convert T1 / FLAIR in nii for lpa/lga
 CMD_convert_T1="mri_convert $T1_IN_FLAIR $T1_IN_FLAIR_nii"
 CMD_convert_FLAIR="mri_convert $FLAIR $FLAIR_nii"
-CMD_convert_FLAIR_BIASCORR="mri_convert $FLAIR_BIASCORR $FLAIR_BIASCORR_nii"
 
 # Execute 
 [ ! -f $T1_IN_FLAIR ] && $singularity_fsl /bin/bash -c "$CMD_T1_EXTRACT_BRAIN"
@@ -160,6 +158,7 @@ if [ ! -f $FLAIR_BRAIN_IN_MNI ]; then
     $singularity_mrtrix /bin/bash -c "$CMD_BIASCORR_FLAIR"
     $singularity_fsl /bin/bash -c "$CMD_FLAIR_BRAIN_EXTRACT; $CMD_FLAIR_BRAIN_BIASCORR_EXTRACT"
     $singularity_mrtrix /bin/bash -c "$CMD_FLAIR_BRAIN_BIASCORR_IN_T1; $CMD_FLAIR_BIASCORR_IN_T1; $CMD_FLAIR_BRAIN_IN_T1; $CMD_FLAIR_BRAIN_BIASCORR_IN_MNI; $CMD_FLAIR_BIASCORR_IN_MNI; $CMD_FLAIR_BRAIN_IN_MNI"
+    $singularity_freesurfer /bin/bash -c "$CMD_convert_T1; $CMD_convert_FLAIR"
 
 fi
 

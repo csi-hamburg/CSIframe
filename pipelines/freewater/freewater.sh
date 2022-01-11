@@ -52,7 +52,7 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 # Define environment
 ####################
-
+ENV_DIR=$PROJ_DIR/_envs
 module load matlab/2019b
 module load singularity
 
@@ -78,7 +78,6 @@ singularity_fsl="singularity run --cleanenv --no-home --userns \
 # Create output directory
 #########################
 
-FW_CODE_DIR=$ENV_DIR/freewater/
 FW_OUTPUT_DIR=$DATA_DIR/freewater/$1/ses-${SESSION}/dwi
 
 # Check whether output directory already exists: yes > remove and create new output directory
@@ -135,6 +134,9 @@ $singularity_mrtrix3 $CMD_CONVERT
 # Run free-water elimination #
 ############################## 
 
+
+FW_CODE_DIR=$ENV_DIR/freewater/
+
 pushd $FW_CODE_DIR
 
 matlab \
@@ -142,7 +144,7 @@ matlab \
    -nodesktop \
    -nojvm \
    -batch \
-   "FreeWater_OneCase('$1', 'ses-${SESSION}', '$INPUT_DWI', '$INPUT_BVAL', '$INPUT_BVEC', '$INPUT_MASK', '$FW_OUTPUT_DIR'); quit"
+   "cd('$FW_CODE_DIR'); FreeWater_OneCase('$1', 'ses-${SESSION}', '$INPUT_DWI', '$INPUT_BVAL', '$INPUT_BVEC', '$INPUT_MASK', '$FW_OUTPUT_DIR'); quit"
 
 popd
 
