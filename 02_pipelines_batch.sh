@@ -21,6 +21,9 @@ set -x
 # Change default permissions for new files
 umask u=rwx g=rwx
 
+# Do not dump core files
+ulimit -c 0
+
 # Source project environment
 set -o allexport
 source $SCRIPT_DIR/environment.conf
