@@ -588,7 +588,7 @@ elif [ $PIPELINE == "wmh" ];then
 elif [ $PIPELINE == "statistics" ];then
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
-	echo "Which method do you want to perform? (cfe)"
+	echo "Which method do you want to perform? (cfe/tfce/nbs)"
 	read STAT_METHOD; export STAT_METHOD
 	export PIPELINE_SUFFIX=_${STAT_METHOD}
 
@@ -602,6 +602,20 @@ elif [ $PIPELINE == "statistics" ];then
 		export ANALYSIS_LEVEL=group
 		batch_time_default="1-00:00:00"
 		partition_default="big"
+
+	elif [ $STAT_METHOD == tfce ];then
+	
+	export SUBJS_PER_NODE=$subj_array_length
+	export ANALYSIS_LEVEL=group
+	batch_time_default="1-00:00:00"
+	partition_default="big"
+
+	elif [ $STAT_METHOD == nbs ];then
+	
+	export SUBJS_PER_NODE=$subj_array_length
+	export ANALYSIS_LEVEL=group
+	batch_time_default="1-00:00:00"
+	partition_default="big"
 
 	fi
 else
