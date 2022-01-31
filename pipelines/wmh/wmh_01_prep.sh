@@ -39,6 +39,8 @@ singularity_freesurfer="singularity run --cleanenv --userns \
     -B $TMP_OUT:/tmp_out \
     $ENV_DIR/$container_freesurfer" 
 
+( cp -ruvfL $ENV_DIR/freesurfer_license.txt $ENV_DIR/$FREESURFER_CONTAINER/opt/$FREESURFER_VERSION/.license )
+
 container_fsl=fsl-6.0.3
 singularity_fsl="singularity run --cleanenv --userns \
     -B $PROJ_DIR \
@@ -160,6 +162,8 @@ if [ ! -f $FLAIR_BRAIN_IN_MNI ]; then
 
 fi
 
+$singularity_freesurfer /bin/bash -c "$CMD_convert_T1; $CMD_convert_FLAIR; $CMD_convert_FLAIR_BIASCORR"
+
 ###############################################################################################################################################################
 # The ultimate masking game - create wm masks for filtering of segmentations
 ###############################################################################################################################################################
@@ -211,7 +215,6 @@ CMD_final_mask="fslmaths $BRAINWITHOUTRIBBON_MASK -mul $VENTRICLEWMWMHMASK $BRAI
 CMD_final_mask_in_FLAIR="antsApplyTransforms -i $BRAINWITHOUTRIBBON_MASK -r $FLAIR -t $T1_TO_FLAIR_WARP -o $BRAINWITHOUTRIBBON_MASK_FLAIR"
 CMD_BINARIZE_FINAL_MASK_FLAIR="fslmaths $BRAINWITHOUTRIBBON_MASK_FLAIR -bin $BRAINWITHOUTRIBBON_MASK_FLAIR"
 
-( cp -ruvfL $ENV_DIR/freesurfer_license.txt $FREESURFER_CONTAINER/opt/$FREESURFER_VERSION/.license )
 
 if [ ! -f $BRAINWITHOUTRIBBON_MASK_FLAIR ]; then
 
