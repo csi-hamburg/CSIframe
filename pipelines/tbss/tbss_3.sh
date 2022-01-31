@@ -77,6 +77,7 @@ echo "TBSS_DIR = $TBSS_DIR"
 
 FA_ERODED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-DTINoNeg_FA.nii.gz
 FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask.nii.gz
+[ $TBSS_PIPELINE == "fixel" ] && FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-FAaveraged_desc-brain_mask.nii.gz
 FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA.nii.gz
 MEAN_FA_SKEL=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean_desc-DTINoNeg_FA.nii.gz
 SKEL_DIST=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-meanFA_desc-mask_distancemap.nii.gz

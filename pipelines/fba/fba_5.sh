@@ -19,6 +19,7 @@
 #       - mrtrix3-3.0.2.sif                                                                                       #
 #       - mrtrix3tissue-5.2.8.sif                                                                                 #
 #       - tractseg-master.sif                                                                                     #
+#       - fsl-6.0.3                                                                                               #
 ###################################################################################################################
 
 # Get verbose outputs
@@ -45,6 +46,7 @@ export SINGULARITYENV_MRTRIX_TMPFILE_DIR=/tmp
 container_mrtrix3=mrtrix3-3.0.2      
 container_mrtrix3tissue=mrtrix3tissue-5.2.8
 container_tractseg=tractseg-master
+container_fsl=fsl-6.0.3
 
 singularity_mrtrix3="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
@@ -70,41 +72,49 @@ singularity_tractseg="singularity run --cleanenv --userns \
     -B $TMP_OUT:/tmp_out \
     $ENV_DIR/$container_tractseg" 
 
+singularity_fsl="singularity run --cleanenv --no-home --userns \
+    -B $PROJ_DIR \
+    -B $(readlink -f $ENV_DIR) \
+    -B $TMP_DIR/:/tmp \
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
+    $ENV_DIR/$container_fsl"
+
 parallel="parallel --ungroup --delay 0.2 -j16 --joblog $CODE_DIR/log/parallel_runtask.log"
 
 # Define subject array
 input_subject_array=($@)
 
-#########################
-# FIXEL METRICS 2 VOXEL
-#########################
+# #########################
+# # FIXEL METRICS 2 VOXEL
+# #########################
 
-# Input
-#########################
-FD_SMOOTH_DIR=$FBA_GROUP_DIR/fd_smooth
-LOG_FC_SMOOTH_DIR=$FBA_GROUP_DIR/log_fc_smooth
-FDC_SMOOTH_DIR=$FBA_GROUP_DIR/fdc_smooth
+# # Input
+# #########################
+# FD_SMOOTH_DIR=$FBA_GROUP_DIR/fd_smooth
+# LOG_FC_SMOOTH_DIR=$FBA_GROUP_DIR/log_fc_smooth
+# FDC_SMOOTH_DIR=$FBA_GROUP_DIR/fdc_smooth
 
-# Output
-#########################
-FD_VOXEL=$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-voxelmap_fd.nii.gz
-LOG_FC_VOXEL=$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-voxelmap_logfc.nii.gz
-FDC_VOXEL=$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-voxelmap_fdc.nii.gz
-COMPLEXITY_VOXEL=$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-voxelmap_complexity.nii.gz
+# # Output
+# #########################
+# FD_VOXEL=$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-voxelmap_fd.nii.gz
+# LOG_FC_VOXEL=$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-voxelmap_logfc.nii.gz
+# FDC_VOXEL=$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-voxelmap_fdc.nii.gz
+# COMPLEXITY_VOXEL=$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-voxelmap_complexity.nii.gz
 
-# Command
-#########################
-CMD_FIX2VOX_FD="fixel2voxel $FD_SMOOTH_DIR/{}.mif mean $FD_VOXEL -force"
-CMD_FIX2VOX_LOG_FC="fixel2voxel $LOG_FC_SMOOTH_DIR/{}.mif mean $LOG_FC_VOXEL -force"
-CMD_FIX2VOX_FDC="fixel2voxel $FDC_SMOOTH_DIR/{}.mif mean $FDC_VOXEL -force"
-CMD_FIX2VOX_COMPLEXITY="fixel2voxel $FD_SMOOTH_DIR/{}.mif complexity $COMPLEXITY_VOXEL -force"
+# # Command
+# #########################
+# CMD_FIX2VOX_FD="fixel2voxel $FD_SMOOTH_DIR/{}.mif mean $FD_VOXEL -force"
+# CMD_FIX2VOX_LOG_FC="fixel2voxel $LOG_FC_SMOOTH_DIR/{}.mif mean $LOG_FC_VOXEL -force"
+# CMD_FIX2VOX_FDC="fixel2voxel $FDC_SMOOTH_DIR/{}.mif mean $FDC_VOXEL -force"
+# CMD_FIX2VOX_COMPLEXITY="fixel2voxel $FD_SMOOTH_DIR/{}.mif complexity $COMPLEXITY_VOXEL -force"
 
-# Execution
-#########################
-$parallel "$singularity_mrtrix3 $CMD_FIX2VOX_FD" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3 $CMD_FIX2VOX_LOG_FC" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3 $CMD_FIX2VOX_FDC" ::: ${input_subject_array[@]}
-$parallel "$singularity_mrtrix3 $CMD_FIX2VOX_COMPLEXITY" ::: ${input_subject_array[@]}
+# # Execution
+# #########################
+# $parallel "$singularity_mrtrix3 $CMD_FIX2VOX_FD" ::: ${input_subject_array[@]}
+# $parallel "$singularity_mrtrix3 $CMD_FIX2VOX_LOG_FC" ::: ${input_subject_array[@]}
+# $parallel "$singularity_mrtrix3 $CMD_FIX2VOX_FDC" ::: ${input_subject_array[@]}
+# $parallel "$singularity_mrtrix3 $CMD_FIX2VOX_COMPLEXITY" ::: ${input_subject_array[@]}
 
 
 #########################
@@ -124,19 +134,72 @@ FA_MNI_TARGET="$ENV_DIR/standard/FSL_HCP1065_FA_1mm.nii.gz"
 
 # Output
 #########################
-FA_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_FA.nii.gz"
+FA_TEMP="$FA_TEMP_DIR/fa/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_FA.nii.gz"
 FA_AVG_TEMP="$FA_TEMP_DIR/FA_averaged.nii.gz"
 
 # Command
 #########################
 CMD_MRTRANSFORM="mrtransform $FA -warp $SUB2TEMP_WARP $FA_TEMP -force"
-CMD_AVG="mrmath $(find $FA_TEMP_DIR -name "sub-*") mean $FA_AVG_TEMP --force"
+CMD_AVG="mrmath $(find $FA_TEMP_DIR -name "sub-*") mean $FA_AVG_TEMP -force"
+CMD_THRESH="fslmaths $FA_AVG_TEMP -thr 0 $FA_AVG_TEMP"
 
 # Execution
 #########################
-$parallel "$singularity_mrtrix3 $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
-$parallel "[ -f $FA_TEMP ] && ln -srf $FA_TEMP $FA_TEMP_DIR/fa" ::: ${input_subject_array[@]}
+#$parallel "$singularity_mrtrix3 $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
+#$parallel "[ -f $FA_TEMP ] && ln -srf $FA_TEMP $FA_TEMP_DIR/fa" ::: ${input_subject_array[@]}
 $singularity_mrtrix3 $CMD_AVG
+$singularity_fsl $CMD_THRESH
+
+#########################
+# Individual FA maps (T1w space) to FA_averaged (fodtemplate space)
+#########################
+
+# Input
+#########################
+FA="$DATA_DIR/freewater/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz"
+FA_AVG_TEMP="$FA_TEMP_DIR/FA_averaged.nii.gz"
+
+# Output
+#########################
+FA2TEMP_WARP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_desc-dwi_from-T1w_to-fodtemplate_Composite.h5"
+FA_TEMPLATE_SPACE="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_FA.nii.gz"
+
+# Command
+#########################
+CMD_FA2TEMP="antsRegistration \
+    --output [ $FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_desc-dwi_from-T1w_to-fodtemplate_, $FA_TEMPLATE_SPACE ] \
+    --collapse-output-transforms 0 \
+    --dimensionality 3 \
+    --initial-moving-transform [ $FA_AVG_TEMP, $FA, 1 ] \
+    --initialize-transforms-per-stage 0 \
+    --interpolation Linear \
+    --transform Rigid[ 0.1 ] \
+    --metric MI[ $FA_AVG_TEMP, $FA, 1, 32, Regular, 0.25 ] \
+    --convergence [ 10000x111110x11110x100, 1e-08, 10 ] \
+    --smoothing-sigmas 3.0x2.0x1.0x0.0vox \
+    --shrink-factors 8x4x2x1 \
+    --use-estimate-learning-rate-once 1 \
+    --use-histogram-matching 1 \
+    --transform Affine[ 0.1 ] \
+    --metric MI[ $FA_AVG_TEMP, $FA, 1, 32, Regular, 0.25 ] \
+    --convergence [ 10000x111110x11110x100, 1e-08, 10 ] \
+    --smoothing-sigmas 3.0x2.0x1.0x0.0vox \
+    --shrink-factors 8x4x2x1 \
+    --use-estimate-learning-rate-once 1 \
+    --use-histogram-matching 1 \
+    --transform SyN[ 0.2, 3.0, 0.0 ] \
+    --metric CC[ $FA_AVG_TEMP, $FA, 1, 4 ] \
+    --convergence [ 100x50x30x20, 1e-08, 10 ] \
+    --smoothing-sigmas 3.0x2.0x1.0x0.0vox \
+    --shrink-factors 8x4x2x1 \
+    --use-estimate-learning-rate-once 1 \
+    --use-histogram-matching 1 -v \
+    --winsorize-image-intensities [ 0.005, 0.995 ] \
+    --write-composite-transform 1"
+
+# Execution
+#########################
+$parallel "$singularity_mrtrix3 $CMD_FA2TEMP" ::: ${input_subject_array[@]}
 
 #########################
 # FA_AVG_TEMP 2 MNI + ATLAS 2 TEMP
@@ -152,7 +215,7 @@ FA_AVG_TEMP="$FA_TEMP_DIR/FA_averaged.nii.gz"
 #########################
 FA_MNI="$FA_TEMP_DIR/FA_averaged_in_mni.nii.gz"
 MNI2TEMP_WARP="$TEMP2MNI_DIR/TEMP2MNI_InverseComposite.h5"
-FA_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-FWcorrected_FA.nii.gz"
+#FA_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-FWcorrected_FA.nii.gz"
 ATLAS_TEMP="$TEMP2MNI_DIR/Schaefer2018_{1}Parcels_{2}Networks_order_FSLMNI152_space-fodtemplate_1mm.nii.gz"
 
 # Command
@@ -275,7 +338,9 @@ FW_DIR="$DATA_DIR/freewater/{}/ses-$SESSION/dwi/"
 
 # Input
 #########################
-FA="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz"
+#FA="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz"
+FA_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_FA.nii.gz"
+FA2TEMP_WARP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_desc-dwi_from-T1w_to-fodtemplate_Composite.h5"
 FAt="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-FWcorrected_FA.nii.gz"
 MD="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_MD.nii.gz"
 MDt="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-FWcorrected_MD.nii.gz"
@@ -284,12 +349,9 @@ ADt="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-FWcorrected_L1.nii.gz"
 RD="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_RD.nii.gz"
 RDt="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-FWcorrected_RD.nii.gz"
 FW="$FW_DIR/{}_ses-${SESSION}_space-T1w_FW.nii.gz"
-SUB2TEMP_WARP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_from-subject_to-fodtemplate_warp.mif"
-FA_AVG_TEMP="$FA_TEMP_DIR/FA_averaged.nii.gz"
 
 # Output
 #########################
-FA_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_FA.nii.gz"
 FAt_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-FWcorrected_FA.nii.gz"
 MD_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_MD.nii.gz"
 MDt_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-FWcorrected_MD.nii.gz"
@@ -302,14 +364,74 @@ FW_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_FW.nii
 
 # Command
 #########################
-CMD_FAt2TEMP="mrtransform $FAt -warp $SUB2TEMP_WARP $FAt_TEMP -force"
-CMD_MD2TEMP="mrtransform $MD -warp $SUB2TEMP_WARP $MD_TEMP -force"
-CMD_MDt2TEMP="mrtransform $MDt -warp $SUB2TEMP_WARP $MDt_TEMP -force"
-CMD_AD2TEMP="mrtransform $AD -warp $SUB2TEMP_WARP $AD_TEMP -force"
-CMD_ADt2TEMP="mrtransform $ADt -warp $SUB2TEMP_WARP $ADt_TEMP -force"
-CMD_RD2TEMP="mrtransform $RD -warp $SUB2TEMP_WARP $RD_TEMP -force"
-CMD_RDt2TEMP="mrtransform $RDt -warp $SUB2TEMP_WARP $RDt_TEMP -force"
-CMD_FW2TEMP="mrtransform $FW -warp $SUB2TEMP_WARP $FW_TEMP -force"
+# CMD_FAt2TEMP="mrtransform $FAt -warp $SUB2TEMP_WARP $FAt_TEMP -force"
+# CMD_MD2TEMP="mrtransform $MD -warp $SUB2TEMP_WARP $MD_TEMP -force"
+# CMD_MDt2TEMP="mrtransform $MDt -warp $SUB2TEMP_WARP $MDt_TEMP -force"
+# CMD_AD2TEMP="mrtransform $AD -warp $SUB2TEMP_WARP $AD_TEMP -force"
+# CMD_ADt2TEMP="mrtransform $ADt -warp $SUB2TEMP_WARP $ADt_TEMP -force"
+# CMD_RD2TEMP="mrtransform $RD -warp $SUB2TEMP_WARP $RD_TEMP -force"
+# CMD_RDt2TEMP="mrtransform $RDt -warp $SUB2TEMP_WARP $RDt_TEMP -force"
+# CMD_FW2TEMP="mrtransform $FW -warp $SUB2TEMP_WARP $FW_TEMP -force"
+
+CMD_FAt2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $FAt \
+            -r $FA_TEMP \
+            -o $FAt_TEMP \
+            -t $FA2TEMP_WARP
+"
+CMD_AD2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $AD \
+            -r $FA_TEMP \
+            -o $AD_TEMP \
+            -t $FA2TEMP_WARP
+"
+CMD_ADt2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $ADt \
+            -r $FA_TEMP \
+            -o $ADt_TEMP \
+            -t $FA2TEMP_WARP
+"
+CMD_RD2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $RD \
+            -r $FA_TEMP \
+            -o $RD_TEMP \
+            -t $FA2TEMP_WARP
+"
+CMD_RDt2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $RDt \
+            -r $FA_TEMP \
+            -o $RDt_TEMP \
+            -t $FA2TEMP_WARP
+"
+
+CMD_MD2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $MD \
+            -r $FA_TEMP_TARGET \
+            -o $MD_TEMP \
+            -t $FA2TEMP_WARP
+"
+
+CMD_MDt2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $MDt \
+            -r $FA_TEMP_TARGET \
+            -o $MDt_TEMP \
+            -t $FA2TEMP_WARP
+"
+
+CMD_FW2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $FW \
+            -r $FA_TEMP_TARGET \
+            -o $FW_TEMP \
+            -t $FA2TEMP_WARP
+"
 
 # Execution
 #########################
