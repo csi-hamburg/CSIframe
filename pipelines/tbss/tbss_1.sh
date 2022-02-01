@@ -308,7 +308,7 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
     # Set pipeline specific variables
     #################################
 
-    INPUT_DIR=$TBSS_SUBDIR
+    INPUT_DIR=$FBA_DIR
     SPACE=fodtemplate
     MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW desc-voxelmap_fd desc-voxelmap_fdc desc-voxelmap_logfc desc-voxelmap_complexity"
@@ -327,31 +327,7 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
         echo ""
         
         mkdir -p $TBSS_SUBDIR
-
-        # Mask FBA output to avoid non-zero values outside of brain
-        ###########################################################
-
-        for MOD in $(echo $MODALITIES); do
-
-            # Define input
-
-            DMRI_MOD=$FBA_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD}
-            BRAIN_MASK=$FBA_DIR/${1}_ses-${SESSION}_space-${SPACE}_desc-brain_mask
-
-            # Define output
-
-            DMRI_MASKED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD}
-
-            # Define command
-            
-            CMD_MASK="fslmaths $DMRI_MOD -mas $BRAIN_MASK $DMRI_MASKED"
-
-            #Execute command
-
-            $singularity_fsl $CMD_MASK
-
-        done
-        
+       
     else
 
         echo ""

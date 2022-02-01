@@ -114,39 +114,18 @@ echo ""
 echo "Creating valid mask and mean FA ..."
 echo ""
 
-if [ $TBSS_PIPELINE == "mni" ]; then
+# Define input/output
 
-    # Define input/output
+FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask
+FA_MASKED=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-DTINoNeg_FA
+FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA
 
-    FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask
-    FA_MASKED=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-DTINoNeg_FA
-    FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA
+# Define command
 
-    # Define command
-
-    CMD_MEAN="
-        fslmaths $FA_MERGED -max 0 -Tmin -bin $FA_MASK -odt char; \
-        fslmaths $FA_MERGED -mas $FA_MASK $FA_MASKED; \
-        fslmaths $FA_MASKED -Tmean $FA_MEAN"
-
-elif [ $TBSS_PIPELINE == "fixel" ]; then
-    
-    # Define input/output
-
-    FA_FBA_TEMPLATE=$DATA_DIR/fba/derivatives/fa_template/FA_averaged
-    BET_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-FAaveraged_desc-brain
-    FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-FAaveraged_desc-brain_mask
-    FA_MASKED=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-DTINoNeg_FA
-    FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA
-
-    # Define command
-
-    CMD_MEAN="
-        bet $FA_FBA_TEMPLATE $BET_MASK -m; \
-        fslmaths $FA_MERGED -mas $FA_MASK $FA_MASKED; \
-        fslmaths $FA_MASKED -Tmean $FA_MEAN"
-    
-fi
+CMD_MEAN="
+    fslmaths $FA_MERGED -max 0 -Tmin -bin $FA_MASK -odt char; \
+    fslmaths $FA_MERGED -mas $FA_MASK $FA_MASKED; \
+    fslmaths $FA_MASKED -Tmean $FA_MEAN"
 
 # Execute command
 
