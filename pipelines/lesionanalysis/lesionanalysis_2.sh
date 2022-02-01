@@ -29,6 +29,8 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 # Define environment
 ####################
 
+parallel="parallel --ungroup --delay 0.2 -j16 --joblog $CODE_DIR/log/parallel_runtask.log"
+
 container_fsl=fsl-6.0.3
 singularity_fsl="singularity run --cleanenv --no-home --userns \
     -B .
@@ -39,102 +41,100 @@ singularity_fsl="singularity run --cleanenv --no-home --userns \
     -B $TMP_OUT \
     $ENV_DIR/$container_fsl"
 
-# Input subjects
-################
+# Input directory
+#################
 
-pushd $LA_DIR 
-sub_array=($(ls sub* -d))
-popd
+LA_DIR=$DATA_DIR/lesionanalysis
 
 # Create output directory
 #########################
 
-LA_DIR=$DATA_DIR/lesionanalysis
-
-[ $ORIG_SPACE == "T1w" ] && OUT_DIR=$LA_DIR/derivatives/ses-${SESSION}/anat
-[ $ORIG_SPACE == "FLAIR" ] && OUT_DIR=$LA_DIR/derivatives/ses-${SESSION}/anat
-[ $ORIG_SPACE == "dwi" ] && OUT_DIR=$LA_DIR/derivatives/ses-${SESSION}/dwi
-[ $ORIG_SPACE == "dsc" ] && OUT_DIR=$LA_DIR/derivatives/ses-${SESSION}/perf
-[ $ORIG_SPACE == "asl" ] && OUT_DIR=$LA_DIR/derivatives/ses-${SESSION}/perf
+[ $READOUT_SPACE == "T1w" ] && DER_DIR=$LA_DIR/derivatives/ses-${SESSION}/anat
+[ $READOUT_SPACE == "FLAIR" ] && DER_DIR=$LA_DIR/derivatives/ses-${SESSION}/anat
+[ $READOUT_SPACE == "dwi" ] && DER_DIR=$LA_DIR/derivatives/ses-${SESSION}/dwi
+[ $READOUT_SPACE == "dsc" ] && DER_DIR=$LA_DIR/derivatives/ses-${SESSION}/perf
+[ $READOUT_SPACE == "asl" ] && DER_DIR=$LA_DIR/derivatives/ses-${SESSION}/perf
 
 # Check whether output directory already exists: yes > remove and create new output directory
 
-[ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
-[ -d $OUT_DIR ] && rm -rvf $OUT_DIR && mkdir -p $OUT_DIR
+[ ! -d $DER_DIR ] && mkdir -p $DER_DIR
+[ -d $DER_DIR ] && rm -rvf $DER_DIR && mkdir -p $DER_DIR
 
 
 ###################################################################################################################
 #                                           Run lesion analysis part II                                           #
 ###################################################################################################################
 
+###########################################
+# Read out lesion shells on subject level #
+###########################################
 
-if [ $ORIG_SPACE == "T1w" ] && [ $READOUT_SPACE == "dwi" ]; then
+if [ $ANALYSIS_LEVEL == "subject" ]; then
 
-    ###################
-    # Create CSV file #
-    ################### 
+    if [ $ORIG_SPACE == "T1w" ] && [ $READOUT_SPACE == "dwi" ]; then
 
-    CSV=$OUT_DIR/${READOUT_SPACE}_ses-${SESSION}_space-T1w_lesionanalysis.csv
+        ###################
+        # Create CSV file #
+        ################### 
 
-    if [ $FLIP == "yes" ]; then
+        CSV=$LA_DIR/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_mod-${READOUT_SPACE}_space-T1w_lesionanalysis.csv
 
-        echo -en "sub_id,\
-lesionanalysis_lesion_mean_FW,lesionanalysis_fliplesion_mean_FW,\
-lesionanalysis_lesion_mean_FAt,lesionanalysis_fliplesion_mean_FAt,\
-lesionanalysis_lesion_mean_MD,lesionanalysis_fliplesion_mean_MD,\
-lesionanalysis_shell1_mean_FW,lesionanalysis_flipshell1_mean_FW,\
-lesionanalysis_shell1_mean_FAt,lesionanalysis_flipshell1_mean_FAt,\
-lesionanalysis_shell1_mean_MD,lesionanalysis_flipshell1_mean_MD,\
-lesionanalysis_shell2_mean_FW,lesionanalysis_flipshell2_mean_FW,\
-lesionanalysis_shell2_mean_FAt,lesionanalysis_flipshell2_mean_FAt,\
-lesionanalysis_shell2_mean_MD,lesionanalysis_flipshell2_mean_MD,\
-lesionanalysis_shell3_mean_FW,lesionanalysis_flipshell3_mean_FW,\
-lesionanalysis_shell3_mean_FAt,lesionanalysis_flipshell3_mean_FAt,\
-lesionanalysis_shell3_mean_MD,lesionanalysis_flipshell3_mean_MD,\
-lesionanalysis_shell4_mean_FW,lesionanalysis_flipshell4_mean_FW,\
-lesionanalysis_shell4_mean_FAt,lesionanalysis_flipshell4_mean_FAt,\
-lesionanalysis_shell4_mean_MD,lesionanalysis_flipshell4_mean_MD,\
-lesionanalysis_shell5_mean_FW,lesionanalysis_flipshell5_mean_FW,\
-lesionanalysis_shell5_mean_FAt,lesionanalysis_flipshell5_mean_FAt,\
-lesionanalysis_shell5_mean_MD,lesionanalysis_flipshell5_mean_MD,\
-lesionanalysis_shell6_mean_FW,lesionanalysis_flipshell6_mean_FW,\
-lesionanalysis_shell6_mean_FAt,lesionanalysis_flipshell6_mean_FAt,\
-lesionanalysis_shell6_mean_MD,lesionanalysis_flipshell6_mean_MD,\
-lesionanalysis_shell7_mean_FW,lesionanalysis_flipshell7_mean_FW,\
-lesionanalysis_shell7_mean_FAt,lesionanalysis_flipshell7_mean_FAt,\
-lesionanalysis_shell7_mean_MD,lesionanalysis_flipshell7_mean_MD,\
-lesionanalysis_shell8_mean_FW,lesionanalysis_flipshell8_mean_FW,\
-lesionanalysis_shell8_mean_FAt,lesionanalysis_flipshell8_mean_FAt,\
-lesionanalysis_shell8_mean_MD,lesionanalysis_flipshell8_mean_MD" > $CSV
+        if [ $MODIFIER == "yes" ]; then
 
-    elif [ $FLIP == "no" ]; then
+            echo -en "sub_id,ses_id,\
+    lesionanalysis_lesion_mean_FW,lesionanalysis_fliplesion_mean_FW,\
+    lesionanalysis_lesion_mean_FAt,lesionanalysis_fliplesion_mean_FAt,\
+    lesionanalysis_lesion_mean_MD,lesionanalysis_fliplesion_mean_MD,\
+    lesionanalysis_shell1_mean_FW,lesionanalysis_flipshell1_mean_FW,\
+    lesionanalysis_shell1_mean_FAt,lesionanalysis_flipshell1_mean_FAt,\
+    lesionanalysis_shell1_mean_MD,lesionanalysis_flipshell1_mean_MD,\
+    lesionanalysis_shell2_mean_FW,lesionanalysis_flipshell2_mean_FW,\
+    lesionanalysis_shell2_mean_FAt,lesionanalysis_flipshell2_mean_FAt,\
+    lesionanalysis_shell2_mean_MD,lesionanalysis_flipshell2_mean_MD,\
+    lesionanalysis_shell3_mean_FW,lesionanalysis_flipshell3_mean_FW,\
+    lesionanalysis_shell3_mean_FAt,lesionanalysis_flipshell3_mean_FAt,\
+    lesionanalysis_shell3_mean_MD,lesionanalysis_flipshell3_mean_MD,\
+    lesionanalysis_shell4_mean_FW,lesionanalysis_flipshell4_mean_FW,\
+    lesionanalysis_shell4_mean_FAt,lesionanalysis_flipshell4_mean_FAt,\
+    lesionanalysis_shell4_mean_MD,lesionanalysis_flipshell4_mean_MD,\
+    lesionanalysis_shell5_mean_FW,lesionanalysis_flipshell5_mean_FW,\
+    lesionanalysis_shell5_mean_FAt,lesionanalysis_flipshell5_mean_FAt,\
+    lesionanalysis_shell5_mean_MD,lesionanalysis_flipshell5_mean_MD,\
+    lesionanalysis_shell6_mean_FW,lesionanalysis_flipshell6_mean_FW,\
+    lesionanalysis_shell6_mean_FAt,lesionanalysis_flipshell6_mean_FAt,\
+    lesionanalysis_shell6_mean_MD,lesionanalysis_flipshell6_mean_MD,\
+    lesionanalysis_shell7_mean_FW,lesionanalysis_flipshell7_mean_FW,\
+    lesionanalysis_shell7_mean_FAt,lesionanalysis_flipshell7_mean_FAt,\
+    lesionanalysis_shell7_mean_MD,lesionanalysis_flipshell7_mean_MD,\
+    lesionanalysis_shell8_mean_FW,lesionanalysis_flipshell8_mean_FW,\
+    lesionanalysis_shell8_mean_FAt,lesionanalysis_flipshell8_mean_FAt,\
+    lesionanalysis_shell8_mean_MD,lesionanalysis_flipshell8_mean_MD" > $CSV
 
-        echo -en "sub_id,\
-lesionanalysis_lesion_mean_FW,lesionanalysis_lesion_mean_FAt,lesionanalysis_lesion_mean_MD,\
-lesionanalysis_shell1_mean_FW,lesionanalysis_shell1_mean_FAt,lesionanalysis_shell1_mean_MD,\
-lesionanalysis_shell2_mean_FW,lesionanalysis_shell2_mean_FAt,lesionanalysis_shell2_mean_MD,\
-lesionanalysis_shell3_mean_FW,lesionanalysis_shell3_mean_FAt,lesionanalysis_shell3_mean_MD,\
-lesionanalysis_shell4_mean_FW,lesionanalysis_shell4_mean_FAt,lesionanalysis_shell4_mean_MD,\
-lesionanalysis_shell5_mean_FW,lesionanalysis_shell5_mean_FAt,lesionanalysis_shell5_mean_MD,\
-lesionanalysis_shell6_mean_FW,lesionanalysis_shell6_mean_FAt,lesionanalysis_shell6_mean_MD,\
-lesionanalysis_shell7_mean_FW,lesionanalysis_shell7_mean_FAt,lesionanalysis_shell7_mean_MD,\
-lesionanalysis_shell8_mean_FW,lesionanalysis_shell8_mean_FAt,lesionanalysis_shell8_mean_MD" > $CSV
+        elif [ $MODIFIER == "no" ]; then
 
-    fi
+            echo -en "sub_id,ses_id,\
+    lesionanalysis_lesion_mean_FW,lesionanalysis_lesion_mean_FAt,lesionanalysis_lesion_mean_MD,\
+    lesionanalysis_shell1_mean_FW,lesionanalysis_shell1_mean_FAt,lesionanalysis_shell1_mean_MD,\
+    lesionanalysis_shell2_mean_FW,lesionanalysis_shell2_mean_FAt,lesionanalysis_shell2_mean_MD,\
+    lesionanalysis_shell3_mean_FW,lesionanalysis_shell3_mean_FAt,lesionanalysis_shell3_mean_MD,\
+    lesionanalysis_shell4_mean_FW,lesionanalysis_shell4_mean_FAt,lesionanalysis_shell4_mean_MD,\
+    lesionanalysis_shell5_mean_FW,lesionanalysis_shell5_mean_FAt,lesionanalysis_shell5_mean_MD,\
+    lesionanalysis_shell6_mean_FW,lesionanalysis_shell6_mean_FAt,lesionanalysis_shell6_mean_MD,\
+    lesionanalysis_shell7_mean_FW,lesionanalysis_shell7_mean_FAt,lesionanalysis_shell7_mean_MD,\
+    lesionanalysis_shell8_mean_FW,lesionanalysis_shell8_mean_FAt,lesionanalysis_shell8_mean_MD" > $CSV
 
-    #######################################
-    # Extract means of lesions and shells #
-    #######################################
+        fi
 
-    for sub in ${sub_array[@]}; do
+        #######################################
+        # Extract means of lesions and shells #
+        #######################################
+        
+        # Define image modalities from which to extract means 
+        #####################################################
 
-        #######################################################
-        # Define image modalities from which to extract means #
-        #######################################################
-
-        FW_IMAGE=$DATA_DIR/freewater/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-T1w_FW.nii.gz
-        FAt_IMAGE=$DATA_DIR/freewater/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-T1w_desc-FWcorrected_FA.nii.gz
-        MD_IMAGE=$DATA_DIR/freewater/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-T1w_desc-DTINoNeg_MD.nii.gz
+        FW_IMAGE=$DATA_DIR/freewater/$1/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-T1w_FW.nii.gz
+        FAt_IMAGE=$DATA_DIR/freewater/$1/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-T1w_desc-FWcorrected_FA.nii.gz
+        MD_IMAGE=$DATA_DIR/freewater/$1/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_MD.nii.gz
 
         ######################
         # Ipsilateral lesion #
@@ -143,14 +143,14 @@ lesionanalysis_shell8_mean_FW,lesionanalysis_shell8_mean_FAt,lesionanalysis_shel
         # Define input
         ##############
 
-        LESION=$LA_DIR/${sub}/ses-$SESSION/anat/${1}_ses-${SESSION}_space-T1w_desc-lesion_res-2mm_mask.nii.gz
+        LESION=$LA_DIR/${1}/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-T1w_desc-lesion_res-2mm_mask.nii.gz
 
         # Define output
         ###############
 
-        FW_LESION=$TMP_OUT/${sub}_ses-${SESSION}_space-T1w_desc-lesion_FW.nii.gz
-        FAt_LESION=$TMP_OUT/${sub}_ses-${SESSION}_space-T1w_desc-FWcorrected_desc-lesion_FAt.nii.gz
-        MD_LESION=$TMP_OUT/${sub}_ses-${SESSION}_space-T1w_desc-DTINoNeg_desc-lesion_MD.nii.gz
+        FW_LESION=$TMP_OUT/${1}_ses-${SESSION}_space-T1w_desc-lesion_FW.nii.gz
+        FAt_LESION=$TMP_OUT/${1}_ses-${SESSION}_space-T1w_desc-FWcorrected_desc-lesion_FAt.nii.gz
+        MD_LESION=$TMP_OUT/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_desc-lesion_MD.nii.gz
 
         # Define commands
         #################
@@ -165,28 +165,28 @@ lesionanalysis_shell8_mean_FW,lesionanalysis_shell8_mean_FAt,lesionanalysis_shel
         # Execute commands
         ##################
 
-        $singularity_fsl /bin/bash -c "$CMD_LESION_FW; $CMD_LESION_FAt; $CMD_LESION_MD"
-        mean_lesion_fw=`$CMD_LESION_MEAN_FW | tail -n 1`
-        mean_lesion_fat=`$CMD_LESION_MEAN_FAt | tail -n 1`
-        mean_lesion_md=`$CMD_LESION_MEAN_MD | tail -n 1`
+        $singularity_fsl /bin/bash -c "$CMD_LESION_FW;$CMD_LESION_FAt;$CMD_LESION_MD"
+        mean_lesion_fw=`$singularity_fsl $CMD_LESION_MEAN_FW | tail -n 1`
+        mean_lesion_fat=`$singularity_fsl $CMD_LESION_MEAN_FAt | tail -n 1`
+        mean_lesion_md=`$singularity_fsl $CMD_LESION_MEAN_MD | tail -n 1`
 
         ########################
         # Contralateral lesion #
         ########################
 
-        [ if $FLIP = "yes" ]; then
+        if [ $MODIFIER = "yes" ]; then
 
             # Define input
             ##############
 
-            LESION_FLIP=$LA_DIR/${sub}/ses-$SESSION/anat/${1}_ses-${SESSION}_space-T1w_desc-lesion_res-2mm_desc-flipped_mask.nii.gz
+            LESION_FLIP=$LA_DIR/${1}/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-T1w_desc-lesion_desc-flipped_res-2mm_mask.nii.gz
 
             # Define output
             ###############
 
-            FW_LESION_FLIP=$TMP_OUT/${sub}_ses-${SESSION}_space-T1w_desc-lesion_desc-flipped_FW.nii.gz
-            FAt_LESION_FLIP=$TMP_OUT/${sub}_ses-${SESSION}_space-T1w_desc-FWcorrected_desc-lesion_desc-flipped_FAt.nii.gz
-            MD_LESION_FLIP=$TMP_OUT/${sub}_ses-${SESSION}_space-T1w_desc-DTINoNeg_desc-lesion_desc-flipped_MD.nii.gz
+            FW_LESION_FLIP=$TMP_OUT/${1}_ses-${SESSION}_space-T1w_desc-lesion_desc-flipped_FW.nii.gz
+            FAt_LESION_FLIP=$TMP_OUT/${1}_ses-${SESSION}_space-T1w_desc-FWcorrected_desc-lesion_desc-flipped_FAt.nii.gz
+            MD_LESION_FLIP=$TMP_OUT/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_desc-lesion_desc-flipped_MD.nii.gz
 
             # Define commands
             #################
@@ -202,9 +202,9 @@ lesionanalysis_shell8_mean_FW,lesionanalysis_shell8_mean_FAt,lesionanalysis_shel
             ##################
 
             $singularity_fsl /bin/bash -c "$CMD_LESION_FLIP_FW; $CMD_LESION_FLIP_FAt; $CMD_LESION_FLIP_MD"
-            mean_lesion_flip_fw=`$CMD_LESION_FLIP_MEAN_FW | tail -n 1`
-            mean_lesion_flip_fat=`$CMD_LESION_FLIP_MEAN_FAt | tail -n 1`
-            mean_lesion_flip_md=`$CMD_LESION_FLIP_MEAN_MD | tail -n 1`
+            mean_lesion_flip_fw=`$singularity_fsl $CMD_LESION_FLIP_MEAN_FW | tail -n 1`
+            mean_lesion_flip_fat=`$singularity_fsl $CMD_LESION_FLIP_MEAN_FAt | tail -n 1`
+            mean_lesion_flip_md=`$singularity_fsl $CMD_LESION_FLIP_MEAN_MD | tail -n 1`
 
         fi
         
@@ -212,13 +212,13 @@ lesionanalysis_shell8_mean_FW,lesionanalysis_shell8_mean_FAt,lesionanalysis_shel
         # Append lesion means to CSV #
         ##############################
 
-        if [ $FLIP == "yes" ]; then
+        if [ $MODIFIER == "yes" ]; then
 
-            echo -en "\n$sub,$mean_lesion_fw,$mean_lesion_flip_fw,$mean_lesion_fat,$mean_lesion_flip_fat,$mean_lesion_md,$mean_lesion_flip_md" >> $CSV
+            echo -en "\n$1,$SESSION,$mean_lesion_fw,$mean_lesion_flip_fw,$mean_lesion_fat,$mean_lesion_flip_fat,$mean_lesion_md,$mean_lesion_flip_md," >> $CSV
         
-        elif [ $FLIP == "no" ]; then
+        elif [ $MODIFIER == "no" ]; then
 
-            echo -en "\n$sub,$mean_lesion_fw,$mean_lesion_fat,$mean_lesion_md," >> $CSV
+            echo -en "\n$1,$SESSION,$mean_lesion_fw,$mean_lesion_fat,$mean_lesion_md," >> $CSV
 
         fi
 
@@ -231,14 +231,14 @@ lesionanalysis_shell8_mean_FW,lesionanalysis_shell8_mean_FAt,lesionanalysis_shel
             # Define input
             ##############
 
-            LESION_SHELL=$LA_DIR/${sub}/ses-$SESSION/anat/${sub}_ses-${SESSION}_space-T1w_desc-lesion_res-2mm_desc-dil${i}_shell.nii.gz
+            LESION_SHELL=$LA_DIR/${1}/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-T1w_desc-lesion_res-2mm_desc-dil${i}_shell.nii.gz
             
             # Define output
             ###############
 
-            FW_SHELL=$TMP_OUT/${sub}_ses-${SESSION}_space-T1w_desc-shell${i}_FW.nii.gz
-            FAt_SHELL=$TMP_OUT/${sub}_ses-${SESSION}_space-T1w_desc-FWcorrected_desc-shell${i}_FA.nii.gz
-            MD_SHELL=$TMP_OUT/${sub}_ses-${SESSION}_space-T1w_desc-DTINoNeg_desc-shell${i}_MD.nii.gz
+            FW_SHELL=$TMP_OUT/${1}_ses-${SESSION}_space-T1w_desc-shell${i}_FW.nii.gz
+            FAt_SHELL=$TMP_OUT/${1}_ses-${SESSION}_space-T1w_desc-FWcorrected_desc-shell${i}_FA.nii.gz
+            MD_SHELL=$TMP_OUT/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_desc-shell${i}_MD.nii.gz
 
             # Define commands
             #################
@@ -253,28 +253,28 @@ lesionanalysis_shell8_mean_FW,lesionanalysis_shell8_mean_FAt,lesionanalysis_shel
             # Execute commands
             ##################
 
-            $singularity_fsl /bin/bash -c "$CMD_LESION_FW; $CMD_LESION_FAt; $CMD_LESION_MD"
-            mean_shell_fw=`$CMD_SHELL_MEAN_FW | tail -n 1`
-            mean_shell_fat=`$CMD_SHELL_MEAN_FAt | tail -n 1`
-            mean_shell_md=`$CMD_LESION_MEAN_MD | tail -n 1`
-       
+            $singularity_fsl /bin/bash -c "$CMD_SHELL_FW;$CMD_SHELL_FAt;$CMD_SHELL_MD"
+            mean_shell_fw=`$singularity_fsl $CMD_SHELL_MEAN_FW | tail -n 1`
+            mean_shell_fat=`$singularity_fsl $CMD_SHELL_MEAN_FAt | tail -n 1`
+            mean_shell_md=`$singularity_fsl $CMD_SHELL_MEAN_MD | tail -n 1`
+    
         ########################
         # Contralateral shells #
         ########################
         
-            if [ $FLIP = yes]; then
-           
+            if [ $MODIFIER = yes ]; then
+        
                 # Define input
                 ##############
 
-                LESION_FLIP_SHELL=$LA_DIR/${sub}/ses-$SESSION/anat/${sub}_ses-${SESSION}_space-T1w_desc-lesion_desc-flipped_res-2mm_desc-dil${i}_shell.nii.gz
+                LESION_FLIP_SHELL=$LA_DIR/${1}/ses-$SESSION/dwi/${1}_ses-${SESSION}_space-T1w_desc-lesion_desc-flipped_res-2mm_desc-dil${i}_shell.nii.gz
                 
                 # Define output
                 ###############
 
-                FW_SHELL_FLIP=$TMP_OUT/${sub}_ses-${SESSION}_space-T1w_desc-shell${i}_desc-flipped_FW.nii.gz
-                FAt_SHELL_FLIP=$TMP_OUT/${sub}_ses-${SESSION}_space-T1w_desc-FWcorrected_desc-shell${i}_desc-flipped_FA.nii.gz
-                MD_SHELL_FLIP=$TMP_OUT/${sub}_ses-${SESSION}_space-T1w_desc-DTINoNeg_desc-shell${i}_desc-flipped_MD.nii.gz
+                FW_SHELL_FLIP=$TMP_OUT/${1}_ses-${SESSION}_space-T1w_desc-shell${i}_desc-flipped_FW.nii.gz
+                FAt_SHELL_FLIP=$TMP_OUT/${1}_ses-${SESSION}_space-T1w_desc-FWcorrected_desc-shell${i}_desc-flipped_FA.nii.gz
+                MD_SHELL_FLIP=$TMP_OUT/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_desc-shell${i}_desc-flipped_MD.nii.gz
 
                 # Define commands
                 #################
@@ -289,10 +289,10 @@ lesionanalysis_shell8_mean_FW,lesionanalysis_shell8_mean_FAt,lesionanalysis_shel
                 # Execute commands
                 ##################
 
-                $singularity_fsl /bin/bash -c "$CMD_SHELL_FLIP_FW; $CMD_SHELL_FLIP_FAt; $CMD_SHELL_FLIP_MD"
-                mean_shell_flip_fw=`$CMD_SHELL_FLIP_MEAN_FW | tail -n 1`
-                mean_shell_flip_fat=`$CMD_SHELL_FLIP_MEAN_FAt | tail -n 1`
-                mean_shell_flip_md=`$CMD_SHELL_FLIP_MEAN_MD | tail -n 1`
+                $singularity_fsl /bin/bash -c "$CMD_SHELL_FLIP_FW;$CMD_SHELL_FLIP_FAt;$CMD_SHELL_FLIP_MD"
+                mean_shell_flip_fw=`$singularity_fsl $CMD_SHELL_FLIP_MEAN_FW | tail -n 1`
+                mean_shell_flip_fat=`$singularity_fsl $CMD_SHELL_FLIP_MEAN_FAt | tail -n 1`
+                mean_shell_flip_md=`$singularity_fsl $CMD_SHELL_FLIP_MEAN_MD | tail -n 1`
             
             fi
         
@@ -300,18 +300,60 @@ lesionanalysis_shell8_mean_FW,lesionanalysis_shell8_mean_FAt,lesionanalysis_shel
         # Append shell means to CSV #
         #############################
 
-            if [ $FLIP == "yes" ]; then
+            if [ $MODIFIER == "yes" ]; then
 
-                echo -n "$mean_shell_fw,$mean_shell_flip_fw,$mean_shell_fat,$mean_shell_flip_fat,$mean_shell_md,$mean_shell_flip_md" >> $CSV
+                echo -n "$mean_shell_fw,$mean_shell_flip_fw,$mean_shell_fat,$mean_shell_flip_fat,$mean_shell_md,$mean_shell_flip_md," >> $CSV
             
-            elif [ $FLIP == "no" ]; then
+            elif [ $MODIFIER == "no" ]; then
 
-                echo -n "$mean_lesion_fw,$mean_lesion_fat,$mean_lesion_md" >> $CSV
+                echo -n "$mean_shell_fw,$mean_shell_fat,$mean_shell_md," >> $CSV
 
             fi
         
         done
     
+    fi
+
+###############################
+# Combine CSVs on group level #
+###############################
+
+elif [ $ANALYSIS_LEVEL == "group" ]; then
+
+    # Get subject to extract columm names from csv
+    ##############################################
+
+    pushd $LA_DIR 
+    sub_array=($(ls sub* -d))
+    popd
+
+    for sub in $(echo ${sub_array[@]}); do
+
+        CSV=$LA_DIR/$sub/ses-${SESSION}/$READOUT_SPACE/${sub}_ses-${SESSION}_mod-${READOUT_SPACE}_space-${ORIG_SPACE}_lesionanalysis.csv
+        RAND_SUB=$sub
+        
+        [ -f $CSV ] && break
+
+    done
+
+    CSV_RAND=$LA_DIR/$RAND_SUB/ses-${SESSION}/$READOUT_SPACE/${RAND_SUB}_ses-${SESSION}_mod-${READOUT_SPACE}_space-${ORIG_SPACE}_lesionanalysis.csv
+
+    # Define output
+    ###############
+
+    CSV_COMBINED=$DER_DIR/ses-${SESSION}_mod-${READOUT_SPACE}_space-${ORIG_SPACE}_lesionanalysis.csv
+
+    # Create CSV
+    ############
+
+    head -n 1 $CSV_RAND > $CSV_COMBINED
+
+    for sub in $(echo ${sub_array[@]}); do
+        
+        CSV=$LA_DIR/$sub/ses-${SESSION}/$READOUT_SPACE/${sub}_ses-${SESSION}_mod-${READOUT_SPACE}_space-${ORIG_SPACE}_lesionanalysis.csv
+        
+        [ -f $CSV ] && csv=`tail -n 1 $CSV` && echo -e "\n$csv" >> $CSV_COMBINED
+
     done
 
 fi
