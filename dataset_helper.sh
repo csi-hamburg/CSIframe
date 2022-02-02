@@ -23,7 +23,7 @@ echo "Script is run from $(realpath .); superdataset is assumed to be/become sub
 echo "Enter name of dataset concerned / to create; e.g. CSI_HCHS"
 read PROJ_NAME
 
-echo "What do you want to do? (setup_superdataset, add_data_subds, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, if_in_s3, create_participants_tsv, add_lzs_s3_remote, create_pybids_db, templateflow_setup, export_from_datalad)"
+echo "What do you want to do? (setup_superdataset, add_data_subds, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, if_in_s3, create_participants_tsv, add_lzs_s3_remote, create_pybids_db, templateflow_setup, export_from_datalad, check_sequences_rawbids)"
 read PIPELINE
 
 #################################################################
@@ -381,6 +381,40 @@ elif [ $PIPELINE == export_from_datalad ];then
 			rm -rf .git .datalad .gitattributes ";" \
 			chmod 770 -R . ";"\
 			popd
+	done
+
+elif [ $PIPELINE == check_sequences_rawbids ]; then
+
+	echo "For which session do you want to check the raw_bids output? please answer with single number."
+	read SESSION; export SESSION
+
+	export DERIVATIVES_dir=$BIDS_dir/derivatives
+	[ ! -d $DERIVATIVES_dir ] && mkdir -p $DERIVATIVES_dir
+
+	# set up the output file
+	export OUTPUT_FILE=$DERIVATIVES_dir/qa-raw_bids.csv
+	echo "subjectID SESSION missing_flair missing_t1 missing_t2 missing_dwi missing_dwi_bvec missing_dwi_bval missing_func" > $OUTPUT_FILE
+
+	for sub in $(cat $BIDS_dir/sourcedata/participants.tsv); do
+
+		FLAIR=sub-${sub}/ses-${SESSION}/anat/sub-${sub}_ses-${SESSION}_FLAIR.nii.gz
+		T1=sub-${sub}/ses-${SESSION}/anat/sub-${sub}_ses-${SESSION}_T1w.nii.gz
+		T2=sub-${sub}/ses-${SESSION}/anat/sub-${sub}_ses-${SESSION}_T2w.nii.gz
+		DWI=sub-${sub}/ses-${SESSION}/dwi/sub-${sub}_ses-${SESSION}_acq-AP_dwi.nii.gz
+		DWI_bvec=sub-${sub}/ses-${SESSION}/dwi/sub-${sub}_ses-${SESSION}_acq-AP_dwi.bvec
+		DWI_bval=sub-${sub}/ses-${SESSION}/dwi/sub-${sub}_ses-${SESSION}_acq-AP_dwi.bval
+		FUNC=sub-${sub}/ses-${SESSION}/func/sub-${sub}_ses-${SESSION}_task-rest_bold.nii.gz
+
+		[ -f $FLAIR ] && missing_flair=0 || missing_flair=1
+		[ -f $T1 ] && missing_t1=0 || missing_t1=1
+		[ -f $T2 ] && missing_t2=0 || missing_t2=1
+		[ -f $DWI ] && missing_dwi=0 || missing_dwi=1
+		[ -f $DWI_bvec ] && missing_dwi_bvec=0 || missing_dwi_bvec=1
+		[ -f $DWI_bval ] && missing_dwi_bval=0 || missing_dwi_bval=1
+		[ -f $FUNC ] && missing_func=0 || missing_func=1
+
+		echo "sub-${sub} ses-${SESSION} $missing_flair $missing_t1 $missing_t2 $missing_dwi $missing_dwi_bvec $missing_dwi_bval $missing_func" >> $OUTPUT_FILE
+
 	done
 
 
