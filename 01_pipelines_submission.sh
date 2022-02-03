@@ -188,12 +188,12 @@ elif [ $PIPELINE == "fmriprep" ];then
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Please enter specific templates if you want to use them."
-	echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
+	echo "Choose from tested adult templates (fsnative fsaverage fsaverage5 MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
 	echo "or infant templates (MNIPediatricAsym:cohort-1:res-native)"
-	echo "Enter nothing to keep defaults (fsnative fsaverage MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
+	echo "Enter nothing to keep defaults (fsnative fsaverage fsaverage5 MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
 	read OUTPUT_SPACES; export OUTPUT_SPACES
 
-	[ -z $OUTPUT_SPACES ] && export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym MNI152NLin2009cAsym T1w func"
+	[ -z $OUTPUT_SPACES ] && export OUTPUT_SPACES="fsnative fsaverage fsaverage5 MNI152NLin6Asym MNI152NLin2009cAsym T1w func"
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '--anat-only'"
