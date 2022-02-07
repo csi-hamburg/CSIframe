@@ -43,6 +43,8 @@ DESIGN_MATRIX=$STATISTICS_DIR/design.txt
 CONTRAST=$STATISTICS_DIR/contrast.txt
 FILES=$STATISTICS_DIR/files.txt
 
+[ ! -d $STATISTICS_DIR/output/ ] && mkdir -p $STATISTICS_DIR/output/ 
+
 # Command
 #########################
 CMD_NBS="connectomestats $FILES tfnbs $DESIGN_MATRIX $CONTRAST $STATISTICS_DIR/output/ -force"
