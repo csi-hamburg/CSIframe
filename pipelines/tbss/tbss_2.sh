@@ -114,16 +114,23 @@ echo ""
 echo "Creating valid mask and mean FA ..."
 echo ""
 
+# Define input/output
+
 FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask
 FA_MASKED=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-DTINoNeg_FA
 FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA
 
+# Define command
+
 CMD_MEAN="
     fslmaths $FA_MERGED -max 0 -Tmin -bin $FA_MASK -odt char; \
-	fslmaths $FA_MERGED -mas $FA_MASK $FA_MASKED; \
+    fslmaths $FA_MERGED -mas $FA_MASK $FA_MASKED; \
     fslmaths $FA_MASKED -Tmean $FA_MEAN"
 
-$singularity_fsl /bin/bash -c "$CMD_MEAN" 
+# Execute command
+
+$singularity_fsl /bin/bash -c "$CMD_MEAN"
+
 
 echo ""
 echo "Skeletonizing mean FA ..."

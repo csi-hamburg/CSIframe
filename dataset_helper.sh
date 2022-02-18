@@ -39,7 +39,7 @@ export PROJ_DIR=$(realpath $SCRIPT_DIR/../../$PROJ_NAME)
 export DATA_DIR=$PROJ_DIR/data
 export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
-export CODE_DIR=$PROJ_DIR/code
+export CODE_DIR=$SCRIPT_DIR
 export ENV_DIR=$PROJ_DIR/envs
 
 export DATALAD_LOCATIONS_SOCKETS=$WORK/tmp
