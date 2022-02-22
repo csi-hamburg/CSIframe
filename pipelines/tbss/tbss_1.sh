@@ -327,7 +327,7 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
         echo ""
         
         mkdir -p $TBSS_SUBDIR
-
+       
     else
 
         echo ""
