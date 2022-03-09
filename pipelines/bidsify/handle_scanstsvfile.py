@@ -32,14 +32,14 @@ if os.path.exists(f'{bids_dir}/{subject}/ses-{session}/perf/{subject}_ses-{sessi
     df.drop(axis = 0, index = drop_asl, inplace = True)
     df.drop(axis = 0, index = drop_m0, inplace = True)
 
-    df_append = pd.DataFrame([[f'perf/{subject}_ses-{session}_asl.nii.gz', "NaN", "NaN", 'NaN'],
-        [f'perf/{subject}_ses-{session}_m0scan.nii.gz', "NaN", "NaN", 'NaN']], columns = df.columns)
+    df_append = pd.DataFrame([[f'perf/{subject}_ses-{session}_asl.nii.gz', "n/a", "n/a", 'n/a'],
+        [f'perf/{subject}_ses-{session}_m0scan.nii.gz', "n/a", "n/a", 'n/a']], columns = df.columns)
     
     df = df.append(df_append)
 
 # Substitute contents of problematic metadata fields with new data
 
-df[['acq_time','operator']]="NaN"
+df[['acq_time','operator']]="n/a"
 
 def enter_random(x):
     y=''.join(random.choices(string.ascii_lowercase + string.digits, k=8))

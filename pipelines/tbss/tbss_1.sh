@@ -104,7 +104,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
     echo "Processing $1"
     echo ""
 
-    if [ -f $FW_DIR/${1}_ses-${SESSION}_space-${SPACE}_desc-DTINoNeg_FA.nii.gz ]; then 
+    if [ -f $FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz ]; then 
 
         mkdir -p $TBSS_SUBDIR
         
@@ -327,7 +327,7 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
         echo ""
         
         mkdir -p $TBSS_SUBDIR
-
+       
     else
 
         echo ""

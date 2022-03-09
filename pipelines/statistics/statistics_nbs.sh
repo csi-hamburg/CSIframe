@@ -2,7 +2,7 @@
 set -x
 
 ###################################################################################################################
-# GLM + Connectivity-based fixel enhancement                                                                      #
+# Network-based statistic                                                                                         #
 #                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [manual preparation]                                                                                          #
@@ -31,32 +31,25 @@ singularity_mrtrix3="singularity run --cleanenv --userns \
     $ENV_DIR/$container_mrtrix3" 
 
 #########################
-# CFE
+# TFCE
 #########################
 
-FBA_DIR=$DATA_DIR/fba
-FBA_GROUP_DIR=$DATA_DIR/fba/derivatives
 STATISTICS_DIR=$DATA_DIR/statistics/${MODIFIER}
 [ ! -d $STATISTICS_DIR ] && mkdir -p $STATISTICS_DIR && echo "Please setup $STATISTICS_DIR with 'design_matrix.txt' and 'files.txt'" && exit 0
 
 # Input
 #########################
-FD_SMOOTH_DIR=$FBA_GROUP_DIR/fd_smooth
-LOG_FC_SMOOTH_DIR=$FBA_GROUP_DIR/log_fc_smooth
-FDC_SMOOTH_DIR=$FBA_GROUP_DIR/fdc_smooth
-MATRIX_DIR=$FBA_GROUP_DIR/matrix
 DESIGN_MATRIX=$STATISTICS_DIR/design.txt
-FILES=$STATISTICS_DIR/files.txt
 CONTRAST=$STATISTICS_DIR/contrast.txt
+FILES=$STATISTICS_DIR/files.txt
+
+[ ! -d $STATISTICS_DIR/output/ ] && mkdir -p $STATISTICS_DIR/output/ 
 
 # Command
 #########################
-CMD_CFE_FD="fixelcfestats $FD_SMOOTH_DIR $FILES $DESIGN_MATRIX $CONTRAST $MATRIX_DIR $STATISTICS_DIR/stats_fd/ -force"
-CMD_CFE_LOG_FC="fixelcfestats $LOG_FC_SMOOTH_DIR $FILES $DESIGN_MATRIX $CONTRAST $MATRIX_DIR $STATISTICS_DIR/stats_log_fc/ -force"
-CMD_CFE_FDC="fixelcfestats $FDC_SMOOTH_DIR $FILES $DESIGN_MATRIX $CONTRAST $MATRIX_DIR $STATISTICS_DIR/stats_fdc/ -force"
+CMD_NBS="connectomestats $FILES tfnbs $DESIGN_MATRIX $CONTRAST $STATISTICS_DIR/output/ -force"
+
 
 # Execution
 #########################
-$singularity_mrtrix3 $CMD_CFE_FD
-$singularity_mrtrix3 $CMD_CFE_LOG_FC
-$singularity_mrtrix3 $CMD_CFE_FDC
+$singularity_mrtrix3 $CMD_NBS
