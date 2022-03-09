@@ -188,12 +188,12 @@ elif [ $PIPELINE == "fmriprep" ];then
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Please enter specific templates if you want to use them."
-	echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
+	echo "Choose from tested adult templates (fsnative fsaverage fsaverage5 MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
 	echo "or infant templates (MNIPediatricAsym:cohort-1:res-native)"
-	echo "Enter nothing to keep defaults (fsnative fsaverage MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
+	echo "Enter nothing to keep defaults (fsnative fsaverage fsaverage5 MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
 	read OUTPUT_SPACES; export OUTPUT_SPACES
 
-	[ -z $OUTPUT_SPACES ] && export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym MNI152NLin2009cAsym T1w func"
+	[ -z $OUTPUT_SPACES ] && export OUTPUT_SPACES="fsnative fsaverage fsaverage5 MNI152NLin6Asym MNI152NLin2009cAsym T1w func"
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '--anat-only'"
@@ -582,6 +582,74 @@ elif [ $PIPELINE == "wmh" ];then
 		export ANALYSIS_LEVEL=group
 		batch_time_default="06:00:00"
 		export SUBJS_PER_NODE=$subj_array_length
+
+	fi
+
+elif [ $PIPELINE == "lesionanalysis" ];then
+	
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Which part of the pipeline would you like to run? (1/2)"
+	read LA_PART; export LA_PART
+	export PIPELINE_SUFFIX=_${LA_PART}
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Please define the original image space of the lesion mask(s)."
+	echo "Currently available: 'T1w'."
+	read ORIG_SPACE; export ORIG_SPACE
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Please define the space in which lesion masks and shells are to be read out."
+	echo "Currently available: 'dwi'"
+	echo "Note: qsiprep output is expected. Therefore 'dwi' refers to T1w-space and not the original dwi-space!"
+	read READOUT_SPACE; export READOUT_SPACE
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Would you like to flip lesion mask / read out flipped lesion (shells)? (yes/no)"
+	read FLIP; export MODIFIER=$FLIP
+	
+	if [ $LA_PART == "1" ]; then
+
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+		echo "Please provide absolute path to directory with subject directories containing the lesion masks."
+		echo "Note: the expected naming convention of files is as follows <LESION_DIR>/<sub>/<ses>/<anat/dwi/perf/func>/<sub>_<ses>_<space>_desc-lesion_mask.nii.gz"
+		read LESION_DIR; export LESION_DIR
+
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+		echo "Please specify which output of anatomical preprocessing shall be used (fmriprep/qsiprep)."
+		echo "Note: it is assumed that freesurfer (recon-all) was run through the specified pipeline and therefore T1w-spaces match."
+		read ANAT_PREPROC; export ANAT_PREPROC
+
+		export SUBJS_PER_NODE=16
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="01:00:00"
+		partition_default="std"
+	
+	elif [ $LA_PART == "2" ]; then
+
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+		echo "On which level would you like to run Part 2? (subject/group)"
+		read ANALYSIS_LEVEL; export ANALYSIS_LEVEL
+
+		if [ $ANALYSIS_LEVEL == "subject" ]; then
+
+			export SUBJS_PER_NODE=16
+			export ANALYSIS_LEVEL=subject
+			batch_time_default="01:00:00"
+			partition_default="std"
+
+		elif [ $ANALYSIS_LEVEL == "group" ]; then
+
+			export SUBJS_PER_NODE=$subj_array_length
+			export ANALYSIS_LEVEL=group
+			batch_time_default="00:30:00"
+			partition_default="std"
+
+		fi
+	
+	else
+
+	 	echo "Part $LA_PART for $PIPELINE pipeline is not supported."
+	 	exit 0
 
 	fi
 
