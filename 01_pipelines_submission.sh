@@ -588,12 +588,13 @@ elif [ $PIPELINE == "wmh" ];then
 elif [ $PIPELINE == "statistics" ];then
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
-	echo "Which method do you want to perform? (cfe/tfce/nbs)"
+	echo "Which method do you want to perform? (cfe/tfce_tbss/nbs)"
 	read STAT_METHOD; export STAT_METHOD
 	export PIPELINE_SUFFIX=_${STAT_METHOD}
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
-	echo "Define hypothesis short (-> becomes name of subdirectory in data/statistics), e.g. 'cfe_group_comparison_postcovid_controls' or 'tfce_linear_relationship_fa_tmtb'"
+	echo "Define hypothesis short (-> has to be name of subdirectory in data/statistics)"
+	echo $(ls $DATA_DIR/statistics/* -d -1 | xargs -n 1 basename | sort | uniq ) | tr " " "\n"
 	read MODIFIER; export MODIFIER
 
 	if [ $STAT_METHOD == cfe ];then
@@ -601,9 +602,9 @@ elif [ $PIPELINE == "statistics" ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
 		batch_time_default="1-00:00:00"
-		partition_default="big"
+		partition_default="std"
 
-	elif [ $STAT_METHOD == tfce ];then
+	elif [ $STAT_METHOD == tfce_tbss ];then
 	
 	export SUBJS_PER_NODE=$subj_array_length
 	export ANALYSIS_LEVEL=group
