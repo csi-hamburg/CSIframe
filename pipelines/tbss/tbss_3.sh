@@ -22,8 +22,12 @@
 # Get verbose outputs
 set -x
 
+# Turn off creation of core files
+ulimit -c 0
+
 # Define subject specific temporary directory on $SCRATCH_DIR
 export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
+TMP_IN=$TMP_DIR/input;                 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN
 TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 ###############################################################################
@@ -37,18 +41,18 @@ container_fsl=fsl-6.0.3
 singularity_fsl="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
-    -B $TMP_DIR/:/tmp \
-    -B $TMP_IN:/tmp_in \
-    -B $TMP_OUT:/tmp_out \
+    -B $TMP_DIR \
+    -B $TMP_IN \
+    -B $TMP_OUT \
     $ENV_DIR/$container_fsl"
 
 container_miniconda=miniconda-csi
 singularity_miniconda="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
-    -B $TMP_DIR/:/tmp \
-    -B $TMP_IN:/tmp_in \
-    -B $TMP_OUT:/tmp_out \
+    -B $TMP_DIR \
+    -B $TMP_IN \
+    -B $TMP_OUT \
     $ENV_DIR/$container_miniconda"
 
 # Set pipeline specific variables

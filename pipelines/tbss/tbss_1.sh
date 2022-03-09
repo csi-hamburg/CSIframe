@@ -93,6 +93,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
 
     # Set pipeline specific variables
     
+    SPACE=MNI
     MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW"
     
@@ -128,7 +129,6 @@ if [ $TBSS_PIPELINE == "mni" ]; then
         echo ""
 
         INPUT_DIR=$FW_DIR
-        SPACE=MNI
 
     elif [ -f $FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz ] && [ ! -f $FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-DTINoNeg_FA.nii.gz ]; then
         
