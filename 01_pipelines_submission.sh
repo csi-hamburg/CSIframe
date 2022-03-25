@@ -431,17 +431,19 @@ elif [ $PIPELINE == "wmh" ];then
 	export ANALYSIS_LEVEL=subject
 	partition_default="std"
 
-	echo "Which ANALYSIS PART do you want to perform? currently available are: 01_prep / 02_segment / 03_combine / 04_postproc / eval / determine_thresh / threshold_finder_01 / threshold_finder_02 "
+	echo "Which ANALYSIS PART do you want to perform? currently available are: 01_prep / 02_segment / 03_combine / 04_postproc_define_subs / 04_postproc / eval / determine_thresh / threshold_finder_01 / threshold_finder_02 "
 	read WMH_LEVEL
 	export PIPELINE_SUFFIX=_${WMH_LEVEL}
 
 	if [ $WMH_LEVEL == "01_prep" ]; then
 
 		batch_time_default="05:00:00"
+		export SUBJS_PER_NODE=32
+		export ANALYSIS_LEVEL=subject
 
 	elif [ $WMH_LEVEL == "02_segment" ]; then
 	
-		echo "Which SEGMENTATION ALGORITHM do you want to use? currently available: antsrnet / bianca / lga / lpa / samseg"
+		echo "Which SEGMENTATION ALGORITHM do you want to use? currently available: antsrnet / bianca / LOCATE / lga / lpa / samseg"
 		read ALGORITHM; export ALGORITHM
 
 		if [ $ALGORITHM == "samseg" ]; then
@@ -468,22 +470,44 @@ elif [ $PIPELINE == "wmh" ];then
 
 		elif [ $ALGORITHM == "bianca" ]; then
 
-			batch_time_default="05:00:00"
 			echo "because the data are training data, no bias correction happened. Automatically set to NO."
 			BIASCORR=n; export BIASCORR
-			export SUBJS_PER_NODE=$subj_array_length
+
+			echo "Do you want to train bianca or test bianca? ( training / validation / testing ) \
+			Note: for training, you need manual masks. For testing, you either need a classifier created with TRAINING or train first."
+			read BIANCA_LEVEL; export BIANCA_LEVEL
+
+			[ $BIANCA_LEVEL == training ] && export SUBJS_PER_NODE=$subj_array_length
+			[ $BIANCA_LEVEL == training ] && export ANALYSIS_LEVEL=group
+			[ $BIANCA_LEVEL == training ] && batch_time_default="24:00:00"
+			[ $BIANCA_LEVEL == validation ] && export SUBJS_PER_NODE=16
+			[ $BIANCA_LEVEL == validation ] && export ANALYSIS_LEVEL=subject
+			[ $BIANCA_LEVEL == validation ] && batch_time_default="05:30:00"
+			[ $BIANCA_LEVEL == testing ] && export SUBJS_PER_NODE=16
+			[ $BIANCA_LEVEL == testing ] && export ANALYSIS_LEVEL=subject
+			[ $BIANCA_LEVEL == testing ] && batch_time_default="05:30:00"
 
 		elif [ $ALGORITHM == "LOCATE" ]; then
 
-			batch_time_default="05:00:00"
+			batch_time_default="00:30:00"
 			echo "because the data are training data, no bias correction happened. Automatically set to NO."
 			BIASCORR=n; export BIASCORR
-			export ANALYSIS_LEVEL=group
-			export SUBJS_PER_NODE=$subj_array_length
 
-			echo "Do you want to validate LOCATE, train LOCATE, or test LOCATE? answer with: 'validate', 'training', 'testing' \
-			Note: for validation and training, you need manual masks. For testing, you either need a classifier created with TRAINING or train first."
+			echo "Which step of LOCATE should be run? (training / validation (segmentation of training set) / testing) \
+			Note: for validation and training, you need manual masks. \
+			In addition: please run training before you start validation or testing."
 			read LOCATE_LEVEL; export LOCATE_LEVEL
+
+			[ $LOCATE_LEVEL == testing ] && export SUBJS_PER_NODE=16
+			[ $LOCATE_LEVEL == testing ] && export ANALYSIS_LEVEL=subject
+			[ $LOCATE_LEVEL == testing ] && batch_time_default="05:00:00"
+			[ $LOCATE_LEVEL == training ] && export SUBJS_PER_NODE=$subj_array_length
+			[ $LOCATE_LEVEL == training ] && export ANALYSIS_LEVEL=group
+			[ $LOCATE_LEVEL == training ] && batch_time_default="2-00:00:00"
+			[ $LOCATE_LEVEL == validation ] && export SUBJS_PER_NODE=$subj_array_length
+			[ $LOCATE_LEVEL == validation ] && export ANALYSIS_LEVEL=group
+			[ $LOCATE_LEVEL == validation ] && batch_time_default="2-00:00:00"
+			
 
 		fi
 
@@ -500,13 +524,38 @@ elif [ $PIPELINE == "wmh" ];then
 		
 		[ $ALGORITHM1 == $ALGORITHM2 ] && echo "$ALGORITHM1 == $ALGORITHM2 ... stupid" && exit 1
 
+	elif [ $WMH_LEVEL == "04_postproc_define_subs" ]; then 
+
+		INTERACTIVE==y
+		SUBJS_PER_NODE=400 # DO NOT CHANGE !
+		length=($(ls $BIDS_DIR/sub-* -d | xargs -n 1 basename | wc -l))
+		number_of_scripts=$(echo "scale=2; $length/$SUBJS_PER_NODE" | bc)
+		number_of_scripts_rounded=$(echo $number_of_scripts | awk '{print ($0-int($0)>0)?int($0)+1:int($0)}')
+		DERIVATIVE_dir=$DATA_DIR/$PIPELINE/derivatives
+		[ ! -d $DERIVATIVE_dir ] && mkdir $DERIVATIVE_dir
+
+		for num in $(seq 1 $number_of_scripts_rounded); do
+    		start=$(($num * $SUBJS_PER_NODE))
+    		[ $start == 1 ] && echo $(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename | head -n $start ) > $DERIVATIVE_dir/sublist_${num}.csv
+    		[ $start != 1 ] && echo $(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename | head -n $start | tail -n $SUBJS_PER_NODE) > $DERIVATIVE_dir/sublist_${num}.csv
+
+		done
+
+		exit 1
+
 	elif [ $WMH_LEVEL == "04_postproc" ]; then 
 
-		batch_time_default="00:05:00"
-		echo "which output do you want to process? Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)" 
+		export sublist=${subj_array[@]}
+		export SUBJS_PER_NODE=400 # DO NOT CHANGE!
+		export ANALYSIS_LEVEL=group
+		batch_time_default="2-00:00:00"
+
+		[ $subj_array_length -gt $SUBJS_PER_NODE ] && echo "please define a subject list! subject lists are in $PIPELINE/derivatives or can be created with the option: 04_postproc_define_subs"
+		[ $subj_array_length -gt $SUBJS_PER_NODE ] && exit 1
+
+		echo "Which algorithm do you want to evaluate? Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
 		read ALGORITHM; export ALGORITHM
-
-
+		
 	elif [ $WMH_LEVEL == "eval" ]; then 
 
 		export SUBJS_PER_NODE=$subj_array_length
@@ -522,7 +571,7 @@ elif [ $PIPELINE == "wmh" ];then
 		echo "which analysis level you want to perform? possible answers: subject / group. Please execute subject before group. Thx!"
 		read ANALYSIS_LEVEL; export ANALYSIS_LEVEL
 
-		SUBJS_PER_NODE=8
+		export SUBJS_PER_NODE=8
 		batch_time_default="01:00:00"
 		[ $ANALYSIS_LEVEL == "group" ] && export SUBJS_PER_NODE=$subj_array_length
 
@@ -550,7 +599,7 @@ elif [ $PIPELINE == "wmh" ];then
 
 		fi
 
-		export ANALYSIS_LEVEL=subject
+		export ANALYSIS_LEVEL=group
 		[ $ALGORITHM_COMBI == "single" ] && batch_time_default="01:00:00"
 		[ $ALGORITHM_COMBI == "multiple" ] && batch_time_default="02:30:00"
 		export SUBJS_PER_NODE=8
@@ -610,7 +659,7 @@ else
 	exit
 fi
 
-if [ $INTERACTIVE != y ];then
+if [ $INTERACTIVE != y ]; then
 
 	# Set batch time to allocate and partition
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
@@ -626,7 +675,7 @@ if [ $INTERACTIVE != y ];then
 	[ -z $partition ] && partition=$partition_default
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
-	echo "Do you want to provide additional flags for sbatch submission? e.g. '--hold' or '--dependency afterok:job_id' or '--begin=16:00'"
+	echo "Do you want to provide additional flags for sbatch submission? e.g. '--hold' or '--dependency=afterok:job_id' or '--begin=16:00'"
 	echo "Leave empty to choose default"
 	read optional_slurm_flags
 

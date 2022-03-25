@@ -23,7 +23,7 @@ echo "Script is run from $(realpath .); superdataset is assumed to be/become sub
 echo "Enter name of dataset concerned / to create; e.g. CSI_HCHS"
 read PROJ_NAME
 
-echo "What do you want to do? (setup_superdataset, add_data_subds, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, if_in_s3, create_participants_tsv, add_lzs_s3_remote, create_pybids_db, templateflow_setup, export_from_datalad, check_sequences_rawbids)"
+echo "What do you want to do? (setup_superdataset, add_data_subds, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, if_in_s3, create_participants_tsv, add_lzs_s3_remote, create_pybids_db, templateflow_setup, export_from_datalad, qa_missings)"
 read PIPELINE
 
 #################################################################
@@ -383,39 +383,90 @@ elif [ $PIPELINE == export_from_datalad ];then
 			popd
 	done
 
-elif [ $PIPELINE == check_sequences_rawbids ]; then
+elif [ $PIPELINE == qa_missings ]; then
 
 	echo "For which session do you want to check the raw_bids output? please answer with single number."
 	read SESSION; export SESSION
 
-	export DERIVATIVES_dir=$BIDS_dir/derivatives
+	export DERIVATIVES_dir=$BIDS_DIR/derivatives
 	[ ! -d $DERIVATIVES_dir ] && mkdir -p $DERIVATIVES_dir
 
 	# set up the output file
 	export OUTPUT_FILE=$DERIVATIVES_dir/qa-raw_bids.csv
-	echo "subjectID SESSION missing_flair missing_t1 missing_t2 missing_dwi missing_dwi_bvec missing_dwi_bval missing_func" > $OUTPUT_FILE
+	echo "subjectID SESSION missing_flair missing_t1 missing_t2 missing_dwi missing_func missing_asl missing_m0 missing_aslprep missing_cat missing_conn_struc missing_conn_func missing_fba missing_fmriprep_struc missing_fmriprep_func missing_freesurfer missing_freewater missing_mriqcstruc missing_mriqcfunc missing_obseg missing_psmd missing_qsiprep missing_qsirecon missing_tbss missing_wmh missing_xcpengine" > $OUTPUT_FILE
 
-	for sub in $(cat $BIDS_dir/sourcedata/participants.tsv); do
 
-		FLAIR=sub-${sub}/ses-${SESSION}/anat/sub-${sub}_ses-${SESSION}_FLAIR.nii.gz
-		T1=sub-${sub}/ses-${SESSION}/anat/sub-${sub}_ses-${SESSION}_T1w.nii.gz
-		T2=sub-${sub}/ses-${SESSION}/anat/sub-${sub}_ses-${SESSION}_T2w.nii.gz
-		DWI=sub-${sub}/ses-${SESSION}/dwi/sub-${sub}_ses-${SESSION}_acq-AP_dwi.nii.gz
-		DWI_bvec=sub-${sub}/ses-${SESSION}/dwi/sub-${sub}_ses-${SESSION}_acq-AP_dwi.bvec
-		DWI_bval=sub-${sub}/ses-${SESSION}/dwi/sub-${sub}_ses-${SESSION}_acq-AP_dwi.bval
-		FUNC=sub-${sub}/ses-${SESSION}/func/sub-${sub}_ses-${SESSION}_task-rest_bold.nii.gz
+	for sub in $(cat $BIDS_DIR/sourcedata/participants.tsv); do
 
-		[ -f $FLAIR ] && missing_flair=0 || missing_flair=1
-		[ -f $T1 ] && missing_t1=0 || missing_t1=1
-		[ -f $T2 ] && missing_t2=0 || missing_t2=1
-		[ -f $DWI ] && missing_dwi=0 || missing_dwi=1
-		[ -f $DWI_bvec ] && missing_dwi_bvec=0 || missing_dwi_bvec=1
-		[ -f $DWI_bval ] && missing_dwi_bval=0 || missing_dwi_bval=1
-		[ -f $FUNC ] && missing_func=0 || missing_func=1
+		# raw_bids output
+		FLAIR=$BIDS_DIR/sub-${sub}/ses-${SESSION}/anat/sub-${sub}_ses-${SESSION}_FLAIR.nii.gz
+		T1=$BIDS_DIR/sub-${sub}/ses-${SESSION}/anat/sub-${sub}_ses-${SESSION}_T1w.nii.gz
+		T2=$BIDS_DIR/sub-${sub}/ses-${SESSION}/anat/sub-${sub}_ses-${SESSION}_T2w.nii.gz
+		DWI=$BIDS_DIR/sub-${sub}/ses-${SESSION}/dwi/sub-${sub}_ses-${SESSION}_acq-AP_dwi.nii.gz
+		FUNC=$BIDS_DIR/sub-${sub}/ses-${SESSION}/func/sub-${sub}_ses-${SESSION}_task-rest_bold.nii.gz
+		ASL=$BIDS_DIR/sub-${sub}/ses-${SESSION}/perf/sub-${sub}_ses-${SESSION}_asl.nii.gz
+		M0=$BIDS_DIR/sub-${sub}/ses-${SESSION}/perf/sub-${sub}_ses-${SESSION}_m0scan.nii.gz
 
-		echo "sub-${sub} ses-${SESSION} $missing_flair $missing_t1 $missing_t2 $missing_dwi $missing_dwi_bvec $missing_dwi_bval $missing_func" >> $OUTPUT_FILE
+		# pipeline_specific output
+		ASLPREP=$DATA_DIR/aslprep/sub-${sub}/ses-${SESSION}/perf/sub-${sub}_ses-${SESSION}_space-MNI152NLin2009cAsym_desc-basil_cbf.nii.gz
+		CAT12=$DATA_DIR/cat12/sub-${sub}/surf/rh.thickness.T1
+		CONNECTOMICS_STRUC=$DATA_DIR/connectomics/sub-${sub}/ses-${SESSION}/dwi/sub-${sub}_ses-${SESSION}_*_sc_sift_connectomics.csv
+		CONNECTOMICS_FUNC=$DATA_DIR/connectomics/sub-${sub}/ses-${SESSION}/func/sub-${sub}_ses-${SESSION}_*_connectomics.csv
+		FBA=$DATA_DIR/fba/derivatives/fdc_smooth/sub-${sub}.mif
+		FMRIPREP_STRUC=$DATA_DIR/fmriprep/sub-${sub}/ses-${SESSION}/anat/sub-${sub}_ses-${SESSION}_desc-preproc_T1w.nii.gz
+		FMRIPREP_FUNC=$DATA_DIR/fmriprep/sub-${sub}/ses-${SESSION}/func/sub-${sub}_ses-${SESSION}_task-rest_desc-preproc_bold.nii.gz
+		FREESURFER=$DATA_DIR/freesurfer/sub-${sub}/stats/aseg.stats
+		FREEWATER=$DATA_DIR/freewater/sub-${sub}/ses-1/dwi/sub-${sub}_ses-${SESSION}_space-MNI_FW.nii.gz
+		MRIQC_STRUC=$DATA_DIR/mriqc/sub-${sub}/ses-${SESSION}/anat/sub-${sub}_ses-${SESSION}_T1w.json
+		MRIQC_FUNC=$DATA_DIR/mriqc/sub-${sub}/ses-${SESSION}/func/sub-${sub}_ses-${SESSION}_task-rest_bold.json
+		OBSEG=$DATA_DIR/obseg/sub-${sub}/stats/segmentation_stats.csv
+		PSMD=$DATA_DIR/psmd*/sub-${sub}/ses-${SESSION}/dwi/tbss/stats/MD_skeletonised_masked_R.nii.gz
+		QSIPREP=$DATA_DIR/qsiprep/sub-${sub}/ses-${SESSION}/dwi/sub-${sub}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.nii.gz
+		QSIRECON=$DATA_DIR/qsirecon/sub-${sub}/ses-${SESSION}/dwi/sub-${sub}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_space-T1w_dhollanderconnectome.mat
+		TBSS=$DATA_DIR/tbss_*/sub-${sub}/ses-${SESSION}/dwi/sub-${sub}_ses-${SESSION}_space-MNI_desc-eroded_desc-DTINoNeg_FA.nii.gz
+		WMH=$DATA_DIR/wmh/sub-${sub}/ses-${SESSION}/anat/sub-${sub}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmhperi_desc-*_mask.nii.gz
+		XCPENGINE=$DATA_DIR/xcpengine/sub-${sub}/fcon/schaefer400x7/sub-${sub}_schaefer400x7_network.txt
+
+		# editing
+		CONNECTOMICS_STRUC=$(echo $CONNECTOMICS_STRUC | awk '{print $1}')
+		CONNECTOMICS_FUNC=$(echo $CONNECTOMICS_FUNC | awk '{print $1}')
+		TBSS=$(echo $TBSS | awk '{print $1}')
+		WMH=$(echo $WMH | awk '{print $1}')
+
+		# check status
+		[ -f $FLAIR ] && missing_flair=0 || missing_flair=1 
+		[ -f $T1 ] && missing_t1=0 || missing_t1=1 
+		[ -f $T2 ] && missing_t2=0 || missing_t2=1 
+		[ -f $DWI ] && missing_dwi=0 || missing_dwi=1 
+		[ -f $FUNC ] && missing_func=0 || missing_func=1 
+		[ -f $ASL ] && missing_asl=0 || missing_asl=1 
+		[ -f $M0 ] && missing_m0=0 || missing_m0=1 
+		[ -f $ASLPREP ] && missing_aslprep=0 || missing_aslprep=1 
+		[ -f $CAT12 ] && missing_cat=0 || missing_cat=1 
+		[ -f $CONNECTOMICS_STRUC ] && missing_conn_struc=0 || missing_conn_struc=1
+		[ -f $CONNECTOMICS_FUNC ] && missing_conn_func=0 || missing_conn_func=1 
+		[ -f $FBA ] && missing_fba=0 || missing_fba=1 
+		[ -f $FMRIPREP_STRUC ] && missing_fmriprep_struc=0 || missing_fmriprep_struc=1 
+		[ -f $FMRIPREP_FUNC ] && missing_fmriprep_func=0 || missing_fmriprep_func=1 
+		[ -f $FREESURFER ] && missing_freesurfer=0 || missing_freesurfer=1 
+		[ -f $FREEWATER ] && missing_freewater=0 || missing_freewater=1 
+		[ -f $MRIQC_STRUC ] && missing_mriqcstruc=0 || missing_mriqcstruc=1 
+		[ -f $MRIQC_FUNC ] && missing_mriqcfunc=0 || missing_mriqcfunc=1 
+		[ -f $OBSEG ] && missing_obseg=0 || missing_obseg=1 
+		[ -f $PSMD ] && missing_psmd=0 || missing_psmd=1 
+		[ -f $QSIPREP ] && missing_qsiprep=0 || missing_qsiprep=1 
+		[ -f $QSIRECON ] && missing_qsirecon=0 || missing_qsirecon=1 
+		[ -f $TBSS ] && missing_tbss=0 || missing_tbss=1 
+		[ -f $WMH ] && missing_wmh=0 || missing_wmh=1 
+		[ -f $XCPENGINE ] && missing_xcpengine=0 || missing_xcpengine=1 
+
+		# write in output file
+		echo "sub-${sub} ses-${SESSION} $missing_flair $missing_t1 $missing_t2 $missing_dwi $missing_func $missing_asl $missing_m0 $missing_aslprep $missing_cat $missing_conn_struc $missing_conn_func $missing_fba $missing_fmriprep_struc $missing_fmriprep_func $missing_freesurfer $missing_freewater $missing_mriqcstruc $missing_mriqcfunc $missing_obseg $missing_psmd $missing_qsiprep $missing_qsirecon $missing_tbss $missing_wmh $missing_xcpengine" >> $OUTPUT_FILE
 
 	done
+
+	# example command for checking missing subjects on MASTER_NAS in the dicoms directory:
+	# for i in `cat /media/sda/PhD/hummel_marvin/projects/CSI_HCHS/data/raw_bids/derivatives/qa-raw_bids.csv`; do missing_flair=$(echo $i | awk '{print $3}'); sub=$(echo $i | awk '{print $1}' | tail -c 9); if [ $missing_flair == 1 ]; then echo $sub $missing_flair; fi; if [ $missing_flair == 1 ]; then ls /media/sda/MASTER_NAS/HCHS/DICOMS_HCHS/DICOMS_HCHS/ds_10000/out/$sub/ses-1/* -d ; fi; done
 
 
 else

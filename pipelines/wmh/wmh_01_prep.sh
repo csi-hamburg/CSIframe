@@ -95,9 +95,9 @@ T1_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii.gz
 T1_TO_FLAIR_WARP_pre=$OUT_DIR/${1}_ses-${SESSION}_from-T1_to-FLAIR_
 T1_TO_FLAIR_WARP=$OUT_DIR/${1}_ses-${SESSION}_from-T1_to-FLAIR_Composite.h5
 T1_MASK_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
-T1_IN_FLAIR_nii=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii # needed for lga + lpa algorithm
+T1_IN_FLAIR_nii=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii
 FLAIR_TO_T1_WARP=$OUT_DIR/${1}_ses-${SESSION}_from-T1_to-FLAIR_InverseComposite.h5
-FLAIR_nii=$OUT_DIR/${1}_ses-${SESSION}_FLAIR.nii # needed for lga + lpa algorithm
+FLAIR_nii=$OUT_DIR/${1}_ses-${SESSION}_FLAIR.nii
 FLAIR_BIASCORR=$OUT_DIR/${1}_ses-${SESSION}_desc-biascorr_FLAIR.nii.gz
 FLAIR_BIASCORR_IN_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-biascorr_FLAIR.nii.gz
 FLAIR_BRAIN=$OUT_DIR/${1}_ses-${SESSION}_desc-brain_FLAIR.nii.gz
@@ -128,29 +128,36 @@ CMD_T1_TO_FLAIR="antsRegistration \
 --use-histogram-matching 1 \
 --winsorize-image-intensities [ 0.005, 0.995 ] \
 --write-composite-transform 1"
+
 # register T1 mask to FLAIR
 CMD_T1_MASK_TO_FLAIR="antsApplyTransforms -d 3 -i $T1_MASK -r $FLAIR -t $T1_TO_FLAIR_WARP -o $T1_MASK_IN_FLAIR"
 CMD_THRESHOLD_MASK="fslmaths $T1_MASK_IN_FLAIR -thr 0.95 -bin $T1_MASK_IN_FLAIR"
+
 # flair bias correction
-CMD_BIASCORR_FLAIR="N4BiasFieldCorrection -d 3 -i $FLAIR -x $T1_MASK_IN_FLAIR -o $FLAIR_BIASCORR --verbose 1" 
+CMD_BIASCORR_FLAIR="N4BiasFieldCorrection -d 3 -i $FLAIR -o $FLAIR_BIASCORR --verbose 1" 
+
 # flair brain extraction
 CMD_FLAIR_BRAIN_EXTRACT="fslmaths $FLAIR -mul $T1_MASK_IN_FLAIR $FLAIR_BRAIN"
 CMD_FLAIR_BRAIN_BIASCORR_EXTRACT="fslmaths $FLAIR_BIASCORR -mul $T1_MASK_IN_FLAIR $FLAIR_BRAIN_BIASCORR"
+
 # register all FLAIR images to T1
 CMD_FLAIR_BRAIN_BIASCORR_IN_T1="antsApplyTransforms -d 3 -i $FLAIR_BRAIN_BIASCORR -r $T1_BRAIN -t $FLAIR_TO_T1_WARP -o $FLAIR_BRAIN_BIASCORR_IN_T1"
 CMD_FLAIR_BIASCORR_IN_T1="antsApplyTransforms -d 3 -i $FLAIR_BIASCORR -r $T1 -t $FLAIR_TO_T1_WARP -o $FLAIR_BIASCORR_IN_T1"
 CMD_FLAIR_BRAIN_IN_T1="antsApplyTransforms -d 3 -i $FLAIR_BRAIN -r $T1_BRAIN -t $FLAIR_TO_T1_WARP -o $FLAIR_BRAIN_IN_T1"
+
 # register all FLAIR images to MNI
 CMD_FLAIR_BRAIN_BIASCORR_IN_MNI="antsApplyTransforms -d 3 -i $FLAIR_BRAIN_BIASCORR -r $MNI_TEMPLATE -o $FLAIR_BRAIN_BIASCORR_IN_MNI -t $FLAIR_TO_T1_WARP -t $T1_TO_MNI_WARP"
 CMD_FLAIR_BIASCORR_IN_MNI="antsApplyTransforms -d 3 -i $FLAIR_BIASCORR -r $MNI_TEMPLATE_SKULL -o $FLAIR_BIASCORR_IN_MNI -t $FLAIR_TO_T1_WARP -t $T1_TO_MNI_WARP"
 CMD_FLAIR_BRAIN_IN_MNI="antsApplyTransforms -d 3 -i $FLAIR_BRAIN -r $MNI_TEMPLATE -o $FLAIR_BRAIN_IN_MNI -t $FLAIR_TO_T1_WARP -t $T1_TO_MNI_WARP"
+
 # convert T1 / FLAIR in nii for lpa/lga
 CMD_convert_T1="mri_convert $T1_IN_FLAIR $T1_IN_FLAIR_nii"
 CMD_convert_FLAIR="mri_convert $FLAIR $FLAIR_nii"
 
 # Execute 
-[ ! -f $T1_IN_FLAIR ] && $singularity_fsl /bin/bash -c "$CMD_T1_EXTRACT_BRAIN"
-[ ! -f $T1_IN_FLAIR ] && $singularity_mrtrix /bin/bash -c "$CMD_T1_TO_FLAIR; $CMD_T1_MASK_TO_FLAIR"
+$singularity_fsl /bin/bash -c "$CMD_T1_EXTRACT_BRAIN"
+[ ! -f $T1_IN_FLAIR ] && $singularity_mrtrix /bin/bash -c "$CMD_T1_TO_FLAIR"
+[ ! -f $T1_MASK_IN_FLAIR ] && $singularity_mrtrix /bin/bash -c "$CMD_T1_MASK_TO_FLAIR"
 
 if [ ! -f $FLAIR_BRAIN_IN_MNI ]; then
 
@@ -162,7 +169,7 @@ if [ ! -f $FLAIR_BRAIN_IN_MNI ]; then
 
 fi
 
-$singularity_freesurfer /bin/bash -c "$CMD_convert_T1; $CMD_convert_FLAIR; $CMD_convert_FLAIR_BIASCORR"
+
 
 ###############################################################################################################################################################
 # The ultimate masking game - create wm masks for filtering of segmentations
@@ -189,6 +196,13 @@ RIBBON_right=/tmp/${1}_ses-${SESSION}_space-T1_hemi-R_desc-ribbon_mask.nii.gz
 RIBBON_left=/tmp/${1}_ses-${SESSION}_space-T1_hemi-L_desc-ribbon_mask.nii.gz 
 RIBBONMASK=/tmp/${1}_ses-${SESSION}_space-T1_desc-ribbon_mask.nii.gz
 CCMASK=/tmp/${1}_ses-${SESSION}_space-T1_desc-corpcall_mask.nii.gz
+CAUDATEMASK_LEFT=/tmp/${1}_ses-${SESSION}_space-T1_desc-caudateleft_mask.nii.gz
+CAUDATEMASK_RIGHT=/tmp/${1}_ses-${SESSION}_space-T1_desc-caudateright_mask.nii.gz
+PUTAMENMASK_LEFT=/tmp/${1}_ses-${SESSION}_space-T1_desc-putamenleft_mask.nii.gz
+PUTAMENMASK_RIGHT=/tmp/${1}_ses-${SESSION}_space-T1_desc-putamenright_mask.nii.gz
+PALLIDUMMASK_LEFT=/tmp/${1}_ses-${SESSION}_space-T1_desc-pallidumleft_mask.nii.gz
+PALLIDUMMASK_RIGHT=/tmp/${1}_ses-${SESSION}_space-T1_desc-pallidumright_mask.nii.gz
+VENTRICLEMASK_eroded=/tmp/${1}_ses-${SESSION}_space-T1_desc-ventricle_desc-eroded_mask.nii.gz
 BRAINWITHOUTRIBBON_MASK=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-brainwithoutribbon_mask.nii.gz
 BRAINWITHOUTRIBBON_MASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brainwithoutribbon_mask.nii.gz
 
@@ -209,21 +223,29 @@ CMD_merge_ribbonmasks="fslmaths $RIBBON_right -add $RIBBON_left -bin $RIBBONMASK
 CMD_threshold_ribbonmask="fslmaths $RIBBONMASK -bin -dilM $RIBBONMASK"
 CMD_threshold_ribbonmaskagain="fslmaths $RIBBONMASK -bin -dilM $RIBBONMASK"
 CMD_create_cc="fslmaths $ASEG_nii -thr 251 -bin $CCMASK"
-CMD_dilate_cc="fslmaths $CCMASK -bin -dilM $CCMASK"
-CMD_new_brainmask="fslmaths $T1_MASK -sub $RIBBONMASK -sub $CCMASK $BRAINWITHOUTRIBBON_MASK"
+CMD_dilate_cc="fslmaths $CCMASK -dilM -bin $CCMASK"
+CMD_create_caudate_left="fslmaths $ASEG_nii -thr 11 -uthr 11 -bin $CAUDATEMASK_LEFT"
+CMD_dilate_caudate_left="fslmaths $CAUDATEMASK_LEFT -dilM -bin $CAUDATEMASK_LEFT"
+CMD_create_caudate_right="fslmaths $ASEG_nii -thr 50 -uthr 50 -bin $CAUDATEMASK_RIGHT"
+CMD_dilate_caudate_right="fslmaths $CAUDATEMASK_RIGHT -dilM -bin $CAUDATEMASK_RIGHT"
+CMD_create_putamen_left="fslmaths $ASEG_nii -thr 12 -uthr 12 -bin $PUTAMENMASK_LEFT"
+CMD_dilate_putamen_left="fslmaths $PUTAMENMASK_LEFT -dilM -bin $PUTAMENMASK_LEFT"
+CMD_create_putamen_right="fslmaths $ASEG_nii -thr 51 -uthr 51 -bin $PUTAMENMASK_RIGHT"
+CMD_dilate_putamen_right="fslmaths $PUTAMENMASK_RIGHT -dilM -bin $PUTAMENMASK_RIGHT"
+CMD_create_pallidum_left="fslmaths $ASEG_nii -thr 13 -uthr 13 -bin $PALLIDUMMASK_LEFT"
+CMD_dilate_pallidum_left="fslmaths $PALLIDUMMASK_LEFT -dilM -bin $PALLIDUMMASK_LEFT"
+CMD_create_pallidum_right="fslmaths $ASEG_nii -thr 52 -uthr 52 -bin $PALLIDUMMASK_RIGHT"
+CMD_dilate_pallidum_right="fslmaths $PALLIDUMMASK_RIGHT -dilM -bin $PALLIDUMMASK_RIGHT"
+CMD_erode_ventriclemask="fslmaths $VENTRICLEMASK_T1 -ero $VENTRICLEMASK_eroded"
+CMD_new_brainmask="fslmaths $T1_MASK -sub $RIBBONMASK -sub $CCMASK -sub $CAUDATEMASK_LEFT -sub $CAUDATEMASK_RIGHT -sub $PUTAMENMASK_LEFT -sub $PUTAMENMASK_RIGHT -sub $PALLIDUMMASK_LEFT -sub $PALLIDUMMASK_RIGHT -sub $VENTRICLEMASK_eroded $BRAINWITHOUTRIBBON_MASK"
 CMD_final_mask="fslmaths $BRAINWITHOUTRIBBON_MASK -mul $VENTRICLEWMWMHMASK $BRAINWITHOUTRIBBON_MASK"
 CMD_final_mask_in_FLAIR="antsApplyTransforms -i $BRAINWITHOUTRIBBON_MASK -r $FLAIR -t $T1_TO_FLAIR_WARP -o $BRAINWITHOUTRIBBON_MASK_FLAIR"
 CMD_BINARIZE_FINAL_MASK_FLAIR="fslmaths $BRAINWITHOUTRIBBON_MASK_FLAIR -bin $BRAINWITHOUTRIBBON_MASK_FLAIR"
 
-
-if [ ! -f $BRAINWITHOUTRIBBON_MASK_FLAIR ]; then
-
 # Execute 
-    $singularity_freesurfer /bin/bash -c "$CMD_prepare_wmmask; $CMD_convert_wmmask"
-    $singularity_fsl /bin/bash -c "$CMD_create_wmmask_right; $CMD_create_wmmask_left; $CMD_merge_wmmasks; $CMD_create_freesurferwmh_mask; $CMD_create_ventriclemask_right; $CMD_create_ventriclemask_left; $CMD_merge_ventriclemasks; $CMD_create_ventriclewmmask; $CMD_create_ribbonmask_right; $CMD_create_ribbonmask_left; $CMD_merge_ribbonmasks; $CMD_threshold_ribbonmask; $CMD_threshold_ribbonmaskagain; $CMD_create_cc; $CMD_dilate_cc; $CMD_new_brainmask; $CMD_final_mask"
-    $singularity_mrtrix /bin/bash -c "$CMD_final_mask_in_FLAIR; $CMD_BINARIZE_FINAL_MASK_FLAIR"
-
-fi 
+$singularity_freesurfer /bin/bash -c "$CMD_prepare_wmmask; $CMD_convert_wmmask"
+$singularity_fsl /bin/bash -c "$CMD_create_wmmask_right; $CMD_create_wmmask_left; $CMD_merge_wmmasks; $CMD_create_freesurferwmh_mask; $CMD_create_ventriclemask_right; $CMD_create_ventriclemask_left; $CMD_merge_ventriclemasks; $CMD_create_ventriclewmmask; $CMD_create_ribbonmask_right; $CMD_create_ribbonmask_left; $CMD_merge_ribbonmasks; $CMD_threshold_ribbonmask; $CMD_threshold_ribbonmaskagain; $CMD_create_cc; $CMD_dilate_cc; $CMD_create_caudate_left; $CMD_dilate_caudate_left; $CMD_create_caudate_right; $CMD_dilate_caudate_right; $CMD_create_putamen_left; $CMD_dilate_putamen_left; $CMD_create_putamen_right; $CMD_dilate_putamen_right; $CMD_create_pallidum_left; $CMD_dilate_pallidum_left; $CMD_create_pallidum_right; $CMD_dilate_pallidum_right; $CMD_erode_ventriclemask; $CMD_new_brainmask; $CMD_final_mask"
+$singularity_mrtrix /bin/bash -c "$CMD_final_mask_in_FLAIR; $CMD_BINARIZE_FINAL_MASK_FLAIR"
 
 ###############################################################################################################################################################
 # create distancemap
