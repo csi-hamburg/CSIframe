@@ -68,6 +68,7 @@ singularity_tractseg="singularity run --cleanenv --userns \
     -B $TMP_DIR/:/tmp \
     -B $TMP_IN:/tmp_in \
     -B $TMP_OUT:/tmp_out \
+    -B $PIPELINE_DIR:/home \
     $ENV_DIR/$container_tractseg" 
 
 parallel="parallel --ungroup --delay 0.2 -j16 --joblog $CODE_DIR/log/parallel_runtask.log"
@@ -100,8 +101,8 @@ CMD_MRTRANSFORM="mrtransform $DWI_MASK_UPSAMPLED -warp $SUB2TEMP_WARP -interp ne
 
 # Execution
 #########################
-#$parallel "$singularity_mrtrix3tissue $CMD_MRREGISTER" ::: ${input_subject_array[@]}
-#$parallel "$singularity_mrtrix3tissue $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3tissue $CMD_MRREGISTER" ::: ${input_subject_array[@]}
+$parallel "$singularity_mrtrix3tissue $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
 
 
 #########################
@@ -232,6 +233,7 @@ TRACTSEG_OUT_DIR=$TRACTSEG_DIR/tractseg_output/
 #########################
 FOD_TEMPLATE="$FBA_GROUP_DIR/template/wmfod_template.mif"
 TRACTOGRAM_SIFT="$FBA_GROUP_DIR/template/template_tractogram_20_million_sift.tck"
+FIXELMASK_FINAL="$FBA_GROUP_DIR/fixelmask/06_fixelmask_final"
 
 # Output
 #########################

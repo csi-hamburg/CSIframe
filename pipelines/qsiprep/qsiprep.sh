@@ -52,8 +52,7 @@ CMD="
    --skip-bids-validation \
    --use-syn-sdc \
    --force-syn \
-   --output-space T1w template \
-   --template MNI152NLin2009cAsym \
+   --output-space T1w \
    --nthreads $SLURM_CPUS_PER_TASK \
    --omp-nthreads $OMP_NTHREADS \
    --mem_mb $MEM_MB \
