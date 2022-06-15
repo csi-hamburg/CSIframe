@@ -31,7 +31,8 @@ module load parallel
 
 FBA_DIR=$DATA_DIR/fba
 FBA_GROUP_DIR=$FBA_DIR/derivatives; [ ! -d $FBA_GROUP_DIR ] && mkdir -p $FBA_GROUP_DIR
-TEMPLATE_SUBJECTS_TXT=$FBA_DIR/sourcedata/template_subjects.txt
+[ ! -d $FBA_GROUP_DIR/template ] && mkdir -p $FBA_GROUP_DIR/template
+TEMPLATE_SUBJECTS_TXT=$FBA_GROUP_DIR/template/template_subjects.txt
 TEMPLATE_RANDOM_SUBJECTS_TXT=$FBA_DIR/sourcedata/random_template_subjects.txt
 export SINGULARITYENV_MRTRIX_TMPFILE_DIR=/tmp
 

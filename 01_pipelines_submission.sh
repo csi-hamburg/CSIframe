@@ -29,8 +29,8 @@ export PIPELINE_SUFFIX=""
 
 # Define session to process
 echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
-if [[ "aslprep fmriprep mriqc qsiprep smriprep" == *"$PIPELINE"* ]]; then
-	echo "aslprep, fmriprep, mriqc, qsiprep and smriprep do not require session input"
+if [[ "aslprep fmriprep mriqc qsiprep smriprep statistics" == *"$PIPELINE"* ]]; then
+	echo "aslprep, fmriprep, mriqc, qsiprep, smriprep and statistics do not require session input"
 else 
 	echo "Which session do you want to process?"
 	[ -d $BIDS_DIR ] && echo "Choose from: $(ls $DATA_DIR/raw_bids/sub-*/* -d | xargs -n 1 basename | sort | uniq | cut -d "-" -f 2 | tr '\n' ' ') $([[ "bidsify freesurfer" == *"$PIPELINE"* ]] && echo -e "all")"
@@ -188,12 +188,12 @@ elif [ $PIPELINE == "fmriprep" ];then
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Please enter specific templates if you want to use them."
-	echo "Choose from tested adult templates (fsnative fsaverage MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
+	echo "Choose from tested adult templates (fsnative fsaverage fsaverage5 MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
 	echo "or infant templates (MNIPediatricAsym:cohort-1:res-native)"
-	echo "Enter nothing to keep defaults (fsnative fsaverage MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
+	echo "Enter nothing to keep defaults (fsnative fsaverage fsaverage5 MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
 	read OUTPUT_SPACES; export OUTPUT_SPACES
 
-	[ -z $OUTPUT_SPACES ] && export OUTPUT_SPACES="fsnative fsaverage MNI152NLin6Asym MNI152NLin2009cAsym T1w func"
+	[ -z $OUTPUT_SPACES ] && export OUTPUT_SPACES="fsnative fsaverage fsaverage5 MNI152NLin6Asym MNI152NLin2009cAsym T1w func"
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '--anat-only'"
@@ -431,22 +431,24 @@ elif [ $PIPELINE == "wmh" ];then
 	export ANALYSIS_LEVEL=subject
 	partition_default="std"
 
-	echo "Which ANALYSIS PART do you want to perform? currently available are: 01_prep / 02_segment / 03_combine / 04_postproc / eval"
+	echo "Which ANALYSIS PART do you want to perform? currently available are: 01_prep / 02_segment / 03_combine / 04_postproc_define_subs / 04_postproc / eval / determine_thresh / threshold_finder_01 / threshold_finder_02 "
 	read WMH_LEVEL
 	export PIPELINE_SUFFIX=_${WMH_LEVEL}
 
-	if [ $WMH_LEVEL == "_01_prep" ]; then
+	if [ $WMH_LEVEL == "01_prep" ]; then
 
-		batch_time="04:00:00"
+		batch_time_default="05:00:00"
+		export SUBJS_PER_NODE=32
+		export ANALYSIS_LEVEL=subject
 
-	elif [ $WMH_LEVEL == "_02_segment" ]; then
+	elif [ $WMH_LEVEL == "02_segment" ]; then
 	
-		echo "Which SEGMENTATION ALGORITHM do you want to use? currently available: antsrnet / bianca / lga / lpa / samseg"
+		echo "Which SEGMENTATION ALGORITHM do you want to use? currently available: antsrnet / bianca / LOCATE / lga / lpa / samseg"
 		read ALGORITHM; export ALGORITHM
 
 		if [ $ALGORITHM == "samseg" ]; then
 
-			batch_time="03:00:00"
+			batch_time_default="03:30:00"
 			export SUBJS_PER_NODE=8
 
 			echo "this algorithm does not recommend any bias-correction. Automatically set to NO."
@@ -454,26 +456,66 @@ elif [ $PIPELINE == "wmh" ];then
 		
 		elif [ $ALGORITHM == "lga" ] || [ $ALGORITHM == "lpa" ]; then
 
-			batch_time="02:00:00"
+			batch_time_default="01:00:00"
 			export SUBJS_PER_NODE=8
 
 			echo "this algorithm does not recommend any bias-correction. Automatically set to NO."
 			BIASCORR=n; export BIASCORR
 
-		elif [ $ALGORITHM == "bianca" ] || [ $ALGORITHM == "antsrnet" ]; then
+		elif [ $ALGORITHM == "antsrnet" ]; then
 
-			batch_time="01:00:00"
-
+			batch_time_default="01:00:00"
 			echo "do you want to perform bias-correction on the FLAIR image? (y/n)"
 			read BIASCORR; export BIASCORR
 
+		elif [ $ALGORITHM == "bianca" ]; then
+
+			echo "because the data are training data, no bias correction happened. Automatically set to NO."
+			BIASCORR=n; export BIASCORR
+
+			echo "Do you want to train bianca or test bianca? ( training / validation / testing ) \
+			Note: for training, you need manual masks. For testing, you either need a classifier created with TRAINING or train first."
+			read BIANCA_LEVEL; export BIANCA_LEVEL
+
+			[ $BIANCA_LEVEL == training ] && export SUBJS_PER_NODE=$subj_array_length
+			[ $BIANCA_LEVEL == training ] && export ANALYSIS_LEVEL=group
+			[ $BIANCA_LEVEL == training ] && batch_time_default="24:00:00"
+			[ $BIANCA_LEVEL == validation ] && export SUBJS_PER_NODE=16
+			[ $BIANCA_LEVEL == validation ] && export ANALYSIS_LEVEL=subject
+			[ $BIANCA_LEVEL == validation ] && batch_time_default="05:30:00"
+			[ $BIANCA_LEVEL == testing ] && export SUBJS_PER_NODE=16
+			[ $BIANCA_LEVEL == testing ] && export ANALYSIS_LEVEL=subject
+			[ $BIANCA_LEVEL == testing ] && batch_time_default="05:30:00"
+
+		elif [ $ALGORITHM == "LOCATE" ]; then
+
+			batch_time_default="00:30:00"
+			echo "because the data are training data, no bias correction happened. Automatically set to NO."
+			BIASCORR=n; export BIASCORR
+
+			echo "Which step of LOCATE should be run? (training / validation (segmentation of training set) / testing) \
+			Note: for validation and training, you need manual masks. \
+			In addition: please run training before you start validation or testing."
+			read LOCATE_LEVEL; export LOCATE_LEVEL
+
+			[ $LOCATE_LEVEL == testing ] && export SUBJS_PER_NODE=16
+			[ $LOCATE_LEVEL == testing ] && export ANALYSIS_LEVEL=subject
+			[ $LOCATE_LEVEL == testing ] && batch_time_default="05:00:00"
+			[ $LOCATE_LEVEL == training ] && export SUBJS_PER_NODE=$subj_array_length
+			[ $LOCATE_LEVEL == training ] && export ANALYSIS_LEVEL=group
+			[ $LOCATE_LEVEL == training ] && batch_time_default="2-00:00:00"
+			[ $LOCATE_LEVEL == validation ] && export SUBJS_PER_NODE=$subj_array_length
+			[ $LOCATE_LEVEL == validation ] && export ANALYSIS_LEVEL=group
+			[ $LOCATE_LEVEL == validation ] && batch_time_default="2-00:00:00"
+			
+
 		fi
 
-	elif [ $WMH_LEVEL == "_03_combine" ]; then
+	elif [ $WMH_LEVEL == "03_combine" ]; then
 
-		batch_time="00:02:00"
+		batch_time_default="00:02:00"
 	
-		echo "this script combines the segmented masks of different algorithms. not more than two lesion masks can be combined, sorry."
+		echo "this script combines the segmented masks of different algorithms."
 		echo "which is the first algorithm? currently available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
 		read ALGORITHM1; export ALGORITHM1
 
@@ -482,38 +524,216 @@ elif [ $PIPELINE == "wmh" ];then
 		
 		[ $ALGORITHM1 == $ALGORITHM2 ] && echo "$ALGORITHM1 == $ALGORITHM2 ... stupid" && exit 1
 
-	elif [ $WMH_LEVEL == "_eval" ]; then 
+	elif [ $WMH_LEVEL == "04_postproc_define_subs" ]; then 
 
-		batch_time="01:00:00"
-		echo "which output do you want to evaluate? Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)" 
+		INTERACTIVE==y
+		SUBJS_PER_NODE=400 # DO NOT CHANGE !
+		length=($(ls $BIDS_DIR/sub-* -d | xargs -n 1 basename | wc -l))
+		number_of_scripts=$(echo "scale=2; $length/$SUBJS_PER_NODE" | bc)
+		number_of_scripts_rounded=$(echo $number_of_scripts | awk '{print ($0-int($0)>0)?int($0)+1:int($0)}')
+		DERIVATIVE_dir=$DATA_DIR/$PIPELINE/derivatives
+		[ ! -d $DERIVATIVE_dir ] && mkdir $DERIVATIVE_dir
+
+		for num in $(seq 1 $number_of_scripts_rounded); do
+    		start=$(($num * $SUBJS_PER_NODE))
+    		[ $start == 1 ] && echo $(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename | head -n $start ) > $DERIVATIVE_dir/sublist_${num}.csv
+    		[ $start != 1 ] && echo $(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename | head -n $start | tail -n $SUBJS_PER_NODE) > $DERIVATIVE_dir/sublist_${num}.csv
+
+		done
+
+		exit 1
+
+	elif [ $WMH_LEVEL == "04_postproc" ]; then 
+
+		export sublist=${subj_array[@]}
+		export SUBJS_PER_NODE=400 # DO NOT CHANGE!
+		export ANALYSIS_LEVEL=group
+		batch_time_default="2-00:00:00"
+
+		[ $subj_array_length -gt $SUBJS_PER_NODE ] && echo "please define a subject list! subject lists are in $PIPELINE/derivatives or can be created with the option: 04_postproc_define_subs"
+		[ $subj_array_length -gt $SUBJS_PER_NODE ] && exit 1
+
+		echo "Which algorithm do you want to evaluate? Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
+		read ALGORITHM; export ALGORITHM
+		
+	elif [ $WMH_LEVEL == "eval" ]; then 
+
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time_default="01:00:00"
+
+		echo "This script evaluates the segmented masks of different algorithms."
+		echo "Which algorithm do you want to evaluate? Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
 		read ALGORITHM; export ALGORITHM
 
+	elif [ $WMH_LEVEL == "determine_thresh" ]; then 
 
-	elif [ $WMH_LEVEL == "_04_postproc" ]; then 
+		echo "which analysis level you want to perform? possible answers: subject / group. Please execute subject before group. Thx!"
+		read ANALYSIS_LEVEL; export ANALYSIS_LEVEL
 
-		batch_time="00:05:00"
-		echo "which output do you want to evaluate? Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)" 
-		read ALGORITHM; export ALGORITHM
+		export SUBJS_PER_NODE=8
+		batch_time_default="01:00:00"
+		[ $ANALYSIS_LEVEL == "group" ] && export SUBJS_PER_NODE=$subj_array_length
+
+	elif [ $WMH_LEVEL == "threshold_finder_01" ]; then 
+
+		echo "Do you want to threshold masks of a single algorithm (then answer with 'single'), or do you want to threshold combined masks or multiple algorithms (then answer with 'multiple')?"
+		read ALGORITHM_COMBI; export ALGORITHM_COMBI
+
+		if [ $ALGORITHM_COMBI == "multiple" ]; then 
+
+			echo "which is the first algorithm?"
+			#"currently available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
+			read ALGORITHM1; export ALGORITHM1
+
+			echo "which is the second algorithm? please do not name the same algorithm twice." 
+			#"available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
+			read ALGORITHM2; export ALGORITHM2
+		
+			[ $ALGORITHM1 == $ALGORITHM2 ] && echo "$ALGORITHM1 == $ALGORITHM2 ... stupid" && exit 1
+
+		elif [ $ALGORITHM_COMBI == "single" ]; then 
+
+			echo "which algorithm do you want to find a threshold for? currently available: antsrnet / antsrnetbias / bianca / lga / lpa / samseg ."
+			read ALGORITHM; export ALGORITHM
+
+		fi
+
+		export ANALYSIS_LEVEL=group
+		[ $ALGORITHM_COMBI == "single" ] && batch_time_default="01:00:00"
+		[ $ALGORITHM_COMBI == "multiple" ] && batch_time_default="02:30:00"
+		export SUBJS_PER_NODE=8
+
+	elif [ $WMH_LEVEL == "threshold_finder_02" ]; then 
+
+		echo "Do you want to threshold masks of a single algorithm (then answer with 'single'), or do you want to threshold combined masks or multiple algorithms (then answer with 'multiple')?"
+		read ALGORITHM_COMBI; export ALGORITHM_COMBI
+
+		if [ $ALGORITHM_COMBI == "multiple" ]; then 
+
+			echo "which is the first algorithm?"
+			#"currently available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
+			read ALGORITHM1; export ALGORITHM1
+
+			echo "which is the second algorithm? please do not name the same algorithm twice. "
+			#"available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
+			read ALGORITHM2; export ALGORITHM2
+		
+			[ $ALGORITHM1 == $ALGORITHM2 ] && echo "$ALGORITHM1 == $ALGORITHM2 ... stupid" && exit 1
+
+		elif [ $ALGORITHM_COMBI == "single" ]; then 
+
+			echo "which algorithm do you want to find a threshold for? currently available: antsrnet / antsrnetbias / bianca / lga / lpa / samseg ."
+			read ALGORITHM; export ALGORITHM
+
+		fi
+
+		export ANALYSIS_LEVEL=group
+		batch_time_default="06:00:00"
+		export SUBJS_PER_NODE=$subj_array_length
+
+	fi
+
+elif [ $PIPELINE == "lesionanalysis" ];then
+	
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Which part of the pipeline would you like to run? (1/2)"
+	read LA_PART; export LA_PART
+	export PIPELINE_SUFFIX=_${LA_PART}
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Please define the original image space of the lesion mask(s)."
+	echo "Currently available: 'T1w'."
+	read ORIG_SPACE; export ORIG_SPACE
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Please define the space in which lesion masks and shells are to be read out."
+	echo "Currently available: 'dwi'"
+	echo "Note: qsiprep output is expected. Therefore 'dwi' refers to T1w-space and not the original dwi-space!"
+	read READOUT_SPACE; export READOUT_SPACE
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Would you like to flip lesion mask / read out flipped lesion (shells)? (yes/no)"
+	read FLIP; export MODIFIER=$FLIP
+	
+	if [ $LA_PART == "1" ]; then
+
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+		echo "Please provide absolute path to directory with subject directories containing the lesion masks."
+		echo "Note: the expected naming convention of files is as follows <LESION_DIR>/<sub>/<ses>/<anat/dwi/perf/func>/<sub>_<ses>_<space>_desc-lesion_mask.nii.gz"
+		read LESION_DIR; export LESION_DIR
+
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+		echo "Please specify which output of anatomical preprocessing shall be used (fmriprep/qsiprep)."
+		echo "Note: it is assumed that freesurfer (recon-all) was run through the specified pipeline and therefore T1w-spaces match."
+		read ANAT_PREPROC; export ANAT_PREPROC
+
+		export SUBJS_PER_NODE=16
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="01:00:00"
+		partition_default="std"
+	
+	elif [ $LA_PART == "2" ]; then
+
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+		echo "On which level would you like to run Part 2? (subject/group)"
+		read ANALYSIS_LEVEL; export ANALYSIS_LEVEL
+
+		if [ $ANALYSIS_LEVEL == "subject" ]; then
+
+			export SUBJS_PER_NODE=16
+			export ANALYSIS_LEVEL=subject
+			batch_time_default="01:00:00"
+			partition_default="std"
+
+		elif [ $ANALYSIS_LEVEL == "group" ]; then
+
+			export SUBJS_PER_NODE=$subj_array_length
+			export ANALYSIS_LEVEL=group
+			batch_time_default="00:30:00"
+			partition_default="std"
+
+		fi
+	
+	else
+
+	 	echo "Part $LA_PART for $PIPELINE pipeline is not supported."
+	 	exit 0
 
 	fi
 
 elif [ $PIPELINE == "statistics" ];then
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
-	echo "Which method do you want to perform? (cfe)"
+	echo "Which method do you want to perform? (cfe/tfce_tbss/nbs)"
 	read STAT_METHOD; export STAT_METHOD
 	export PIPELINE_SUFFIX=_${STAT_METHOD}
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"		
-	echo "Define hypothesis short (-> becomes name of subdirectory in data/statistics), e.g. 'cfe_group_comparison_postcovid_controls' or 'tfce_linear_relationship_fa_tmtb'"
+	echo "Define hypothesis short (-> has to be name of subdirectory in data/statistics)"
+	echo $(ls $DATA_DIR/statistics/* -d -1 | xargs -n 1 basename | sort | uniq ) | tr " " "\n"
 	read MODIFIER; export MODIFIER
 
 	if [ $STAT_METHOD == cfe ];then
 		
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time_default="04:00:00"
+		batch_time_default="1-00:00:00"
 		partition_default="std"
+
+	elif [ $STAT_METHOD == tfce_tbss ];then
+	
+	export SUBJS_PER_NODE=$subj_array_length
+	export ANALYSIS_LEVEL=group
+	batch_time_default="1-00:00:00"
+	partition_default="big"
+
+	elif [ $STAT_METHOD == nbs ];then
+	
+	export SUBJS_PER_NODE=$subj_array_length
+	export ANALYSIS_LEVEL=group
+	batch_time_default="1-00:00:00"
+	partition_default="big"
 
 	fi
 else
@@ -522,7 +742,7 @@ else
 	exit
 fi
 
-if [ $INTERACTIVE != y ];then
+if [ $INTERACTIVE != y ]; then
 
 	# Set batch time to allocate and partition
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
@@ -538,7 +758,7 @@ if [ $INTERACTIVE != y ];then
 	[ -z $partition ] && partition=$partition_default
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"
-	echo "Do you want to provide additional flags for sbatch submission? e.g. '--hold' or '--dependency afterok:job_id' or '--begin=16:00'"
+	echo "Do you want to provide additional flags for sbatch submission? e.g. '--hold' or '--dependency=afterok:job_id' or '--begin=16:00'"
 	echo "Leave empty to choose default"
 	read optional_slurm_flags
 

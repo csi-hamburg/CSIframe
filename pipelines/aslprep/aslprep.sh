@@ -22,7 +22,7 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 # Define environment
 ####################
-
+ENV_DIR=$PROJ_DIR/_envs
 container_aslprep=aslprep-0.2.7
 singularity_aslprep="singularity run --cleanenv --userns \
     -B $PROJ_DIR \
@@ -48,7 +48,7 @@ CMD="
    /tmp_in /tmp_out participant \
    --participant-label $1 \
    --work-dir /tmp \
-   --fs-license-file envs/freesurfer_license.txt \
+   --fs-license-file _envs/freesurfer_license.txt \
    --skip-bids-validation \
    --nthreads $SLURM_CPUS_PER_TASK \
    --omp-nthreads $OMP_NTHREADS \

@@ -17,16 +17,14 @@ def infotodict(seqinfo):
     # The "data" key creates sequential numbers which can be for naming sequences.
     # This is especially valuable if you run the same sequence multiple times at the scanner.
     t1w = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_T1w')
-    t2w = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_T2w')
     flair = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_FLAIR')
     dwi = create_key('sub-{subject}/{session}/dwi/sub-{subject}_{session}_acq-AP_dwi')
-    func_rest = create_key('sub-{subject}/{session}/func/sub-{subject}_{session}_task-rest_bold')
 
     # Section 1b: This data dictionary (below) should be revised by the user.
     # It uses the variables defines above as keys.
     ##########################################################################
     # Enter a key in the dictionary for each key you created above in section 1.
-    info = {t1w: [], t2w: [], flair: [], dwi: [], func_rest: []} 
+    info = {t1w: [], flair: [], dwi: []} 
     last_run = len(seqinfo)
 
     # Section 2: These criteria should be revised by user.
@@ -38,14 +36,10 @@ def infotodict(seqinfo):
     # 1) An equivalent field "==" (e.g., good for checking dimensions)
     # 2) A field that includes a string (e.g., 'mprage' in s.protocol_name)
     for idx, s in enumerate(seqinfo):
-        if ('t1_mprage_cor_ND' == s.series_description):
+        if ('t1_mprage_cor_p2_iso_0.9_ND' == s.series_description):
             info[t1w].append(s.series_id)
-        if ('t2_space_cor_p4_iso_ND' == s.series_description) or ('t2_tse_tra_ND' == s.series_description):
-            info[t2w].append(s.series_id)
-        if ('t2_spc_da-fl_sag_ND' == s.series_description):
+        if ('t2_tirm_tra_dark-fluid' == s.series_description):
             info[flair].append(s.series_id)
-        if ('ep2d_diff_tra_DTI_DFC' == s.series_description) or ('ep2d_diff_tra_DTI_DFC_MIX' == s.series_description):
+        if ('ep2d_diff_tra_DTI_64no72_p2_monopolar_DFC_MIX' == s.series_description) or ('ep2d_diff_tra_DTI_72_p2_monopolar_DYNDIST_MIX' == s.series_description):
             info[dwi].append(s.series_id)
-        if ('ep2d_bold_restingstate_tra' == s.series_description):
-            info[func_rest].append(s.series_id)
     return info

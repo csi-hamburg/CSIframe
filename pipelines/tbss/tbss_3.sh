@@ -22,8 +22,12 @@
 # Get verbose outputs
 set -x
 
+# Turn off creation of core files
+ulimit -c 0
+
 # Define subject specific temporary directory on $SCRATCH_DIR
 export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
+TMP_IN=$TMP_DIR/input;                 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN
 TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 ###############################################################################
@@ -37,18 +41,18 @@ container_fsl=fsl-6.0.3
 singularity_fsl="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
-    -B $TMP_DIR/:/tmp \
-    -B $TMP_IN:/tmp_in \
-    -B $TMP_OUT:/tmp_out \
+    -B $TMP_DIR \
+    -B $TMP_IN \
+    -B $TMP_OUT \
     $ENV_DIR/$container_fsl"
 
 container_miniconda=miniconda-csi
 singularity_miniconda="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
-    -B $TMP_DIR/:/tmp \
-    -B $TMP_IN:/tmp_in \
-    -B $TMP_OUT:/tmp_out \
+    -B $TMP_DIR \
+    -B $TMP_IN \
+    -B $TMP_OUT \
     $ENV_DIR/$container_miniconda"
 
 # Set pipeline specific variables
@@ -77,6 +81,7 @@ echo "TBSS_DIR = $TBSS_DIR"
 
 FA_ERODED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-DTINoNeg_FA.nii.gz
 FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask.nii.gz
+#[ $TBSS_PIPELINE == "fixel" ] && FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-FAaveraged_desc-brain_mask.nii.gz
 FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA.nii.gz
 MEAN_FA_SKEL=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean_desc-DTINoNeg_FA.nii.gz
 SKEL_DIST=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-meanFA_desc-mask_distancemap.nii.gz
