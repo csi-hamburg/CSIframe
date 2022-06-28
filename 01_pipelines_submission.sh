@@ -669,8 +669,8 @@ elif [ $PIPELINE == "statistics" ];then
 		
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time_default="1-00:00:00"
-		partition_default="std"
+		batch_time_default="3-00:00:00"
+		partition_default="big"
 
 	elif [ $STAT_METHOD == tfce_tbss ];then
 	
@@ -684,7 +684,7 @@ elif [ $PIPELINE == "statistics" ];then
 	export SUBJS_PER_NODE=$subj_array_length
 	export ANALYSIS_LEVEL=group
 	batch_time_default="1-00:00:00"
-	partition_default="big"
+	partition_default="std"
 
 	fi
 else
