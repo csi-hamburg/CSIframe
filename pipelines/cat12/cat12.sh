@@ -8,7 +8,7 @@
 #   [pipelines which need to be run first]                                                                        #
 #       - none (optional 'wmh' for lesion filling -> change paths accordingly)                                    #
 #   [container]                                                                                                   #
-#       - mrtrix-3.0.2.sif (mrconvert for nii.gz-->.nii; cause strange things occur when using gunzip on hummel)  #
+#       - mrtrix-3.0.2.sif (mrconvert for nii.gz-->.nii; unexpected things occur when using hpc gunzip on nii.gz) #
 #       - cat12_standalone.sif                                                                                    #
 ###################################################################################################################
 
