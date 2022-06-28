@@ -3,11 +3,16 @@
 ###################################################################################################################
 # fMRI preprocessing (https://fmriprep.org/en/stable/)                                                            #
 #                                                                                                                 #
+# Internal documentation:                                                                                         #
+#   https://github.com/csi-hamburg/hummel_processing/wiki/Functional-MRI-Preprocessing                            #
+#                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [pipelines which need to be run first]                                                                        #
 #       - none                                                                                                    #
 #   [container]                                                                                                   #
-#       - fmriprep-20.2.6.sif                                                                                     #
+#       - fmriprep-21.0.2.sif                                                                                     #
+#                                                                                                                 #
+# Author: Marvin Petersen (m-petersen)                                                                            #
 ###################################################################################################################
 
 # Get verbose outputs
