@@ -437,7 +437,7 @@ elif [ $PIPELINE == "wmh" ];then
 
 	if [ $WMH_LEVEL == "01_prep" ]; then
 
-		batch_time_default="05:00:00"
+		batch_time_default="08:00:00"
 		export SUBJS_PER_NODE=32
 		export ANALYSIS_LEVEL=subject
 
@@ -527,7 +527,7 @@ elif [ $PIPELINE == "wmh" ];then
 	elif [ $WMH_LEVEL == "04_postproc_define_subs" ]; then 
 
 		INTERACTIVE==y
-		SUBJS_PER_NODE=400 # DO NOT CHANGE !
+		SUBJS_PER_NODE=100 # DO NOT CHANGE !
 		length=($(ls $BIDS_DIR/sub-* -d | xargs -n 1 basename | wc -l))
 		number_of_scripts=$(echo "scale=2; $length/$SUBJS_PER_NODE" | bc)
 		number_of_scripts_rounded=$(echo $number_of_scripts | awk '{print ($0-int($0)>0)?int($0)+1:int($0)}')
@@ -546,14 +546,15 @@ elif [ $PIPELINE == "wmh" ];then
 	elif [ $WMH_LEVEL == "04_postproc" ]; then 
 
 		export sublist=${subj_array[@]}
-		export SUBJS_PER_NODE=400 # DO NOT CHANGE!
+		export SUBJS_PER_NODE=100 # DO NOT CHANGE!
 		export ANALYSIS_LEVEL=group
 		batch_time_default="2-00:00:00"
 
 		[ $subj_array_length -gt $SUBJS_PER_NODE ] && echo "please define a subject list! subject lists are in $PIPELINE/derivatives or can be created with the option: 04_postproc_define_subs"
 		[ $subj_array_length -gt $SUBJS_PER_NODE ] && exit 1
 
-		echo "Which algorithm do you want to evaluate? Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
+		echo "Which algorithm do you want to evaluate?"
+		#echo "Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
 		read ALGORITHM; export ALGORITHM
 		
 	elif [ $WMH_LEVEL == "eval" ]; then 

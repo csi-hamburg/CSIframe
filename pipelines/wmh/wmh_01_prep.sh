@@ -248,34 +248,93 @@ $singularity_fsl /bin/bash -c "$CMD_create_wmmask_right; $CMD_create_wmmask_left
 $singularity_mrtrix /bin/bash -c "$CMD_final_mask_in_FLAIR; $CMD_BINARIZE_FINAL_MASK_FLAIR"
 
 ###############################################################################################################################################################
-# create distancemap
+# register output of masking game to T1 and MNI
 ###############################################################################################################################################################
-# Define inputs
-VENTRICLEMASK_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-ventricle_mask.nii.gz
+# Define inputs 
+WMMASK_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-wm_mask.nii.gz 
 FLAIR=$DATA_DIR/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_FLAIR.nii.gz
 T1_TO_FLAIR_WARP=$OUT_DIR/${1}_ses-${SESSION}_from-T1_to-FLAIR_Composite.h5
-T1_MASK_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
+MNI_TEMPLATE=$ENV_DIR/standard/tpl-MNI152NLin2009cAsym_res-01_desc-brain_T1w.nii.gz
+T1_TO_MNI_WARP=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_from-T1w_to-MNI152NLin2009cAsym_mode-image_xfm.h5
+VENTRICLEMASK_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-ventricle_mask.nii.gz
+T1_MASK=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-brain_mask.nii.gz
 
 # Define outputs
 VENTRICLEMASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-ventricle_mask.nii.gz
-DISTANCEMAP=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_distancemap.nii.gz
-WMMASK_peri=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmperi_mask.nii.gz
-WMMASK_deep=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmdeep_mask.nii.gz
+WMMASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wm_mask.nii.gz 
+WMMASK_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-wm_mask.nii.gz
+VENTRICLEMASK_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-ventricle_mask.nii.gz
+T1_MASK_IN_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-brain_mask.nii.gz
 
 # Define commands
 CMD_VENTRICLEMASK_TO_FLAIR="antsApplyTransforms -i $VENTRICLEMASK_T1 -r $FLAIR -t $T1_TO_FLAIR_WARP -o $VENTRICLEMASK_FLAIR"
 CMD_BINARIZE_VENTRICLEMASK_FLAIR="fslmaths $VENTRICLEMASK_FLAIR -bin $VENTRICLEMASK_FLAIR"
+CMD_WMMASK_TO_FLAIR="antsApplyTransforms -i $WMMASK_T1 -r $FLAIR -t $T1_TO_FLAIR_WARP -o $WMMASK_FLAIR"
+CMD_BINARIZE_WMMASK_FLAIR="fslmaths $WMMASK_FLAIR -bin $WMMASK_FLAIR"
+CMD_WMMASK_TO_MNI="antsApplyTransforms -i $WMMASK_T1 -r $MNI_TEMPLATE -t $T1_TO_MNI_WARP -o $WMMASK_MNI"
+CMD_BINARIZE_WMMASK_MNI="fslmaths $WMMASK_MNI -bin $WMMASK_MNI"
+CMD_VENTRICLEMASK_TO_MNI="antsApplyTransforms -i $VENTRICLEMASK_T1 -r $MNI_TEMPLATE -t $T1_TO_MNI_WARP -o $VENTRICLEMASK_MNI"
+CMD_BINARIZE_VENTRICLEMASK_MNI="fslmaths $VENTRICLEMASK_MNI -bin $VENTRICLEMASK_MNI"
+CMD_BRAINMASK_TO_MNI="antsApplyTransforms -d 3 -i $T1_MASK -r $MNI_TEMPLATE -t $T1_TO_MNI_WARP -o $T1_MASK_IN_MNI"
+CMD_BINARIZE_BRAINMASK_MNI="fslmaths $T1_MASK_IN_MNI -bin $T1_MASK_IN_MNI"
+
+# Execute
+$singularity_mrtrix /bin/bash -c "$CMD_VENTRICLEMASK_TO_FLAIR; $CMD_WMMASK_TO_FLAIR; $CMD_WMMASK_TO_MNI; $CMD_VENTRICLEMASK_TO_MNI; $CMD_BRAINMASK_TO_MNI"
+$singularity_fsl /bin/bash -c "$CMD_BINARIZE_VENTRICLEMASK_FLAIR; $CMD_BINARIZE_WMMASK_FLAIR; $CMD_BINARIZE_WMMASK_MNI; $CMD_BINARIZE_VENTRICLEMASK_MNI; $CMD_BINARIZE_BRAINMASK_MNI"
+
+
+
+###############################################################################################################################################################
+# create distancemap in FLAIR, T1 and MNI space
+###############################################################################################################################################################
+# Define inputs
+VENTRICLEMASK_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-ventricle_mask.nii.gz
+T1_MASK_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
+VENTRICLEMASK_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-ventricle_mask.nii.gz
+T1_MASK=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-brain_mask.nii.gz
+T1_MASK_IN_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-brain_mask.nii.gz
+
+# Define outputs
+DISTANCEMAP=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_distancemap.nii.gz
+DISTANCEMAP_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_distancemap.nii.gz
+DISTANCEMAP_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_distancemap.nii.gz
+WMMASK_peri=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmperi_mask.nii.gz
+WMMASK_deep=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmdeep_mask.nii.gz
+WMMASK_peri_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-wmperi_mask.nii.gz
+WMMASK_deep_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-wmdeep_mask.nii.gz
+WMMASK_peri_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-wmperi_mask.nii.gz
+WMMASK_deep_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-wmdeep_mask.nii.gz
+
+# Define commands
+# in FLAIR space
 CMD_create_distancemap="distancemap -i $VENTRICLEMASK_FLAIR -m $T1_MASK_IN_FLAIR -o $DISTANCEMAP"
 CMD_upperthreshold_distancemap="fslmaths $DISTANCEMAP -uthr 10 -bin $WMMASK_peri"
 CMD_make_peri_beautiful="fslmaths $WMMASK_peri -add $VENTRICLEMASK_FLAIR -bin $WMMASK_peri"
 CMD_threshold_distancemap="fslmaths $DISTANCEMAP -thr 10 -bin $WMMASK_deep"
+# in MNI space
+CMD_create_distancemap_MNI="distancemap -i $VENTRICLEMASK_MNI -m $T1_MASK_IN_MNI -o $DISTANCEMAP_MNI"
+CMD_upperthreshold_distancemap_MNI="fslmaths $DISTANCEMAP_MNI -uthr 10 -bin $WMMASK_peri_MNI"
+CMD_make_peri_beautiful_MNI="fslmaths $WMMASK_peri_MNI -add $VENTRICLEMASK_MNI -bin $WMMASK_peri_MNI"
+CMD_threshold_distancemap_MNI="fslmaths $DISTANCEMAP_MNI -thr 10 -bin $WMMASK_deep_MNI"
+# in T1 space
+CMD_create_distancemap_T1="distancemap -i $VENTRICLEMASK_T1 -m $T1_MASK -o $DISTANCEMAP_T1"
+CMD_upperthreshold_distancemap_T1="fslmaths $DISTANCEMAP_T1 -uthr 10 -bin $WMMASK_peri_T1"
+CMD_make_peri_beautiful_T1="fslmaths $WMMASK_peri_T1 -add $VENTRICLEMASK_T1 -bin $WMMASK_peri_T1"
+CMD_threshold_distancemap_T1="fslmaths $DISTANCEMAP_T1 -thr 10 -bin $WMMASK_deep_T1"
+
 
 # Execute 
 if [ ! -f $DISTANCEMAP ]; then
     
-    $singularity_mrtrix /bin/bash -c "$CMD_VENTRICLEMASK_TO_FLAIR"
-    $singularity_fsl /bin/bash -c "$CMD_BINARIZE_VENTRICLEMASK_FLAIR; $CMD_create_distancemap; $CMD_upperthreshold_distancemap; $CMD_make_peri_beautiful; $CMD_threshold_distancemap"
+    $singularity_fsl /bin/bash -c "$CMD_create_distancemap; $CMD_upperthreshold_distancemap; $CMD_make_peri_beautiful; $CMD_threshold_distancemap"
 
 fi
+
+[ ! -f $DISTANCEMAP_T1 ] && $singularity_fsl /bin/bash -c "$CMD_create_distancemap_T1"
+[ ! -f $DISTANCEMAP_MNI ] && $singularity_fsl /bin/bash -c "$CMD_create_distancemap_MNI"
+$singularity_fsl /bin/bash -c "$CMD_upperthreshold_distancemap_MNI; $CMD_make_peri_beautiful_MNI; $CMD_threshold_distancemap_MNI; $CMD_upperthreshold_distancemap_T1; $CMD_make_peri_beautiful_T1; $CMD_threshold_distancemap_T1"
+
+
+
 ###############################################################################################################################################################
 
