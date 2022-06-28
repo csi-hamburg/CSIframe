@@ -7,7 +7,7 @@
 #   [pipelines which need to be run first]                                                                        #
 #       - none                                                                                                    #
 #   [container]                                                                                                   #
-#       - qsiprep-0.14.2.sif                                                                                      #
+#       - qsiprep-0.15.3.sif                                                                                      #
 ###################################################################################################################
 
 # Get verbose outputs
