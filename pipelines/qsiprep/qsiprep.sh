@@ -3,6 +3,10 @@
 ###################################################################################################################
 # Diffusion prepocessing and structural connectome reconstruction (https://qsiprep.readthedocs.io/en/latest/)     #
 #                                                                                                                 #
+# Internal documentation:                                                                                         #
+#   https://github.com/csi-hamburg/hummel_processing/wiki/Diffusion-MRI-Preprocessing                             #
+#   https://github.com/csi-hamburg/hummel_processing/wiki/Structural-Connectome-Reconstruction                    #
+#                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [pipelines which need to be run first]                                                                        #
 #       - none                                                                                                    #
