@@ -24,7 +24,7 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 ##################################
 
 # Singularity container version and command
-container_qsiprep=qsiprep-0.14.2
+container_qsiprep=qsiprep-0.15.3
 singularity_qsiprep="singularity run --cleanenv --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
@@ -35,7 +35,9 @@ singularity_qsiprep="singularity run --cleanenv --userns \
 
 # To make I/O more efficient read/write outputs from/to $SCRATCH
 [ -d $TMP_IN ] && cp -rf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
-[ -d $TMP_OUT ] && mkdir -p $TMP_OUT/qsiprep $TMP_OUT/qsirecon
+[ -d $TMP_OUT ] && mkdir -p $TMP_OUT/qsiprep $TMP_OUT/qsirecon $TMP_OUT/freesurfer
+[ -f $DATA_DIR/freesurfer/$1/stats/aseg.stats ] && cp -rf $DATA_DIR/freesurfer/$1 $TMP_OUT/freesurfer
+
 
 # $MRTRIX_TMPFILE_DIR should be big and writable
 export MRTRIX_TMPFILE_DIR=/tmp
@@ -52,8 +54,7 @@ CMD="
    --skip-bids-validation \
    --use-syn-sdc \
    --force-syn \
-   --output-space T1w template \
-   --template MNI152NLin2009cAsym \
+   --output-space T1w \
    --nthreads $SLURM_CPUS_PER_TASK \
    --omp-nthreads $OMP_NTHREADS \
    --mem_mb $MEM_MB \
@@ -61,6 +62,7 @@ CMD="
    --unringing-method mrdegibbs \
    --skull-strip-template OASIS \
    --stop-on-first-crash \
+   --freesurfer-input /tmp_out/freesurfer \
    --output-resolution $OUTPUT_RESOLUTION \
    --fs-license-file envs/freesurfer_license.txt"
 [ ! -z $RECON ] && CMD="${CMD} --recon_input data/qsiprep/$1 --recon_spec $RECON"

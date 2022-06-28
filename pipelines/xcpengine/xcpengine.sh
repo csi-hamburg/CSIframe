@@ -51,7 +51,7 @@ if [ $MODIFIER == struc ];then
 
 elif [ $MODIFIER == fc_36pspkreg ];then
 
-   BOLD_IMG=$1/ses-$SESSION/func/${1}_ses-${SESSION}_task-rest_space-MNI152NLin6Asym_desc-preproc_bold.nii.gz
+   BOLD_IMG=$1/ses-$SESSION/func/${1}_ses-${SESSION}_task-rest_space-MNI152NLin2009cAsym_desc-preproc_bold.nii.gz
    echo "id0,img" > $COHORT_FILE
    echo "$1,$BOLD_IMG" >> $COHORT_FILE
 
@@ -59,7 +59,7 @@ elif [ $MODIFIER == fc_36pspkreg ];then
 
 elif [ $MODIFIER == fc_aromagsr ];then
 
-   BOLD_IMG=$1/ses-$SESSION/func/${1}_ses-${SESSION}_task-rest_space-MNI152NLin6Asym_desc-preproc_bold.nii.gz
+   BOLD_IMG=$1/ses-$SESSION/func/${1}_ses-${SESSION}_task-rest_space-MNI152NLin2009cAsym_desc-preproc_bold.nii.gz
    echo "id0,img" > $COHORT_FILE
    echo "$1,$BOLD_IMG" >> $COHORT_FILE
 
@@ -75,7 +75,7 @@ CMD="
    -i /tmp \
    -r /tmp_in \
    -o /tmp_out/xcpengine \
-   -t 1"
+   -t 3"
 $CMD
 
 cp -ruvf $TMP_OUT/xcpengine $DATA_DIR

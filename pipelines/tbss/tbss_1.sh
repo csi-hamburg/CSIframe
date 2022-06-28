@@ -1,8 +1,10 @@
 #!/bin/bash
 
-###########################################################
-# FSL TBSS implementation for parallelized job submission #
-###########################################################
+############################################################
+# FSL TBSS implementation for parallelized job submission  #
+#                                                          #
+# PART 1 - registration, eroding and zeroing of end slices #
+############################################################
 
 ###############################################################################
 # Pipeline specific dependencies:                                             #
@@ -10,14 +12,20 @@
 #       - qsiprep                                                             #
 #       - freewater                                                           #
 #       - fba (only for fixel branch)                                         #
-#   [container]                                                               #
+#   [containers]                                                              #
 #       - fsl-6.0.3                                                           #  
 #       - mrtrix3-3.0.2 (only for fixel branch)                               #
 ###############################################################################
 
-############################################################
-# PART 1 - registration, eroding and zeroing of end slices #
-############################################################
+# Get verbose outputs
+set -x
+
+# Define subject specific temporary directory on $SCRATCH_DIR
+export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
+TMP_IN=$TMP_DIR/input;                 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN
+TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
+
+###################################################################################################################
 
 # Setup environment
 ###################
@@ -27,20 +35,21 @@ container_fsl=fsl-6.0.3
 container_mrtrix3=mrtrix3-3.0.2      
 export SINGULARITYENV_MRTRIX_TMPFILE_DIR=$TMP_DIR
 
-singularity_mrtrix3="singularity run --cleanenv --userns \
-    -B . \
+singularity_mrtrix3="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
-    -B $SCRATCH_DIR:/tmp \
     -B $(readlink -f $ENV_DIR) \
+    -B $TMP_DIR/:/tmp \
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
     $ENV_DIR/$container_mrtrix3" 
 
-singularity_fsl="singularity run --cleanenv --userns \
-    -B . \
+singularity_fsl="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
-    -B $SCRATCH_DIR:/tmp \
     -B $(readlink -f $ENV_DIR) \
+    -B $TMP_DIR/:/tmp \
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
     $ENV_DIR/$container_fsl" 
-
 
 # Define input/output directories
 #################################
@@ -84,6 +93,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
 
     # Set pipeline specific variables
     
+    SPACE=MNI
     MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW"
     
@@ -94,7 +104,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
     echo "Processing $1"
     echo ""
 
-    if [ -f $FW_DIR/${1}_ses-${SESSION}_space-${SPACE}_desc-DTINoNeg_FA.nii.gz ]; then 
+    if [ -f $FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz ]; then 
 
         mkdir -p $TBSS_SUBDIR
         
@@ -119,7 +129,6 @@ if [ $TBSS_PIPELINE == "mni" ]; then
         echo ""
 
         INPUT_DIR=$FW_DIR
-        SPACE=MNI
 
     elif [ -f $FW_DIR/${1}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz ] && [ ! -f $FW_DIR/${1}_ses-${SESSION}_space-MNI_desc-DTINoNeg_FA.nii.gz ]; then
         
@@ -162,7 +171,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
 
         # Commands
         
-        CMD_TEMP2MNI="
+        CMD_FA2MNI="
         antsRegistration \
             --output [ $TBSS_SUBDIR/${1}_ses-${SESSION}_desc-dwi_from-T1w_to-MNI_, $FA_IMAGE ] \
             --collapse-output-transforms 0 \
@@ -261,7 +270,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
 
         # Execution
     
-        $singularity_mrtrix3 $CMD_TEMP2MNI
+        $singularity_mrtrix3 $CMD_FA2MNI
         $singularity_mrtrix3 $CMD_FAt2MNI
         $singularity_mrtrix3 $CMD_AD2MNI
         $singularity_mrtrix3 $CMD_ADt2MNI
@@ -295,7 +304,7 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
     ##############
 
     echo "Running fixel TBSS pipeline ..."
-
+    
     # Set pipeline specific variables
     #################################
 
@@ -316,7 +325,9 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
         echo ""
         echo "Registration of $1 to FOD template has been performed already. Starting to erode and zero end slices of $1 ..."
         echo ""
-
+        
+        mkdir -p $TBSS_SUBDIR
+       
     else
 
         echo ""

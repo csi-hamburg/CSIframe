@@ -22,7 +22,7 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 # Define environment
 ####################
-
+ENV_DIR=$PROJ_DIR/_envs
 container_aslprep=aslprep-0.2.7
 singularity_aslprep="singularity run --cleanenv --userns \
     -B $PROJ_DIR \
@@ -33,7 +33,7 @@ singularity_aslprep="singularity run --cleanenv --userns \
     $ENV_DIR/$container_aslprep" 
 
 # To make I/O more efficient read/write outputs from/to $SCRATCH
-[ -d $TMP_IN ] && cp -rf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
+[ -d $TMP_IN ] && cp -rvf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
 [ -d $TMP_OUT ] && mkdir -p $TMP_OUT/aslprep
 
 ###########
@@ -48,7 +48,7 @@ CMD="
    /tmp_in /tmp_out participant \
    --participant-label $1 \
    --work-dir /tmp \
-   --fs-license-file envs/freesurfer_license.txt
+   --fs-license-file _envs/freesurfer_license.txt \
    --skip-bids-validation \
    --nthreads $SLURM_CPUS_PER_TASK \
    --omp-nthreads $OMP_NTHREADS \
@@ -56,16 +56,19 @@ CMD="
    --ignore fieldmaps slicetiming sbref \
    --output-spaces asl T1w MNI152NLin2009cAsym \
    --asl2t1w-init register \
-   --asl2tw-dof 6 \
-   --m0_scale 0.1 \
+   --asl2t1w-dof 6 \
+   --force-bbr
+   --use-syn-sdc
+   --force-syn
+   --m0_scale 10 \
    --scorescrub \
    --basil \
-   --use-syn-sdc \
-   --skull-strip-template OASIS \
-   --skull-strip-fixed-seed 42
-   --skull-strip-t1w force
-   --stop-on-first-crash \
-   --notrack"
+   --skull-strip-template OASIS30ANTs \
+   --skull-strip-fixed-seed \
+   --random-seed 42 \
+   --skull-strip-t1w force \
+   --notrack \
+   --verbose"
 
 # Execute command
 #################
@@ -75,4 +78,4 @@ eval $CMD
 # Copy outputs to $DATA_DIR
 ###########################
 
-cp -ruvf $TMP_OUT/aslprep $DATA_DIR/aslprep
+cp -ruvf $TMP_OUT/aslprep $DATA_DIR/

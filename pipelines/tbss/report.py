@@ -1,3 +1,4 @@
+from mmap import PAGESIZE
 import os
 import sys
 import glob
@@ -21,6 +22,7 @@ html += "</p><br>"
 
 html += f"<img src='{histfig}'/>"
 html += f"<img src='{boxfig}'/><br>"
+html += "<br>"
 
 overlay_paths=glob.glob(f'{tbss_dir}/*/ses-{ses}/dwi/*_ses-{ses}_space-{space}_desc-skeleton_{mod}_overlay.png')
 
@@ -28,8 +30,10 @@ for overlay in overlay_paths:
     
     sub = overlay.split("/")[-1].split("_")[0]
 
+    html += '<p style="font-size:24px">'
     html += f"<b>{mod} skeleton of {sub} for ses-{ses} in {space} space</b>"
-    html += f"<img src='{overlay}'/><br>\n"
+    html += "</p><br>"
+    html += f"<img src='{overlay}'/><br>"
 
 with open(f"{report}", "w") as outputfile:
 	outputfile.write(html)
@@ -41,4 +45,4 @@ report_pdf = report.split(".")[0]
 
 print(report_pdf)
 
-pdfkit.from_file(f'{report}', f'{report_pdf}.pdf')
+pdfkit.from_file(f'{report}', f'{report_pdf}.pdf', options = {'page-size': 'A3'})

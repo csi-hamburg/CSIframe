@@ -45,12 +45,6 @@ if [ $SESSION == all ];then
       [ ! -d $TMP_OUT/ ] && mkdir -p $TMP_OUT
    done
 
-   #SESSIONS+=($sub_ses_dir)
-
-   #for ses_dir in $(ls $DATA_DIR/raw_bids/$1);do
-   #      [ ! -d $TMP_OUT/$1/$ses_dir ]; mkdir -p $TMP_OUT/$1/$ses_dir
-   #   done
-
    CMD="
       $singularity_freesurfer \
       recon-all \
@@ -63,7 +57,6 @@ if [ $SESSION == all ];then
 
 else
 
-   #export SESSIONS=($SESSION)
    sub_ses_dir=${1}_ses-${SESSION}
 
    [ ! -d $TMP_IN/$sub_ses_dir ] && cp -rf $BIDS_DIR/$1/ses-$SESSION $TMP_IN/$sub_ses_dir 

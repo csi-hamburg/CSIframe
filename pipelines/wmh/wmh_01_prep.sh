@@ -1,32 +1,91 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# SET VARIABLES FOR CONTAINER TO BE USED
-FSL_VERSION=fsl-6.0.3
-FREESURFER_VERSION=freesurfer-7.1.1
-MRTRIX_VERSION=mrtrix3-3.0.2
-###############################################################################################################################################################
-FSL_CONTAINER=$ENV_DIR/$FSL_VERSION
-FREESURFER_CONTAINER=$ENV_DIR/$FREESURFER_VERSION
-MRTRIX_CONTAINER=$ENV_DIR/$MRTRIX_VERSION
-ANTSRNET_CONTAINER=$ENV_DIR/antsrnet
-###############################################################################################################################################################
-singularity="singularity run --cleanenv --userns -B $(readlink -f $ENV_DIR) -B $PROJ_DIR -B $TMP_DIR/:/tmp"
-###############################################################################################################################################################
+###################################################################################################################
+# Preprocessing of FLAIR and T1 and creation of input files for WMH segmentation 
+#                                                                                                                 
+# Pipeline specific dependencies:                                                                                 
+#   [pipelines which need to be run first]                                                                        
+#       - freesurfer
+#       - fmriprep                                                                                                    
+#   [container]                                                                                                   
+#       - fsl-6.0.3.sif
+#       - freesurfer-7.1.1.sif     
+#       - mrtrix3-3.0.2    
+#       - antsrnet
+#                                                                           
+###################################################################################################################
+
+# Get verbose outputs
+set -x
+ulimit -c 0
+
+# Define subject specific temporary directory on $SCRATCH_DIR
+export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
+TMP_IN=$TMP_DIR/input;                 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN
+TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
+
+###################################################################################################################
+
+# Pipeline-specific environment
+##################################
+
+# Singularity container version and command
+container_freesurfer=freesurfer-7.1.1
+singularity_freesurfer="singularity run --cleanenv --userns \
+    -B $PROJ_DIR \
+    -B $(readlink -f $ENV_DIR) \
+    -B $TMP_DIR/:/tmp \
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
+    $ENV_DIR/$container_freesurfer" 
+
+( cp -ruvfL $ENV_DIR/freesurfer_license.txt $ENV_DIR/$FREESURFER_CONTAINER/opt/$FREESURFER_VERSION/.license )
+
+container_fsl=fsl-6.0.3
+singularity_fsl="singularity run --cleanenv --userns \
+    -B $PROJ_DIR \
+    -B $(readlink -f $ENV_DIR) \
+    -B $TMP_DIR/:/tmp \
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
+    $ENV_DIR/$container_fsl" 
+
+container_mrtrix=mrtrix3-3.0.2
+singularity_mrtrix="singularity run --cleanenv --userns \
+    -B $PROJ_DIR \
+    -B $(readlink -f $ENV_DIR) \
+    -B $TMP_DIR/:/tmp \
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
+    $ENV_DIR/$container_mrtrix" 
+
+container_antsrnet=antsrnet
+singularity_antsrnet="singularity run --cleanenv --userns \
+    -B $PROJ_DIR \
+    -B $(readlink -f $ENV_DIR) \
+    -B $TMP_DIR/:/tmp \
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
+    $ENV_DIR/$container_antsrnet" 
 
 # Set output directories
-OUT_DIR=data/$PIPELINE/$1/ses-${SESSION}/anat/
+OUT_DIR=$DATA_DIR/$PIPELINE/$1/ses-${SESSION}/anat/
 [ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
 
+# To make I/O more efficient read/write outputs from/to $SCRATCH
+[ -d $TMP_IN ] && cp -rf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
+[ -d $TMP_OUT ] && mkdir -p $TMP_OUT/wmh $TMP_OUT/wmh
 
+# $MRTRIX_TMPFILE_DIR should be big and writable
+export MRTRIX_TMPFILE_DIR=/tmp
 
-
-
-
+# Pipeline execution
+##################################
 # Define inputs 
-FLAIR=data/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_FLAIR.nii.gz
-T1=data/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-preproc_T1w.nii.gz
-T1_MASK=data/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-brain_mask.nii.gz
-T1_TO_MNI_WARP=data/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_from-T1w_to-MNI152NLin2009cAsym_mode-image_xfm.h5
+FLAIR=$DATA_DIR/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_FLAIR.nii.gz
+T1=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-preproc_T1w.nii.gz
+T1_MASK=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-brain_mask.nii.gz
+T1_TO_MNI_WARP=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_from-T1w_to-MNI152NLin2009cAsym_mode-image_xfm.h5
 MNI_TEMPLATE=$ENV_DIR/standard/tpl-MNI152NLin2009cAsym_res-01_desc-brain_T1w.nii.gz
 MNI_TEMPLATE_SKULL=$ENV_DIR/standard/tpl-MNI152NLin2009cAsym_res-01_T1w.nii.gz
 
@@ -36,11 +95,10 @@ T1_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii.gz
 T1_TO_FLAIR_WARP_pre=$OUT_DIR/${1}_ses-${SESSION}_from-T1_to-FLAIR_
 T1_TO_FLAIR_WARP=$OUT_DIR/${1}_ses-${SESSION}_from-T1_to-FLAIR_Composite.h5
 T1_MASK_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
-T1_IN_FLAIR_nii=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii # needed for lga + lpa algorithm
+T1_IN_FLAIR_nii=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii
 FLAIR_TO_T1_WARP=$OUT_DIR/${1}_ses-${SESSION}_from-T1_to-FLAIR_InverseComposite.h5
-FLAIR_nii=$OUT_DIR/${1}_ses-${SESSION}_FLAIR.nii # needed for lga + lpa algorithm
+FLAIR_nii=$OUT_DIR/${1}_ses-${SESSION}_FLAIR.nii
 FLAIR_BIASCORR=$OUT_DIR/${1}_ses-${SESSION}_desc-biascorr_FLAIR.nii.gz
-FLAIR_BIASCORR_nii=$OUT_DIR/${1}_ses-${SESSION}_desc-biascorr_FLAIR.nii
 FLAIR_BIASCORR_IN_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-biascorr_FLAIR.nii.gz
 FLAIR_BRAIN=$OUT_DIR/${1}_ses-${SESSION}_desc-brain_FLAIR.nii.gz
 FLAIR_BRAIN_BIASCORR=$OUT_DIR/${1}_ses-${SESSION}_desc-biascorr_desc-brain_FLAIR.nii.gz
@@ -70,49 +128,57 @@ CMD_T1_TO_FLAIR="antsRegistration \
 --use-histogram-matching 1 \
 --winsorize-image-intensities [ 0.005, 0.995 ] \
 --write-composite-transform 1"
+
 # register T1 mask to FLAIR
 CMD_T1_MASK_TO_FLAIR="antsApplyTransforms -d 3 -i $T1_MASK -r $FLAIR -t $T1_TO_FLAIR_WARP -o $T1_MASK_IN_FLAIR"
 CMD_THRESHOLD_MASK="fslmaths $T1_MASK_IN_FLAIR -thr 0.95 -bin $T1_MASK_IN_FLAIR"
+
 # flair bias correction
-CMD_BIASCORR_FLAIR="N4BiasFieldCorrection -d 3 -i $FLAIR -x $T1_MASK_IN_FLAIR -o $FLAIR_BIASCORR --verbose 1" 
+CMD_BIASCORR_FLAIR="N4BiasFieldCorrection -d 3 -i $FLAIR -o $FLAIR_BIASCORR --verbose 1" 
+
 # flair brain extraction
 CMD_FLAIR_BRAIN_EXTRACT="fslmaths $FLAIR -mul $T1_MASK_IN_FLAIR $FLAIR_BRAIN"
 CMD_FLAIR_BRAIN_BIASCORR_EXTRACT="fslmaths $FLAIR_BIASCORR -mul $T1_MASK_IN_FLAIR $FLAIR_BRAIN_BIASCORR"
+
 # register all FLAIR images to T1
 CMD_FLAIR_BRAIN_BIASCORR_IN_T1="antsApplyTransforms -d 3 -i $FLAIR_BRAIN_BIASCORR -r $T1_BRAIN -t $FLAIR_TO_T1_WARP -o $FLAIR_BRAIN_BIASCORR_IN_T1"
 CMD_FLAIR_BIASCORR_IN_T1="antsApplyTransforms -d 3 -i $FLAIR_BIASCORR -r $T1 -t $FLAIR_TO_T1_WARP -o $FLAIR_BIASCORR_IN_T1"
 CMD_FLAIR_BRAIN_IN_T1="antsApplyTransforms -d 3 -i $FLAIR_BRAIN -r $T1_BRAIN -t $FLAIR_TO_T1_WARP -o $FLAIR_BRAIN_IN_T1"
+
 # register all FLAIR images to MNI
 CMD_FLAIR_BRAIN_BIASCORR_IN_MNI="antsApplyTransforms -d 3 -i $FLAIR_BRAIN_BIASCORR -r $MNI_TEMPLATE -o $FLAIR_BRAIN_BIASCORR_IN_MNI -t $FLAIR_TO_T1_WARP -t $T1_TO_MNI_WARP"
 CMD_FLAIR_BIASCORR_IN_MNI="antsApplyTransforms -d 3 -i $FLAIR_BIASCORR -r $MNI_TEMPLATE_SKULL -o $FLAIR_BIASCORR_IN_MNI -t $FLAIR_TO_T1_WARP -t $T1_TO_MNI_WARP"
 CMD_FLAIR_BRAIN_IN_MNI="antsApplyTransforms -d 3 -i $FLAIR_BRAIN -r $MNI_TEMPLATE -o $FLAIR_BRAIN_IN_MNI -t $FLAIR_TO_T1_WARP -t $T1_TO_MNI_WARP"
+
 # convert T1 / FLAIR in nii for lpa/lga
 CMD_convert_T1="mri_convert $T1_IN_FLAIR $T1_IN_FLAIR_nii"
 CMD_convert_FLAIR="mri_convert $FLAIR $FLAIR_nii"
-CMD_convert_FLAIR_BIASCORR="mri_convert $FLAIR_BIASCORR $FLAIR_BIASCORR_nii"
 
 # Execute 
-[ ! -f $T1_IN_FLAIR ] && $singularity $FSL_CONTAINER /bin/bash -c "$CMD_T1_EXTRACT_BRAIN"
-[ ! -f $T1_IN_FLAIR ] && $singularity $MRTRIX_CONTAINER /bin/bash -c "$CMD_T1_TO_FLAIR; $CMD_T1_MASK_TO_FLAIR"
+$singularity_fsl /bin/bash -c "$CMD_T1_EXTRACT_BRAIN"
+[ ! -f $T1_IN_FLAIR ] && $singularity_mrtrix /bin/bash -c "$CMD_T1_TO_FLAIR"
+[ ! -f $T1_MASK_IN_FLAIR ] && $singularity_mrtrix /bin/bash -c "$CMD_T1_MASK_TO_FLAIR"
 
 if [ ! -f $FLAIR_BRAIN_IN_MNI ]; then
 
-    $singularity $FSL_CONTAINER /bin/bash -c "$CMD_THRESHOLD_MASK"
-    $singularity $MRTRIX_CONTAINER /bin/bash -c "$CMD_BIASCORR_FLAIR"
-    $singularity $FSL_CONTAINER /bin/bash -c "$CMD_FLAIR_BRAIN_EXTRACT; $CMD_FLAIR_BRAIN_BIASCORR_EXTRACT"
-    $singularity $MRTRIX_CONTAINER /bin/bash -c "$CMD_FLAIR_BRAIN_BIASCORR_IN_T1; $CMD_FLAIR_BIASCORR_IN_T1; $CMD_FLAIR_BRAIN_IN_T1; $CMD_FLAIR_BRAIN_BIASCORR_IN_MNI; $CMD_FLAIR_BIASCORR_IN_MNI; $CMD_FLAIR_BRAIN_IN_MNI"
-    $singularity $FREESURFER_CONTAINER /bin/bash -c "$CMD_convert_T1; $CMD_convert_FLAIR; $CMD_convert_FLAIR_BIASCORR"
+    $singularity_fsl /bin/bash -c "$CMD_THRESHOLD_MASK"
+    $singularity_mrtrix /bin/bash -c "$CMD_BIASCORR_FLAIR"
+    $singularity_fsl /bin/bash -c "$CMD_FLAIR_BRAIN_EXTRACT; $CMD_FLAIR_BRAIN_BIASCORR_EXTRACT"
+    $singularity_mrtrix /bin/bash -c "$CMD_FLAIR_BRAIN_BIASCORR_IN_T1; $CMD_FLAIR_BIASCORR_IN_T1; $CMD_FLAIR_BRAIN_IN_T1; $CMD_FLAIR_BRAIN_BIASCORR_IN_MNI; $CMD_FLAIR_BIASCORR_IN_MNI; $CMD_FLAIR_BRAIN_IN_MNI"
+    $singularity_freesurfer /bin/bash -c "$CMD_convert_T1; $CMD_convert_FLAIR"
 
 fi
+
+
 
 ###############################################################################################################################################################
 # The ultimate masking game - create wm masks for filtering of segmentations
 ###############################################################################################################################################################
 # Define inputs
-ASEG_freesurfer=data/freesurfer/$1/mri/aseg.mgz
-TEMPLATE_native=data/freesurfer/$1/mri/rawavg.mgz
-T1_MASK=data/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-brain_mask.nii.gz
-FLAIR=data/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_FLAIR.nii.gz
+ASEG_freesurfer=$DATA_DIR/freesurfer/$1/mri/aseg.mgz
+TEMPLATE_native=$DATA_DIR/freesurfer/$1/mri/rawavg.mgz
+T1_MASK=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-brain_mask.nii.gz
+FLAIR=$DATA_DIR/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_FLAIR.nii.gz
 T1_TO_FLAIR_WARP=$OUT_DIR/${1}_ses-${SESSION}_from-T1_to-FLAIR_Composite.h5
 
 # Define outputs
@@ -129,6 +195,14 @@ VENTRICLEWMWMHMASK=/tmp/${1}_ses-${SESSION}_space-T1_desc-ventriclewmwmh_mask.ni
 RIBBON_right=/tmp/${1}_ses-${SESSION}_space-T1_hemi-R_desc-ribbon_mask.nii.gz 
 RIBBON_left=/tmp/${1}_ses-${SESSION}_space-T1_hemi-L_desc-ribbon_mask.nii.gz 
 RIBBONMASK=/tmp/${1}_ses-${SESSION}_space-T1_desc-ribbon_mask.nii.gz
+CCMASK=/tmp/${1}_ses-${SESSION}_space-T1_desc-corpcall_mask.nii.gz
+CAUDATEMASK_LEFT=/tmp/${1}_ses-${SESSION}_space-T1_desc-caudateleft_mask.nii.gz
+CAUDATEMASK_RIGHT=/tmp/${1}_ses-${SESSION}_space-T1_desc-caudateright_mask.nii.gz
+PUTAMENMASK_LEFT=/tmp/${1}_ses-${SESSION}_space-T1_desc-putamenleft_mask.nii.gz
+PUTAMENMASK_RIGHT=/tmp/${1}_ses-${SESSION}_space-T1_desc-putamenright_mask.nii.gz
+PALLIDUMMASK_LEFT=/tmp/${1}_ses-${SESSION}_space-T1_desc-pallidumleft_mask.nii.gz
+PALLIDUMMASK_RIGHT=/tmp/${1}_ses-${SESSION}_space-T1_desc-pallidumright_mask.nii.gz
+VENTRICLEMASK_eroded=/tmp/${1}_ses-${SESSION}_space-T1_desc-ventricle_desc-eroded_mask.nii.gz
 BRAINWITHOUTRIBBON_MASK=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-brainwithoutribbon_mask.nii.gz
 BRAINWITHOUTRIBBON_MASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brainwithoutribbon_mask.nii.gz
 
@@ -148,51 +222,119 @@ CMD_create_ribbonmask_left="fslmaths $ASEG_nii -thr 3 -uthr 3 -bin $RIBBON_left"
 CMD_merge_ribbonmasks="fslmaths $RIBBON_right -add $RIBBON_left -bin $RIBBONMASK"
 CMD_threshold_ribbonmask="fslmaths $RIBBONMASK -bin -dilM $RIBBONMASK"
 CMD_threshold_ribbonmaskagain="fslmaths $RIBBONMASK -bin -dilM $RIBBONMASK"
-CMD_new_brainmask="fslmaths $T1_MASK -sub $RIBBONMASK $BRAINWITHOUTRIBBON_MASK"
+CMD_create_cc="fslmaths $ASEG_nii -thr 251 -bin $CCMASK"
+CMD_dilate_cc="fslmaths $CCMASK -dilM -bin $CCMASK"
+CMD_create_caudate_left="fslmaths $ASEG_nii -thr 11 -uthr 11 -bin $CAUDATEMASK_LEFT"
+CMD_dilate_caudate_left="fslmaths $CAUDATEMASK_LEFT -dilM -bin $CAUDATEMASK_LEFT"
+CMD_create_caudate_right="fslmaths $ASEG_nii -thr 50 -uthr 50 -bin $CAUDATEMASK_RIGHT"
+CMD_dilate_caudate_right="fslmaths $CAUDATEMASK_RIGHT -dilM -bin $CAUDATEMASK_RIGHT"
+CMD_create_putamen_left="fslmaths $ASEG_nii -thr 12 -uthr 12 -bin $PUTAMENMASK_LEFT"
+CMD_dilate_putamen_left="fslmaths $PUTAMENMASK_LEFT -dilM -bin $PUTAMENMASK_LEFT"
+CMD_create_putamen_right="fslmaths $ASEG_nii -thr 51 -uthr 51 -bin $PUTAMENMASK_RIGHT"
+CMD_dilate_putamen_right="fslmaths $PUTAMENMASK_RIGHT -dilM -bin $PUTAMENMASK_RIGHT"
+CMD_create_pallidum_left="fslmaths $ASEG_nii -thr 13 -uthr 13 -bin $PALLIDUMMASK_LEFT"
+CMD_dilate_pallidum_left="fslmaths $PALLIDUMMASK_LEFT -dilM -bin $PALLIDUMMASK_LEFT"
+CMD_create_pallidum_right="fslmaths $ASEG_nii -thr 52 -uthr 52 -bin $PALLIDUMMASK_RIGHT"
+CMD_dilate_pallidum_right="fslmaths $PALLIDUMMASK_RIGHT -dilM -bin $PALLIDUMMASK_RIGHT"
+CMD_erode_ventriclemask="fslmaths $VENTRICLEMASK_T1 -ero $VENTRICLEMASK_eroded"
+CMD_new_brainmask="fslmaths $T1_MASK -sub $RIBBONMASK -sub $CCMASK -sub $CAUDATEMASK_LEFT -sub $CAUDATEMASK_RIGHT -sub $PUTAMENMASK_LEFT -sub $PUTAMENMASK_RIGHT -sub $PALLIDUMMASK_LEFT -sub $PALLIDUMMASK_RIGHT -sub $VENTRICLEMASK_eroded $BRAINWITHOUTRIBBON_MASK"
 CMD_final_mask="fslmaths $BRAINWITHOUTRIBBON_MASK -mul $VENTRICLEWMWMHMASK $BRAINWITHOUTRIBBON_MASK"
 CMD_final_mask_in_FLAIR="antsApplyTransforms -i $BRAINWITHOUTRIBBON_MASK -r $FLAIR -t $T1_TO_FLAIR_WARP -o $BRAINWITHOUTRIBBON_MASK_FLAIR"
 CMD_BINARIZE_FINAL_MASK_FLAIR="fslmaths $BRAINWITHOUTRIBBON_MASK_FLAIR -bin $BRAINWITHOUTRIBBON_MASK_FLAIR"
 
-( cp -ruvfL $ENV_DIR/freesurfer_license.txt $FREESURFER_CONTAINER/opt/$FREESURFER_VERSION/.license )
-
-if [ ! -f $BRAINWITHOUTRIBBON_MASK_FLAIR ]; then
-
 # Execute 
-    $singularity $FREESURFER_CONTAINER /bin/bash -c "$CMD_prepare_wmmask; $CMD_convert_wmmask"
-    $singularity $FSL_CONTAINER /bin/bash -c "$CMD_create_wmmask_right; $CMD_create_wmmask_left; $CMD_merge_wmmasks; $CMD_create_freesurferwmh_mask; $CMD_create_ventriclemask_right; $CMD_create_ventriclemask_left; $CMD_merge_ventriclemasks; $CMD_create_ventriclewmmask; $CMD_create_ribbonmask_right; $CMD_create_ribbonmask_left; $CMD_merge_ribbonmasks; $CMD_threshold_ribbonmask; $CMD_threshold_ribbonmaskagain; $CMD_new_brainmask; $CMD_final_mask"
-    $singularity $MRTRIX_CONTAINER /bin/bash -c "$CMD_final_mask_in_FLAIR; $CMD_BINARIZE_FINAL_MASK_FLAIR"
-
-fi 
+$singularity_freesurfer /bin/bash -c "$CMD_prepare_wmmask; $CMD_convert_wmmask"
+$singularity_fsl /bin/bash -c "$CMD_create_wmmask_right; $CMD_create_wmmask_left; $CMD_merge_wmmasks; $CMD_create_freesurferwmh_mask; $CMD_create_ventriclemask_right; $CMD_create_ventriclemask_left; $CMD_merge_ventriclemasks; $CMD_create_ventriclewmmask; $CMD_create_ribbonmask_right; $CMD_create_ribbonmask_left; $CMD_merge_ribbonmasks; $CMD_threshold_ribbonmask; $CMD_threshold_ribbonmaskagain; $CMD_create_cc; $CMD_dilate_cc; $CMD_create_caudate_left; $CMD_dilate_caudate_left; $CMD_create_caudate_right; $CMD_dilate_caudate_right; $CMD_create_putamen_left; $CMD_dilate_putamen_left; $CMD_create_putamen_right; $CMD_dilate_putamen_right; $CMD_create_pallidum_left; $CMD_dilate_pallidum_left; $CMD_create_pallidum_right; $CMD_dilate_pallidum_right; $CMD_erode_ventriclemask; $CMD_new_brainmask; $CMD_final_mask"
+$singularity_mrtrix /bin/bash -c "$CMD_final_mask_in_FLAIR; $CMD_BINARIZE_FINAL_MASK_FLAIR"
 
 ###############################################################################################################################################################
-# create distancemap
+# register output of masking game to T1 and MNI
 ###############################################################################################################################################################
-# Define inputs
-VENTRICLEMASK_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-ventricle_mask.nii.gz
-FLAIR=data/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_FLAIR.nii.gz
+# Define inputs 
+WMMASK_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-wm_mask.nii.gz 
+FLAIR=$DATA_DIR/raw_bids/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_FLAIR.nii.gz
 T1_TO_FLAIR_WARP=$OUT_DIR/${1}_ses-${SESSION}_from-T1_to-FLAIR_Composite.h5
-T1_MASK_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
+MNI_TEMPLATE=$ENV_DIR/standard/tpl-MNI152NLin2009cAsym_res-01_desc-brain_T1w.nii.gz
+T1_TO_MNI_WARP=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_from-T1w_to-MNI152NLin2009cAsym_mode-image_xfm.h5
+VENTRICLEMASK_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-ventricle_mask.nii.gz
+T1_MASK=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-brain_mask.nii.gz
 
 # Define outputs
 VENTRICLEMASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-ventricle_mask.nii.gz
-DISTANCEMAP=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_distancemap.nii.gz
-WMMASK_peri=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmperi_mask.nii.gz
-WMMASK_deep=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmdeep_mask.nii.gz
+WMMASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wm_mask.nii.gz 
+WMMASK_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-wm_mask.nii.gz
+VENTRICLEMASK_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-ventricle_mask.nii.gz
+T1_MASK_IN_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-brain_mask.nii.gz
 
 # Define commands
 CMD_VENTRICLEMASK_TO_FLAIR="antsApplyTransforms -i $VENTRICLEMASK_T1 -r $FLAIR -t $T1_TO_FLAIR_WARP -o $VENTRICLEMASK_FLAIR"
 CMD_BINARIZE_VENTRICLEMASK_FLAIR="fslmaths $VENTRICLEMASK_FLAIR -bin $VENTRICLEMASK_FLAIR"
+CMD_WMMASK_TO_FLAIR="antsApplyTransforms -i $WMMASK_T1 -r $FLAIR -t $T1_TO_FLAIR_WARP -o $WMMASK_FLAIR"
+CMD_BINARIZE_WMMASK_FLAIR="fslmaths $WMMASK_FLAIR -bin $WMMASK_FLAIR"
+CMD_WMMASK_TO_MNI="antsApplyTransforms -i $WMMASK_T1 -r $MNI_TEMPLATE -t $T1_TO_MNI_WARP -o $WMMASK_MNI"
+CMD_BINARIZE_WMMASK_MNI="fslmaths $WMMASK_MNI -bin $WMMASK_MNI"
+CMD_VENTRICLEMASK_TO_MNI="antsApplyTransforms -i $VENTRICLEMASK_T1 -r $MNI_TEMPLATE -t $T1_TO_MNI_WARP -o $VENTRICLEMASK_MNI"
+CMD_BINARIZE_VENTRICLEMASK_MNI="fslmaths $VENTRICLEMASK_MNI -bin $VENTRICLEMASK_MNI"
+CMD_BRAINMASK_TO_MNI="antsApplyTransforms -d 3 -i $T1_MASK -r $MNI_TEMPLATE -t $T1_TO_MNI_WARP -o $T1_MASK_IN_MNI"
+CMD_BINARIZE_BRAINMASK_MNI="fslmaths $T1_MASK_IN_MNI -bin $T1_MASK_IN_MNI"
+
+# Execute
+$singularity_mrtrix /bin/bash -c "$CMD_VENTRICLEMASK_TO_FLAIR; $CMD_WMMASK_TO_FLAIR; $CMD_WMMASK_TO_MNI; $CMD_VENTRICLEMASK_TO_MNI; $CMD_BRAINMASK_TO_MNI"
+$singularity_fsl /bin/bash -c "$CMD_BINARIZE_VENTRICLEMASK_FLAIR; $CMD_BINARIZE_WMMASK_FLAIR; $CMD_BINARIZE_WMMASK_MNI; $CMD_BINARIZE_VENTRICLEMASK_MNI; $CMD_BINARIZE_BRAINMASK_MNI"
+
+
+
+###############################################################################################################################################################
+# create distancemap in FLAIR, T1 and MNI space
+###############################################################################################################################################################
+# Define inputs
+VENTRICLEMASK_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-ventricle_mask.nii.gz
+T1_MASK_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
+VENTRICLEMASK_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-ventricle_mask.nii.gz
+T1_MASK=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-brain_mask.nii.gz
+T1_MASK_IN_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-brain_mask.nii.gz
+
+# Define outputs
+DISTANCEMAP=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_distancemap.nii.gz
+DISTANCEMAP_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_distancemap.nii.gz
+DISTANCEMAP_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_distancemap.nii.gz
+WMMASK_peri=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmperi_mask.nii.gz
+WMMASK_deep=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmdeep_mask.nii.gz
+WMMASK_peri_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-wmperi_mask.nii.gz
+WMMASK_deep_MNI=$OUT_DIR/${1}_ses-${SESSION}_space-MNI_desc-wmdeep_mask.nii.gz
+WMMASK_peri_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-wmperi_mask.nii.gz
+WMMASK_deep_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-wmdeep_mask.nii.gz
+
+# Define commands
+# in FLAIR space
 CMD_create_distancemap="distancemap -i $VENTRICLEMASK_FLAIR -m $T1_MASK_IN_FLAIR -o $DISTANCEMAP"
 CMD_upperthreshold_distancemap="fslmaths $DISTANCEMAP -uthr 10 -bin $WMMASK_peri"
 CMD_make_peri_beautiful="fslmaths $WMMASK_peri -add $VENTRICLEMASK_FLAIR -bin $WMMASK_peri"
 CMD_threshold_distancemap="fslmaths $DISTANCEMAP -thr 10 -bin $WMMASK_deep"
+# in MNI space
+CMD_create_distancemap_MNI="distancemap -i $VENTRICLEMASK_MNI -m $T1_MASK_IN_MNI -o $DISTANCEMAP_MNI"
+CMD_upperthreshold_distancemap_MNI="fslmaths $DISTANCEMAP_MNI -uthr 10 -bin $WMMASK_peri_MNI"
+CMD_make_peri_beautiful_MNI="fslmaths $WMMASK_peri_MNI -add $VENTRICLEMASK_MNI -bin $WMMASK_peri_MNI"
+CMD_threshold_distancemap_MNI="fslmaths $DISTANCEMAP_MNI -thr 10 -bin $WMMASK_deep_MNI"
+# in T1 space
+CMD_create_distancemap_T1="distancemap -i $VENTRICLEMASK_T1 -m $T1_MASK -o $DISTANCEMAP_T1"
+CMD_upperthreshold_distancemap_T1="fslmaths $DISTANCEMAP_T1 -uthr 10 -bin $WMMASK_peri_T1"
+CMD_make_peri_beautiful_T1="fslmaths $WMMASK_peri_T1 -add $VENTRICLEMASK_T1 -bin $WMMASK_peri_T1"
+CMD_threshold_distancemap_T1="fslmaths $DISTANCEMAP_T1 -thr 10 -bin $WMMASK_deep_T1"
+
 
 # Execute 
 if [ ! -f $DISTANCEMAP ]; then
     
-    $singularity $MRTRIX_CONTAINER /bin/bash -c "$CMD_VENTRICLEMASK_TO_FLAIR"
-    $singularity $FSL_CONTAINER /bin/bash -c "$CMD_BINARIZE_VENTRICLEMASK_FLAIR; $CMD_create_distancemap; $CMD_upperthreshold_distancemap; $CMD_make_peri_beautiful; $CMD_threshold_distancemap"
+    $singularity_fsl /bin/bash -c "$CMD_create_distancemap; $CMD_upperthreshold_distancemap; $CMD_make_peri_beautiful; $CMD_threshold_distancemap"
 
 fi
+
+[ ! -f $DISTANCEMAP_T1 ] && $singularity_fsl /bin/bash -c "$CMD_create_distancemap_T1"
+[ ! -f $DISTANCEMAP_MNI ] && $singularity_fsl /bin/bash -c "$CMD_create_distancemap_MNI"
+$singularity_fsl /bin/bash -c "$CMD_upperthreshold_distancemap_MNI; $CMD_make_peri_beautiful_MNI; $CMD_threshold_distancemap_MNI; $CMD_upperthreshold_distancemap_T1; $CMD_make_peri_beautiful_T1; $CMD_threshold_distancemap_T1"
+
+
+
 ###############################################################################################################################################################
 

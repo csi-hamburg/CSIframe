@@ -37,7 +37,7 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 # Define environment
 ####################
-
+ENV_DIR=$PROJ_DIR/_envs
 container_heudiconv=heudiconv-0.9.0  
 container_pydeface=pydeface-2.0.0
 container_csiminiconda=miniconda-csi
@@ -100,7 +100,7 @@ fi
 
 for SESSION in $SESSIONS; do
 
-   if [ $ASL == "n" ]; then
+   if [ $BIDS_PIPE == "heudiconv" ]; then
       
       # Command
       #########################
@@ -153,7 +153,7 @@ for SESSION in $SESSIONS; do
 
       fi
 
-   elif [ $ASL == "y" ]; then
+   elif [ $BIDS_PIPE == "asl" ]; then
 
       #####################################################################
       # Modify ASL output to comply with BIDS standard / aslprep pipeline #

@@ -19,6 +19,7 @@
 #       - mrtrix3-3.0.2.sif                                                                                       #
 #       - mrtrix3tissue-5.2.8.sif                                                                                 #
 #       - tractseg-master.sif                                                                                     #
+#       - fsl-6.0.3                                                                                               #
 ###################################################################################################################
 
 # Get verbose outputs
@@ -45,6 +46,7 @@ export SINGULARITYENV_MRTRIX_TMPFILE_DIR=/tmp
 container_mrtrix3=mrtrix3-3.0.2      
 container_mrtrix3tissue=mrtrix3tissue-5.2.8
 container_tractseg=tractseg-master
+container_fsl=fsl-6.0.3
 
 singularity_mrtrix3="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
@@ -69,6 +71,14 @@ singularity_tractseg="singularity run --cleanenv --userns \
     -B $TMP_IN:/tmp_in \
     -B $TMP_OUT:/tmp_out \
     $ENV_DIR/$container_tractseg" 
+
+singularity_fsl="singularity run --cleanenv --no-home --userns \
+    -B $PROJ_DIR \
+    -B $(readlink -f $ENV_DIR) \
+    -B $TMP_DIR/:/tmp \
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
+    $ENV_DIR/$container_fsl"
 
 parallel="parallel --ungroup --delay 0.2 -j16 --joblog $CODE_DIR/log/parallel_runtask.log"
 
@@ -124,19 +134,71 @@ FA_MNI_TARGET="$ENV_DIR/standard/FSL_HCP1065_FA_1mm.nii.gz"
 
 # Output
 #########################
-FA_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_FA.nii.gz"
+FA_TEMP="$FA_TEMP_DIR/fa/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_FA.nii.gz"
 FA_AVG_TEMP="$FA_TEMP_DIR/FA_averaged.nii.gz"
 
 # Command
 #########################
 CMD_MRTRANSFORM="mrtransform $FA -warp $SUB2TEMP_WARP $FA_TEMP -force"
-CMD_AVG="mrmath $(ls -d -1 $FA_TEMP_DIR/fa/sub-*) mean $FA_AVG_TEMP --force"
+CMD_AVG="mrmath $(find $FA_TEMP_DIR -name "sub-*") mean $FA_AVG_TEMP -force"
+CMD_THRESH="fslmaths $FA_AVG_TEMP -thr 0 $FA_AVG_TEMP"
 
 # Execution
 #########################
 $parallel "$singularity_mrtrix3 $CMD_MRTRANSFORM" ::: ${input_subject_array[@]}
-$parallel "[ -f $FA_TEMP ] && ln -srf $FA_TEMP $FA_TEMP_DIR/fa" ::: ${input_subject_array[@]}
 $singularity_mrtrix3 $CMD_AVG
+$singularity_fsl $CMD_THRESH
+
+#########################
+# Individual FA maps (T1w space) to FA_averaged (fodtemplate space)
+#########################
+
+# Input
+#########################
+FA="$DATA_DIR/freewater/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz"
+FA_AVG_TEMP="$FA_TEMP_DIR/FA_averaged.nii.gz"
+
+# Output
+#########################
+FA2TEMP_WARP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_desc-dwi_from-T1w_to-fodtemplate_Composite.h5"
+FA_TEMPLATE_SPACE="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_FA.nii.gz"
+
+# Command
+#########################
+CMD_FA2TEMP="antsRegistration \
+    --output [ $FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_desc-dwi_from-T1w_to-fodtemplate_, $FA_TEMPLATE_SPACE ] \
+    --collapse-output-transforms 0 \
+    --dimensionality 3 \
+    --initial-moving-transform [ $FA_AVG_TEMP, $FA, 1 ] \
+    --initialize-transforms-per-stage 0 \
+    --interpolation Linear \
+    --transform Rigid[ 0.1 ] \
+    --metric MI[ $FA_AVG_TEMP, $FA, 1, 32, Regular, 0.25 ] \
+    --convergence [ 10000x111110x11110x100, 1e-08, 10 ] \
+    --smoothing-sigmas 3.0x2.0x1.0x0.0vox \
+    --shrink-factors 8x4x2x1 \
+    --use-estimate-learning-rate-once 1 \
+    --use-histogram-matching 1 \
+    --transform Affine[ 0.1 ] \
+    --metric MI[ $FA_AVG_TEMP, $FA, 1, 32, Regular, 0.25 ] \
+    --convergence [ 10000x111110x11110x100, 1e-08, 10 ] \
+    --smoothing-sigmas 3.0x2.0x1.0x0.0vox \
+    --shrink-factors 8x4x2x1 \
+    --use-estimate-learning-rate-once 1 \
+    --use-histogram-matching 1 \
+    --transform SyN[ 0.2, 3.0, 0.0 ] \
+    --metric CC[ $FA_AVG_TEMP, $FA, 1, 4 ] \
+    --convergence [ 100x50x30x20, 1e-08, 10 ] \
+    --smoothing-sigmas 3.0x2.0x1.0x0.0vox \
+    --shrink-factors 8x4x2x1 \
+    --use-estimate-learning-rate-once 1 \
+    --use-histogram-matching 1 -v \
+    --winsorize-image-intensities [ 0.005, 0.995 ] \
+    --write-composite-transform 1"
+
+# Execution
+#########################
+$parallel "$singularity_mrtrix3 $CMD_FA2TEMP" ::: ${input_subject_array[@]}
 
 #########################
 # FA_AVG_TEMP 2 MNI + ATLAS 2 TEMP
@@ -152,7 +214,7 @@ FA_AVG_TEMP="$FA_TEMP_DIR/FA_averaged.nii.gz"
 #########################
 FA_MNI="$FA_TEMP_DIR/FA_averaged_in_mni.nii.gz"
 MNI2TEMP_WARP="$TEMP2MNI_DIR/TEMP2MNI_InverseComposite.h5"
-FA_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-FWcorrected_FA.nii.gz"
+#FA_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-FWcorrected_FA.nii.gz"
 ATLAS_TEMP="$TEMP2MNI_DIR/Schaefer2018_{1}Parcels_{2}Networks_order_FSLMNI152_space-fodtemplate_1mm.nii.gz"
 
 # Command
@@ -272,11 +334,12 @@ $parallel $singularity_mrtrix3 $CMD_COMPLEXITY2MNI ::: ${input_subject_array[@]}
 #########################
 
 FW_DIR="$DATA_DIR/freewater/{}/ses-$SESSION/dwi/"
-[ ! -d $FW_DIR ] && echo Please run freewater core pipeline first && exit 1
 
 # Input
 #########################
-FA="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz"
+#FA="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_FA.nii.gz"
+FA_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_FA.nii.gz"
+FA2TEMP_WARP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_desc-dwi_from-T1w_to-fodtemplate_Composite.h5"
 FAt="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-FWcorrected_FA.nii.gz"
 MD="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_MD.nii.gz"
 MDt="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-FWcorrected_MD.nii.gz"
@@ -285,12 +348,9 @@ ADt="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-FWcorrected_L1.nii.gz"
 RD="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-DTINoNeg_RD.nii.gz"
 RDt="$FW_DIR/{}_ses-${SESSION}_space-T1w_desc-FWcorrected_RD.nii.gz"
 FW="$FW_DIR/{}_ses-${SESSION}_space-T1w_FW.nii.gz"
-SUB2TEMP_WARP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_acq-AP_from-subject_to-fodtemplate_warp.mif"
-FA_AVG_TEMP="$FA_TEMP_DIR/FA_averaged.nii.gz"
 
 # Output
 #########################
-FA_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_FA.nii.gz"
 FAt_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-FWcorrected_FA.nii.gz"
 MD_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-DTINoNeg_MD.nii.gz"
 MDt_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-FWcorrected_MD.nii.gz"
@@ -300,17 +360,65 @@ RD_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-D
 RDt_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_desc-FWcorrected_RD.nii.gz"
 FW_TEMP="$FBA_DIR/{}/ses-$SESSION/dwi/{}_ses-${SESSION}_space-fodtemplate_FW.nii.gz"
 
+CMD_FAt2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $FAt \
+            -r $FA_TEMP \
+            -o $FAt_TEMP \
+            -t $FA2TEMP_WARP
+"
+CMD_AD2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $AD \
+            -r $FA_TEMP \
+            -o $AD_TEMP \
+            -t $FA2TEMP_WARP
+"
+CMD_ADt2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $ADt \
+            -r $FA_TEMP \
+            -o $ADt_TEMP \
+            -t $FA2TEMP_WARP
+"
+CMD_RD2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $RD \
+            -r $FA_TEMP \
+            -o $RD_TEMP \
+            -t $FA2TEMP_WARP
+"
+CMD_RDt2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $RDt \
+            -r $FA_TEMP \
+            -o $RDt_TEMP \
+            -t $FA2TEMP_WARP
+"
 
-# Command
-#########################
-CMD_FAt2TEMP="mrtransform $FAt -warp $SUB2TEMP_WARP $FAt_TEMP -force"
-CMD_MD2TEMP="mrtransform $MD -warp $SUB2TEMP_WARP $MD_TEMP -force"
-CMD_MDt2TEMP="mrtransform $MDt -warp $SUB2TEMP_WARP $MDt_TEMP -force"
-CMD_AD2TEMP="mrtransform $AD -warp $SUB2TEMP_WARP $AD_TEMP -force"
-CMD_ADt2TEMP="mrtransform $ADt -warp $SUB2TEMP_WARP $ADt_TEMP -force"
-CMD_RD2TEMP="mrtransform $RD -warp $SUB2TEMP_WARP $RD_TEMP -force"
-CMD_RDt2TEMP="mrtransform $RDt -warp $SUB2TEMP_WARP $RDt_TEMP -force"
-CMD_FW2TEMP="mrtransform $FW -warp $SUB2TEMP_WARP $FW_TEMP -force"
+CMD_MD2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $MD \
+            -r $FA_TEMP \
+            -o $MD_TEMP \
+            -t $FA2TEMP_WARP
+"
+
+CMD_MDt2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $MDt \
+            -r $FA_TEMP \
+            -o $MDt_TEMP \
+            -t $FA2TEMP_WARP
+"
+
+CMD_FW2TEMP="
+antsApplyTransforms -d 3 -e 3 -n Linear \
+            -i $FW \
+            -r $FA_TEMP \
+            -o $FW_TEMP \
+            -t $FA2TEMP_WARP
+"
 
 # Execution
 #########################
@@ -322,175 +430,3 @@ $parallel $singularity_mrtrix3 $CMD_ADt2TEMP ::: ${input_subject_array[@]}
 $parallel $singularity_mrtrix3 $CMD_RD2TEMP ::: ${input_subject_array[@]}
 $parallel $singularity_mrtrix3 $CMD_RDt2TEMP ::: ${input_subject_array[@]}
 $parallel $singularity_mrtrix3 $CMD_FW2TEMP ::: ${input_subject_array[@]}
-
-###################################
-# Read out ROIs in template space #
-###################################
-
-# Get tracktseg ROIs
-####################
-
-FIXEL_ROIS=(`ls $FBA_GROUP_DIR/tractseg/bundles_fixelmask/*fixelmask.mif | rev | cut -d "/" -f 1 | cut -d "_" -f 2- | rev`)
-
-# Create CSV
-############
-
-for sub in $(echo ${input_subject_array[@]}); do
-
-    if [ -f $FD_SMOOTH_DIR/$sub.mif ]; then
-
-        ROI_CSV=$FBA_DIR/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-fodtemplate_desc-tractseg_desc-roi_means.csv
-        echo -n "sub_id," > $ROI_CSV
-
-        # Tractseg ROIs
-
-        for MOD in fd logfc fdc complexity FA FAt AD ADt RD RDt MD MDt; do
-        
-            echo -n "fba_AF_left_mean_$MOD,fba_AF_right_mean_$MOD,fba_all_bundle_mean_$MOD,fba_ATR_left_mean_$MOD,fba_ATR_right_mean_$MOD,\
-            fba_CA_mean_$MOD,fba_CC_1_mean_$MOD,fba_CC_2_mean_$MOD,fba_CC_3_mean_$MOD,fba_CC_4_mean_$MOD,fba_CC_5_mean_$MOD,fba_CC_6_mean_$MOD,\
-            fba_CC_7_mean_$MOD,fba_CC_mean_$MOD,fba_CG_left_mean_$MOD,fba_CG_right_mean_$MOD,fba_CST_left_mean_$MOD,fba_CST_right_mean_$MOD,fba_FPT_left_mean_$MOD,\
-            fba_FPT_right_mean_$MOD,fba_FX_left_mean_$MOD,fba_FX_right_mean_$MOD,fba_ICP_left_mean_$MOD,fba_ICP_right_mean_$MOD,fba_IFO_left_mean_$MOD,\
-            fba_IFO_right_mean_$MOD,fba_ILF_left_mean_$MOD,fba_ILF_right_mean_$MOD,fba_MCP_mean_$MOD,fba_MLF_left_mean_$MOD,fba_MLF_right_mean_$MOD,\
-            fba_OR_left_mean_$MOD,fba_OR_right_mean_$MOD,fba_POPT_left_mean_$MOD,fba_POPT_right_mean_$MOD,fba_SCP_left_mean_$MOD,fba_SCP_right_mean_$MOD,fba_SLF_III_left_mean_$MOD,\
-            fba_SLF_III_right_mean_$MOD,fba_SLF_II_left_mean_$MOD,fba_SLF_II_right_mean_$MOD,fba_SLF_I_left_mean_$MOD,fba_SLF_I_right_mean_$MOD,\
-            fba_ST_FO_left_mean_$MOD,fba_ST_FO_right_mean_$MOD,fba_ST_OCC_left_mean_$MOD,fba_ST_OCC_right_mean_$MOD,fba_ST_PAR_left_mean_$MOD,\
-            fba_ST_PAR_right_mean_$MOD,fba_ST_POSTC_left_mean_$MOD,fba_ST_POSTC_right_mean_$MOD,fba_ST_PREC_left_mean_$MOD,fba_PREC_right_mean_$MOD,\
-            fba_ST_PREF_left_mean_$MOD,fba_ST_PREF_right_mean_$MOD,fba_ST_PREM_left_mean_$MOD,fba_ST_PREM_right_mean_$MOD,fba_STR_left_mean_$MOD,fba_STR_right_mean_$MOD,\
-            fba_T_OCC_left_mean_$MOD,fba_T_OCC_right_mean_$MOD,fba_T_PAR_left_mean_$MOD,fba_T_PAR_right_mean_$MOD,fba_T_POSTC_left_mean_$MOD,fba_T_POSTC_right_mean_$MOD,\
-            fba_T_PREC_left_mean_$MOD,fba_T_PREC_right_mean_$MOD,fba_T_PREF_left_mean_$MOD,fba_T_PREF_right_mean_$MOD,fba_T_PREM_left_mean_$MOD,fba_T_PREM_right_mean_$MOD,\
-            fba_UF_left_mean_$MOD,fba_UF_right_mean_$MOD" >> $ROI_CSV
-
-        done
-
-        echo "fba_AF_left_mean_FW,fba_AF_right_mean_FW,fba_all_bundle_mean_FW,fba_ATR_left_mean_FW,fba_ATR_right_mean_FW,\
-        fba_CA_mean_FW,fba_CC_1_mean_FW,fba_CC_2_mean_FW,fba_CC_3_mean_FW,fba_CC_4_mean_FW,fba_CC_5_mean_FW,fba_CC_6_mean_FW,\
-        fba_CC_7_mean_FW,fba_CC_mean_FW,fba_CG_left_mean_FW,fba_CG_right_mean_FW,fba_CST_left_mean_FW,fba_CST_right_mean_FW,fba_FPT_left_mean_FW,\
-        fba_FPT_right_mean_FW,fba_FX_left_mean_FW,fba_FX_right_mean_FW,fba_ICP_left_mean_FW,fba_ICP_right_mean_FW,fba_IFO_left_mean_FW,\
-        fba_IFO_right_mean_FW,fba_ILF_left_mean_FW,fba_ILF_right_mean_FW,fba_MCP_mean_FW,fba_MLF_left_mean_FW,fba_MLF_right_mean_FW,\
-        fba_OR_left_mean_FW,fba_OR_right_mean_FW,fba_POPT_left_mean_FW,fba_POPT_right_mean_FW,fba_SCP_left_mean_FW,fba_SCP_right_mean_FW,fba_SLF_III_left_mean_FW,\
-        fba_SLF_III_right_mean_FW,fba_SLF_II_left_mean_FW,fba_SLF_II_right_mean_FW,fba_SLF_I_left_mean_FW,fba_SLF_I_right_mean_FW,\
-        fba_ST_FO_left_mean_FW,fba_ST_FO_right_mean_FW,fba_ST_OCC_left_mean_FW,fba_ST_OCC_right_mean_FW,fba_ST_PAR_left_mean_FW,\
-        fba_ST_PAR_right_mean_FW,fba_ST_POSTC_left_mean_FW,fba_ST_POSTC_right_mean_FW,fba_ST_PREC_left_mean_FW,fba_PREC_right_mean_FW,\
-        fba_ST_PREF_left_mean_FW,fba_ST_PREF_right_mean_FW,fba_ST_PREM_left_mean_FW,fba_ST_PREM_right_mean_FW,fba_STR_left_mean_FW,fba_STR_right_mean_FW,\
-        fba_T_OCC_left_mean_FW,fba_T_OCC_right_mean_FW,fba_T_PAR_left_mean_FW,fba_T_PAR_right_mean_FW,fba_T_POSTC_left_mean_FW,fba_T_POSTC_right_mean_FW,\
-        fba_T_PREC_left_mean_FW,fba_T_PREC_right_mean_FW,fba_T_PREF_left_mean_FW,fba_T_PREF_right_mean_FW,fba_T_PREM_left_mean_FW,fba_T_PREM_right_mean_FW,\
-        fba_UF_left_mean_FW,fba_UF_right_mean_FW" >> $ROI_CSV
-    fi
-
-done
-
-# Extract ROIs
-##############
-
-for ROI in $(echo ${FIXEL_ROIS[@]}); do
-
-    FIXEL_MASK=$FBA_GROUP_DIR/tractseg/bundles_fixelmask/${ROI}_fixelmask.mif
-    VOXEL_MASK=$FBA_GROUP_DIR/tractseg/tractseg_output/bundle_segmentations/${ROI}.nii.gz
-
-    # Fixel metrics
-    CMD_ROI_FD="mrstats -output mean -mask $FIXEL_MASK $FD_SMOOTH_DIR/{}.mif | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_fd.txt"
-    CMD_ROI_LOG_FC="mrstats -output mean -mask $FIXEL_MASK $LOG_FC_SMOOTH_DIR/{}.mif | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_logfc.txt"
-    CMD_ROI_FDC="mrstats -output mean -mask $FIXEL_MASK $FDC_SMOOTH_DIR/{}.mif | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_fdc.txt"
-
-    # Voxel metrics
-    CMD_ROI_COMPLEXITY="mrstats -output mean -mask $VOXEL_MASK $COMPLEXITY_VOXEL | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_complexity.txt"
-    CMD_ROI_FA="mrstats -output mean -mask $VOXEL_MASK $FA_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_FA.txt"
-    CMD_ROI_FAt="mrstats -output mean -mask $VOXEL_MASK $FAt_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_FAt.txt"
-    CMD_ROI_AD="mrstats -output mean -mask $VOXEL_MASK $AD_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_AD.txt"
-    CMD_ROI_ADt="mrstats -output mean -mask $VOXEL_MASK $ADt_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_ADt.txt"
-    CMD_ROI_RD="mrstats -output mean -mask $VOXEL_MASK $RD_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_RD.txt"
-    CMD_ROI_RDt="mrstats -output mean -mask $VOXEL_MASK $RDt_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_RDt.txt"
-    CMD_ROI_MD="mrstats -output mean -mask $VOXEL_MASK $MD_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_MD.txt"
-    CMD_ROI_MDt="mrstats -output mean -mask $VOXEL_MASK $MDt_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_MDt.txt"
-    CMD_ROI_FW="mrstats -output mean -mask $VOXEL_MASK $FW_TEMP | tail -n 1 > $TMP_OUT/{}_fba_${ROI}_mean_FW.txt"
-
-    # Run commands in parallel
-    $parallel $singularity_mrtrix3 $CMD_ROI_FD ::: ${input_subject_array[@]}
-    $parallel $singularity_mrtrix3 $CMD_ROI_LOG_FC ::: ${input_subject_array[@]}
-    $parallel $singularity_mrtrix3 $CMD_ROI_FDC ::: ${input_subject_array[@]}
-    $parallel $singularity_mrtrix3 $CMD_ROI_COMPLEXITY ::: ${input_subject_array[@]}
-    $parallel $singularity_mrtrix3 $CMD_ROI_FA ::: ${input_subject_array[@]}
-    $parallel $singularity_mrtrix3 $CMD_ROI_FAt ::: ${input_subject_array[@]}
-    $parallel $singularity_mrtrix3 $CMD_ROI_AD ::: ${input_subject_array[@]}
-    $parallel $singularity_mrtrix3 $CMD_ROI_ADt ::: ${input_subject_array[@]}
-    $parallel $singularity_mrtrix3 $CMD_ROI_RD ::: ${input_subject_array[@]}
-    $parallel $singularity_mrtrix3 $CMD_ROI_RDt ::: ${input_subject_array[@]}
-    $parallel $singularity_mrtrix3 $CMD_ROI_MD ::: ${input_subject_array[@]}
-    $parallel $singularity_mrtrix3 $CMD_ROI_MDt ::: ${input_subject_array[@]}
-    $parallel $singularity_mrtrix3 $CMD_ROI_FW ::: ${input_subject_array[@]}
-
-done
-
-# Ammend outputs to CSV on subject level
-########################################
-
-for sub in $(echo ${input_subject_array[@]}); do
-
-    if [ -f $FD_SMOOTH_DIR/$sub.mif ]; then
-
-        ROI_CSV=$FBA_DIR/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-fodtemplate_desc-tractseg_desc-roi_means.csv
-        echo -n "$sub," >> $ROI_CSV
-
-        for MOD in fd logfc fdc complexity FA FAt AD ADt RD RDt MD MDt; do
-        
-            for ROI in $(echo ${FIXEL_ROIS[@]}); do
-
-            MEAN=`cat $TMP_OUT/${sub}_fba_${ROI}_mean_$MOD.txt`
-            echo -n "$MEAN," >> $ROI_CSV
-
-            done
-        
-        done
-
-        MOD="FW"
-        
-        for ROI in $(echo ${FIXEL_ROIS[@]:0:72}); do
-        
-            MEAN=`cat $TMP_OUT/${sub}_fba_${ROI}_mean_$MOD.txt`
-            echo -n "$MEAN," >> $ROI_CSV
-
-        done
-
-        ROI="UF_right"
-        MEAN=`cat $TMP_OUT/${sub}_fba_${ROI}_mean_$MOD.txt`
-        echo "$MEAN" >> $ROI_CSV
-    fi
-done
-
-###############################
-# Combine CSVs on group level #
-###############################
-
-# Get subject to extract columm names from csv
-##############################################
-
-for sub in $(echo ${input_subject_array[@]}); do
-
-    ROI_CSV=$FBA_DIR/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-fodtemplate_desc-tractseg_desc-roi_means.csv
-    RAND_SUB=$sub
-    
-    [ -f $ROI_CSV ] && break
-
-done
-
-ROI_CSV_RAND=$FBA_DIR/$RAND_SUB/ses-$SESSION/dwi/${RAND_SUB}_ses-${SESSION}_space-fodtemplate_desc-tractseg_desc-roi_means.csv
-
-# Output
-########
-
-[ ! -d $FBA_GROUP_DIR/ses-$SESSION ] && mkdir -p $FBA_GROUP_DIR/ses-$SESSION/dwi
-
-ROI_CSV_COMBINED=$FBA_GROUP_DIR/ses-$SESSION/dwi/ses-${SESSION}_space-fodtemplate_desc-tractseg_desc-roi_means.csv
-
-# Create CSV
-############
-
-head -n 1 $ROI_CSV_RAND > $ROI_CSV_COMBINED
-
-for sub in $(echo ${input_subject_array[@]}); do
-    
-    ROI_CSV=$FBA_DIR/$sub/ses-$SESSION/dwi/${sub}_ses-${SESSION}_space-fodtemplate_desc-tractseg_desc-roi_means.csv
-    
-    [ -f $ROI_CSV ] && tail -n 1 $ROI_CSV >> $ROI_CSV_COMBINED
-
-done

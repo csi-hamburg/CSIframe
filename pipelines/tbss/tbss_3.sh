@@ -1,8 +1,10 @@
 #!/bin/bash
 
-###########################################################
-# FSL TBSS implementation for parallelized job submission #
-###########################################################
+#########################################################################################
+# FSL TBSS implementation for parallelized job submission                               #
+#                                                                                       #
+# PART 3 - projection of diffusion metrics on skeleton overlay creation and ROI readout #
+#########################################################################################
 
 ###############################################################################
 # Pipeline specific dependencies:                                             #
@@ -12,22 +14,23 @@
 #       - fba (only for fixel branch)                                         #
 #       - tbss_1                                                              #
 #       - tbss_2                                                              #
-#   [container]                                                               #
-#       - fsl-6.0.3                                                           #  
+#   [container and code]                                                      #
+#       - fsl-6.0.3                                                           #
+#       - overlay.py                                                          #  
 ###############################################################################
 
 # Get verbose outputs
 set -x
 
+# Turn off creation of core files
+ulimit -c 0
+
 # Define subject specific temporary directory on $SCRATCH_DIR
 export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
+TMP_IN=$TMP_DIR/input;                 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN
 TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 ###############################################################################
-
-############################################################################
-# PART 3 - projection of diffusion metrics on skeleton and readout of ROIs #
-############################################################################
 
 # Setup environment
 ###################
@@ -35,23 +38,22 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 module load singularity
 
 container_fsl=fsl-6.0.3
-singularity_fsl="singularity run --cleanenv --userns \
-    -B . \
+singularity_fsl="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
-    -B $SCRATCH_DIR:/tmp \
-    -B $TMP_OUT \
     -B $(readlink -f $ENV_DIR) \
-    $ENV_DIR/$container_fsl" 
+    -B $TMP_DIR \
+    -B $TMP_IN \
+    -B $TMP_OUT \
+    $ENV_DIR/$container_fsl"
 
 container_miniconda=miniconda-csi
-singularity_miniconda=" singularity run --cleanenv --userns \
-    -B . \
+singularity_miniconda="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
-    -B $SCRATCH_DIR:/tmp \
-    -B $TMP_OUT \
     -B $(readlink -f $ENV_DIR) \
-    -B /usw
-    /usw/fatx405/csi_envs/$container_miniconda"
+    -B $TMP_DIR \
+    -B $TMP_IN \
+    -B $TMP_OUT \
+    $ENV_DIR/$container_miniconda"
 
 # Set pipeline specific variables
 
@@ -79,6 +81,7 @@ echo "TBSS_DIR = $TBSS_DIR"
 
 FA_ERODED=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_desc-DTINoNeg_FA.nii.gz
 FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask.nii.gz
+#[ $TBSS_PIPELINE == "fixel" ] && FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-FAaveraged_desc-brain_mask.nii.gz
 FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA.nii.gz
 MEAN_FA_SKEL=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean_desc-DTINoNeg_FA.nii.gz
 SKEL_DIST=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-meanFA_desc-mask_distancemap.nii.gz
@@ -216,7 +219,7 @@ for MOD in $(echo $MODALITIES); do
 
     # Output
 
-    OVERLAY=$TBSS_SUBDIR//${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}_overlay.png
+    OVERLAY=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}_overlay.png
 
     $singularity_miniconda python $PIPELINE_DIR/overlay.py $MOD_MASKED $MOD_SKEL $OVERLAY
 
@@ -242,31 +245,31 @@ if [ $TBSS_PIPELINE == "mni" ]; then
     
     ROI_CSV=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_label-JHU_desc-ROIs_means.csv
     
-    echo -n "sub_id," >> $ROI_CSV
+    echo -n "sub_id," > $ROI_CSV
 
     # ROIs of JHU ICBM-DTI-81 white-matter labels atlas
 
     for MOD in FA FAt AD ADt RD RDt MD MDt; do
         
-        echo -n "tbssmni_MI-CP_mean_$MOD,tbssmni_P-CT_mean_$MOD,tbssmni_GCC_mean_$MOD,tbssmni_BCC_mean_$MOD,tbssmni_SCC_mean_$MOD,tbssmni_FX_mean_$MOD,\
-        tbssmni_CST-R_mean_$MOD,tbssmni_CST-L_mean_$MOD,tbssmni_ML-R_mean_$MOD,tbssmni_ML-L_mean_$MOD,tbssmni_ICP-R_mean_$MOD,tbssmni_ICP-L_mean_$MOD,\
-        tbssmni_SCP-R_mean_$MOD,tbssmni_SCP-L_mean_$MOD,tbssmni_CP-R_mean_$MOD,tbssmni_CP-L_mean_$MOD,tbssmni_ALIC-R_mean_$MOD,tbssmni_ALIC-L_mean_$MOD,\
-        tbssmni_PLIC-R_mean_$MOD,tbssmni_PLIC-L_mean_$MOD,tbssmni_RLIC-R_mean_$MOD,tbssmni_RLIC-L_mean_$MOD,tbssmni_ACR-R_mean_$MOD,tbssmni_ACR-L_mean_$MOD,\
-        tbssmni_SCR-R_mean_$MOD,tbssmni_SCR-L_mean_$MOD,tbssmni_PCR-R_mean_$MOD,tbssmni_PCR-L_mean_$MOD,tbssmni_PTR-R_mean_$MOD,tbssmni_PTR-L_mean_$MOD,\
-        tbssmni_SS-R_mean_$MOD,tbssmni_SS-L_mean_$MOD,tbssmni_EC-R_mean_$MOD,tbssmni_EC-L_mean_$MOD,tbssmni_CGC-R_mean_$MOD,\
-        tbssmni_CGC-L_mean_$MOD,tbssmni_CGH-R_mean_$MOD,tbssmni_CGH-L_mean_$MOD,tbssmni_FX_ST-R_mean_$MOD,tbssmni_FX_ST-L_mean_$MOD,tbssmni_SLF-R_mean_$MOD,\
-        tbssmni_SLF-L_mean_$MOD,tbssmni_SFO-R_mean_$MOD,tbssmni_SFO-L_mean_$MOD,tbssmni_UNC-R_mean_$MOD,tbssmni_UNC-L_mean_$MOD,\
-        tbssmni_TAP-R_mean_$MOD,tbssmni_TAP-L_mean_$MOD,tbssmni_skeleton_mean_$MOD," >> $ROI_CSV
+        echo -en "tbssmni_MI-CP_mean_$MOD,tbssmni_P-CT_mean_$MOD,tbssmni_GCC_mean_$MOD,tbssmni_BCC_mean_$MOD,tbssmni_SCC_mean_$MOD,tbssmni_FX_mean_$MOD,\
+tbssmni_CST-R_mean_$MOD,tbssmni_CST-L_mean_$MOD,tbssmni_ML-R_mean_$MOD,tbssmni_ML-L_mean_$MOD,tbssmni_ICP-R_mean_$MOD,tbssmni_ICP-L_mean_$MOD,\
+tbssmni_SCP-R_mean_$MOD,tbssmni_SCP-L_mean_$MOD,tbssmni_CP-R_mean_$MOD,tbssmni_CP-L_mean_$MOD,tbssmni_ALIC-R_mean_$MOD,tbssmni_ALIC-L_mean_$MOD,\
+tbssmni_PLIC-R_mean_$MOD,tbssmni_PLIC-L_mean_$MOD,tbssmni_RLIC-R_mean_$MOD,tbssmni_RLIC-L_mean_$MOD,tbssmni_ACR-R_mean_$MOD,tbssmni_ACR-L_mean_$MOD,\
+tbssmni_SCR-R_mean_$MOD,tbssmni_SCR-L_mean_$MOD,tbssmni_PCR-R_mean_$MOD,tbssmni_PCR-L_mean_$MOD,tbssmni_PTR-R_mean_$MOD,tbssmni_PTR-L_mean_$MOD,\
+tbssmni_SS-R_mean_$MOD,tbssmni_SS-L_mean_$MOD,tbssmni_EC-R_mean_$MOD,tbssmni_EC-L_mean_$MOD,tbssmni_CGC-R_mean_$MOD,\
+tbssmni_CGC-L_mean_$MOD,tbssmni_CGH-R_mean_$MOD,tbssmni_CGH-L_mean_$MOD,tbssmni_FX_ST-R_mean_$MOD,tbssmni_FX_ST-L_mean_$MOD,tbssmni_SLF-R_mean_$MOD,\
+tbssmni_SLF-L_mean_$MOD,tbssmni_SFO-R_mean_$MOD,tbssmni_SFO-L_mean_$MOD,tbssmni_UNC-R_mean_$MOD,tbssmni_UNC-L_mean_$MOD,\
+tbssmni_TAP-R_mean_$MOD,tbssmni_TAP-L_mean_$MOD,tbssmni_skeleton_mean_$MOD," >> $ROI_CSV
     done
 
-        echo "tbssmni_MI-CP_mean_FW,tbssmni_P-CT_mean_FW,tbssmni_GCC_mean_FW,tbssmni_BCC_mean_FW,tbssmni_SCC_mean_FW,tbssmni_FX_mean_FW,tbssmni_CST-R_mean_FW,\
-        tbssmni_CST-L_mean_FW,tbssmni_ML-R_mean_FW,tbssmni_ML-L_mean_FW,tbssmni_ICP-R_mean_FW,tbssmni_ICP-L_mean_FW,tbssmni_SCP-R_mean_FW,tbssmni_SCP-L_mean_FW,\
-        tbssmni_CP-R_mean_FW,tbssmni_CP-L_mean_FW,tbssmni_ALIC-R_mean_FW,tbssmni_ALIC-L_mean_FW,tbssmni_PLIC-R_mean_FW,tbssmni_PLIC-L_mean_FW,\
-        tbssmni_RLIC-R_mean_$MOD,tbssmni_RLIC-L_mean_$MOD,tbssmni_ACR-R_mean_FW,tbssmni_ACR-L_mean_FW,tbssmni_SCR-R_mean_FW,tbssmni_SCR-L_mean_FW,\
-        tbssmni_PCR-R_mean_FW,tbssmni_PCR-L_mean_FW,tbssmni_PTR-R_mean_FW,tbssmni_PTR-L_mean_FW,tbssmni_SS-R_mean_FW,tbssmni_SS-L_mean_FW,tbssmni_EC-R_mean_FW,\
-        tbssmni_EC-L_mean_FW,tbssmni_CGC-R_mean_FW,tbssmni_CGC-L_mean_FW,tbssmni_CGH-R_mean_FW,tbssmni_CGH-L_mean_FW,tbssmni_FX_ST-R_mean_FW,\
-        tbssmni_FX_ST-L_mean_FW,tbssmni_SLF-R_mean_FW,tbssmni_SLF-L_mean_FW,tbssmni_SFO-R_mean_FW,tbssmni_SFO-L_mean_FW,tbssmni_UNC-R_mean_FW,\
-        tbssmni_UNC-L_mean_FW,tbssmni_TAP-R_mean_FW,tbssmni_TAP-L_mean_FW,tbssmni_skeleton_mean_FW" >> $ROI_CSV
+        echo -e "tbssmni_MI-CP_mean_FW,tbssmni_P-CT_mean_FW,tbssmni_GCC_mean_FW,tbssmni_BCC_mean_FW,tbssmni_SCC_mean_FW,tbssmni_FX_mean_FW,tbssmni_CST-R_mean_FW,\
+tbssmni_CST-L_mean_FW,tbssmni_ML-R_mean_FW,tbssmni_ML-L_mean_FW,tbssmni_ICP-R_mean_FW,tbssmni_ICP-L_mean_FW,tbssmni_SCP-R_mean_FW,tbssmni_SCP-L_mean_FW,\
+tbssmni_CP-R_mean_FW,tbssmni_CP-L_mean_FW,tbssmni_ALIC-R_mean_FW,tbssmni_ALIC-L_mean_FW,tbssmni_PLIC-R_mean_FW,tbssmni_PLIC-L_mean_FW,\
+tbssmni_RLIC-R_mean_FW,tbssmni_RLIC-L_mean_FW,tbssmni_ACR-R_mean_FW,tbssmni_ACR-L_mean_FW,tbssmni_SCR-R_mean_FW,tbssmni_SCR-L_mean_FW,\
+tbssmni_PCR-R_mean_FW,tbssmni_PCR-L_mean_FW,tbssmni_PTR-R_mean_FW,tbssmni_PTR-L_mean_FW,tbssmni_SS-R_mean_FW,tbssmni_SS-L_mean_FW,tbssmni_EC-R_mean_FW,\
+tbssmni_EC-L_mean_FW,tbssmni_CGC-R_mean_FW,tbssmni_CGC-L_mean_FW,tbssmni_CGH-R_mean_FW,tbssmni_CGH-L_mean_FW,tbssmni_FX_ST-R_mean_FW,\
+tbssmni_FX_ST-L_mean_FW,tbssmni_SLF-R_mean_FW,tbssmni_SLF-L_mean_FW,tbssmni_SFO-R_mean_FW,tbssmni_SFO-L_mean_FW,tbssmni_UNC-R_mean_FW,\
+tbssmni_UNC-L_mean_FW,tbssmni_TAP-R_mean_FW,tbssmni_TAP-L_mean_FW,tbssmni_skeleton_mean_FW" >> $ROI_CSV
 
     # Iterate across modalities to extract JHU ROIs and mean across entire skeleton
     ###############################################################################
@@ -349,9 +352,9 @@ elif [ $TBSS_PIPELINE == "fixel" ]; then
     # Output CSV for fixel branch
     MEAN_CSV=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_means.csv
     
-    echo "sub_id,tbss_skeleton_mean_FA,tbss_skeleton_mean_FAt,tbss_skeleton_mean_AD,tbss_skeleton_mean_ADt,tbss_skeleton_mean_RD,\
-    tbss_skeleton_mean_RDt,tbss_skeleton_mean_MD,tbss_skeleton_mean_MDt,tbss_skeleton_mean_FW,tbss_skeleton_mean_fd,tbss_skeleton_mean_fdc,\
-    tbss_skeleton_mean_logfc,tbss_skeleton_mean_complexity" >> $MEAN_CSV
+    echo -e "sub_id,tbss_skeleton_mean_FA,tbss_skeleton_mean_FAt,tbss_skeleton_mean_AD,tbss_skeleton_mean_ADt,tbss_skeleton_mean_RD,\
+tbss_skeleton_mean_RDt,tbss_skeleton_mean_MD,tbss_skeleton_mean_MDt,tbss_skeleton_mean_FW,tbss_skeleton_mean_fd,tbss_skeleton_mean_fdc,\
+tbss_skeleton_mean_logfc,tbss_skeleton_mean_complexity" > $MEAN_CSV
 
     # Iterate across modalities to extract mean across entire skeleton
     ##################################################################

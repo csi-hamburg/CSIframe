@@ -24,7 +24,7 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 ##################################
 
 # Singularity container version and command
-container_fmriprep=fmriprep-20.2.6
+container_fmriprep=fmriprep-21.0.2
 singularity_fmriprep="singularity run --cleanenv --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
@@ -57,8 +57,6 @@ CMD="
    --use-aroma \
    --cifti-output 91k \
    --random-seed 12345 \
-   --use-syn-sdc \
-   --force-syn \
    --notrack \
    --skip_bids_validation \
    --fs-license-file envs/freesurfer_license.txt"
