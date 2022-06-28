@@ -348,7 +348,7 @@ elif [ $ALGORITHM == "LOCATE" ]; then
 
     elif [ $LOCATE_LEVEL == "validation" ]; then
 
-        #matlab -nosplash -nodesktop -nojvm -batch "addpath(genpath('$LOCATE_installation')); LOCATE_LOO_testing('$LOCATE_training_dir'); quit"
+        matlab -nosplash -nodesktop -nojvm -batch "addpath(genpath('$LOCATE_installation')); LOCATE_LOO_testing('$LOCATE_training_dir'); quit"
 
         # output are all files in $LOCATE_training_dir/LOCATE_LOO_results_directory
 
