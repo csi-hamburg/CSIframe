@@ -8,6 +8,8 @@
 #       - none                                                                                                    #
 #   [container]                                                                                                   #
 #       - qsiprep-0.15.3.sif                                                                                      #
+#                                                                                                                 #
+# Author: Marvin Petersen (m-petersen)                                                                            #
 ###################################################################################################################
 
 # Get verbose outputs
