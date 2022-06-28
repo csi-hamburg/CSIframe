@@ -33,52 +33,34 @@ singularity_freesurfer="singularity run --cleanenv --userns \
     -B $TMP_OUT:/tmp_out \
     $ENV_DIR/$container_freesurfer" 
 
-export SINGULARITYENV_SUBJECTS_DIR=$TMP_OUT/freesurfer
+export SINGULARITYENV_SUBJECTS_DIR=$TMP_OUT
 
 parallel="parallel --ungroup --delay 0.2 -j16 --joblog $CODE_DIR/log/parallel_runtask.log"
 
-if [ $SESSION == all ];then
+[ ! -d $TMP_OUT/ ] && mkdir -p $TMP_OUT
 
-   for ses in $(ls $BIDS_DIR/$1);do
-      sub_ses_dir=${1}_${ses}
-      [ ! -d $TMP_IN/$sub_ses_dir ] && cp -rf $BIDS_DIR/$1/$ses $TMP_IN/$sub_ses_dir 
-      [ ! -d $TMP_OUT/ ] && mkdir -p $TMP_OUT
-   done
+for ses in $(ls $BIDS_DIR/$1);do
+   sub_ses_dir=${1}_${ses}
+   sessions+=("-tp $sub_ses_dir")
+   [ ! -d $TMP_OUT/$sub_ses_dir ] && cp -rf $DATA_DIR/freesurfer_long/$sub_ses_dir $TMP_OUT/
+done
 
-   #SESSIONS+=($sub_ses_dir)
+CMD_BASE="
+   recon-all \
+   -base ${1}_base \
+   ${sessions[@]} \
+   -sd /tmp_out/ \
+   -debug \
+   -all"
+$singularity_freesurfer $CMD_BASE
 
-   #for ses_dir in $(ls $DATA_DIR/raw_bids/$1);do
-   #      [ ! -d $TMP_OUT/$1/$ses_dir ]; mkdir -p $TMP_OUT/$1/$ses_dir
-   #   done
-
-   CMD="
-      $singularity_freesurfer \
-      recon-all \
-      -sd /tmp_out/ \
-      -subjid {} \
-      -i /tmp_in/{}/anat/{}_T1w.nii.gz \
-      -debug \
-      -all"
-   $parallel $CMD ::: $(ls $TMP_IN)
-
-else
-
-   #export SESSIONS=($SESSION)
-   sub_ses_dir=${1}_ses-${SESSION}
-
-   [ ! -d $TMP_IN/$sub_ses_dir ] && cp -rf $BIDS_DIR/$1/ses-$SESSION $TMP_IN/$sub_ses_dir 
-
-   CMD="
-      $singularity_freesurfer \
-      recon-all \
-      -sd /tmp_out \
-      -subjid $sub_ses_dir \
-      -i /tmp_in/$sub_ses_dir/anat/${1}_ses-${SESSION}_T1w.nii.gz \
-      -debug \
-      -all"
-   $CMD
-
-fi
+CMD_LONG="
+recon-all \
+-long {} ${1}_base \
+-sd /tmp_out/ \
+-debug \
+-all"
+$parallel $singularity_freesurfer $CMD_LONG ::: ${sessions[@]}
 
 [ ! -d $DATA_DIR/freesurfer_long ] && mkdir -p $DATA_DIR/freesurfer_long
 cp -ruvf $TMP_OUT/* $DATA_DIR/freesurfer_long

@@ -127,7 +127,7 @@ elif [ $PIPELINE == "smriprep" ];then
 elif [ $PIPELINE == "freesurfer" ];then
 	
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
-	echo "Which pipeline level do you want to perform? (reconall/sub2avg)"
+	echo "Which pipeline level do you want to perform? (reconall/sub2avg/long)"
 	echo "For default ('reconall') leave empty"
 	read FS_LEVEL; export FS_LEVEL
 	[ -z $FS_LEVEL ] && export FS_LEVEL=reconall
@@ -145,6 +145,13 @@ elif [ $PIPELINE == "freesurfer" ];then
 		export SUBJS_PER_NODE=16
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="03:00:00"
+		partition_default="std"
+
+	elif [ $FS_LEVEL == long ];then
+
+		export SUBJS_PER_NODE=4
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="1-00:00:00"
 		partition_default="std"
 
 	fi
