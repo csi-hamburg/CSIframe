@@ -93,6 +93,24 @@ if [ $PIPELINE == "bidsify" ];then
 		
 	fi
 
+elif [ $PIPELINE == "nice" ];then
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Please provide the name of directory (in DATA_DIR) containing lesion masks."
+	echo "Choose from:"
+	ls -1 $DATA_DIR
+	read MODIFIER; export MODIFIER
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Please provide the space of original lesion segmentation"
+	echo "Currently available: FLAIR"
+	read ORIG_SPACE; export ORIG_SPACE
+
+	export SUBJS_PER_NODE=8
+	export ANALYSIS_LEVEL=subject
+	batch_time_default="06:00:00"
+	partition_default="std"
+
 elif [ $PIPELINE == "qsiprep" ];then
 	
 	# Mind limitation by /scratch and memory capacity (23gb temporary files, 15gb max RAM usage)

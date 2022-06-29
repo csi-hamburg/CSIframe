@@ -2,10 +2,10 @@
 
 ###################################################################################################################
 # Script for postprocessing NordicIce perfusion analysis output                                                   #
-#       - brain extraction of FLAIR images                                                                        #
+#       - brain extraction and bias correction of FLAIR images                                                    #
 #       - registration of lesion segmentations from FLAIR space to DSC space                                      #
 #       - creation of perfusion deficit masks (Tmax > 6s)                                                         #
-#       - registration of pefusion images to standard spacet                                                      #
+#       - registration of pefusion images to standard space                                                       #
 ###################################################################################################################
 
 ###################################################################################################################
@@ -13,7 +13,9 @@
 #   [pipelines which need to be run first]                                                                        #
 #       - NordicIce perfusion analysis and bidsification of it's outputs                                          #
 #   [containers]                                                                                                  #
-#       - fsl-6.0.3                                                                                               #  
+#       - fsl-6.0.3                                                                                               #
+#       - ants-2.3.5                                                                                              #
+#       - convert3d-1.0.0  
 ###################################################################################################################
 
 # Get verbose outputs and avoid creation of core files
@@ -34,8 +36,8 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 module load singularity
 container_fsl=fsl-6.0.3     
-container_mrtrix3=mrtrix3-3.0.2
-export SINGULARITYENV_MRTRIX_TMPFILE_DIR=$TMP_DIR
+container_ants=ants-2.3.5
+container_c3d=convert3d-1.0.0
 
 singularity_fsl="singularity run --cleanenv --userns \
     -B . \
@@ -47,13 +49,21 @@ singularity_fsl="singularity run --cleanenv --userns \
     -B $TMP_OUT \
     $ENV_DIR/$container_fsl"
 
-singularity_mrtrix3="singularity run --cleanenv --userns \
+singularity_ants="singularity run --cleanenv --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR \
     -B $TMP_IN \
     -B $TMP_OUT \
-    $ENV_DIR/$container_mrtrix3" 
+    $ENV_DIR/$container_ants" 
+
+singularity_c3d="singularity run --cleanenv --userns \
+    -B $PROJ_DIR \
+    -B $(readlink -f $ENV_DIR) \
+    -B $TMP_DIR \
+    -B $TMP_IN \
+    -B $TMP_OUT \
+    $ENV_DIR/$container_c3d" 
 
 
 # Define pipeline output directory 
@@ -79,7 +89,7 @@ DER_DIR=$NICE_DIR/derivatives/ses-$SESSION/perf
 # Define input
 ##############
 
-FLAIR=$BIDS_DIR/$1/ses-$SESSION/${1}_ses-${SESSION}_FLAIR.nii.gz
+FLAIR=$BIDS_DIR/$1/ses-$SESSION/anat/${1}_ses-${SESSION}_FLAIR.nii.gz
 
 # Define output
 ###############
@@ -97,7 +107,7 @@ CMD_BET="bet $FLAIR_BIASCORR $FLAIR_BRAIN -m -v"
 # Execute commands
 ##################
 
-$singularity_mrtrix3 $CMD_BIASCORR_FLAIR
+$singularity_ants $CMD_BIASCORR_FLAIR
 $singularity_fsl $CMD_BET
 
 mv ${FLAIR_BRAIN}_mask.nii.gz $BRAIN_MASK
@@ -122,7 +132,7 @@ CSF=$ANAT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-fast_csf.nii.gz
 # Define command
 ################
 
-CMD_FAST="fast --class 3 --type 2 --segments --nobias --out $TISSUES $FLAIR_BRAIN"
+CMD_FAST="fast -n 3 -t 2 -g -N -v -o $TISSUES $FLAIR_BRAIN"
 
 # Execute command
 #################
@@ -131,6 +141,45 @@ $singularity_fsl $CMD_FAST
 mv ${TISSUES}_seg_0.nii.gz $GM
 mv ${TISSUES}_seg_1.nii.gz $WM
 mv ${TISSUES}_seg_2.nii.gz $CSF
+
+#####################################################
+# Reorient perfusion images to standard orientation #
+#####################################################
+
+# This needs to be done to accomodate NordicIce orientation bug
+
+# Define input/output
+#####################
+
+BASELINE_DSC=$PERF_DIR/${1}_ses-${SESSION}_desc-moco_baselineSI.nii.gz
+MTT=$PERF_DIR/${1}_ses-${SESSION}_desc-moco_desc-LeakageCorrected_MTT.nii.gz
+RBF=$PERF_DIR/${1}_ses-${SESSION}_desc-moco_desc-LeakageCorrected_rBF.nii.gz
+RBV=$PERF_DIR/${1}_ses-${SESSION}_desc-moco_desc-LeakageCorrected_rBV.nii.gz
+EF=$PERF_DIR/${1}_ses-${SESSION}_desc-moco_EF.nii.gz
+LEAKAGE=$PERF_DIR/${1}_ses-${SESSION}_desc-moco_leakage.nii.gz
+TMAX=$PERF_DIR/${1}_ses-${SESSION}_desc-moco_Tmax.nii.gz
+
+# Define commands
+#################
+
+CMD_BASELINE_RO="fslreorient2std $BASELINE_DSC $BASELINE_DSC"
+CMD_MTT_RO="fslreorient2std $MTT $MTT"
+CMD_RBF_RO="fslreorient2std $RBF $RBF"
+CMD_RBV_RO="fslreorient2std $RBV $RBV"
+CMD_EF_RO="fslreorient2std $EF $EF"
+CMD_LEAKAGE_RO="fslreorient2std $LEAKAGE $LEAKAGE"
+CMD_TMAX_RO="fslreorient2std $TMAX $TMAX"
+
+# Execute commands
+##################
+
+$singularity_fsl $CMD_BASELINE_RO
+$singularity_fsl $CMD_MTT_RO
+$singularity_fsl $CMD_RBF_RO
+$singularity_fsl $CMD_RBV_RO
+$singularity_fsl $CMD_EF_RO
+$singularity_fsl $CMD_LEAKAGE_RO
+$singularity_fsl $CMD_TMAX_RO
 
 ########################################
 # Brain extraction of perfusion images #
@@ -230,9 +279,17 @@ CSF=$ANAT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-fast_csf.nii.gz
 # Define output
 ###############
 
-DSC_2_FLAIR=$ANAT_DIR/${1}_ses-${SESSION}_from-dsc_to-FLAIR_desc-affine_
-AFFINE=${DSC_2_FLAIR}0GenericAffine.mat
+DSC_IN_FLAIR=$PERF_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-moco_desc-brain_baselineSI.nii.gz
+DSC_2_FLAIR_FSL=$PERF_DIR/${1}_ses-${SESSION}_from-dsc_to-FLAIR_desc-affine.mat
+FLAIR_2_DSC=$ANAT_DIR/${1}_ses-${SESSION}_from-FLAIR_to-dsc_desc-affine.mat
+DSC_2_FLAIR_ITK=$PERF_DIR/${1}_ses-${SESSION}_from-dsc_to-FLAIR_desc-affine.txt
+
+LESION_MASK_DSC_PROB=$ANAT_DIR/${1}_ses-${SESSION}_space-dsc_desc-prob_desc-lesion_mask.nii.gz
 LESION_MASK_DSC=$ANAT_DIR/${1}_ses-${SESSION}_space-dsc_desc-lesion_mask.nii.gz
+
+GM_DSC_PROB=$ANAT_DIR/${1}_ses-${SESSION}_space-dsc_desc-fast_desc-prob_greymatter.nii.gz
+WM_DSC_PROB=$ANAT_DIR/${1}_ses-${SESSION}_space-dsc_desc-fast_desc-prob_whitematter.nii.gz
+CSF_DSC_PROB=$ANAT_DIR/${1}_ses-${SESSION}_space-dsc_desc-fast_desc-prob_csf.nii.gz
 
 GM_DSC=$ANAT_DIR/${1}_ses-${SESSION}_space-dsc_desc-fast_greymatter.nii.gz
 WM_DSC=$ANAT_DIR/${1}_ses-${SESSION}_space-dsc_desc-fast_whitematter.nii.gz
@@ -241,28 +298,31 @@ CSF_DSC=$ANAT_DIR/${1}_ses-${SESSION}_space-dsc_desc-fast_csf.nii.gz
 # Define commands
 #################
 
-# Registration
+CMD_DSC2FLAIR="flirt -in $BASELINE_DSC_BRAIN -ref $FLAIR_BRAIN -out $DSC_IN_FLAIR -omat $DSC_2_FLAIR_FSL"
+CMD_FLAIR2DSC="convert_xfm -omat $FLAIR_2_DSC -inverse $DSC_2_FLAIR_FSL"
+CMD_CONVERT_AFFINE="c3d_affine_tool -ref $FLAIR_BRAIN -src $BASELINE_DSC_BRAIN $DSC_2_FLAIR_FSL -fsl2ras -oitk $DSC_2_FLAIR_ITK"
 
-CMD_DSC2FLAIR="antsRegistrationSyN.sh -d 3 -n $SLURM_CPUS_PER_TASK -m $BASELINE_DSC_BRAIN -f $FLAIR_BRAIN -o $DSC_2_FLAIR -t a"
-CMD_APPLY_XFM_LESION="antsApplyTransforms -d 3 -e 0 -i $LESION_MASK -r $BASELINE_DSC_BRAIN -t [ $AFFINE, 1 ] -o $LESION_MASK_DSC"
-CMD_APPLY_XFM_GM="antsApplyTransforms -d 3 -e 0 -i $GM -r $BASELINE_DSC_BRAIN -t [ $AFFINE, 1 ] -o $GM_DSC"
-CMD_APPLY_XFM_WM="antsApplyTransforms -d 3 -e 0 -i $WM -r $BASELINE_DSC_BRAIN -t [ $AFFINE, 1 ] -o $WM_DSC"
-CMD_APPLY_XFM_CSF"antsApplyTransforms -d 3 -e 0 -i $CSF -r $BASELINE_DSC_BRAIN -t [ $AFFINE, 1 ] -o $CSF_DSC"
+CMD_APPLY_XFM_LESION="flirt -in $LESION_MASK -ref $BASELINE_DSC_BRAIN -applyxfm -init $FLAIR_2_DSC -out $LESION_MASK_DSC_PROB"
+CMD_APPLY_XFM_GM="flirt -in $GM -ref $BASELINE_DSC_BRAIN -applyxfm -init $FLAIR_2_DSC -out $GM_DSC_PROB"
+CMD_APPLY_XFM_WM="flirt -in $WM -ref $BASELINE_DSC_BRAIN -applyxfm -init $FLAIR_2_DSC -out $WM_DSC_PROB"
+CMD_APPLY_XFM_CSF="flirt -in $CSF -ref $BASELINE_DSC_BRAIN -applyxfm -init $FLAIR_2_DSC -out $CSF_DSC_PROB"
 
 # Thresholding
 
-CMD_THRESH_LESION="fslmaths $LESION_MASK_DSC -thr 0.9 -bin $LESION_MASK_DSC"
-CMD_TRESH_GM="fslmaths $GM_DSC -thr 0.1 -bin $GM_DSC"
-CMD_TRESH_WM="fslmaths $WM_DSC -thr 0.1 -bin $WM_DSC"
-CMD_TRESH_CSF="fslmaths $CSF_DSC -thr 0.1 -bin $CSF_DSC"
+CMD_THRESH_LESION="fslmaths $LESION_MASK_DSC_PROB -thr 0.6 -bin $LESION_MASK_DSC"
+CMD_TRESH_GM="fslmaths $GM_DSC_PROB -thr 0.6 -bin $GM_DSC"
+CMD_TRESH_WM="fslmaths $WM_DSC_PROB -thr 0.6 -bin $WM_DSC"
+CMD_TRESH_CSF="fslmaths $CSF_DSC_PROB -thr 0.6 -bin $CSF_DSC"
 
 # Execute commands
 ##################
 
 # Registration
 
-$singularity_mrtrix3 $CMD_DSC2FLAIR
-$singularity_mrtrix3 $CMD_APPLY_XFM_LESION
+$singularity_fsl $CMD_DSC2FLAIR
+$singularity_fsl $CMD_FLAIR2DSC
+$singularity_c3d $CMD_CONVERT_AFFINE
+$singularity_fsl $CMD_APPLY_XFM_LESION
 $singularity_fsl $CMD_APPLY_XFM_GM
 $singularity_fsl $CMD_APPLY_XFM_WM
 $singularity_fsl $CMD_APPLY_XFM_CSF
@@ -350,15 +410,15 @@ X=`$singularity_fsl $CMD_X | tail -n 1`
 Y=`$singularity_fsl $CMD_Y | tail -n 1`
 Z=`$singularity_fsl $CMD_Z | tail -n 1`
 
-# Minimum volume of cluster is set here to be at least 1 ml
-
-VOX_THRESH=`echo $((1000/$(($X*$Y*$Z)))) | awk '{print int($1+0.5)}'`
+# Minimum volume of cluster is set here to be at least 0.5 ml
+VOL=`echo "$X * $Y * $Z" | bc`
+VOX_THRESH=`echo "500/$VOL" | bc`
 
 # Threshold Tmax image and create perfusion deficit mask 
 ########################################################
 
 CMD_PERF_CLUSTER="cluster --in=$TMAX_CLEAN --thresh=6 --osize=$PERF_CLUSTER --connectivity=6"
-CMD_PERF_DEFICIT="fslmaths $PERF_CLUSTER -thr $VOX_THRESH $PERF_DEFICIT"
+CMD_PERF_DEFICIT="fslmaths $PERF_CLUSTER -thr $VOX_THRESH -bin $PERF_DEFICIT"
 
 $singularity_fsl $CMD_PERF_CLUSTER
 $singularity_fsl $CMD_PERF_DEFICIT
@@ -438,14 +498,13 @@ FLAIR2TEMPLATE_WARP=$ANAT_DIR/${1}_ses-${SESSION}_from-FLAIR_to-miplab_Composite
 # Define command
 ################
 
-CMD_FLAIR2TEMPLATE="
-antsRegistration \
+CMD_FLAIR2TEMPLATE="antsRegistration \
     --output [ $ANAT_DIR/${1}_ses-${SESSION}_from-FLAIR_to-miplab_, $FLAIR_IN_TEMPLATE ] \
     --collapse-output-transforms 0 \
     --dimensionality 3 \
     --initial-moving-transform [ $TEMPLATE, $FLAIR_BRAIN, 1 ] \
     --initialize-transforms-per-stage 0 \
-    --interpolation LanczosWindowedSinc \
+    --interpolation Linear \
     --transform Rigid[ 0.1 ] \
     --metric MI[ $TEMPLATE, $FLAIR_BRAIN, 1, 32, Regular, 0.25 ] \
     --convergence [ 10000x111110x11110x100, 1e-08, 10 ] \
@@ -461,7 +520,7 @@ antsRegistration \
     --use-estimate-learning-rate-once 1 \
     --use-histogram-matching 1 \
     --transform SyN[ 0.2, 3.0, 0.0 ] \
-    --metric CC[ $TEMPALTE, $FLAIR_BRAIN, 1, 4 ] \
+    --metric CC[ $TEMPLATE, $FLAIR_BRAIN, 1, 4 ] \
     --convergence [ 100x50x30x20, 1e-08, 10 ] \
     --smoothing-sigmas 3.0x2.0x1.0x0.0vox \
     --shrink-factors 8x4x2x1 \
@@ -473,13 +532,13 @@ antsRegistration \
 # Execute command
 #################
 
-$singularity_mrtrix3 $CMD_FLAIR2TEMPLATE
+$singularity_ants $CMD_FLAIR2TEMPLATE
 
 ################################################################
 # Registration of perfusion images to standard space via FLAIR #
 ################################################################
 
-# Define input ### USE brain extracted only perfusion images > exclude csf/ventricles afterwards??
+# Define input
 ##############
 
 MTT_CLEAN=$PERF_DIR/${1}_ses-${SESSION}_desc-moco_desc-brain_desc-wocsf_MTT.nii.gz
@@ -490,13 +549,23 @@ LEAKAGE_CLEAN=$PERF_DIR/${1}_ses-${SESSION}_desc-moco_desc-brain_desc-wocsf_leak
 LEAKAGE_ABS_CLEAN=$PERF_DIR/${1}_ses-${SESSION}_desc-moco_desc-brain_desc-wocsf_absleakage.nii.gz
 TMAX_CLEAN=$PERF_DIR/${1}_ses-${SESSION}_desc-moco_desc-brain_desc-wocsf_Tmax.nii.gz
 
-DSC2FLAIR_AFFINE=$ANAT_DIR/${1}_ses-${SESSION}_from-dsc_to-FLAIR_desc-affine_0GenericAffine.mat
+FLAIR_BRAIN=$ANAT_DIR/${1}_ses-${SESSION}_desc-preproc_desc-brain_FLAIR.nii.gz
+DSC_2_FLAIR_FSL=$PERF_DIR/${1}_ses-${SESSION}_from-dsc_to-FLAIR_desc-affine.mat
+DSC_IN_FLAIR=$PERF_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-moco_desc-brain_baselineSI.nii.gz
 FLAIR2TEMPLATE_WARP=$ANAT_DIR/${1}_ses-${SESSION}_from-FLAIR_to-miplab_Composite.h5
 TEMPLATE=$ENV_DIR/standard/miplab-flair_asym_brain.nii.gz
 
 # Define output
 ###############
+MTT_FLAIR=$PERF_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-moco_desc-brain_desc-wocsf_MTT.nii.gz
+RBF_FLAIR=$PERF_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-moco_desc-brain_desc-wocsf_rBF.nii.gz
+RBV_FLAIR=$PERF_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-moco_desc-brain_desc-wocsf_rBV.nii.gz
+EF_FLAIR=$PERF_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-moco_desc-brain_desc-wocsf_EF.nii.gz
+LEAKAGE_FLAIR=$PERF_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-moco_desc-brain_desc-wocsf_leakage.nii.gz
+LEAKAGE_ABS_FLAIR=$PERF_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-moco_desc-brain_desc-wocsf_absleakage.nii.gz
+TMAX_FLAIR=$PERF_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-moco_desc-brain_desc-wocsf_Tmax.nii.gz
 
+BASELINE_TEMP=$PERF_DIR/${1}_ses-${SESSION}_space-miplab_desc-moco_desc-brain_baselineSI.nii.gz
 MTT_TEMP=$PERF_DIR/${1}_ses-${SESSION}_space-miplab_desc-moco_desc-brain_desc-wocsf_MTT.nii.gz
 RBF_TEMP=$PERF_DIR/${1}_ses-${SESSION}_space-miplab_desc-moco_desc-brain_desc-wocsf_rBF.nii.gz
 RBV_TEMP=$PERF_DIR/${1}_ses-${SESSION}_space-miplab_desc-moco_desc-brain_desc-wocsf_rBV.nii.gz
@@ -508,24 +577,42 @@ TMAX_TEMP=$PERF_DIR/${1}_ses-${SESSION}_space-miplab_desc-moco_desc-brain_desc-w
 # Define commands
 #################
 
-CMD_MTT2MNI="antsApplyTransforms -d 3 -e 0 -n LanczosWindowedSinc -i $MTT_CLEAN -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -t $DSC2FLAIR_AFFINE -o $MTT_TEMP"
-CMD_RBF2MNI="antsApplyTransforms -d 3 -e 0 -n LanczosWindowedSinc -i $RBF_CLEAN -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -t $DSC2FLAIR_AFFINE -o $RBF_TEMP"
-CMD_RBV2MNI="antsApplyTransforms -d 3 -e 0 -n LanczosWindowedSinc -i $RBV_CLEAN -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -t $DSC2FLAIR_AFFINE -o $RBV_TEMP"
-CMD_EF2MNI="antsApplyTransforms -d 3 -e 0 -n LanczosWindowedSinc -i $EF_CLEAN -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -t $DSC2FLAIR_AFFINE -o $EF_TEMP"
-CMD_LEAKAGE2MNI="antsApplyTransforms -d 3 -e 0 -n LanczosWindowedSinc -i $LEAKAGE_CLEAN -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -t $DSC2FLAIR_AFFINE -o $LEAKAGE_TEMP"
-CMD_LEAKAGE_ABS2MNI="antsApplyTransforms -d 3 -e 0 -n LanczosWindowedSinc -i $LEAKAGE_ABS_CLEAN -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -t $DSC2FLAIR_AFFINE -o $LEAKAGE_ABS_TMEP"
-CMD_TMAX2MNI="antsApplyTransforms -d 3 -e 0 -n LanczosWindowedSinc -i $TMAX_CLEAN -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -t $DSC2FLAIR_AFFINE -o $TMAX_TEMP"
+CMD_MTT2FLAIR="flirt -in $MTT_CLEAN -ref $FLAIR_BRAIN -applyxfm -init $DSC_2_FLAIR_FSL -out $MTT_FLAIR"
+CMD_RBF2FLAIR="flirt -in $RBF_CLEAN -ref $FLAIR_BRAIN -applyxfm -init $DSC_2_FLAIR_FSL -out $RBF_FLAIR"
+CMD_RBV2FLAIR="flirt -in $RBV_CLEAN -ref $FLAIR_BRAIN -applyxfm -init $DSC_2_FLAIR_FSL -out $RBV_FLAIR"
+CMD_EF2FLAIR="flirt -in $EF_CLEAN -ref $FLAIR_BRAIN -applyxfm -init $DSC_2_FLAIR_FSL -out $EF_FLAIR"
+CMD_LEAKAGE2FLAIR="flirt -in $LEAKAGE_CLEAN -ref $FLAIR_BRAIN -applyxfm -init $DSC_2_FLAIR_FSL -out $LEAKAGE_FLAIR"
+CMD_LEAKAGE_ABS2FLAIR="flirt -in $LEAKAGE_ABS_CLEAN -ref $FLAIR_BRAIN -applyxfm -init $DSC_2_FLAIR_FSL -out $LEAKAGE_ABS_FLAIR"
+CMD_TMAX2FLAIR="flirt -in $TMAX_CLEAN -ref $FLAIR_BRAIN -applyxfm -init $DSC_2_FLAIR_FSL -out $TMAX_FLAIR"
+
+CMD_BASELINE2MNI="antsApplyTransforms -d 3 -e 0 -n Linear -i $DSC_IN_FLAIR -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -o $BASELINE_TEMP"
+CMD_MTT2MNI="antsApplyTransforms -d 3 -e 0 -n Linear -i $MTT_FLAIR -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -o $MTT_TEMP"
+CMD_RBF2MNI="antsApplyTransforms -d 3 -e 0 -n Linear -i $RBF_FLAIR -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -o $RBF_TEMP"
+CMD_RBV2MNI="antsApplyTransforms -d 3 -e 0 -n Linear -i $RBV_FLAIR -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -o $RBV_TEMP"
+CMD_EF2MNI="antsApplyTransforms -d 3 -e 0 -n Linear -i $EF_FLAIR -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -o $EF_TEMP"
+CMD_LEAKAGE2MNI="antsApplyTransforms -d 3 -e 0 -n Linear -i $LEAKAGE_FLAIR -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -o $LEAKAGE_TEMP"
+CMD_LEAKAGE_ABS2MNI="antsApplyTransforms -d 3 -e 0 -n Linear -i $LEAKAGE_ABS_FLAIR -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -o $LEAKAGE_ABS_TEMP"
+CMD_TMAX2MNI="antsApplyTransforms -d 3 -e 0 -n Linear -i $TMAX_FLAIR -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -o $TMAX_TEMP"
 
 # Execute commands
 ##################
 
-$singularity_mrtrix3 $CMD_MTT2MNI
-$singularity_mrtrix3 $CMD_RBF2MNI
-$singularity_mrtrix3 $CMD_RBV2MNI
-$singularity_mrtrix3 $CMD_EF2MNI
-$singularity_mrtrix3 $CMD_LEAKAGE2MNI
-$singularity_mrtrix3 $CMD_LEAKAGE_ABS2MNI
-$singularity_mrtrix3 $CMD_TMAX2MNI
+$singularity_fsl $CMD_MTT2FLAIR
+$singularity_fsl $CMD_RBF2FLAIR
+$singularity_fsl $CMD_RBV2FLAIR
+$singularity_fsl $CMD_EF2FLAIR
+$singularity_fsl $CMD_LEAKAGE2FLAIR
+$singularity_fsl $CMD_LEAKAGE_ABS2FLAIR
+$singularity_fsl $CMD_TMAX2FLAIR
+
+$singularity_ants $CMD_BASELINE2MNI
+$singularity_ants $CMD_MTT2MNI
+$singularity_ants $CMD_RBF2MNI
+$singularity_ants $CMD_RBV2MNI
+$singularity_ants $CMD_EF2MNI
+$singularity_ants $CMD_LEAKAGE2MNI
+$singularity_ants $CMD_LEAKAGE_ABS2MNI
+$singularity_ants $CMD_TMAX2MNI
 
 ########################################################################
 # Registration of lesion and perfusion deficit masks to standard space #
@@ -538,29 +625,38 @@ $singularity_mrtrix3 $CMD_TMAX2MNI
 LESION_MASK=$LESION_DIR/${1}_ses-${SESSION}_space-FLAIR_lesionmask.nii.gz
 PERF_DEFICIT=$PERF_DIR/${1}_ses-${SESSION}_desc-perfusiondeficit_mask.nii.gz
 
-DSC2FLAIR_AFFINE=$ANAT_DIR/${1}_ses-${SESSION}_from-dsc_to-FLAIR_desc-affine_0GenericAffine.mat
+#DSC2FLAIR_AFFINE=$ANAT_DIR/${1}_ses-${SESSION}_from-dsc_to-FLAIR_desc-affine_0GenericAffine.mat
+DSC_2_FLAIR_ITK=$PERF_DIR/${1}_ses-${SESSION}_from-dsc_to-FLAIR_desc-affine.txt
+FLAIR_BRAIN=$ANAT_DIR/${1}_ses-${SESSION}_desc-preproc_desc-brain_FLAIR.nii.gz
+DSC_2_FLAIR_FSL=$PERF_DIR/${1}_ses-${SESSION}_from-dsc_to-FLAIR_desc-affine.mat
+
 FLAIR2TEMPLATE_WARP=$ANAT_DIR/${1}_ses-${SESSION}_from-FLAIR_to-miplab_Composite.h5
 TEMPLATE=$ENV_DIR/standard/miplab-flair_asym_brain.nii.gz
 
 # Define output
 ###############
 
+LESION_TEMP_PROB=$ANAT_DIR/${1}_ses-${SESSION}_space-miplab_desc-prob_desc-lesion_mask.nii.gz
 LESION_TEMP=$ANAT_DIR/${1}_ses-${SESSION}_space-miplab_desc-lesion_mask.nii.gz
+PERF_FLAIR=$PERF_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-perfusiondeficit_mask.nii.gz
+PERF_TEMP_PROB=$PERF_DIR/${1}_ses-${SESSION}_space-miplab_desc-prob_desc-perfusiondeficit_mask.nii.gz
 PERF_TEMP=$PERF_DIR/${1}_ses-${SESSION}_space-miplab_desc-perfusiondeficit_mask.nii.gz
 
 # Define commands
 #################
 
-CMD_LESION2TEMP="antsApplyTransforms -d 3 -e 0 -n Linear -i $LESION_MASK -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -o $LESION_TEMP"
-CMD_PERF2TEMP="antsApplyTransforms -d 3 -e 0 -n Linear -i $PERF_DEFICIT -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -t $DSC2FLAIR_AFFINE -o $PERF_TEMP"
-CMD_THRESH_LESION="fslmaths $LESION_TEMP -thr 0.9 $LESION_TEMP"
-CMD_THRESH_PERF="fslmaths $PERF_TEMP -thr 0.9 $PERF_TEMP"
+CMD_LESION2TEMP="antsApplyTransforms -d 3 -e 0 -n Linear -i $LESION_MASK -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -o $LESION_TEMP_PROB"
+CMD_PERF2FLAIR="flirt -in $PERF_DEFICIT -ref $FLAIR_BRAIN -applyxfm -init $DSC_2_FLAIR_FSL -out $PERF_FLAIR"
+CMD_PERF2TEMP="antsApplyTransforms -d 3 -e 0 -n Linear -i $PERF_FLAIR -r $TEMPLATE -t $FLAIR2TEMPLATE_WARP -o $PERF_TEMP_PROB"
+CMD_THRESH_LESION="fslmaths $LESION_TEMP_PROB -thr 0.80 -bin $LESION_TEMP"
+CMD_THRESH_PERF="fslmaths $PERF_TEMP_PROB -thr 0.6 -bin $PERF_TEMP"
 
 # Execute commands
 ##################
 
-$singularity_mrtrix3 $CMD_LESION2TEMP
-$singularity_mrtrix3 $CMD_PERF2TEMP
+$singularity_ants $CMD_LESION2TEMP
+$singularity_fsl $CMD_PERF2FLAIR
+$singularity_ants $CMD_PERF2TEMP
 $singularity_fsl $CMD_THRESH_LESION
 $singularity_fsl $CMD_THRESH_PERF
 
@@ -677,10 +773,21 @@ extractmean() {
 
     img=$1
     roi=$2
+    mod=$3
 
-    $singularity_fsl fslmaths $img -mul $roi $TMP_OUT/${roi}_mean_tmp
-    mean=`$singularity_fsl fslstats $TMP_OUT/${roi}_mean_tmp -M | tail -n 1`
+    test=`$singularity_fsl fslstats $roi -M | tail -n 1`
 
+    if [ $test != "0.000000" ]; then
+
+        $singularity_fsl fslmaths $img -mul $roi $TMP_OUT/${mod}_mean_tmp > /dev/null 2>&1
+        mean=`$singularity_fsl fslstats $TMP_OUT/${mod}_mean_tmp -M | tail -n 1`
+    
+    else
+
+        mean=""
+    
+    fi
+    
     echo $mean
 
 }
@@ -690,72 +797,72 @@ extractmean() {
 
 # Lesion
 
-lesion_mtt=`extractmean $MTT_CLEAN $LESION_MASK_DSC`
-lesion_rbf=`extractmean $RBF_CLEAN $LESION_MASK_DSC`
-lesion_rbv=`extractmean $RBV_CLEAN $LESION_MASK_DSC`
-lesion_ef=`extractmean $EF_CLEAN $LESION_MASK_DSC`
-lesion_leakage=`extractmean $LEAKAGE_CLEAN $LESION_MASK_DSC`
-lesion_absleakage=`extractmean $LEAKAGE_ABS_CLEAN $LESION_MASK_DSC`
-lesion_tmax=`extractmean $TMAX_CLEAN $LESION_MASK_DSC`
+lesion_mtt=`extractmean $MTT_CLEAN $LESION_MASK_DSC mtt_lesion`
+lesion_rbf=`extractmean $RBF_CLEAN $LESION_MASK_DSC rbf_lesion`
+lesion_rbv=`extractmean $RBV_CLEAN $LESION_MASK_DSC rbv_lesion`
+lesion_ef=`extractmean $EF_CLEAN $LESION_MASK_DSC ef_lesion`
+lesion_leakage=`extractmean $LEAKAGE_CLEAN $LESION_MASK_DSC leakage_lesion`
+lesion_absleakage=`extractmean $LEAKAGE_ABS_CLEAN $LESION_MASK_DSC absleakage_lesion`
+lesion_tmax=`extractmean $TMAX_CLEAN $LESION_MASK_DSC tmax_lesion`
 
-lesion_z_mtt=`extractmean $MTT_Z $LESION_MASK_DSC`
-lesion_z_rbf=`extractmean $RBF_Z $LESION_MASK_DSC`
-lesion_z_rbv=`extractmean $RBV_Z $LESION_MASK_DSC`
-lesion_z_ef=`extractmean $EF_Z $LESION_MASK_DSC`
-lesion_z_leakage=`extractmean $LEAKAGE_Z $LESION_MASK_DSC`
-lesion_z_absleakage=`extractmean $LEAKAGE_ABS_Z $LESION_MASK_DSC`
-lesion_z_tmax=`extractmean $TMAX_Z $LESION_MASK_DSC`
+lesion_z_mtt=`extractmean $MTT_Z $LESION_MASK_DSC mttz_lesion`
+lesion_z_rbf=`extractmean $RBF_Z $LESION_MASK_DSC rbfz_lesion`
+lesion_z_rbv=`extractmean $RBV_Z $LESION_MASK_DSC rbvz_lesion`
+lesion_z_ef=`extractmean $EF_Z $LESION_MASK_DSC efz_lesion`
+lesion_z_leakage=`extractmean $LEAKAGE_Z $LESION_MASK_DSC leakagez_lesion`
+lesion_z_absleakage=`extractmean $LEAKAGE_ABS_Z $LESION_MASK_DSC absleakagez_lesion`
+lesion_z_tmax=`extractmean $TMAX_Z $LESION_MASK_DSC tmaxz_lesion`
 
-lesionstandard_mtt=`extractmean $MTT_TEMP $LESION_TEMP`
-lesionstandard_rbf=`extractmean $RBF_TEMP $LESION_TEMP`
-lesionstandard_rbv=`extractmean $RBV_TEMP $LESION_TEMP`
-lesionstandard_ef=`extractmean $EF_TEMP $LESION_TEMP`
-lesionstandard_leakage=`extractmean $LEAKAGE_TEMP $LESION_TEMP`
-lesionstandard_absleakage=`extractmean $LEAKAGE_ABS_TEMP $LESION_TEMP`
-lesionstandard_tmax=`extractmean $TMAX_TEMP $LESION_TEMP`
+lesionstandard_mtt=`extractmean $MTT_TEMP $LESION_TEMP mtt_lesionstandard`
+lesionstandard_rbf=`extractmean $RBF_TEMP $LESION_TEMP rbf_lesionstandard`
+lesionstandard_rbv=`extractmean $RBV_TEMP $LESION_TEMP rbv_lesionstandard`
+lesionstandard_ef=`extractmean $EF_TEMP $LESION_TEMP ef_lesionstandard`
+lesionstandard_leakage=`extractmean $LEAKAGE_TEMP $LESION_TEMP leakage_lesionstandard`
+lesionstandard_absleakage=`extractmean $LEAKAGE_ABS_TEMP $LESION_TEMP absleakage_lesionstandard`
+lesionstandard_tmax=`extractmean $TMAX_TEMP $LESION_TEMP tmax_lesionstandard`
 
-lesionstandard_z_mtt=`extractmean $MTT_Z_TEMP $LESION_TEMP`
-lesionstandard_z_rbf=`extractmean $RBF_Z_TEMP $LESION_TEMP`
-lesionstandard_z_rbv=`extractmean $RBV_Z_TEMP $LESION_TEMP`
-lesionstandard_z_ef=`extractmean $EF_Z_TEMP $LESION_TEMP`
-lesionstandard_z_leakage=`extractmean $LEAKAGE_Z_TEMP $LESION_TEMP`
-lesionstandard_z_absleakage=`extractmean $LEAKAGE_ABS_Z_TEMP $LESION_TEMP`
-lesionstandard_z_tmax=`extractmean $TMAX_Z_TEMP $LESION_TEMP`
+lesionstandard_z_mtt=`extractmean $MTT_Z_TEMP $LESION_TEMP mttz_lesionstandard`
+lesionstandard_z_rbf=`extractmean $RBF_Z_TEMP $LESION_TEMP rbfz_lesionstandard`
+lesionstandard_z_rbv=`extractmean $RBV_Z_TEMP $LESION_TEMP rbvz_lesionstandard`
+lesionstandard_z_ef=`extractmean $EF_Z_TEMP $LESION_TEMP efz_lesionstandard`
+lesionstandard_z_leakage=`extractmean $LEAKAGE_Z_TEMP $LESION_TEMP leakagez_lesionstandard`
+lesionstandard_z_absleakage=`extractmean $LEAKAGE_ABS_Z_TEMP $LESION_TEMP absleakagez_lesionstandard`
+lesionstandard_z_tmax=`extractmean $TMAX_Z_TEMP $LESION_TEMP tmaxz_lesionstandard`
 
 
 # Perfusion deficit
 
-perfdef_mtt=`extractmean $MTT_CLEAN $PERF_DEFICIT`
-perfdef_rbf=`extractmean $RBF_CLEAN $PERF_DEFICIT`
-perfdef_rbv=`extractmean $RBV_CLEAN $PERF_DEFICIT`
-perfdef_ef=`extractmean $EF_CLEAN $PERF_DEFICIT`
-perfdef_leakage=`extractmean $LEAKAGE_CLEAN $PERF_DEFICIT`
-perfdef_absleakage=`extractmean $LEAKAGE_ABS_CLEAN $PERF_DEFICIT`
-perfdef_tmax=`extractmean $TMAX_CLEAN $PERF_DEFICIT`
+perfdef_mtt=`extractmean $MTT_CLEAN $PERF_DEFICIT mtt_perf`
+perfdef_rbf=`extractmean $RBF_CLEAN $PERF_DEFICIT rbf_perf`
+perfdef_rbv=`extractmean $RBV_CLEAN $PERF_DEFICIT rbv_perf`
+perfdef_ef=`extractmean $EF_CLEAN $PERF_DEFICIT ef_perf`
+perfdef_leakage=`extractmean $LEAKAGE_CLEAN $PERF_DEFICIT leakage_perf`
+perfdef_absleakage=`extractmean $LEAKAGE_ABS_CLEAN $PERF_DEFICIT absleakage_perf`
+perfdef_tmax=`extractmean $TMAX_CLEAN $PERF_DEFICIT tmax_perf`
 
-perfdef_z_mtt=`extractmean $MTT_Z $PERF_DEFICIT`
-perfdef_z_rbf=`extractmean $RBF_Z $PERF_DEFICIT`
-perfdef_z_rbv=`extractmean $RBV_Z $PERF_DEFICIT`
-perfdef_z_ef=`extractmean $EF_Z $PERF_DEFICIT`
-perfdef_z_leakage=`extractmean $LEAKAGE_Z $PERF_DEFICIT`
-perfdef_z_absleakage=`extractmean $LEAKAGE_ABS_Z $PERF_DEFICIT`
-perfdef_z_tmax=`extractmean $TMAX_Z $PERF_DEFICIT`
+perfdef_z_mtt=`extractmean $MTT_Z $PERF_DEFICIT mttz_perf`
+perfdef_z_rbf=`extractmean $RBF_Z $PERF_DEFICIT rbfz_perf`
+perfdef_z_rbv=`extractmean $RBV_Z $PERF_DEFICIT rbvz_perf`
+perfdef_z_ef=`extractmean $EF_Z $PERF_DEFICIT efz_perf`
+perfdef_z_leakage=`extractmean $LEAKAGE_Z $PERF_DEFICIT leakagez_perf`
+perfdef_z_absleakage=`extractmean $LEAKAGE_ABS_Z $PERF_DEFICIT absleakagez_perf`
+perfdef_z_tmax=`extractmean $TMAX_Z $PERF_DEFICIT tmaxz_perf`
 
-perfdefstandard_mtt=`extractmean $MTT_TEMP $PERF_TEMP`
-perfdefstandard_rbf=`extractmean $RBF_TEMP $PERF_TEMP`
-perfdefstandard_rbv=`extractmean $RBV_TEMP $PERF_TEMP`
-perfdefstandard_ef=`extractmean $EF_TEMP $PERF_TEMP`
-perfdefstandard_leakage=`extractmean $LEAKAGE_TEMP $PERF_TEMP`
-perfdefstandard_absleakage=`extractmean $LEAKAGE_ABS_TEMP $PERF_TEMP`
-perfdefstandard_tmax=`extractmean $TMAX_TEMP $PERF_TEMP`
+perfdefstandard_mtt=`extractmean $MTT_TEMP $PERF_TEMP mtt_perfstandard`
+perfdefstandard_rbf=`extractmean $RBF_TEMP $PERF_TEMP rbf_perfstandard`
+perfdefstandard_rbv=`extractmean $RBV_TEMP $PERF_TEMP rbv_perfstandard`
+perfdefstandard_ef=`extractmean $EF_TEMP $PERF_TEMP ef_perfstandard`
+perfdefstandard_leakage=`extractmean $LEAKAGE_TEMP $PERF_TEMP leakage_perfstandard`
+perfdefstandard_absleakage=`extractmean $LEAKAGE_ABS_TEMP $PERF_TEMP absleakage_perfstandard`
+perfdefstandard_tmax=`extractmean $TMAX_TEMP $PERF_TEMP tmax_perfstandard`
 
-perfdefstandard_z_mtt=`extractmean $MTT_Z_TEMP $PERF_TEMP`
-perfdefstandard_z_rbf=`extractmean $RBF_Z_TEMP $PERF_TEMP`
-perfdefstandard_z_rbv=`extractmean $RBV_Z_TEMP $PERF_TEMP`
-perfdefstandard_z_ef=`extractmean $EF_Z_TEMP $PERF_TEMP`
-perfdefstandard_z_leakage=`extractmean $LEAKAGE_Z_TEMP $PERF_TEMP`
-perfdefstandard_z_absleakage=`extractmean $LEAKAGE_ABS_Z_TEMP $PERF_TEMP`
-perfdefstandard_z_tmax=`extractmean $TMAX_Z_TEMP $PERF_TEMP`
+perfdefstandard_z_mtt=`extractmean $MTT_Z_TEMP $PERF_TEMP mttz_perfstandard`
+perfdefstandard_z_rbf=`extractmean $RBF_Z_TEMP $PERF_TEMP rbfz_perfstandard`
+perfdefstandard_z_rbv=`extractmean $RBV_Z_TEMP $PERF_TEMP rbvz_perfstandard`
+perfdefstandard_z_ef=`extractmean $EF_Z_TEMP $PERF_TEMP efz_perfstandard`
+perfdefstandard_z_leakage=`extractmean $LEAKAGE_Z_TEMP $PERF_TEMP leakagez_perfstandard`
+perfdefstandard_z_absleakage=`extractmean $LEAKAGE_ABS_Z_TEMP $PERF_TEMP absleakagez_perfstandard`
+perfdefstandard_z_tmax=`extractmean $TMAX_Z_TEMP $PERF_TEMP tmaxz_perfstandard`
 
 
 # Append to CSV
