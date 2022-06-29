@@ -40,7 +40,7 @@ def infotodict(seqinfo):
     for idx, s in enumerate(seqinfo):
         if ('t1_mprage_cor_ND' == s.series_description):
             info[t1w].append(s.series_id)
-        if ('t2_space_cor_p4_iso_ND' == s.series_description):
+        if ('t2_space_cor_p4_iso_ND' == s.series_description) or ('t2_tse_tra_ND' == s.series_description):
             info[t2w].append(s.series_id)
         if ('t2_spc_da-fl_sag_ND' == s.series_description):
             info[flair].append(s.series_id)
