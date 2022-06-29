@@ -14,7 +14,8 @@
 #       - fba (only for fixel branch)                                         #
 #       - tbss_1                                                              #
 #   [container]                                                               #
-#       - fsl-6.0.3                                                           #  
+#       - fsl-6.0.3                                                           #
+#       - mrtrix3-3.0.2                                                       #  
 ###############################################################################
 
 # Get verbose outputs
@@ -32,13 +33,25 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 module load singularity
 container_fsl=fsl-6.0.3     
+container_mrtrix3=mrtrix3-3.0.2
 
 singularity_fsl="singularity run --cleanenv --userns \
     -B . \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
     -B $(readlink -f $ENV_DIR) \
-    $ENV_DIR/$container_fsl" 
+    -B $TMP_DIR \
+    -B $TMP_IN \
+    -B $TMP_OUT \
+    $ENV_DIR/$container_fsl"
+
+singularity_mrtrix3="singularity run --cleanenv --userns \
+    -B $PROJ_DIR \
+    -B $(readlink -f $ENV_DIR) \
+    -B $TMP_DIR \
+    -B $TMP_IN \
+    -B $TMP_OUT \
+    $ENV_DIR/$container_mrtrix3" 
 
 # Set pipeline specific variables
 
@@ -94,9 +107,11 @@ if [ -d $DER_DIR ]; then
 
     rm -rvf $DER_DIR/*
 
-fi
+else
 
-mkdir -p $DER_DIR
+    mkdir -p $DER_DIR
+
+fi
 
 ##############################################
 # Calculation of mean FA and skeletonization #
@@ -106,31 +121,147 @@ echo ""
 echo "Merging all registered FA images into a single 4D image ..."
 echo ""
 
-FA_MERGED=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-DTINoNeg_FA
+# Count number of subjects
+##########################
 
-$singularity_fsl fslmerge -t $FA_MERGED $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*_desc-eroded_desc-DTINoNeg_FA.nii.gz
+subj_batch_array=($(ls $TBSS_DIR/sub-* -d))
+subj_array_length=${#subj_batch_array[@]}
+echo $subj_array_length
 
-echo ""
-echo "Creating valid mask and mean FA ..."
-echo ""
+# 700 is derived empirically: fslmerge worked for CSI_POSTCOVID without the "workaround" below
 
-# Define input/output
+if [ $subj_array_length -gt 700 ]; then
 
-FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask
-FA_MASKED=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-DTINoNeg_FA
-FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA
+    # Define number of subjects to be merged in one intermediate 4D image
+    #####################################################################
 
-# Define command
+    subj_per_batch=700
+    batch_amount=$(($subj_array_length / $subj_per_batch))
+    export START=1
+    export subject_count=0
 
-CMD_MEAN="
-    fslmaths $FA_MERGED -max 0 -Tmin -bin $FA_MASK -odt char; \
-    fslmaths $FA_MERGED -mas $FA_MASK $FA_MASKED; \
-    fslmaths $FA_MASKED -Tmean $FA_MEAN"
+    # If modulo of subject array length and subj_per_batch is not 0 -> add one iteration to make sure all subjects will be processed
+    
+    [ ! $(( $subj_array_length % $subj_per_batch )) -eq 0 ] && batch_amount=$(($batch_amount + 1))
 
-# Execute command
+    # Loop through subject batches
+    ##############################
 
-$singularity_fsl /bin/bash -c "$CMD_MEAN"
+    for batch in $(seq -w $batch_amount); do
 
+        echo ""
+        echo "Merging batch $batch and creating mask containing only non-zero voxels in all subjects of this batch"
+        echo ""
+
+        # Define end of batch
+        
+        export END=$(($subj_per_batch * $batch))
+
+        # Define output
+
+        FA_MERGED_INTERMEDIATE=$DER_DIR/batch-${batch}_ses-${SESSION}_space-${SPACE}_desc-DTINoNeg_FA.nii.gz
+        FA_MAX0_INTERMEDIATE=$DER_DIR/batch-${batch}_ses-${SESSION}_space-${SPACE}_desc-allFA_max0
+        FA_MAX0_MIN_INTERMEDIATE=$DER_DIR/batch-${batch}_ses-${SESSION}_space-${SPACE}_desc-allFA_max0_min
+        FA_MASK_INTERMEDIATE=$DER_DIR/batch-${batch}_ses-${SESSION}_space-${SPACE}_desc-FA_mask
+        FA_SUM_INTERMEDIATE=$DER_DIR/batch-${batch}_ses-${SESSION}_space-${SPACE}_desc-sum_desc-DTINoNeg_FA.nii.gz
+
+        # Define commands
+
+        CMD_MERGE_INTERMEDIATE="fslmerge -t $FA_MERGED_INTERMEDIATE $(ls $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*_desc-eroded_desc-DTINoNeg_FA.nii.gz | sed -n "$START,${END}p")"
+        CMD_MAX0_INTERMEDIATE="fslmaths $FA_MERGED_INTERMEDIATE -max 0 $FA_MAX0_INTERMEDIATE"
+        CMD_MAX0_MIN_INTERMEDIATE="fslmaths $FA_MAX0_INTERMEDIATE -Tmin $FA_MAX0_MIN_INTERMEDIATE"
+        CMD_BIN_INTERMEDIATE="fslmaths $FA_MAX0_MIN_INTERMEDIATE -bin $FA_MASK_INTERMEDIATE -odt char"
+        CMD_SUM="mrmath $(ls $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*_desc-eroded_desc-DTINoNeg_FA.nii.gz | sed -n "$START,${END}p") sum $FA_SUM_INTERMEDIATE"
+        CMD_NUM="fslval $FA_MERGED_INTERMEDIATE dim4"
+        
+        # Execute commands for batch
+
+        $singularity_fsl $CMD_MERGE_INTERMEDIATE
+        $singularity_fsl $CMD_MAX0_INTERMEDIATE
+        $singularity_fsl $CMD_MAX0_MIN_INTERMEDIATE
+        $singularity_fsl $CMD_BIN_INTERMEDIATE
+        $singularity_mrtrix3 $CMD_SUM
+
+        # Increase START by subj_per_batch
+
+        export START=$(($START + $subj_per_batch))
+
+        # Add number of subjects to subject count
+
+        subject_count_batch=`$singularity_fsl $CMD_NUM | tail -n 1`
+        export subject_count=$(($subject_count + $subject_count_batch))
+
+    done
+
+    # Create final mask and mean FA
+    ###############################
+    
+    echo ""
+    echo "Merging intermediate masks into 4D image to create mask that is valid for all subjects, calculate mean FA and mask..."
+    echo ""
+
+    # Verify number of subjects for calculation of mean
+
+    echo ""
+    echo $subject_count
+    echo ""
+
+    # Define output
+
+    FA_MASK_MERGED=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-FA_desc-merged_mask
+    FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask
+    FA_SUM=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-sum_desc-DTINoNeg_FA.nii.gz
+    FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA
+    
+    # Define commands
+
+    CMD_MERGE_MASK="fslmerge -t $FA_MASK_MERGED $(ls $DER_DIR/batch-*_ses-${SESSION}_space-${SPACE}_desc-FA_mask.nii.gz)"
+    CMD_Tmin_MASK="fslmaths $FA_MASK_MERGED -Tmin $FA_MASK"
+    CMD_FA_SUM="mrmath $(ls $DER_DIR/batch-*_ses-${SESSION}_space-${SPACE}_desc-sum_desc-DTINoNeg_FA.nii.gz) sum $FA_SUM"
+    CMD_MEAN_FA="fslmaths $FA_SUM -div $subject_count -mas $FA_MASK $FA_MEAN"
+
+    # Execute command
+
+    $singularity_fsl $CMD_MERGE_MASK
+    $singularity_fsl $CMD_Tmin_MASK
+    $singularity_mrtrix3 $CMD_FA_SUM
+    $singularity_fsl $CMD_MEAN_FA
+
+else
+
+    # Merge all individual FA images directly into final 4D image
+    #############################################################
+
+    echo ""
+    echo "Merging all registered FA images into a single 4D image ..."
+    echo ""
+
+    FA_MERGED=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-DTINoNeg_FA
+
+    $singularity_fsl fslmerge -t $FA_MERGED $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*_desc-eroded_desc-DTINoNeg_FA.nii.gz
+
+    echo ""
+    echo "Creating valid mask and mean FA ..."
+    echo ""
+
+    # Define input/output
+
+    FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask
+    FA_MASKED=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-DTINoNeg_FA
+    FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA
+
+    # Define command
+
+    CMD_MEAN="
+        fslmaths $FA_MERGED -max 0 -Tmin -bin $FA_MASK -odt char; \
+        fslmaths $FA_MERGED -mas $FA_MASK $FA_MASKED; \
+        fslmaths $FA_MASKED -Tmean $FA_MEAN"
+
+    # Execute command
+
+    $singularity_fsl /bin/bash -c "$CMD_MEAN"
+
+fi
 
 echo ""
 echo "Skeletonizing mean FA ..."

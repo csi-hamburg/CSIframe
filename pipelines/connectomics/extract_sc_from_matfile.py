@@ -26,7 +26,7 @@ for idx, conn_path in enumerate(qsirecon_dir.glob("*/*/*/*T1w_dhollanderconnecto
         atlas_df = pd.DataFrame(conn_mat[f"schaefer{resolution}_sift_radius2_count_connectivity"])
         atlas_df.to_csv(output_dir/f"{resolution}/{sub_id}_desc-{resolution}_structuralconnectome.csv", index=False, header=None, sep=" ")
 
-    if Path(output_dir/f"aal116/{sub_id}_desc-{resolution}_structuralconnectome.csv").exists(): continue
+    if Path(output_dir/f"aal116/{sub_id}_desc-aal116_structuralconnectome.csv").exists(): continue
     Path(output_dir/f"aal116").mkdir(parents=True, exist_ok=True)
     atlas_df = pd.DataFrame(conn_mat[f"aal116_sift_radius2_count_connectivity"])
-    atlas_df.to_csv(output_dir/f"aal116/{sub_id}_desc-{resolution}_structuralconnectome.csv", index=False, header=None, sep=" ")
+    atlas_df.to_csv(output_dir/f"aal116/{sub_id}_desc-aal116_structuralconnectome.csv", index=False, header=None, sep=" ")

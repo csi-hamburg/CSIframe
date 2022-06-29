@@ -1,10 +1,10 @@
 #!/bin/bash
 
-#########################################################################################
-# FSL TBSS implementation for parallelized job submission                               #
-#                                                                                       #
-# PART 3 - projection of diffusion metrics on skeleton overlay creation and ROI readout #
-#########################################################################################
+##########################################################################################
+# FSL TBSS implementation for parallelized job submission                                #
+#                                                                                        #
+# PART 3 - projection of diffusion metrics on skeleton, overlay creation and ROI readout #
+##########################################################################################
 
 ###############################################################################
 # Pipeline specific dependencies:                                             #
@@ -16,14 +16,19 @@
 #       - tbss_2                                                              #
 #   [container and code]                                                      #
 #       - fsl-6.0.3                                                           #
-#       - overlay.py                                                          #  
+#       - overlay.py                                                          #
+#       - miniconda-csi                                                       #  
 ###############################################################################
 
 # Get verbose outputs
 set -x
 
+# Turn off creation of core files
+ulimit -c 0
+
 # Define subject specific temporary directory on $SCRATCH_DIR
 export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
+TMP_IN=$TMP_DIR/input;                 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN
 TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 ###############################################################################
@@ -37,18 +42,18 @@ container_fsl=fsl-6.0.3
 singularity_fsl="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
-    -B $TMP_DIR/:/tmp \
-    -B $TMP_IN:/tmp_in \
-    -B $TMP_OUT:/tmp_out \
+    -B $TMP_DIR \
+    -B $TMP_IN \
+    -B $TMP_OUT \
     $ENV_DIR/$container_fsl"
 
 container_miniconda=miniconda-csi
 singularity_miniconda="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
-    -B $TMP_DIR/:/tmp \
-    -B $TMP_IN:/tmp_in \
-    -B $TMP_OUT:/tmp_out \
+    -B $TMP_DIR \
+    -B $TMP_IN \
+    -B $TMP_OUT \
     $ENV_DIR/$container_miniconda"
 
 # Set pipeline specific variables
@@ -364,7 +369,16 @@ tbss_skeleton_mean_logfc,tbss_skeleton_mean_complexity" > $MEAN_CSV
             
         CMD_MEAN="fslstats $MOD_SKEL -M"
         mean=`$singularity_fsl $CMD_MEAN | tail -n 1`
-        echo -n "$mean," >> $MEAN_CSV
+
+        if [ $mean == "https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence" ]; then
+
+            echo -n "," >> $MEAN_CSV
+
+        else
+            
+            echo -n "$mean," >> $MEAN_CSV
+        
+        fi
         
     done
 
@@ -377,6 +391,15 @@ tbss_skeleton_mean_logfc,tbss_skeleton_mean_complexity" > $MEAN_CSV
 
     CMD_MEAN="fslstats $MOD_SKEL -M"
     mean=`$singularity_fsl $CMD_MEAN | tail -n 1`
-    echo "$mean" >> $MEAN_CSV
+
+    if [ $mean == "https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence" ]; then
+
+        echo "" >> $MEAN_CSV
+    
+    else
+
+        echo "$mean" >> $MEAN_CSV
+
+    fi
 
 fi

@@ -18,7 +18,8 @@
 #   [containers and code]                                                     #
 #       - fsl-6.0.3                                                           #
 #       - stats.py                                                            #
-#       - report.py                                                           #  
+#       - report.py                                                           #
+#       - csi-miniconda                                                       #  
 ###############################################################################
 
 # Get verbose outputs
@@ -26,6 +27,7 @@ set -x
 
 # Define subject specific temporary directory on $SCRATCH_DIR
 export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
+TMP_IN=$TMP_DIR/input;                 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN
 TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 ###############################################################################
@@ -39,18 +41,18 @@ container_fsl=fsl-6.0.3
 singularity_fsl="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
-    -B $TMP_DIR/:/tmp \
-    -B $TMP_IN:/tmp_in \
-    -B $TMP_OUT:/tmp_out \
+    -B $TMP_DIR \
+    -B $TMP_IN \
+    -B $TMP_OUT \
     $ENV_DIR/$container_fsl"
 
 container_miniconda=miniconda-csi
 singularity_miniconda="singularity run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
-    -B $TMP_DIR/:/tmp \
-    -B $TMP_IN:/tmp_in \
-    -B $TMP_OUT:/tmp_out \
+    -B $TMP_DIR \
+    -B $TMP_IN \
+    -B $TMP_OUT \
     $ENV_DIR/$container_miniconda"
 
 # Set pipeline specific variables
@@ -149,28 +151,171 @@ for MOD in $(echo $MODALITIES); do
     echo $MOD
     echo ""
 
-    # Merging outputs
-
-    MERGE_LIST_MOD=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}_mergelist.txt
-    MOD_SKEL_MERGED=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
-
     if [ $TBSS_MERGE_LIST == "all" ]; then
     
-        $singularity_fsl fslmerge \
-            -t $MOD_SKEL_MERGED \
-            $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*desc-skeleton*${MOD}.nii.gz
+        # If more than 700 skeletons are to be merged, intermediate merges are necessary for RAM reasons
+        ################################################################################################
+
+        # Count number of subjects
+        ##########################
+
+        subj_batch_array=($(ls $TBSS_DIR/sub-* -d))
+        subj_array_length=${#subj_batch_array[@]}
+        echo $subj_array_length
         
-    else
+        if [ $subj_array_length -gt 700 ]; then
+
+            # Define number of subjects to be merged in one intermediate 4D image
+            #####################################################################
+
+            subj_per_batch=700
+            batch_amount=$(($subj_array_length / $subj_per_batch))
+            export START=1
+
+            # If modulo of subject array length and subj_per_batch is not 0 -> add one iteration to make sure all subjects will be processed
+            
+            [ ! $(( $subj_array_length % $subj_per_batch )) -eq 0 ] && batch_amount=$(($batch_amount + 1))
+
+            # Loop through subject batches
+            ##############################
+
+            for batch in $(seq -w $batch_amount); do
+
+                echo ""
+                echo "Merging batch $batch ..."
+                echo ""
+
+                # Define end of batch
+                
+                export END=$(($subj_per_batch * $batch))
+
+                # Define output
+
+                MOD_SKEL_MERGED_INTERMEDIATE=$TMP_OUT/batch-${batch}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+
+                # Define commands
+
+                CMD_MERGE_INTERMEDIATE="fslmerge -t $MOD_SKEL_MERGED_INTERMEDIATE $(ls $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*desc-skeleton*${MOD}.nii.gz | sed -n "$START,${END}p")"
+                
+                # Execute commands for batch
+
+                $singularity_fsl $CMD_MERGE_INTERMEDIATE
+
+                # Increase START by subj_per_batch
+
+                export START=$(($START + $subj_per_batch))
+
+            done
+
+            # Merge batches to final 4D image
+            #################################
+
+            # Define output
+
+            MOD_SKEL_MERGED=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+
+            # Command
+
+            $singularity_fsl fslmerge \
+                -t $MOD_SKEL_MERGED \
+                $TMP_OUT/batch-*_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+            
+        else
+
+            MOD_SKEL_MERGED=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+
+            $singularity_fsl fslmerge \
+                -t $MOD_SKEL_MERGED \
+                $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*desc-skeleton*${MOD}.nii.gz
+        
+        fi
+        
+    elif [ $TBSS_MERGE_LIST =! "all" ]; then
+
+        # Define output
+
+        MERGE_LIST_MOD=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}_mergelist.txt
+
+        # Create list of paths to skeletons to be merged
+        ################################################
 
         for sub in $(echo $TBSS_DIR/code/merge_${TBSS_MERGE_LIST}.txt); do
-
+            
+            MOD_SKEL=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
             echo $MOD_SKEL >> $MERGE_LIST_MOD
         
         done
 
-        $singularity_fsl fslmerge \
-            -t $MOD_SKEL_MERGED \
-            $(cat $MERGE_LIST_MOD)
+        # Count number of subjects
+        ##########################
+
+        subj_array_length=$(cat $MERGE_LIST_MOD | wc -l)
+        echo $subj_array_length
+
+        if [ $subj_array_length -gt 700 ]; then
+
+            # Define number of subjects to be merged in one intermediate 4D image
+            #####################################################################
+
+            subj_per_batch=700
+            batch_amount=$(($subj_array_length / $subj_per_batch))
+            export START=1
+
+            # If modulo of subject array length and subj_per_batch is not 0 -> add one iteration to make sure all subjects will be processed
+            
+            [ ! $(( $subj_array_length % $subj_per_batch )) -eq 0 ] && batch_amount=$(($batch_amount + 1))
+
+            # Loop through subject batches
+            ##############################
+
+            for batch in $(seq -w $batch_amount); do
+
+                echo ""
+                echo "Merging batch $batch ..."
+                echo ""
+
+                # Define end of batch
+                
+                export END=$(($subj_per_batch * $batch))
+
+                # Define output
+
+                MOD_SKEL_MERGED_INTERMEDIATE=$TMP_OUT/batch-${batch}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+
+                # Define commands
+
+                CMD_MERGE_INTERMEDIATE="fslmerge -t $MOD_SKEL_MERGED_INTERMEDIATE $(cat $MERGE_LIST_MOD) | sed -n "$START,${END}p")"
+                
+                # Execute commands for batch
+
+                $singularity_fsl $CMD_MERGE_INTERMEDIATE
+
+                # Increase START by subj_per_batch
+
+                export START=$(($START + $subj_per_batch))
+
+            done
+
+            # Merge batches to final 4D image
+            #################################
+
+            # Define output
+
+            MOD_SKEL_MERGED=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+
+            # Command
+
+            $singularity_fsl fslmerge \
+                -t $MOD_SKEL_MERGED \
+                $TMP_OUT/batch-*_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
+            
+        else
+
+            $singularity_fsl fslmerge \
+                -t $MOD_SKEL_MERGED \
+                $(cat $MERGE_LIST_MOD)
+        fi
+
     fi
 
 done

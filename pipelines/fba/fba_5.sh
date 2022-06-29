@@ -117,12 +117,12 @@ $parallel "$singularity_mrtrix3 $CMD_FIX2VOX_FDC" ::: ${input_subject_array[@]}
 $parallel "$singularity_mrtrix3 $CMD_FIX2VOX_COMPLEXITY" ::: ${input_subject_array[@]}
 
 
-# #########################
-# # FA TO TEMPLATE + AVG
-# #########################
+#########################
+# FA TO TEMPLATE + AVG
+#########################
 
- FA_TEMP_DIR=$FBA_DIR/derivatives/fa_template
- TEMP2MNI_DIR=$FBA_DIR/derivatives/temp2mni
+FA_TEMP_DIR=$FBA_DIR/derivatives/fa_template
+TEMP2MNI_DIR=$FBA_DIR/derivatives/temp2mni
 [ ! -d $FA_TEMP_DIR ] && mkdir -p $FA_TEMP_DIR/fa
 [ ! -d $TEMP2MNI_DIR ] && mkdir $TEMP2MNI_DIR
 

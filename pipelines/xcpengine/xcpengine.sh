@@ -3,11 +3,16 @@
 ###################################################################################################################
 # Functional connectome reconstruction (and structural preproc) (https://xcpengine.readthedocs.io/)               #
 #                                                                                                                 #
+# Internal documentation:                                                                                         #
+#   https://github.com/csi-hamburg/hummel_processing/wiki/Functional-Connectome-Reconstruction                    #
+#                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [pipelines which need to be run first]                                                                        #
 #       - fmriprep                                                                                                #
 #   [container]                                                                                                   #
 #       - xcpengine-1.2.3.sif                                                                                     #
+#                                                                                                                 #
+# Author: Marvin Petersen (m-petersen)                                                                            #
 ###################################################################################################################
 
 # Get verbose outputs
