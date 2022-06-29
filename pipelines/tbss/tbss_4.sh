@@ -18,7 +18,8 @@
 #   [containers and code]                                                     #
 #       - fsl-6.0.3                                                           #
 #       - stats.py                                                            #
-#       - report.py                                                           #  
+#       - report.py                                                           #
+#       - csi-miniconda                                                       #  
 ###############################################################################
 
 # Get verbose outputs
@@ -119,26 +120,26 @@ fi
 
 FA_SKEL_MERGED=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-DTINoNeg_FA.nii.gz
 
-# if [ -f $FA_SKEL_MERGED ]; then
+if [ -f $FA_SKEL_MERGED ]; then
     
-#     echo ""
-#     echo "TBSS Part 4 (tbss_4.sh) has already been run for merge list "$TBSS_MERGE_LIST". Removing output of previous run first ..."
-#     echo ""
+    echo ""
+    echo "TBSS Part 4 (tbss_4.sh) has already been run for merge list "$TBSS_MERGE_LIST". Removing output of previous run first ..."
+    echo ""
 
-#     rm -rvf $DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-DTINoNeg*
-#     rm -rvf $DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-FWcorrected*
-#     rm -rvf $DER_DIR/*.html
-#     rm -rvf $DER_DIR/*.txt
-#     rm -rvf $DER_DIR/*.pdf
-#     rm -rvf $DER_DIR/*.csv
+    rm -rvf $DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-DTINoNeg*
+    rm -rvf $DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-FWcorrected*
+    rm -rvf $DER_DIR/*.html
+    rm -rvf $DER_DIR/*.txt
+    rm -rvf $DER_DIR/*.pdf
+    rm -rvf $DER_DIR/*.csv
 
-#     if [ $TBSS_PIPELINE == "fixel" ]; then
+    if [ $TBSS_PIPELINE == "fixel" ]; then
 
-#     rm -rvf $DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-voxelmap*
+    rm -rvf $DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-voxelmap*
 
-#     fi
+    fi
 
-# fi
+fi
 
 #######################################
 # Merging skeletons for each modality #
@@ -162,7 +163,7 @@ for MOD in $(echo $MODALITIES); do
         subj_array_length=${#subj_batch_array[@]}
         echo $subj_array_length
         
-        if [ $subj_array_length > 700 ]; then
+        if [ $subj_array_length -gt 700 ]; then
 
             # Define number of subjects to be merged in one intermediate 4D image
             #####################################################################
@@ -251,7 +252,7 @@ for MOD in $(echo $MODALITIES); do
         subj_array_length=$(cat $MERGE_LIST_MOD | wc -l)
         echo $subj_array_length
 
-        if [ $subj_array_length > 700 ]; then
+        if [ $subj_array_length -gt 700 ]; then
 
             # Define number of subjects to be merged in one intermediate 4D image
             #####################################################################
@@ -319,173 +320,173 @@ for MOD in $(echo $MODALITIES); do
 
 done
 
-# ###########################
-# # Combine individual CSVs #
-# ###########################
+###########################
+# Combine individual CSVs #
+###########################
 
-# # Get random subject to extract columm names from csv
-# #####################################################
+# Get random subject to extract columm names from csv
+#####################################################
 
-# CASELIST_ARRAY=(`sort -R $CASELIST`)
-# RAND_SUB=`echo ${CASELIST_ARRAY[1]}`
+CASELIST_ARRAY=(`sort -R $CASELIST`)
+RAND_SUB=`echo ${CASELIST_ARRAY[1]}`
 
-# if [ $TBSS_PIPELINE == "mni" ]; then
+if [ $TBSS_PIPELINE == "mni" ]; then
 
-#     # Input
-#     #######
+    # Input
+    #######
 
-#     ROI_CSV_RAND=$TBSS_DIR/$RAND_SUB/ses-${SESSION}/dwi/${RAND_SUB}_ses-${SESSION}_space-${SPACE}_desc-skeleton_label-JHU_desc-ROIs_means.csv
+    ROI_CSV_RAND=$TBSS_DIR/$RAND_SUB/ses-${SESSION}/dwi/${RAND_SUB}_ses-${SESSION}_space-${SPACE}_desc-skeleton_label-JHU_desc-ROIs_means.csv
     
-#     # Output
-#     ########
+    # Output
+    ########
     
-#     ROI_CSV_MERGED=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_label-JHU_desc-ROIs_means.csv
+    ROI_CSV_MERGED=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_label-JHU_desc-ROIs_means.csv
 
-#     # Create CSV
-#     ############
+    # Create CSV
+    ############
 
-#     head -n 1 $ROI_CSV_RAND > $ROI_CSV_MERGED
+    head -n 1 $ROI_CSV_RAND > $ROI_CSV_MERGED
 
-#     for sub in $(cat $CASELIST); do
+    for sub in $(cat $CASELIST); do
 
-#         ROI_CSV=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_label-JHU_desc-ROIs_means.csv
-#         tail -n 1 $ROI_CSV >> $ROI_CSV_MERGED
+        ROI_CSV=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_label-JHU_desc-ROIs_means.csv
+        tail -n 1 $ROI_CSV >> $ROI_CSV_MERGED
     
-#     done
+    done
 
-# elif [ $TBSS_PIPELINE == "fixel" ]; then
+elif [ $TBSS_PIPELINE == "fixel" ]; then
 
-#     # Input
-#     #######
+    # Input
+    #######
     
-#     MEAN_CSV_RAND=$TBSS_DIR/$RAND_SUB/ses-${SESSION}/dwi/${RAND_SUB}_ses-${SESSION}_space-${SPACE}_desc-skeleton_means.csv
+    MEAN_CSV_RAND=$TBSS_DIR/$RAND_SUB/ses-${SESSION}/dwi/${RAND_SUB}_ses-${SESSION}_space-${SPACE}_desc-skeleton_means.csv
     
-#     # Output
-#     ########
+    # Output
+    ########
     
-#     MEAN_CSV_MERGED=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_means.csv
+    MEAN_CSV_MERGED=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_means.csv
 
-#     # Create CSV
-#     ############
+    # Create CSV
+    ############
 
-#     head -n 1 $MEAN_CSV_RAND > $MEAN_CSV_MERGED
+    head -n 1 $MEAN_CSV_RAND > $MEAN_CSV_MERGED
 
-#     for sub in $(cat $CASELIST); do
+    for sub in $(cat $CASELIST); do
     
-#         MEAN_CSV=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_means.csv
-#         tail -n 1 $MEAN_CSV >> $MEAN_CSV_MERGED
+        MEAN_CSV=$TBSS_DIR/$sub/ses-${SESSION}/dwi/${sub}_ses-${SESSION}_space-${SPACE}_desc-skeleton_means.csv
+        tail -n 1 $MEAN_CSV >> $MEAN_CSV_MERGED
     
-#     done
+    done
 
-# fi
+fi
 
-# ###############################################################################################
-# # Make boxplot and histogram of mean across skeleton for each modality and create html report #
-# ###############################################################################################
+###############################################################################################
+# Make boxplot and histogram of mean across skeleton for each modality and create html report #
+###############################################################################################
 
-# if [ $TBSS_PIPELINE == "fixel" ]; then
+if [ $TBSS_PIPELINE == "fixel" ]; then
 
-#     MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
-#                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW desc-voxelmap_fd desc-voxelmap_fdc \
-#                 desc-voxelmap_logfc desc-voxelmap_complexity"
-#     CSV=$MEAN_CSV_MERGED
+    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
+                desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW desc-voxelmap_fd desc-voxelmap_fdc \
+                desc-voxelmap_logfc desc-voxelmap_complexity"
+    CSV=$MEAN_CSV_MERGED
 
-#     # Create stats figures
-#     ######################
+    # Create stats figures
+    ######################
 
-#     for MOD in FA FAt AD ADt RD RDt MD MDt FW fd fdc logfc complexity; do
+    for MOD in FA FAt AD ADt RD RDt MD MDt FW fd fdc logfc complexity; do
 
-#         # Stats output
+        # Stats output
 
-#         HISTFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_histogram.png
-#         BOXFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_boxplot.png
+        HISTFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_histogram.png
+        BOXFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_boxplot.png
         
-#         # Command 
+        # Command 
 
-#         $singularity_miniconda python $PIPELINE_DIR/stats.py "" $MOD $CSV $HISTFIG $BOXFIG
+        $singularity_miniconda python $PIPELINE_DIR/stats.py "" $MOD $CSV $HISTFIG $BOXFIG
 
-#     done
+    done
 
-#     # Create HTML report
-#     ####################
+    # Create HTML report
+    ####################
 
-#     for MODALITY in $(echo $MODALITIES); do
+    for MODALITY in $(echo $MODALITIES); do
 
-#         [ $MODALITY == "desc-DTINoNeg_FA" ] && MOD="FA"
-#         [ $MODALITY == "desc-FWcorrected_FA" ] && MOD="FAt"
-#         [ $MODALITY == "desc-DTINoNeg_L1" ] && MOD="AD"
-#         [ $MODALITY == "desc-FWcorrected_L1" ] && MOD="ADt"
-#         [ $MODALITY == "desc-DTINoNeg_RD" ] && MOD="RD"
-#         [ $MODALITY == "desc-FWcorrected_RD" ] && MOD="RDt"
-#         [ $MODALITY == "desc-DTINoNeg_MD" ] && MOD="MD"
-#         [ $MODALITY == "desc-FWcorrected_MD" ] && MOD="MDt"
-#         [ $MODALITY == "FW" ] && MOD="FW"
-#         [ $MODALITY == "desc-voxelmap_fd" ] && MOD="fd"
-#         [ $MODALITY == "desc-voxelmap_fdc" ] && MOD="fdc"
-#         [ $MODALITY == "desc-voxelmap_logfc" ] && MOD="logfc"
-#         [ $MODALITY == "desc-voxelmap_complexity" ] && MOD="complexity"
+        [ $MODALITY == "desc-DTINoNeg_FA" ] && MOD="FA"
+        [ $MODALITY == "desc-FWcorrected_FA" ] && MOD="FAt"
+        [ $MODALITY == "desc-DTINoNeg_L1" ] && MOD="AD"
+        [ $MODALITY == "desc-FWcorrected_L1" ] && MOD="ADt"
+        [ $MODALITY == "desc-DTINoNeg_RD" ] && MOD="RD"
+        [ $MODALITY == "desc-FWcorrected_RD" ] && MOD="RDt"
+        [ $MODALITY == "desc-DTINoNeg_MD" ] && MOD="MD"
+        [ $MODALITY == "desc-FWcorrected_MD" ] && MOD="MDt"
+        [ $MODALITY == "FW" ] && MOD="FW"
+        [ $MODALITY == "desc-voxelmap_fd" ] && MOD="fd"
+        [ $MODALITY == "desc-voxelmap_fdc" ] && MOD="fdc"
+        [ $MODALITY == "desc-voxelmap_logfc" ] && MOD="logfc"
+        [ $MODALITY == "desc-voxelmap_complexity" ] && MOD="complexity"
 
-#         # Input: stats figures
+        # Input: stats figures
 
-#         HISTFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_histogram.png
-#         BOXFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_boxplot.png
+        HISTFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_histogram.png
+        BOXFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_boxplot.png
 
-#         # Output: HTML report
+        # Output: HTML report
 
-#         REPORT=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_${MODALITY}_report.html
+        REPORT=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_${MODALITY}_report.html
 
-#         $singularity_miniconda python $PIPELINE_DIR/report.py $TBSS_DIR $SESSION $SPACE $MODALITY $HISTFIG $BOXFIG $REPORT
+        $singularity_miniconda python $PIPELINE_DIR/report.py $TBSS_DIR $SESSION $SPACE $MODALITY $HISTFIG $BOXFIG $REPORT
 
-#     done
+    done
 
-# elif [ $TBSS_PIPELINE == "mni" ]; then
+elif [ $TBSS_PIPELINE == "mni" ]; then
     
-#     MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
-#                 desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW"
-#     CSV=$ROI_CSV_MERGED
+    MODALITIES="desc-DTINoNeg_FA desc-FWcorrected_FA desc-DTINoNeg_L1 desc-FWcorrected_L1 desc-DTINoNeg_RD \
+                desc-FWcorrected_RD desc-DTINoNeg_MD desc-FWcorrected_MD FW"
+    CSV=$ROI_CSV_MERGED
 
-#     # Create stats figures
-#     ######################
+    # Create stats figures
+    ######################
 
-#     for MOD in FA FAt AD ADt RD RDt MD MDt FW; do
+    for MOD in FA FAt AD ADt RD RDt MD MDt FW; do
 
-#         # Stats output
+        # Stats output
 
-#         HISTFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_histogram.png
-#         BOXFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_boxplot.png
+        HISTFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_histogram.png
+        BOXFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_boxplot.png
 
-#         # Command
+        # Command
 
-#         $singularity_miniconda python $PIPELINE_DIR/stats.py $TBSS_PIPELINE $MOD $CSV $HISTFIG $BOXFIG
+        $singularity_miniconda python $PIPELINE_DIR/stats.py $TBSS_PIPELINE $MOD $CSV $HISTFIG $BOXFIG
 
-#     done
+    done
 
-#     # Create HTML report
-#     ####################
+    # Create HTML report
+    ####################
 
-#     for MODALITY in $(echo $MODALITIES); do
+    for MODALITY in $(echo $MODALITIES); do
 
-#         [ $MODALITY == "desc-DTINoNeg_FA" ] && MOD="FA"
-#         [ $MODALITY == "desc-FWcorrected_FA" ] && MOD="FAt"
-#         [ $MODALITY == "desc-DTINoNeg_L1" ] && MOD="AD"
-#         [ $MODALITY == "desc-FWcorrected_L1" ] && MOD="ADt"
-#         [ $MODALITY == "desc-DTINoNeg_RD" ] && MOD="RD"
-#         [ $MODALITY == "desc-FWcorrected_RD" ] && MOD="RDt"
-#         [ $MODALITY == "desc-DTINoNeg_MD" ] && MOD="MD"
-#         [ $MODALITY == "desc-FWcorrected_MD" ] && MOD="MDt"
-#         [ $MODALITY == "FW" ] && MOD="FW"
+        [ $MODALITY == "desc-DTINoNeg_FA" ] && MOD="FA"
+        [ $MODALITY == "desc-FWcorrected_FA" ] && MOD="FAt"
+        [ $MODALITY == "desc-DTINoNeg_L1" ] && MOD="AD"
+        [ $MODALITY == "desc-FWcorrected_L1" ] && MOD="ADt"
+        [ $MODALITY == "desc-DTINoNeg_RD" ] && MOD="RD"
+        [ $MODALITY == "desc-FWcorrected_RD" ] && MOD="RDt"
+        [ $MODALITY == "desc-DTINoNeg_MD" ] && MOD="MD"
+        [ $MODALITY == "desc-FWcorrected_MD" ] && MOD="MDt"
+        [ $MODALITY == "FW" ] && MOD="FW"
 
-#         # Input: stats figures
+        # Input: stats figures
 
-#         HISTFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_histogram.png
-#         BOXFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_boxplot.png
+        HISTFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_histogram.png
+        BOXFIG=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean${MOD}_boxplot.png
 
-#         # Output: HTML report
+        # Output: HTML report
 
-#         REPORT=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_${MODALITY}_report.html
+        REPORT=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_${MODALITY}_report.html
 
-#         $singularity_miniconda python $PIPELINE_DIR/report.py $TBSS_DIR $SESSION $SPACE $MODALITY $HISTFIG $BOXFIG $REPORT
+        $singularity_miniconda python $PIPELINE_DIR/report.py $TBSS_DIR $SESSION $SPACE $MODALITY $HISTFIG $BOXFIG $REPORT
 
-#     done
+    done
 
-# fi
+fi
