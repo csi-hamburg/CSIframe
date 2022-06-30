@@ -16,7 +16,7 @@
 #       - mrtrix3-3.0.2.sif                                                                                       #
 #       - fsl-6.0.3.sif                                                                                           #
 #                                                                                                                 #
-# Author: Marvin Petersen (m-petersen) & Felix Naegele (felenae)                                                  #
+# Author: Felix Naegele (felenae) & Marvin Petersen (m-petersen)                                                  #
 ###################################################################################################################
 
 # Get verbose outputs
