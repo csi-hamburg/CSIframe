@@ -129,7 +129,7 @@ if [ $PIPELINE == setup_superdataset ];then
 	## Setup YODA-compliant dataset structure
 
 	# Create superdataset and enter PROJ_DIR
-	[ ! -d $PROJ_DIR ] && mkdir $PROJ_DIR
+	[ ! -d $PROJ_DIR ] && mkdir $PROJ_DIR || echo "superdataset $PROJ_DIR already exists"
 	pushd $PROJ_DIR
 	[ ! -f README.md ] && touch README.md
 
