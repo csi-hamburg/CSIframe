@@ -129,9 +129,9 @@ if [ $PIPELINE == setup_superdataset ];then
 	## Setup YODA-compliant dataset structure
 
 	# Create superdataset and enter PROJ_DIR
-	mkdir $PROJ_DIR
+	[ ! -d $PROJ_DIR ] && mkdir $PROJ_DIR
 	pushd $PROJ_DIR
-	touch README.md
+	[ ! -f README.md ] && touch README.md
 
 	# Create code subdataset and insert copy of this script
 	
