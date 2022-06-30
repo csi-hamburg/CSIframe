@@ -2,15 +2,20 @@
 set -x
 
 ###################################################################################################################
-# GLM + Connectivity-based fixel enhancement                                                                      #
+# Fixel wise statistics with connectivity based fixel enhancement                                                 #
+#                                                                                                                 #
+# Internal documentation:                                                                                         #
+#   https://github.com/csi-hamburg/CSIframe/wiki/Fixel-wise-statistics-with-connectivity-based-fixel-enhancement  #
 #                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [manual preparation]                                                                                          #
-#       - hypothesis directory in data/statistics with design_matrix.txt, contrast_matrix and files.txt           #
+#       - hypothesis directory in data/statistics with design_<metric>.txt, contrast_<metric>.txt and files.txt   #
 #   [pipelines which need to be run first]                                                                        #
 #       - fba levels 1-4                                                                                          #
 #   [container]                                                                                                   #
 #       - mrtrix3-3.0.2.sif                                                                                       #
+#                                                                                                                 #
+# Author: Marvin Petersen (m-petersen)                                                                            #
 ###################################################################################################################
 
 # Define subject array
