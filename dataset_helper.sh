@@ -136,14 +136,14 @@ if [ $PIPELINE == setup_superdataset ];then
 	# Create code subdataset and insert copy of this script
 	
 	# Clone code from git
-	git clone https://github.com/csi-hamburg/CSIframe $PROJ_DIR/code
+	[ ! -d $PROJ_DIR/code ] && git clone https://github.com/csi-hamburg/CSIframe $PROJ_DIR/code
 
 	# Create data directory (no datalad dataset)
-	mkdir data
+	[ ! -d $PROJ_DIR/data ] mkdir data
 
 	# Clone envs subdataset from source
 	echo "Please provide absolute Path to datalad dataset cloned from https://github.com/csi-hamburg/envs"
-	echo "In your superdataset we 'envs/' will symlink to this dataset."
+	echo "In your superdataset 'envs/' will symlink to this dataset."
 	read ENVS_SOURCE
 
 	ln -rs $ENVS_SOURCE envs
