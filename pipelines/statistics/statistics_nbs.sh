@@ -4,13 +4,19 @@ set -x
 ###################################################################################################################
 # Network-based statistic                                                                                         #
 #                                                                                                                 #
+# Internal documentation:                                                                                         #
+#   https://github.com/csi-hamburg/CSIframe/wiki/Network-based-statistic                                          #
+#                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [manual preparation]                                                                                          #
 #       - hypothesis directory in data/statistics with design_matrix.txt, contrast_matrix and files.txt           #
 #   [pipelines which need to be run first]                                                                        #
-#       - fba levels 1-4                                                                                          #
+#       - structural connectomes: bidsify, qsiprep                                                                #
+#       - functional connectomes: bidsify, fmriprep, xcpengine                                                    #
 #   [container]                                                                                                   #
 #       - mrtrix3-3.0.2.sif                                                                                       #
+#                                                                                                                 #
+# Author: Marvin Petersen (m-petersen)                                                                            #
 ###################################################################################################################
 
 # Define subject array
