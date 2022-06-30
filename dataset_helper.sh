@@ -136,10 +136,10 @@ if [ $PIPELINE == setup_superdataset ];then
 	# Create code subdataset and insert copy of this script
 	
 	# Clone code from git
-	[ ! -d $PROJ_DIR/code ] && git clone https://github.com/csi-hamburg/CSIframe $PROJ_DIR/code
+	[ ! -d $PROJ_DIR/code ] && git clone https://github.com/csi-hamburg/CSIframe $PROJ_DIR/code || echo "code/ already exists in superdataset"
 
 	# Create data directory (no datalad dataset)
-	[ ! -d $PROJ_DIR/data ] mkdir data
+	[ ! -d $PROJ_DIR/data ] && mkdir data || echo "data/ already exists in superdataset"
 
 	# Clone envs subdataset from source
 	echo "Please provide absolute Path to datalad dataset cloned from https://github.com/csi-hamburg/envs"
