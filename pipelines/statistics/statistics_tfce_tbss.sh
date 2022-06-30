@@ -1,17 +1,26 @@
 #!/usr/bin/env bash
-set -x
 
 ###################################################################################################################
-# Threshold-free cluster enhancement based statistics                                                             #
+# Threshold-free cluster enhancement (mrtrix.readthedocs.io/en/latest/reference/commands/mrclusterstats.html)     #
+#                                                                                                                 #
+# Internal documentation:                                                                                         #
+#   https://github.com/csi-hamburg/CSIframe/wiki/Voxel-wise-statistics-with-threshold-free-cluster-enhancement    #
 #                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [manual preparation]                                                                                          #
-#       - hypothesis directory in data/statistics with design_matrix.txt, contrast_matrix and files.txt           #
+#       - hypothesis directory in data/statistics with files containing design, contrast and file paths           #
 #   [pipelines which need to be run first]                                                                        #
-#       - fba levels 1-4                                                                                          #
+#       - tbss_fixel                                                                                              #
+#       - fba                                                                                                     #
 #   [container]                                                                                                   #
 #       - mrtrix3-3.0.2.sif                                                                                       #
+#       - fsl-6.0.3.sif                                                                                           #
+#                                                                                                                 #
+# Author: Marvin Petersen (m-petersen) & Felix Naegele (felenae)                                                  #
 ###################################################################################################################
+
+# Get verbose outputs
+set -x
 
 # Define subject array
 
