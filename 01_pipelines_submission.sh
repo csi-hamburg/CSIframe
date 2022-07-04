@@ -32,7 +32,7 @@ echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️�
 if [[ "aslprep fmriprep mriqc qsiprep smriprep statistics" == *"$PIPELINE"* ]]; then
 	echo "aslprep, fmriprep, mriqc, qsiprep, smriprep and statistics do not require session input"
 else 
-	echo "Which session do you want to process?"
+	echo "Which session do you want to process? (e.g., for ses-1 type '1')"
 	[ -d $BIDS_DIR ] && echo "Choose from: $(ls $DATA_DIR/raw_bids/sub-*/* -d | xargs -n 1 basename | sort | uniq | cut -d "-" -f 2 | tr '\n' ' ') $([[ "bidsify freesurfer" == *"$PIPELINE"* ]] && echo -e "all")"
 	read SESSION; export SESSION
 fi
