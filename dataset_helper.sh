@@ -23,7 +23,7 @@ source activate datalad
 # Startup dialogue
 #################################################################
 
-echo "What do you want to do? (finalize_superdataset, add_ses_dcm, import_dcms, convert_containers, subdataset_import, missing_outputs, if_in_s3, templateflow_setup, qa_missings)"
+echo "What do you want to do? (finalize_superdataset, add_ses_dcm, import_dcms, import_subdataset, convert_containers, missing_outputs, if_in_s3, templateflow_setup, qa_missings)"
 read PIPELINE
 
 #################################################################
@@ -64,8 +64,14 @@ if [ $PIPELINE == finalize_superdataset ];then
 	# Clone code from git
 	[ ! -d $PROJ_DIR/code ] && git clone https://github.com/csi-hamburg/CSIframe $PROJ_DIR/code || echo "code/ already exists in superdataset"
 
-	# Create data directory (no datalad dataset)
+	# Create data directory
 	[ ! -d $PROJ_DIR/data ] && mkdir $PROJ_DIR/data || echo "data/ already exists in superdataset"
+
+	# Create data/raw_bids which will host bidsified raw data.
+	[ ! -d $BIDS_DIR ] && mkdir -p $BIDS_DIR
+
+	echo "Dataset README" >> $BIDS_DIR/README.md
+	[ -f $ENV_DIR/standard/dataset_description.json ] && cp $ENV_DIR/standard/dataset_description.json $BIDS_DIR 
 
 	# Clone envs subdataset from source
 	echo "Please provide absolute Path to datalad dataset cloned from https://github.com/csi-hamburg/envs"
@@ -73,23 +79,6 @@ if [ $PIPELINE == finalize_superdataset ];then
 	read ENVS_SOURCE
 
 	ln -rs $ENVS_SOURCE $PROJ_DIR/envs
-
-elif [ $PIPELINE == 'convert_containers' ];then
-
-	# Add singularity containers from env to project root
-	
-	echo "Please provide space-separated list of container image names to you want to convert to sandboxes; e.g. 'fmriprep-20.2.1.sif qsiprep-0.13.0.sif'"
-	echo "Available container images are: $(ls $ENV_DIR)."
-	echo "If you provide 'all', all of containers of envs/ are added"
-	pushd $PROJ_DIR/envs; read -e container_list; popd
-
-	[ "$container_list" == all ] && container_list=$(ls $PROJ_DIR/envs/*.sif | xargs -n1 basename)
-
-	for container in $container_list;do
-		echo "Converting $container to sandbox"
-		datalad get -d $ENV_DIR $ENV_DIR/$container
-		singularity build --sandbox $ENV_DIR/${container%.*} $ENV_DIR/$container
-	done
 
 elif [ $PIPELINE == add_ses_dcm ];then
 	## Insert session to single session dcm directory
@@ -211,7 +200,7 @@ elif [ $PIPELINE == import_dcms ];then
 	fi
  
 
-elif [ $PIPELINE == subdataset_import ];then
+elif [ $PIPELINE == import_subdataset ];then
 
 	## Import files from dataset directory and convert them to tarballs
 	echo "Define absolute path to directory to become a subdataset. For instance the path to a directory with bidsified raw data."
@@ -263,6 +252,23 @@ elif [ $PIPELINE == subdataset_import ];then
 	else
 		echo "$INTERACTIVE not available (only interactive/submission)";
 	fi
+
+elif [ $PIPELINE == 'convert_containers' ];then
+
+	# Add singularity containers from env to project root
+	
+	echo "Please provide space-separated list of container image names to you want to convert to sandboxes; e.g. 'fmriprep-20.2.1.sif qsiprep-0.13.0.sif'"
+	echo "Available container images are: $(ls $ENV_DIR)."
+	echo "If you provide 'all', all of containers of envs/ are added"
+	pushd $PROJ_DIR/envs; read -e container_list; popd
+
+	[ "$container_list" == all ] && container_list=$(ls $PROJ_DIR/envs/*.sif | xargs -n1 basename)
+
+	for container in $container_list;do
+		echo "Converting $container to sandbox"
+		datalad get -d $ENV_DIR $ENV_DIR/$container
+		singularity build --sandbox $ENV_DIR/${container%.*} $ENV_DIR/$container
+	done
 
 elif [ $PIPELINE == missing_outputs ];then
 
