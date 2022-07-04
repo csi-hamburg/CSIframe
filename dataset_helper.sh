@@ -4,7 +4,12 @@
 #################################################################
 # Helper script for dataset setup and common datalad operations
 # Works with absolute paths
-# Script assumes to operate from directory container superdataset/s
+# Script assumes to operate from directory superdataset/code
+#
+# Authors: 
+# Marvin Petersen (m-petersen)
+# Carola Mayer (carlo-may)
+# Felix Naegele (felenae)
 #################################################################
 
 source /sw/batch/init.sh
@@ -18,12 +23,7 @@ source activate datalad
 # Startup dialogue
 #################################################################
 
-# Read dataset name
-echo "Script is run from $(realpath .); superdataset is assumed to be/become subdirectory"
-echo "Enter name of dataset concerned / to create; e.g. CSI_HCHS"
-read PROJ_NAME
-
-echo "What do you want to do? (setup_superdataset, add_data_subds, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, if_in_s3, create_participants_tsv, add_lzs_s3_remote, create_pybids_db, templateflow_setup, export_from_datalad, qa_missings)"
+echo "What do you want to do? (finalize_superdataset, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, if_in_s3, templateflow_setup, qa_missings)"
 read PIPELINE
 
 #################################################################
@@ -35,7 +35,8 @@ export SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 export SCRIPT_NAME="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
 echo $SCRIPT_DIR
 echo $SCRIPT_NAME
-export PROJ_DIR=$(realpath $SCRIPT_DIR/../../$PROJ_NAME)
+export PROJ_DIR=$(realpath $SCRIPT_DIR/../)
+#export PROJ_DIR=$(realpath $SCRIPT_DIR/../../$PROJ_NAME)
 export DATA_DIR=$PROJ_DIR/data
 export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
@@ -123,15 +124,15 @@ import() {
 # Dataset helper
 #################################################################
 
-[ -d $PROJ_DIR ] && pushd $PROJ_DIR
-if [ $PIPELINE == setup_superdataset ];then
+#[ -d $PROJ_DIR ] && pushd $PROJ_DIR
+if [ $PIPELINE == finalize_superdataset ];then
 	
 	## Setup YODA-compliant dataset structure
 
 	# Create superdataset and enter PROJ_DIR
 	[ ! -d $PROJ_DIR ] && mkdir $PROJ_DIR || echo "superdataset $PROJ_DIR already exists"
-	pushd $PROJ_DIR
-	[ ! -f README.md ] && touch README.md
+	#pushd $PROJ_DIR
+	[ ! -f $PROJ_DIR/README.md ] && touch $PROJ_DIR/README.md
 
 	# Create code subdataset and insert copy of this script
 	
@@ -139,25 +140,14 @@ if [ $PIPELINE == setup_superdataset ];then
 	[ ! -d $PROJ_DIR/code ] && git clone https://github.com/csi-hamburg/CSIframe $PROJ_DIR/code || echo "code/ already exists in superdataset"
 
 	# Create data directory (no datalad dataset)
-	[ ! -d $PROJ_DIR/data ] && mkdir data || echo "data/ already exists in superdataset"
+	[ ! -d $PROJ_DIR/data ] && mkdir $PROJ_DIR/data || echo "data/ already exists in superdataset"
 
 	# Clone envs subdataset from source
 	echo "Please provide absolute Path to datalad dataset cloned from https://github.com/csi-hamburg/envs"
 	echo "In your superdataset 'envs/' will symlink to this dataset."
 	read ENVS_SOURCE
 
-	ln -rs $ENVS_SOURCE envs
-
-elif [ $PIPELINE == add_data_subds ];then
-
-	# Add derivative subdataset/s in data/
-
-	echo "Please provide space-separated list of subdataset names; e.g. 'smriprep freesurfer qsiprep bianca'"
-	read subdataset_array
-	
-	for subds in ${subdataset_array[@]};do
-		create_data_subds $subds
-	done
+	ln -rs $ENVS_SOURCE $PROJ_DIR/envs
 
 elif [ $PIPELINE == 'convert_containers' ];then
 
@@ -178,16 +168,19 @@ elif [ $PIPELINE == 'convert_containers' ];then
 
 elif [ $PIPELINE == add_ses_dcm ];then
 	## Insert session to single session dcm directory
-	echo "Assumed path containing subject directories with DICOMs is $PROJ_DIR"
+	echo "DICOM import requires existence of a session directory, e.g. 'ses-1'"
+	echo "Please provide absolute PATH to directory to DICOMs directory you later want to import"
+	read DICOM_PATH
+	echo "Assumed path containing subject directories with DICOMs is $DICOM_PATH"
 	echo "Assumed structure of this directory is dataset_directory/subject/sequence/DICOMS"
 	echo "Final structure will be dataset_directory/subject/session/sequence/DICOMS"
 	echo "Before you proceed please make sure that subject directories are the only instances in dataset_directory"
 	echo "Which session to input? e.g. 'ses-1'"
 	read ses
 
-	for sub in $(ls $PROJ_DIR);do
-		mkdir $PROJ_DIR/$sub/$ses/
-		mv $PROJ_DIR/$sub/* $PROJ_DIR/$sub/$ses/
+	for sub in $(ls $DICOM_PATH);do
+		mkdir $DICOM_PATH/$sub/$ses/
+		mv $DICOM_PATH/$sub/* $DICOM_PATH/$sub/$ses/
 	done
 
 elif [ $PIPELINE == import_dcms ];then
@@ -199,6 +192,8 @@ elif [ $PIPELINE == import_dcms ];then
 	echo "Before you proceed please make sure that subject directories are the only instances in dataset_directory"
 	read INPUT_PATH
 	OUTPUT_PATH=$DCM_DIR
+
+	[ ! -d $DCM_DIR ] && mkdir $DCM_DIR && echo "$DCM_DIR has been created" || echo "$DCM_DIR exists"
 
 	echo "Would you like to update an existing import or perform a new import? (update/all)"
 	read IMPORT_TYPE
@@ -306,19 +301,6 @@ elif [ $PIPELINE == if_in_s3 ];then
 	fi
 	popd
 
-elif [ $PIPELINE == create_participants_tsv ];then
-
-	# If heudiconv is run with "--bids notop" raw_bids lacks participants.tsv
-	# Add participants.tsv after completing heudiconv application
-	for subds in $(ls $DATA_DIR);do
-		datalad unlock $DATA_DIR/$subds/participants.tsv
-		echo participant_id > $DATA_DIR/$subds/participants.tsv
-		for sub in $(ls $BIDS_DIR/sub-* -d);do
-			echo $(basename $sub) >> $DATA_DIR/$subds/participants.tsv
-		done
-		datalad save -m "Add participants.tsv" -d^. $DATA_DIR/$subds
-	done
-
 elif [ $PIPELINE == add_lzs_s3_remote ];then
 
 	# Initialize S3 special remote in superds and create LZS S3 bucket as sibling
@@ -349,39 +331,12 @@ elif [ $PIPELINE == add_lzs_s3_remote ];then
 
 	datalad create-sibling-github -d $PROJ_DIR --publish-depends s3 --github-organization csi-hamburg --existing replace --private -s github $repo
 
-elif [ $PIPELINE == create_pybids_db ];then
-
-	[ ! -d $BIDS_DIR/code/pybids_db ] && mkdir -p $BIDS_DIR/code/pybids_db
-	pybids layout --index-metadata --reset-db $BIDS_DIR $BIDS_DIR/code/pybids_db
-
 elif [ $PIPELINE == templateflow_setup ];then
 
 	export TEMPLATEFLOW_HOME=$BIDS_DIR/code/templateflow
 	[ ! -d $TEMPLATEFLOW_HOME ] && mkdir -p $TEMPLATEFLOW_HOME
 	python -c "from templateflow.api import get; get(['MNI152NLin2009cAsym', 'MNI152NLin6Asym', 'OASIS30ANTs'])"
 
-elif [ $PIPELINE == export_from_datalad ];then
-
-
-	# Define the subdataset concerned
-	echo "Please provide space-separated list of subdatasets in data/ to copy to; e.g. 'fmriprep mriqc'"
-	echo "Choose from: $(ls $PROJ_DIR/data)"
-	read subds
-
-	echo "Please provide source dataset"
-	read source_ds
-
-	for ds in ${subds[@]};do
-
-		for_each -nthreads 7 -debug $(ls $PROJ_DIR/../$source_ds/data/raw_bids/sub-* -d | xargs -n1 basename ) : \
-			mkdir -p $PROJ_DIR/data/$ds/NAME ";" \
-			cp -ruvfL $PROJ_DIR/../$source_ds/data/$ds/NAME/* $PROJ_DIR/data/$ds/NAME ";" \
-			pushd $PROJ_DIR/data/$ds/NAME ";" \
-			git annex uninit ";" \
-			rm -rf .git .datalad .gitattributes ";" \
-			chmod 770 -R . ";"\
-			popd
-	done
 
 elif [ $PIPELINE == qa_missings ]; then
 
@@ -473,4 +428,4 @@ else
 	echo "$PIPELINE is not supported"
 fi
 
-popd
+#popd
