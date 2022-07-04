@@ -23,7 +23,7 @@ source activate datalad
 # Startup dialogue
 #################################################################
 
-echo "What do you want to do? (finalize_superdataset, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, if_in_s3, templateflow_setup, qa_missings)"
+echo "What do you want to do? (finalize_superdataset, add_ses_dcm, import_dcms, convert_containers, subdataset_import, missing_outputs, if_in_s3, templateflow_setup, qa_missings)"
 read PIPELINE
 
 #################################################################
@@ -44,81 +44,6 @@ export CODE_DIR=$SCRIPT_DIR
 export ENV_DIR=$PROJ_DIR/envs
 
 export DATALAD_LOCATIONS_SOCKETS=$WORK/tmp
-
-#################################################################
-# Functions
-#################################################################
-
-# Define function for subdataset creation 
-
-export parallel="parallel --ungroup --delay 0.2 -j32" 
-
-create_data_subds () {
-	subds=$1
-	mkdir $DATA_DIR/$subds
-	echo "Dataset README" >> $DATA_DIR/$subds/README.md
-	[ -f $ENV_DIR/standard/dataset_description.json ] && cp $ENV_DIR/standard/dataset_description.json $DATA_DIR/$subds 
-	}
-
-import() {
-	INPUT_PATH=$1
-	OUTPUT_PATH=$2
-	zip=$3
-	time=$4
-	IMPORT_TYPE=$5
-
-	# Define subject list
-	subs=$(ls $INPUT_PATH)
-	echo INPUT $INPUT_PATH OUTPUT $OUTPUT_PATH zip $zip sub $sub
-	echo $subs
-
-	# Define import loop to parallelize across
-	import_loop() {
-
-		seqs=$(find $1 -mindepth 2 -maxdepth 3 -type d -a ! -name '*'"ses-"'*' -exec basename {} \;     | sort | uniq)
-		INPUT_PATH=$1
-		OUTPUT_PATH=$2
-		zip=$3
-		sub=$4
-		IMPORT_TYPE=$5
-
-		echo "Importing subject $sub"
-		echo "Sequences to import: $seqs"
-		OUTPUT_DIR=$OUTPUT_PATH/$sub
-		INPUT_DIR=$INPUT_PATH/$sub
-		for session in $(ls $INPUT_DIR/ses-* -d | xargs -n 1 basename);do
-			if [ $zip == y ];then
-				pushd $INPUT_DIR
-				
-				if [ $IMPORT_TYPE == "all" ]; then
-					mkdir -p $OUTPUT_DIR
-					tar -czvf $OUTPUT_DIR/${session}.tar.gz $session
-				
-				elif [ $IMPORT_TYPE == "update" ]; then
-					gunzip $OUTPUT_DIR/${session}.tar.gz
-					chmod 770 $OUTPUT_DIR/${session}.tar
-					tar -f $OUTPUT_DIR/${session}.tar -v -u $session
-					gzip $OUTPUT_DIR/${session}.tar
-					echo "$sub $session $(date +%d%m%Y)" >> $CODE_DIR/log/dicom_update_$(date +%d%m%Y).log
-				fi
-
-			elif [ $zip == n ];then
-				for seq in $seqs;do
-
-				 	mkdir $OUTPUT_DIR 
-					cp -ruvf $INPUT_DIR/$session/$seq $OUTPUT_DIR/$session/$seq
-				done
-			fi
-		done
-
-	}
-	export -f import_loop
-	CMD="$parallel import_loop $INPUT_PATH $OUTPUT_PATH $zip {} $IMPORT_TYPE ::: $subs"
-	echo $CMD
-
-	# Calculate with ~1h for 150 subjects
-	srun -p std -t $time $CMD
- }
 
 #################################################################
 # Dataset helper
@@ -195,33 +120,148 @@ elif [ $PIPELINE == import_dcms ];then
 
 	[ ! -d $DCM_DIR ] && mkdir $DCM_DIR && echo "$DCM_DIR has been created" || echo "$DCM_DIR exists"
 
-	echo "Would you like to update an existing import or perform a new import? (update/all)"
-	read IMPORT_TYPE
-	export IMPORT_TYPE
-	
-	echo "How much time do you want to allocate? e.g. '01:00:00' for one hour"
-	read time
-
 	echo "Converting subject dirs to tarballs and copying into data/dicoms"
 	export zip=y
 	
-	import $INPUT_PATH $OUTPUT_PATH $zip $time $IMPORT_TYPE
+	echo "How much time do you want to allocate? e.g. '01:00:00' for one hour; default: '01:00:00'"
+	echo "For instance assume ~1h for 150 subjects with HCHS acquisition"
+	read alloc_time; [ -z $alloc_time ] && alloc_time="01:00:00"
+	
+	echo "Would you like tperform a new import or update an existing one? (new/update); default: 'new'"
+	read IMPORT_TYPE; [ -z $IMPORT_TYPE ] && IMPORT_TYPE=new
+	export IMPORT_TYPE
 
-elif [ $PIPELINE == import_raw_bids ];then
+	echo "Do you want to perform import interactively or submit import job to a node? (interactive/submission); default: 'interactive'"
+	echo "Longer imports should be submitted."	
+	read INTERACTIVE; [ -z $INTERACTIVE ] && INTERACTIVE=interactive
+	export INTERACTIVE
 
-	## Add subdataset for bidsified raw data in data/
+	export parallel="parallel --ungroup --delay 0.2 -j32" 
 
-	create_data_subds "raw_bids"
+	# Define subject list
 
-	echo "Do you want to import bidsified subjects in raw_bids?"
-	read yn
+	subs=($(ls $INPUT_PATH))
+	echo INPUT $INPUT_PATH OUTPUT $OUTPUT_PATH zip $zip
+	echo $subs
 
-	if [ $yn == y ];then
-		echo "Please provide absolute path to BIDS root to import from. Please ensure BIDS adherence)" && \
-		read INPUT_PATH
-		echo "Please provide session; e.g. 'ses-1'"
-		read session
-		srun -t 01:00:00 import $INPUT_PATH $BIDS_DIR n $ses
+	# Define import loop to parallelize across
+	import_loop() {
+
+		seqs=$(find $1 -mindepth 2 -maxdepth 3 -type d -a ! -name '*'"ses-"'*' -exec basename {} \;     | sort | uniq)
+		INPUT_PATH=$1
+		OUTPUT_PATH=$2
+		zip=$3
+		sub=$4
+		IMPORT_TYPE=$5
+
+		echo "Importing subject $sub"
+		echo "Sequences to import: $seqs"
+		OUTPUT_DIR=$OUTPUT_PATH/$sub
+		INPUT_DIR=$INPUT_PATH/$sub
+		for session in $(ls $INPUT_DIR/ses-* -d | xargs -n 1 basename);do
+			if [ $zip == y ];then
+				pushd $INPUT_DIR
+				
+				if [ $IMPORT_TYPE == "new" ]; then
+					mkdir -p $OUTPUT_DIR
+					tar -czvf $OUTPUT_DIR/${session}.tar.gz $session
+				
+				elif [ $IMPORT_TYPE == "update" ]; then
+					gunzip $OUTPUT_DIR/${session}.tar.gz
+					chmod 770 $OUTPUT_DIR/${session}.tar
+					tar -f $OUTPUT_DIR/${session}.tar -v -u $session
+					gzip $OUTPUT_DIR/${session}.tar
+					echo "$sub $session $(date +%d%m%Y)" >> $CODE_DIR/log/dicom_update_$(date +%d%m%Y).log
+				fi
+
+			elif [ $zip == n ];then
+				for seq in $seqs;do
+
+				 	mkdir $OUTPUT_DIR 
+					cp -ruvf $INPUT_DIR/$session/$seq $OUTPUT_DIR/$session/$seq
+				done
+			fi
+		done
+
+	}
+	export -f import_loop
+
+
+	if [ $INTERACTIVE == interactive ]; then 
+
+		CMD="$parallel import_loop $INPUT_PATH $OUTPUT_PATH $zip {} $IMPORT_TYPE ::: ${subs[@]}"
+		srun -p std -t $alloc_time $CMD
+
+	elif [ $INTERACTIVE == submission ]; then
+
+		cat <<- EOF > $CODE_DIR/import_dcms.sh
+		#!/usr/bin/env bash
+		source /sw/batch/init.sh
+		module load parallel
+		$parallel import_loop $INPUT_PATH $OUTPUT_PATH $zip {} $IMPORT_TYPE ::: ${subs[@]}
+		EOF
+
+		sbatch -p std -t $alloc_time --output $CODE_DIR/log/"%A-dicom_import-$(date +%d%m%Y).out" \
+                --error $CODE_DIR/log/"%A-dicom_import-$(date +%d%m%Y).err" $CODE_DIR/import_dcms.sh
+
+		rm $CODE_DIR/import_dcms.sh
+
+	else
+		echo "$INTERACTIVE not available mode";
+	fi
+ 
+
+elif [ $PIPELINE == subdataset_import ];then
+
+	## Import files from dataset directory and convert them to tarballs
+	echo "Define absolute path to directory to become a subdataset. For instance the path to a directory with bidsified raw data."
+	read INPUT_PATH
+
+	echo "Define target subdataset e.g. 'raw_bids'"
+	echo "If not already available, it will be created in $PROJ_DIR/data/."
+	read subdataset
+	OUTPUT_PATH=$PROJ_DIR/data/$subdataset
+	export $OUTPUT_PATH
+
+	## Add subdataset in data/
+	[ ! -d $OUTPUT_PATH ] && mkdir -p $OUTPUT_PATH
+	echo "Dataset README" >> $OUTPUT_PATH/README.md
+	[ -f $ENV_DIR/standard/dataset_description.json ] && cp $ENV_DIR/standard/dataset_description.json $OUTPUT_PATH 
+
+	echo "Do you want to perform import interactively or submit import job to a node? (interactive/submission); default: 'interactive'"
+	echo "Longer imports should be submitted."	
+	read INTERACTIVE; [ -z $INTERACTIVE ] && INTERACTIVE=interactive
+
+	echo "How much time do you want to allocate? e.g. '01:00:00' for one hour; default: '01:00:00'"
+	echo "For instance assume ~1h for 150 subjects with HCHS acquisition"
+	read alloc_time; [ -z $alloc_time ] && alloc_time="01:00:00"
+
+	items=($(ls $INPUT_PATH))
+
+	export parallel="parallel --ungroup --delay 0.2 -j32" 
+
+	if [ $INTERACTIVE == interactive ]; then 
+
+		CMD="$parallel cp -ruvf $INPUT_PATH/{} $OUTPUT_PATH ::: ${items[@]}"
+		echo $CMD
+		srun -p std -t $alloc_time $CMD
+
+	elif [ $INTERACTIVE == submission ]; then
+
+		cat <<- EOF > $CODE_DIR/import.sh
+		#!/usr/bin/env bash
+		source /sw/batch/init.sh
+		module load parallel
+		$parallel cp -ruvf $INPUT_PATH/{} $OUTPUT_PATH ::: ${items[@]}
+		EOF
+
+		sbatch -p std -t $alloc_time --output $CODE_DIR/log/"%A-import_$subdataset-$(date +%d%m%Y).out" \
+                --error $CODE_DIR/log/"%A-import_$subdataset-$(date +%d%m%Y).err" $CODE_DIR/import.sh
+
+		rm $CODE_DIR/import.sh
+
+	else
+		echo "$INTERACTIVE not available (only interactive/submission)";
 	fi
 
 elif [ $PIPELINE == missing_outputs ];then
