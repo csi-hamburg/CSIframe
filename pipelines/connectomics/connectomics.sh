@@ -6,10 +6,16 @@
 #  Small World Propensity (Muldoon et al., 2016, https://complexsystemsupenn.com/s/SWP1.zip)                      #
 #  Controllability (Gu et al., 2015, https://complexsystemsupenn.com/s/controllability_code-smb8.zip)             #
 #                                                                                                                 #
+# Internal documentation:                                                                                         #
+#   https://github.com/csi-hamburg/CSIframe/wiki/Graph-measures                                                   #
+#                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [pipelines which need to be run first]                                                                        #
+#       - bidsify                                                                                                 #
 #       - qsiprep & qsirecon for structural connectomics                                                          #
-#       - fmriprep & xcpengine for functional connectomics                                                        #                                                                                 #
+#       - fmriprep & xcpengine for functional connectomics                                                        #
+#                                                                                                                 #
+# Author: Marvin Petersen (m-petersen)                                                                            #
 ###################################################################################################################
 
 # Get verbose outputs

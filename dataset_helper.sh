@@ -4,7 +4,12 @@
 #################################################################
 # Helper script for dataset setup and common datalad operations
 # Works with absolute paths
-# Script assumes to operate from directory container superdataset/s
+# Script assumes to operate from directory superdataset/code
+#
+# Authors: 
+# Marvin Petersen (m-petersen)
+# Carola Mayer (carlo-may)
+# Felix Naegele (felenae)
 #################################################################
 
 source /sw/batch/init.sh
@@ -18,12 +23,7 @@ source activate datalad
 # Startup dialogue
 #################################################################
 
-# Read dataset name
-echo "Script is run from $(realpath .); superdataset is assumed to be/become subdirectory"
-echo "Enter name of dataset concerned / to create; e.g. CSI_HCHS"
-read PROJ_NAME
-
-echo "What do you want to do? (setup_superdataset, add_data_subds, import_raw_bids, convert_containers, add_ses_dcm, import_dcms, missing_outputs, if_in_s3, create_participants_tsv, add_lzs_s3_remote, create_pybids_db, templateflow_setup, export_from_datalad, qa_missings)"
+echo "What do you want to do? (finalize_superdataset, add_ses_dcm, import_dcms, import_subdataset, convert_containers, missing_outputs, if_in_s3, templateflow_setup, qa_missings)"
 read PIPELINE
 
 #################################################################
@@ -35,7 +35,8 @@ export SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 export SCRIPT_NAME="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
 echo $SCRIPT_DIR
 echo $SCRIPT_NAME
-export PROJ_DIR=$(realpath $SCRIPT_DIR/../../$PROJ_NAME)
+export PROJ_DIR=$(realpath $SCRIPT_DIR/../)
+#export PROJ_DIR=$(realpath $SCRIPT_DIR/../../$PROJ_NAME)
 export DATA_DIR=$PROJ_DIR/data
 export DCM_DIR=$PROJ_DIR/data/dicoms
 export BIDS_DIR=$PROJ_DIR/data/raw_bids
@@ -45,30 +46,91 @@ export ENV_DIR=$PROJ_DIR/envs
 export DATALAD_LOCATIONS_SOCKETS=$WORK/tmp
 
 #################################################################
-# Functions
+# Dataset helper
 #################################################################
 
-# Define function for subdataset creation 
+#[ -d $PROJ_DIR ] && pushd $PROJ_DIR
+if [ $PIPELINE == finalize_superdataset ];then
+	
+	## Setup YODA-compliant dataset structure
 
-export parallel="parallel --ungroup --delay 0.2 -j32" 
+	# Create superdataset and enter PROJ_DIR
+	[ ! -d $PROJ_DIR ] && mkdir $PROJ_DIR || echo "superdataset $PROJ_DIR already exists"
+	#pushd $PROJ_DIR
+	[ ! -f $PROJ_DIR/README.md ] && touch $PROJ_DIR/README.md
 
-create_data_subds () {
-	subds=$1
-	mkdir $DATA_DIR/$subds
-	echo "Dataset README" >> $DATA_DIR/$subds/README.md
-	[ -f $ENV_DIR/standard/dataset_description.json ] && cp $ENV_DIR/standard/dataset_description.json $DATA_DIR/$subds 
-	}
+	# Create code subdataset and insert copy of this script
+	
+	# Clone code from git
+	[ ! -d $PROJ_DIR/code ] && git clone https://github.com/csi-hamburg/CSIframe $PROJ_DIR/code || echo "code/ already exists in superdataset"
 
-import() {
-	INPUT_PATH=$1
-	OUTPUT_PATH=$2
-	zip=$3
-	time=$4
-	IMPORT_TYPE=$5
+	# Create data directory
+	[ ! -d $PROJ_DIR/data ] && mkdir $PROJ_DIR/data || echo "data/ already exists in superdataset"
+
+	# Create data/raw_bids which will host bidsified raw data.
+	[ ! -d $BIDS_DIR ] && mkdir -p $BIDS_DIR
+
+	echo "Dataset README" >> $BIDS_DIR/README.md
+	[ -f $ENV_DIR/standard/dataset_description.json ] && cp $ENV_DIR/standard/dataset_description.json $BIDS_DIR 
+
+	# Clone envs subdataset from source
+	echo "Please provide absolute Path to datalad dataset cloned from https://github.com/csi-hamburg/envs"
+	echo "In your superdataset 'envs/' will symlink to this dataset."
+	read ENVS_SOURCE
+
+	ln -rs $ENVS_SOURCE $PROJ_DIR/envs
+
+elif [ $PIPELINE == add_ses_dcm ];then
+	## Insert session to single session dcm directory
+	echo "DICOM import requires existence of a session directory, e.g. 'ses-1'"
+	echo "Please provide absolute PATH to directory to DICOMs directory you later want to import"
+	read DICOM_PATH
+	echo "Assumed path containing subject directories with DICOMs is $DICOM_PATH"
+	echo "Assumed structure of this directory is dataset_directory/subject/sequence/DICOMS"
+	echo "Final structure will be dataset_directory/subject/session/sequence/DICOMS"
+	echo "Before you proceed please make sure that subject directories are the only instances in dataset_directory"
+	echo "Which session to input? e.g. 'ses-1'"
+	read ses
+
+	for sub in $(ls $DICOM_PATH);do
+		mkdir $DICOM_PATH/$sub/$ses/
+		mv $DICOM_PATH/$sub/* $DICOM_PATH/$sub/$ses/
+	done
+
+elif [ $PIPELINE == import_dcms ];then
+
+	## Import dicoms from dataset directory and convert them to tarballs
+	echo "Define path containing subject directories with DICOMs"
+	echo "data/dicoms/ subdataset should have been established (add_dcm_subds)"
+	echo "Assumed structure of this directory is dataset_directory/subject/session/sequence/DICOMS"
+	echo "Before you proceed please make sure that subject directories are the only instances in dataset_directory"
+	read INPUT_PATH
+	OUTPUT_PATH=$DCM_DIR
+
+	[ ! -d $DCM_DIR ] && mkdir $DCM_DIR && echo "$DCM_DIR has been created" || echo "$DCM_DIR exists"
+
+	echo "Converting subject dirs to tarballs and copying into data/dicoms"
+	export zip=y
+	
+	echo "How much time do you want to allocate? e.g. '01:00:00' for one hour; default: '01:00:00'"
+	echo "For instance assume ~1h for 150 subjects with HCHS acquisition"
+	read alloc_time; [ -z $alloc_time ] && alloc_time="01:00:00"
+	
+	echo "Would you like tperform a new import or update an existing one? (new/update); default: 'new'"
+	read IMPORT_TYPE; [ -z $IMPORT_TYPE ] && IMPORT_TYPE=new
+	export IMPORT_TYPE
+
+	echo "Do you want to perform import interactively or submit import job to a node? (interactive/submission); default: 'interactive'"
+	echo "Longer imports should be submitted."	
+	read INTERACTIVE; [ -z $INTERACTIVE ] && INTERACTIVE=interactive
+	export INTERACTIVE
+
+	export parallel="parallel --ungroup --delay 0.2 -j32" 
 
 	# Define subject list
-	subs=$(ls $INPUT_PATH)
-	echo INPUT $INPUT_PATH OUTPUT $OUTPUT_PATH zip $zip sub $sub
+
+	subs=($(ls $INPUT_PATH))
+	echo INPUT $INPUT_PATH OUTPUT $OUTPUT_PATH zip $zip
 	echo $subs
 
 	# Define import loop to parallelize across
@@ -89,7 +151,7 @@ import() {
 			if [ $zip == y ];then
 				pushd $INPUT_DIR
 				
-				if [ $IMPORT_TYPE == "all" ]; then
+				if [ $IMPORT_TYPE == "new" ]; then
 					mkdir -p $OUTPUT_DIR
 					tar -czvf $OUTPUT_DIR/${session}.tar.gz $session
 				
@@ -112,52 +174,84 @@ import() {
 
 	}
 	export -f import_loop
-	CMD="$parallel import_loop $INPUT_PATH $OUTPUT_PATH $zip {} $IMPORT_TYPE ::: $subs"
-	echo $CMD
 
-	# Calculate with ~1h for 150 subjects
-	srun -p std -t $time $CMD
- }
 
-#################################################################
-# Dataset helper
-#################################################################
+	if [ $INTERACTIVE == interactive ]; then 
 
-[ -d $PROJ_DIR ] && pushd $PROJ_DIR
-if [ $PIPELINE == setup_superdataset ];then
-	
-	## Setup YODA-compliant dataset structure
+		CMD="$parallel import_loop $INPUT_PATH $OUTPUT_PATH $zip {} $IMPORT_TYPE ::: ${subs[@]}"
+		srun -p std -t $alloc_time $CMD
 
-	# Create superdataset and enter PROJ_DIR
-	mkdir $PROJ_DIR
-	pushd $PROJ_DIR
-	touch README.md
+	elif [ $INTERACTIVE == submission ]; then
 
-	# Create code subdataset and insert copy of this script
-	
-	# Clone code from git
-	git clone https://github.com/csi-hamburg/hummel_processing $PROJ_DIR/code
+		cat <<- EOF > $CODE_DIR/import_dcms.sh
+		#!/usr/bin/env bash
+		source /sw/batch/init.sh
+		module load parallel
+		$parallel import_loop $INPUT_PATH $OUTPUT_PATH $zip {} $IMPORT_TYPE ::: ${subs[@]}
+		EOF
 
-	# Create data directory (no datalad dataset)
-	mkdir data
+		sbatch -p std -t $alloc_time --output $CODE_DIR/log/"%A-dicom_import-$(date +%d%m%Y).out" \
+                --error $CODE_DIR/log/"%A-dicom_import-$(date +%d%m%Y).err" $CODE_DIR/import_dcms.sh
 
-	# Clone envs subdataset from source
-	echo "Where to clone envs/ from?"
-	echo "Please provide absolute Path to datalad dataset or github URL; e.g. https://github.com/csi-hamburg/csi_envs"
-	read ENVS_SOURCE
+		rm $CODE_DIR/import_dcms.sh
 
-	ln -rs $ENVS_SOURCE envs
+	else
+		echo "$INTERACTIVE not available mode";
+	fi
+ 
 
-elif [ $PIPELINE == add_data_subds ];then
+elif [ $PIPELINE == import_subdataset ];then
 
-	# Add derivative subdataset/s in data/
+	## Import files from dataset directory and convert them to tarballs
+	echo "Define absolute path to directory to become a subdataset. For instance the path to a directory with bidsified raw data."
+	read INPUT_PATH
 
-	echo "Please provide space-separated list of subdataset names; e.g. 'smriprep freesurfer qsiprep bianca'"
-	read subdataset_array
-	
-	for subds in ${subdataset_array[@]};do
-		create_data_subds $subds
-	done
+	echo "Define target subdataset e.g. 'raw_bids'"
+	echo "If not already available, it will be created in $PROJ_DIR/data/."
+	read subdataset
+	OUTPUT_PATH=$PROJ_DIR/data/$subdataset
+	export $OUTPUT_PATH
+
+	## Add subdataset in data/
+	[ ! -d $OUTPUT_PATH ] && mkdir -p $OUTPUT_PATH
+	echo "Dataset README" >> $OUTPUT_PATH/README.md
+	[ -f $ENV_DIR/standard/dataset_description.json ] && cp $ENV_DIR/standard/dataset_description.json $OUTPUT_PATH 
+
+	echo "Do you want to perform import interactively or submit import job to a node? (interactive/submission); default: 'interactive'"
+	echo "Longer imports should be submitted."	
+	read INTERACTIVE; [ -z $INTERACTIVE ] && INTERACTIVE=interactive
+
+	echo "How much time do you want to allocate? e.g. '01:00:00' for one hour; default: '01:00:00'"
+	echo "For instance assume ~1h for 150 subjects with HCHS acquisition"
+	read alloc_time; [ -z $alloc_time ] && alloc_time="01:00:00"
+
+	items=($(ls $INPUT_PATH))
+
+	export parallel="parallel --ungroup --delay 0.2 -j32" 
+
+	if [ $INTERACTIVE == interactive ]; then 
+
+		CMD="$parallel cp -ruvf $INPUT_PATH/{} $OUTPUT_PATH ::: ${items[@]}"
+		echo $CMD
+		srun -p std -t $alloc_time $CMD
+
+	elif [ $INTERACTIVE == submission ]; then
+
+		cat <<- EOF > $CODE_DIR/import.sh
+		#!/usr/bin/env bash
+		source /sw/batch/init.sh
+		module load parallel
+		$parallel cp -ruvf $INPUT_PATH/{} $OUTPUT_PATH ::: ${items[@]}
+		EOF
+
+		sbatch -p std -t $alloc_time --output $CODE_DIR/log/"%A-import_$subdataset-$(date +%d%m%Y).out" \
+                --error $CODE_DIR/log/"%A-import_$subdataset-$(date +%d%m%Y).err" $CODE_DIR/import.sh
+
+		rm $CODE_DIR/import.sh
+
+	else
+		echo "$INTERACTIVE not available (only interactive/submission)";
+	fi
 
 elif [ $PIPELINE == 'convert_containers' ];then
 
@@ -175,59 +269,6 @@ elif [ $PIPELINE == 'convert_containers' ];then
 		datalad get -d $ENV_DIR $ENV_DIR/$container
 		singularity build --sandbox $ENV_DIR/${container%.*} $ENV_DIR/$container
 	done
-
-elif [ $PIPELINE == add_ses_dcm ];then
-	## Insert session to single session dcm directory
-	echo "Assumed path containing subject directories with DICOMs is $PROJ_DIR"
-	echo "Assumed structure of this directory is dataset_directory/subject/sequence/DICOMS"
-	echo "Final structure will be dataset_directory/subject/session/sequence/DICOMS"
-	echo "Before you proceed please make sure that subject directories are the only instances in dataset_directory"
-	echo "Which session to input? e.g. 'ses-1'"
-	read ses
-
-	for sub in $(ls $PROJ_DIR);do
-		mkdir $PROJ_DIR/$sub/$ses/
-		mv $PROJ_DIR/$sub/* $PROJ_DIR/$sub/$ses/
-	done
-
-elif [ $PIPELINE == import_dcms ];then
-
-	## Import dicoms from dataset directory and convert them to tarballs
-	echo "Define path containing subject directories with DICOMs"
-	echo "data/dicoms/ subdataset should have been established (add_dcm_subds)"
-	echo "Assumed structure of this directory is dataset_directory/subject/session/sequence/DICOMS"
-	echo "Before you proceed please make sure that subject directories are the only instances in dataset_directory"
-	read INPUT_PATH
-	OUTPUT_PATH=$DCM_DIR
-
-	echo "Would you like to update an existing import or perform a new import? (update/all)"
-	read IMPORT_TYPE
-	export IMPORT_TYPE
-	
-	echo "How much time do you want to allocate? e.g. '01:00:00' for one hour"
-	read time
-
-	echo "Converting subject dirs to tarballs and copying into data/dicoms"
-	export zip=y
-	
-	import $INPUT_PATH $OUTPUT_PATH $zip $time $IMPORT_TYPE
-
-elif [ $PIPELINE == import_raw_bids ];then
-
-	## Add subdataset for bidsified raw data in data/
-
-	create_data_subds "raw_bids"
-
-	echo "Do you want to import bidsified subjects in raw_bids?"
-	read yn
-
-	if [ $yn == y ];then
-		echo "Please provide absolute path to BIDS root to import from. Please ensure BIDS adherence)" && \
-		read INPUT_PATH
-		echo "Please provide session; e.g. 'ses-1'"
-		read session
-		srun -t 01:00:00 import $INPUT_PATH $BIDS_DIR n $ses
-	fi
 
 elif [ $PIPELINE == missing_outputs ];then
 
@@ -306,19 +347,6 @@ elif [ $PIPELINE == if_in_s3 ];then
 	fi
 	popd
 
-elif [ $PIPELINE == create_participants_tsv ];then
-
-	# If heudiconv is run with "--bids notop" raw_bids lacks participants.tsv
-	# Add participants.tsv after completing heudiconv application
-	for subds in $(ls $DATA_DIR);do
-		datalad unlock $DATA_DIR/$subds/participants.tsv
-		echo participant_id > $DATA_DIR/$subds/participants.tsv
-		for sub in $(ls $BIDS_DIR/sub-* -d);do
-			echo $(basename $sub) >> $DATA_DIR/$subds/participants.tsv
-		done
-		datalad save -m "Add participants.tsv" -d^. $DATA_DIR/$subds
-	done
-
 elif [ $PIPELINE == add_lzs_s3_remote ];then
 
 	# Initialize S3 special remote in superds and create LZS S3 bucket as sibling
@@ -349,39 +377,12 @@ elif [ $PIPELINE == add_lzs_s3_remote ];then
 
 	datalad create-sibling-github -d $PROJ_DIR --publish-depends s3 --github-organization csi-hamburg --existing replace --private -s github $repo
 
-elif [ $PIPELINE == create_pybids_db ];then
-
-	[ ! -d $BIDS_DIR/code/pybids_db ] && mkdir -p $BIDS_DIR/code/pybids_db
-	pybids layout --index-metadata --reset-db $BIDS_DIR $BIDS_DIR/code/pybids_db
-
 elif [ $PIPELINE == templateflow_setup ];then
 
 	export TEMPLATEFLOW_HOME=$BIDS_DIR/code/templateflow
 	[ ! -d $TEMPLATEFLOW_HOME ] && mkdir -p $TEMPLATEFLOW_HOME
 	python -c "from templateflow.api import get; get(['MNI152NLin2009cAsym', 'MNI152NLin6Asym', 'OASIS30ANTs'])"
 
-elif [ $PIPELINE == export_from_datalad ];then
-
-
-	# Define the subdataset concerned
-	echo "Please provide space-separated list of subdatasets in data/ to copy to; e.g. 'fmriprep mriqc'"
-	echo "Choose from: $(ls $PROJ_DIR/data)"
-	read subds
-
-	echo "Please provide source dataset"
-	read source_ds
-
-	for ds in ${subds[@]};do
-
-		for_each -nthreads 7 -debug $(ls $PROJ_DIR/../$source_ds/data/raw_bids/sub-* -d | xargs -n1 basename ) : \
-			mkdir -p $PROJ_DIR/data/$ds/NAME ";" \
-			cp -ruvfL $PROJ_DIR/../$source_ds/data/$ds/NAME/* $PROJ_DIR/data/$ds/NAME ";" \
-			pushd $PROJ_DIR/data/$ds/NAME ";" \
-			git annex uninit ";" \
-			rm -rf .git .datalad .gitattributes ";" \
-			chmod 770 -R . ";"\
-			popd
-	done
 
 elif [ $PIPELINE == qa_missings ]; then
 
@@ -473,4 +474,4 @@ else
 	echo "$PIPELINE is not supported"
 fi
 
-popd
+#popd

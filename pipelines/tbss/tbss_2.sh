@@ -14,7 +14,8 @@
 #       - fba (only for fixel branch)                                         #
 #       - tbss_1                                                              #
 #   [container]                                                               #
-#       - fsl-6.0.3                                                           #  
+#       - fsl-6.0.3                                                           #
+#       - mrtrix3-3.0.2                                                       #  
 ###############################################################################
 
 # Get verbose outputs
@@ -96,7 +97,7 @@ fi
 # Creating derivatives directory
 ################################
 
- DER_DIR=$TBSS_DIR/derivatives/sub-all/ses-${SESSION}/dwi
+DER_DIR=$TBSS_DIR/derivatives/sub-all/ses-${SESSION}/dwi
 
 if [ -d $DER_DIR ]; then
     
@@ -106,9 +107,11 @@ if [ -d $DER_DIR ]; then
 
     rm -rvf $DER_DIR/*
 
-fi
+else
 
-mkdir -p $DER_DIR
+    mkdir -p $DER_DIR
+
+fi
 
 ##############################################
 # Calculation of mean FA and skeletonization #
@@ -127,7 +130,7 @@ echo $subj_array_length
 
 # 700 is derived empirically: fslmerge worked for CSI_POSTCOVID without the "workaround" below
 
-if [ $subj_array_length > 700 ]; then
+if [ $subj_array_length -gt 700 ]; then
 
     # Define number of subjects to be merged in one intermediate 4D image
     #####################################################################
@@ -205,16 +208,16 @@ if [ $subj_array_length > 700 ]; then
 
     # Define output
 
-    FA_MASK_MERGED=$TMP_OUT/sub-all_ses-${SESSION}_space-${SPACE}_desc-FA_desc-merged_mask
-    FA_MASK=$TMP_OUT/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask
-    FA_SUM=$TMP_OUT/sub-all_ses-${SESSION}_space-${SPACE}_desc-sum_desc-DTINoNeg_FA.nii.gz
-    FA_MEAN=$TMP_OUT/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA
+    FA_MASK_MERGED=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-FA_desc-merged_mask
+    FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask
+    FA_SUM=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-sum_desc-DTINoNeg_FA.nii.gz
+    FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA
     
     # Define commands
 
-    CMD_MERGE_MASK="fslmerge -t $FA_MASK_MERGED $(ls $TMP_OUT/batch-*_ses-${SESSION}_space-${SPACE}_desc-FA_mask.nii.gz)"
+    CMD_MERGE_MASK="fslmerge -t $FA_MASK_MERGED $(ls $DER_DIR/batch-*_ses-${SESSION}_space-${SPACE}_desc-FA_mask.nii.gz)"
     CMD_Tmin_MASK="fslmaths $FA_MASK_MERGED -Tmin $FA_MASK"
-    CMD_FA_SUM="mrmath $(ls $TMP_OUT/batch-*_ses-${SESSION}_space-${SPACE}_desc-sum_desc-DTINoNeg_FA.nii.gz) sum $FA_SUM"
+    CMD_FA_SUM="mrmath $(ls $DER_DIR/batch-*_ses-${SESSION}_space-${SPACE}_desc-sum_desc-DTINoNeg_FA.nii.gz) sum $FA_SUM"
     CMD_MEAN_FA="fslmaths $FA_SUM -div $subject_count -mas $FA_MASK $FA_MEAN"
 
     # Execute command
@@ -223,8 +226,6 @@ if [ $subj_array_length > 700 ]; then
     $singularity_fsl $CMD_Tmin_MASK
     $singularity_mrtrix3 $CMD_FA_SUM
     $singularity_fsl $CMD_MEAN_FA
-
-   rm -rvf $TMP_OUT/batch*
 
 else
 
@@ -235,7 +236,7 @@ else
     echo "Merging all registered FA images into a single 4D image ..."
     echo ""
 
-    FA_MERGED=$TMP_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-DTINoNeg_FA
+    FA_MERGED=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-DTINoNeg_FA
 
     $singularity_fsl fslmerge -t $FA_MERGED $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*_desc-eroded_desc-DTINoNeg_FA.nii.gz
 
@@ -245,9 +246,9 @@ else
 
     # Define input/output
 
-    FA_MASK=$TMP_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask
-    FA_MASKED=$TMP_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-DTINoNeg_FA
-    FA_MEAN=$TMP_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA
+    FA_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-meanFA_mask
+    FA_MASKED=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-DTINoNeg_FA
+    FA_MEAN=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-brain_desc-mean_desc-DTINoNeg_FA
 
     # Define command
 
@@ -266,7 +267,7 @@ echo ""
 echo "Skeletonizing mean FA ..."
 echo ""
 
-MEAN_FA_SKEL=$TMP_OUT/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean_desc-DTINoNeg_FA
+MEAN_FA_SKEL=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean_desc-DTINoNeg_FA
 
 $singularity_fsl tbss_skeleton -i $FA_MEAN -o $MEAN_FA_SKEL
 
@@ -289,7 +290,7 @@ echo ""
 echo "Creating skeleton mask using threshold of $thresh ..."
 echo ""
 
-SKELETON_MASK=$TMP_OUT/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-meanFA_mask
+SKELETON_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-meanFA_mask
 
 $singularity_fsl fslmaths $MEAN_FA_SKEL -thr $thresh -bin $SKELETON_MASK
 
@@ -297,7 +298,7 @@ echo ""
 echo "Creating skeleton distancemap ..."
 echo ""
 
-SKEL_DIST=$TMP_OUT/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-meanFA_desc-mask_distancemap
+SKEL_DIST=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-meanFA_desc-mask_distancemap
 
 CMD_DIST="
     fslmaths \
@@ -311,12 +312,6 @@ CMD_DIST="
         -o $SKEL_DIST"
 
 $singularity_fsl /bin/bash -c "$CMD_DIST"
-
-echo ""
-echo "Copying output from scratch to work directory ..."
-echo ""
-
-cp -ruvf $TMP_OUT/* $DER_DIR
 
 ########################################################################################
 # Create ROI masks of JHU ICBM-DTI-81 white-matter labels atlas for MNI branch of TBSS #

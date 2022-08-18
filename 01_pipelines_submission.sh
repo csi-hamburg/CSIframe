@@ -32,7 +32,7 @@ echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️�
 if [[ "aslprep fmriprep mriqc qsiprep smriprep statistics" == *"$PIPELINE"* ]]; then
 	echo "aslprep, fmriprep, mriqc, qsiprep, smriprep and statistics do not require session input"
 else 
-	echo "Which session do you want to process?"
+	echo "Which session do you want to process? (e.g., for ses-1 type '1')"
 	[ -d $BIDS_DIR ] && echo "Choose from: $(ls $DATA_DIR/raw_bids/sub-*/* -d | xargs -n 1 basename | sort | uniq | cut -d "-" -f 2 | tr '\n' ' ') $([[ "bidsify freesurfer" == *"$PIPELINE"* ]] && echo -e "all")"
 	read SESSION; export SESSION
 fi
@@ -92,6 +92,24 @@ if [ $PIPELINE == "bidsify" ];then
 		partition_default="std"
 		
 	fi
+
+elif [ $PIPELINE == "nice" ];then
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Please provide the name of directory (in DATA_DIR) containing lesion masks."
+	echo "Choose from:"
+	ls -1 $DATA_DIR
+	read MODIFIER; export MODIFIER
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Please provide the space of original lesion segmentation"
+	echo "Currently available: FLAIR"
+	read ORIG_SPACE; export ORIG_SPACE
+
+	export SUBJS_PER_NODE=8
+	export ANALYSIS_LEVEL=subject
+	batch_time_default="06:00:00"
+	partition_default="std"
 
 elif [ $PIPELINE == "qsiprep" ];then
 	
@@ -727,8 +745,8 @@ elif [ $PIPELINE == "statistics" ];then
 		
 		export SUBJS_PER_NODE=$subj_array_length
 		export ANALYSIS_LEVEL=group
-		batch_time_default="1-00:00:00"
-		partition_default="std"
+		batch_time_default="3-00:00:00"
+		partition_default="big"
 
 	elif [ $STAT_METHOD == tfce_tbss ];then
 	
@@ -742,7 +760,7 @@ elif [ $PIPELINE == "statistics" ];then
 	export SUBJS_PER_NODE=$subj_array_length
 	export ANALYSIS_LEVEL=group
 	batch_time_default="1-00:00:00"
-	partition_default="big"
+	partition_default="std"
 
 	fi
 
