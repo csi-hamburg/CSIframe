@@ -745,11 +745,54 @@ elif [ $PIPELINE == "statistics" ];then
 	partition_default="big"
 
 	fi
+
+elif [ $PIPELINE == "registration" ];then
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
+	echo "Which method do you want to perform? (ants_rigid/ants_affine/ants_syn/ants_apply_transform)"
+	read REGISTRATION_METHOD; export REGISTRATION_METHOD
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
+	echo "Define task short (-> has to be name of subdirectory in data/registration)"
+	echo $(ls $DATA_DIR/registration/* -d -1 | xargs -n 1 basename | sort | uniq ) | tr " " "\n"
+	read MODIFIER; export MODIFIER
+
+	echo "Please make sure that registration/moving/ and registration/transform/ are present in the task directory."
+	echo "These should contain moving and transform files starting with the subject id (sub-XYZ_...)."
+	echo "We recommend using symlinks instead of the actual files to save disk space."
+	echo "Press enter to continue."
+	read CHECK
+
+	if [ $REGISTRATION_METHOD == ants_rigid ];then
+		export SUBJS_PER_NODE=32
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="01:00:00"
+		partition_default="std"
+
+	elif [ $REGISTRATION_METHOD == ants_affine ];then
+		export SUBJS_PER_NODE=16
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="01:00:00"
+		partition_default="std"
+	
+	elif [ $REGISTRATION_METHOD == ants_syn ];then
+		export SUBJS_PER_NODE=8
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="02:00:00"
+		partition_default="std"
+
+	elif [ $REGISTRATION_METHOD == ants_apply_transform ];then
+		export SUBJS_PER_NODE=8
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="02:00:00"
+		partition_default="std"
+
 else
 	
 	echo "Pipeline $PIPELINE not supported"
 	exit
 fi
+
 
 if [ $INTERACTIVE != y ]; then
 
