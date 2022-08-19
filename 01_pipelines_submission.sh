@@ -771,15 +771,29 @@ elif [ $PIPELINE == "registration" ];then
 	read REGISTRATION_METHOD; export REGISTRATION_METHOD
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
-	echo "Define task short (-> has to be name of subdirectory in data/registration)"
+	echo "Define task directory (-> has to be name of subdirectory in data/registration)"
 	echo $(ls $DATA_DIR/registration/* -d -1 | xargs -n 1 basename | sort | uniq ) | tr " " "\n"
-	read MODIFIER; export MODIFIER
+	read REGISTRATION_TASK; export REGISTRATION_TASK
 
-	echo "Please make sure that registration/moving/ and registration/transform/ are present in the task directory."
-	echo "These should contain moving and transform files starting with the subject id (sub-XYZ_...)."
+	echo "Please make sure that registration/moving/ and registration/target/ are present in the task directory."
+	echo "These should contain moving and target files starting with the subject id (sub-XYZ_...) or"
+	echo "a single template image (e.g. an MNI template)."
 	echo "We recommend using symlinks instead of the actual files to save disk space."
 	echo "Press enter to continue."
 	read CHECK
+
+	echo "Do you want to lesion mask the registration? (y/n)"
+	echo "Please make sure that the lesion_mask/ is present in the task directory containing the lesions to mask during registration."
+	read LESION_MASKING; export LESION_MASKING
+
+	if [ $# != 0 ];then
+		subj_array=($@)
+    	echo "Processing subject(s) ${subj_array[@]}"
+		sleep 1
+	else
+		subj_array=(${@-$(ls $DATA_DIR/registration/$REGISTRATION_TASK/moving/* -d -1 | xargs -n 1 basename)}) # subjects in data/registration/task/moving
+		subj_array_length=${#subj_array[@]}
+	fi
 
 	if [ $REGISTRATION_METHOD == ants_rigid ];then
 		export SUBJS_PER_NODE=32
@@ -804,6 +818,11 @@ elif [ $PIPELINE == "registration" ];then
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="02:00:00"
 		partition_default="std"
+
+		echo "Which interpolation do you want to use? (NearestNeighbor/BSpline/LanczosWindowedSinc)"
+		read INTERPOLATION; export INTERPOLATION
+
+	fi
 
 else
 	
