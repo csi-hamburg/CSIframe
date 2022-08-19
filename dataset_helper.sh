@@ -23,7 +23,7 @@ source activate datalad
 # Startup dialogue
 #################################################################
 
-echo "What do you want to do? (finalize_superdataset, add_ses_dcm, import_dcms, import_subdataset, convert_containers, missing_outputs, if_in_s3, templateflow_setup, qa_missings)"
+echo "What do you want to do? (finalize_superdataset, add_ses_dcm, import_dcms, import_subdataset, convert_containers, missing_outputs, if_in_s3, templateflow_setup, qa_missings, create_symlinks)"
 read PIPELINE
 
 #################################################################
@@ -468,6 +468,59 @@ elif [ $PIPELINE == qa_missings ]; then
 
 	# example command for checking missing subjects on MASTER_NAS in the dicoms directory:
 	# for i in `cat /media/sda/PhD/hummel_marvin/projects/CSI_HCHS/data/raw_bids/derivatives/qa-raw_bids.csv`; do missing_flair=$(echo $i | awk '{print $3}'); sub=$(echo $i | awk '{print $1}' | tail -c 9); if [ $missing_flair == 1 ]; then echo $sub $missing_flair; fi; if [ $missing_flair == 1 ]; then ls /media/sda/MASTER_NAS/HCHS/DICOMS_HCHS/DICOMS_HCHS/ds_10000/out/$sub/ses-1/* -d ; fi; done
+
+elif [ $PIPELINE == create_symlinks ]; then
+
+	pushd $DATA_DIR
+
+	echo "On which session do you want to operate."
+	read session; export session
+
+
+	echo "What is the source subdataset containing the files you want to symlink to (e.g. raw_bids)"
+	read subdataset
+
+	echo "What is the target path relative to data/ that is supposed to contain the symlinks to (e.g. registration/t1_2_mni/moving)"
+	read target_path
+	export TARGET_PATH=$DATA_DIR/$target_path
+	[ ! -e $TARGET_PATH ] && mkdir -p $TARGET_PATH
+
+	echo "Enter string you want to match via 'find' command to find file to symlink to"
+	read find_string
+
+	# find find_string in subdataset
+	pushd $DATA_DIR/$subdataset
+		find_array=(`find -wholename "*${find_string}*"`) #))
+	popd
+
+	for file in ${find_array[@]}; do
+		
+		echo $file
+
+		# cut out sub and ses
+		sub=$(echo $file | awk -F "/" '{print $2}' | awk -F "_" '{print $1}')
+
+		# get file suffix
+		file_suffix=$(echo $file | awk -F "/" '{print $NF}' | awk -F "_" '{print $NF}')
+
+		# get file extension
+		file_extension="${file_suffix#*.}"
+
+		echo Subject: $sub
+		echo File suffix: $file_suffix
+		echo File extension: $file_extension
+		
+		# create relative symlink
+		
+		pushd $TARGET_PATH
+			ln -sr $DATA_DIR/$subdataset/$file ${sub}_ses-${session}.${file_extension}
+		popd
+		# registration/flair_2_t1w/moving
+		# LOCATE/*FLAIR_desc-masked_desc-wmh_desc-LOCATE_mask.nii.gz
+		
+	done
+
+	popd
 
 
 else
