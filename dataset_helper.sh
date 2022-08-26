@@ -52,11 +52,12 @@ export DATALAD_LOCATIONS_SOCKETS=$WORK/tmp
 #[ -d $PROJ_DIR ] && pushd $PROJ_DIR
 if [ $PIPELINE == finalize_superdataset ];then
 	
-	## Setup YODA-compliant dataset structure
+	## Setup dataset structure
 
-	# Create superdataset and enter PROJ_DIR
-	[ ! -d $PROJ_DIR ] && mkdir $PROJ_DIR || echo "superdataset $PROJ_DIR already exists"
-	#pushd $PROJ_DIR
+	chown $(whoami):hpc_ag_thomalla $PROJ_DIR
+	chmod 770 $PROJ_DIR -R
+	chmod g+s $PROJ_DIR
+	
 	[ ! -f $PROJ_DIR/README.md ] && touch $PROJ_DIR/README.md
 
 	# Create code subdataset and insert copy of this script
