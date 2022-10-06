@@ -33,7 +33,7 @@
 ###################################################################
 
 analysis=fc_$(whoami)
-design=/work/fatx405/projects/CSI_HCHS/code/pipelines/xcpengine/fc-36p_spkreg.dsn
+design=/work/fatx405/projects/CSI_HCHS/code/pipelines/xcpengine/fc-24p_gsr.dsn
 sequence=anatomical
 standard=MNI%2x2x2
 
@@ -57,9 +57,9 @@ prestats_process[1]=FMP
 
 confound2_rps[2]=1
 confound2_rms[2]=0
-confound2_wm[2]=1
-confound2_csf[2]=1
-confound2_gsr[2]=1
+confound2_wm[2]=0
+confound2_csf[2]=0
+confound2_gsr[2]=1	
 confound2_acompcor[2]=0
 confound2_tcompcor[2]=0
 confound2_aroma[2]=0
@@ -67,10 +67,9 @@ confound2_past[2]=0
 confound2_dx[2]=1
 confound2_sq[2]=2
 confound2_custom[2]=
-confound2_censor[2]=1
+confound2_censor[2]=0
 confound2_censor_contig[2]=0
-confound2_framewise[2]=fds:0.08,dv:2
-confound2_rerun[2]=1
+confound2_rerun[2]=0
 confound2_cleanup[2]=1
 
 ###################################################################
@@ -149,3 +148,10 @@ qcfc_atlas[9]=schaefer
 qcfc_sig[9]=fdr
 qcfc_rerun[9]=0
 qcfc_cleanup[9]=1
+
+
+
+
+
+
+
