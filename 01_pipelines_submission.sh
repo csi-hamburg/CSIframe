@@ -32,7 +32,7 @@ echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️�
 if [[ "aslprep fmriprep mriqc qsiprep smriprep statistics" == *"$PIPELINE"* ]]; then
 	echo "aslprep, fmriprep, mriqc, qsiprep, smriprep and statistics do not require session input"
 else 
-	echo "Which session do you want to process?"
+	echo "Which session do you want to process? (e.g., for ses-1 type '1')"
 	[ -d $BIDS_DIR ] && echo "Choose from: $(ls $DATA_DIR/raw_bids/sub-*/* -d | xargs -n 1 basename | sort | uniq | cut -d "-" -f 2 | tr '\n' ' ') $([[ "bidsify freesurfer" == *"$PIPELINE"* ]] && echo -e "all")"
 	read SESSION; export SESSION
 fi
@@ -185,7 +185,7 @@ elif [ $PIPELINE == "freesurfer" ];then
 elif [ $PIPELINE == "mriqc" ];then
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-	echo "Choose between participant and group level anaylsis (participant/group)." 
+	echo "Choose between participant and group level analysis (participant/group)." 
 	echo "Please make sure participant level is finished before running group level analysis."
 	read MRIQC_LEVEL; export MRIQC_LEVEL
 
@@ -234,13 +234,13 @@ elif [ $PIPELINE == "aslprep" ]; then
 
 elif [ $PIPELINE == "xcpengine" ];then
 	
-	export SUBJS_PER_NODE=8
+	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
-	batch_time_default="16:00:00"
+	batch_time_default="05:00:00"
 	partition_default="std"
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-	echo "Which xcpengine subanalysis do you want to use? (fc_36pspkreg/fc_aromagsr/struc)"
+	echo "Choose from" $(ls $CODE_DIR/pipelines/xcpengine/fc-*.dsn | xargs -n 1 basename)
 	read MODIFIER; export MODIFIER
 
 elif [ $PIPELINE == "freewater" ];then
@@ -763,11 +763,104 @@ elif [ $PIPELINE == "statistics" ];then
 	partition_default="std"
 
 	fi
+
+elif [ $PIPELINE == "pvs" ];then
+
+	export SUBJS_PER_NODE=16
+	export ANALYSIS_LEVEL=subject
+	partition_default="std"
+	batch_time_default="1-00:00:00"
+
+elif [ $PIPELINE == "registration" ];then
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
+	echo "Which method do you want to perform? (ants_rigid/ants_affine/ants_syn/ants_apply_transform)"
+	read REGISTRATION_METHOD; export REGISTRATION_METHOD
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
+	echo "Define task directory (-> has to be name of subdirectory in data/registration)"
+	echo $(ls $DATA_DIR/registration/* -d -1 | xargs -n 1 basename | sort | uniq ) | tr " " "\n"
+	read REGISTRATION_TASK; export REGISTRATION_TASK
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Please make sure that registration/moving/ and registration/target/ are present in the task directory."
+	echo "These should contain moving and target files starting with the subject id (sub-XYZ_...) or"
+	echo "a single template image (e.g. an MNI template)."
+	echo "We recommend using symlinks instead of the actual files to save disk space."
+	echo "Press enter to continue."
+	read CHECK
+
+	# echo "Is a template the moving or target image? (n/moving/target)"
+	# echo "Given make sure that template is single file in moving/ or target"
+	# read TEMPLATE_WARP; export TEMPLATE_WARP
+
+	# echo "Do you want to lesion mask the registration? (y/n)"
+	# echo "Please make sure that the lesion_mask/ is present in the task directory containing the lesions to mask during registration."
+	# read LESION_MASKING; export LESION_MASKING
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Is a template the moving or target image? (n/moving/target); Default: n"
+	echo "Given that make sure that template is single file in moving/ or target"
+	read TEMPLATE_WARP; export TEMPLATE_WARP
+	[ -z $TEMPLATE_WARP ] && TEMPLATE_WARP="n"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Do you want to mask the registration? (y/n); Default: n"
+	echo "Please make sure that the mask/ is present in the task directory defining the regions to consider during registration."
+	read MASKING; export MASKING
+	[ -z $MASKING ] && MASKING="n"
+
+	if [ $MASKING == y ];then
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+		echo "Is the mask a lesion mask to exclude from registration? (y/n); Default: y"
+		read LESION_MASKING; export LESION_MASKING
+		[ -z $LESION_MASKING ] && LESION_MASKING="y"
+	fi
+
+	if [ $# != 0 ];then
+		subj_array=($@)
+    	echo "Processing subject(s) ${subj_array[@]}"
+		sleep 1
+	else
+		subj_array=(${@-$(ls $DATA_DIR/registration/$REGISTRATION_TASK/moving/* -d -1 | xargs -n 1 basename)}) # subjects in data/registration/task/moving
+		subj_array_length=${#subj_array[@]}
+	fi
+
+	if [ $REGISTRATION_METHOD == ants_rigid ];then
+		export SUBJS_PER_NODE=128
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="01:00:00"
+		partition_default="std"
+
+	elif [ $REGISTRATION_METHOD == ants_affine ];then
+		export SUBJS_PER_NODE=128
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="02:00:00"
+		partition_default="std"
+	
+	elif [ $REGISTRATION_METHOD == ants_syn ];then
+		export SUBJS_PER_NODE=64
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="24:00:00"
+		partition_default="std"
+
+	elif [ $REGISTRATION_METHOD == ants_apply_transform ];then
+		export SUBJS_PER_NODE=8
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="02:00:00"
+		partition_default="std"
+
+		echo "Which interpolation do you want to use? (NearestNeighbor/BSpline/LanczosWindowedSinc)"
+		read INTERPOLATION; export INTERPOLATION
+
+	fi
+
 else
 	
 	echo "Pipeline $PIPELINE not supported"
 	exit
 fi
+
 
 if [ $INTERACTIVE != y ]; then
 
