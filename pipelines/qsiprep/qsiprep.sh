@@ -3,11 +3,17 @@
 ###################################################################################################################
 # Diffusion prepocessing and structural connectome reconstruction (https://qsiprep.readthedocs.io/en/latest/)     #
 #                                                                                                                 #
+# Internal documentation:                                                                                         #
+#   https://github.com/csi-hamburg/hummel_processing/wiki/Diffusion-MRI-Preprocessing                             #
+#   https://github.com/csi-hamburg/hummel_processing/wiki/Structural-Connectome-Reconstruction                    #
+#                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [pipelines which need to be run first]                                                                        #
 #       - none                                                                                                    #
 #   [container]                                                                                                   #
-#       - qsiprep-0.14.2.sif                                                                                      #
+#       - qsiprep-0.15.3.sif                                                                                      #
+#                                                                                                                 #
+# Author: Marvin Petersen (m-petersen)                                                                            #
 ###################################################################################################################
 
 # Get verbose outputs
@@ -24,7 +30,7 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 ##################################
 
 # Singularity container version and command
-container_qsiprep=qsiprep-0.14.2
+container_qsiprep=qsiprep-0.15.3
 singularity_qsiprep="singularity run --cleanenv --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
@@ -35,7 +41,9 @@ singularity_qsiprep="singularity run --cleanenv --userns \
 
 # To make I/O more efficient read/write outputs from/to $SCRATCH
 [ -d $TMP_IN ] && cp -rf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
-[ -d $TMP_OUT ] && mkdir -p $TMP_OUT/qsiprep $TMP_OUT/qsirecon
+[ -d $TMP_OUT ] && mkdir -p $TMP_OUT/qsiprep $TMP_OUT/qsirecon $TMP_OUT/freesurfer
+[ -f $DATA_DIR/freesurfer/$1/stats/aseg.stats ] && cp -rf $DATA_DIR/freesurfer/$1 $TMP_OUT/freesurfer
+
 
 # $MRTRIX_TMPFILE_DIR should be big and writable
 export MRTRIX_TMPFILE_DIR=/tmp
@@ -60,6 +68,7 @@ CMD="
    --unringing-method mrdegibbs \
    --skull-strip-template OASIS \
    --stop-on-first-crash \
+   --freesurfer-input /tmp_out/freesurfer \
    --output-resolution $OUTPUT_RESOLUTION \
    --fs-license-file envs/freesurfer_license.txt"
 [ ! -z $RECON ] && CMD="${CMD} --recon_input data/qsiprep/$1 --recon_spec $RECON"

@@ -3,11 +3,16 @@
 ###################################################################################################################
 # Functional connectome reconstruction (and structural preproc) (https://xcpengine.readthedocs.io/)               #
 #                                                                                                                 #
+# Internal documentation:                                                                                         #
+#   https://github.com/csi-hamburg/hummel_processing/wiki/Functional-Connectome-Reconstruction                    #
+#                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [pipelines which need to be run first]                                                                        #
 #       - fmriprep                                                                                                #
 #   [container]                                                                                                   #
 #       - xcpengine-1.2.3.sif                                                                                     #
+#                                                                                                                 #
+# Author: Marvin Petersen (m-petersen)                                                                            #
 ###################################################################################################################
 
 # Get verbose outputs
@@ -41,36 +46,26 @@ singularity_xcpengine="singularity run --cleanenv --userns \
 #########################
 COHORT_FILE=$TMP_DIR/${1}_ses-${SESSION}_cohort_file.txt
 
-if [ $MODIFIER == struc ];then
+BOLD_IMG=$1/ses-$SESSION/func/${1}_ses-${SESSION}_task-rest_space-MNI152NLin2009cAsym_desc-preproc_bold.nii.gz
+echo "id0,img" > $COHORT_FILE
+echo "$1,$BOLD_IMG" >> $COHORT_FILE
 
-   T1_IMG=$1/ses-$SESSION/anat/${1}_ses-${SESSION}_desc-preproc_T1w.nii.gz
-   echo "id0,img" > $COHORT_FILE
-   echo "$1,$T1_IMG" >> $COHORT_FILE
+design=${MODIFIER%.*}
+echo $design
+# elif [ $MODIFIER == fc_aromagsr ];then
 
-   design=struc.dsn
+#    BOLD_IMG=$1/ses-$SESSION/func/${1}_ses-${SESSION}_task-rest_space-MNI152NLin2009cAsym_desc-preproc_bold.nii.gz
+#    echo "id0,img" > $COHORT_FILE
+#    echo "$1,$BOLD_IMG" >> $COHORT_FILE
 
-elif [ $MODIFIER == fc_36pspkreg ];then
+#    design=fc-aroma-gsr.dsn
 
-   BOLD_IMG=$1/ses-$SESSION/func/${1}_ses-${SESSION}_task-rest_space-MNI152NLin2009cAsym_desc-preproc_bold.nii.gz
-   echo "id0,img" > $COHORT_FILE
-   echo "$1,$BOLD_IMG" >> $COHORT_FILE
-
-   design=fc-36p_spkreg.dsn
-
-elif [ $MODIFIER == fc_aromagsr ];then
-
-   BOLD_IMG=$1/ses-$SESSION/func/${1}_ses-${SESSION}_task-rest_space-MNI152NLin2009cAsym_desc-preproc_bold.nii.gz
-   echo "id0,img" > $COHORT_FILE
-   echo "$1,$BOLD_IMG" >> $COHORT_FILE
-
-   design=fc-aroma-gsr.dsn
-
-fi
+# fi
 
 
 CMD="
    $singularity_xcpengine \
-   -d code/pipelines/xcpengine/$design \
+   -d code/pipelines/xcpengine/$MODIFIER \
    -c /tmp/${1}_ses-${SESSION}_cohort_file.txt \
    -i /tmp \
    -r /tmp_in \
@@ -78,6 +73,6 @@ CMD="
    -t 3"
 $CMD
 
-cp -ruvf $TMP_OUT/xcpengine $DATA_DIR
-
-
+OUTPUT_DESIGN_DIR=$DATA_DIR/xcpengine/${design}
+[ ! -d $OUTPUT_DESIGN_DIR ] && mkdir -p $OUTPUT_DESIGN_DIR
+cp -ruvf $TMP_OUT/xcpengine/* $OUTPUT_DESIGN_DIR
