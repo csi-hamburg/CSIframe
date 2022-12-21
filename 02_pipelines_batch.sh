@@ -34,6 +34,7 @@ export TEMPLATEFLOW_HOME=$BIDS_DIR/code/templateflow; 			[ ! -d $TEMPLATEFLOW_HO
 export SINGULARITYENV_TEMPLATEFLOW_HOME=$TEMPLATEFLOW_HOME;		[ ! -d $SINGULARITYENV_TEMPLATEFLOW_HOME ] && mkdir -p $SINGULARITYENV_TEMPLATEFLOW_HOME
 export SINGULARITY_CACHEDIR=$SCRATCH_DIR/singularity_cache; 	[ ! -d $SINGULARITY_CACHEDIR ] && mkdir -p $SINGULARITY_CACHEDIR
 export SINGULARITY_TMPDIR=$SCRATCH_DIR/singularity_tmp; 		[ ! -d $SINGULARITY_TMPDIR ] && mkdir -p $SINGULARITY_TMPDIR
+export SINGULARITYENV_FS_LICENSE=$ENV_DIR/freesurfer_license.txt
 
 if [ -z $ANALYSIS_LEVEL ];then
 	echo "Specify analysis level. (subject/group)"
