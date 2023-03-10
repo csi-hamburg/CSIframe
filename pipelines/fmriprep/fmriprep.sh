@@ -42,6 +42,7 @@ singularity_fmriprep="singularity run --cleanenv --userns \
 [ -d $TMP_IN ] && cp -rf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
 [ -d $TMP_OUT ] && mkdir -p $TMP_OUT/freesurfer
 [ ! -f $DATA_DIR/freesurfer/$1/stats/aseg.stats ] && rm -rf $DATA_DIR/freesurfer/$1 || cp -rf $DATA_DIR/freesurfer/$1 $TMP_OUT/freesurfer
+[ ! -d $DATA_DIR/fmriprep ] && mkdir -p $DATA_DIR/fmriprep
 
 # Pipeline execution
 ##################################
@@ -72,4 +73,4 @@ eval $CMD
 
 # Copy outputs to $DATA_DIR
 cp -ruvf $TMP_OUT/freesurfer $DATA_DIR
-cp -ruvf $TMP_OUT/fmriprep $DATA_DIR
+cp -ruvf $TMP_OUT/sub-* $DATA_DIR/fmriprep
