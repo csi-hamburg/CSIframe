@@ -764,6 +764,13 @@ elif [ $PIPELINE == "statistics" ];then
 
 	fi
 
+elif [ $PIPELINE == "pvs" ];then
+
+	export SUBJS_PER_NODE=16
+	export ANALYSIS_LEVEL=subject
+	partition_default="std"
+	batch_time_default="1-00:00:00"
+
 elif [ $PIPELINE == "registration" ];then
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		

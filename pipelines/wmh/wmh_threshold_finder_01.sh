@@ -49,9 +49,9 @@ for sub in $(ls $MAN_SEGMENTATION_DIR/sub-* -d | xargs -n 1 basename); do
 
             # Define inputs
             SEGMENTATION=$ALGORITHM_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
+            SEGMENTATION_MAN=$MAN_SEGMENTATION_DIR/${sub}/anat/${sub}_DC_FLAIR_label4.nii.gz
 
             # Define outputs
-            SEGMENTATION_MAN=$MAN_SEGMENTATION_DIR/${sub}/anat/${sub}_DC_FLAIR_label3.nii.gz
             JSON_FILE_dice=$ALGORITHM_OUT_DIR/${sub}_ses-${SESSION}_desc-diceindex_desc-${ALGORITHM}.txt
             JSON_FILE_jaccard=$ALGORITHM_OUT_DIR/${sub}_ses-${SESSION}_desc-jaccard_desc-${ALGORITHM}.txt
             FALSE_POSITIVE=$ALGORITHM_OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-masked_desc-falsepositive_desc-${ALGORITHM}.nii.gz
@@ -109,9 +109,11 @@ for sub in $(ls $MAN_SEGMENTATION_DIR/sub-* -d | xargs -n 1 basename); do
                     # Execute
                     $singularity_fsl /bin/bash -c "$CMD_THRESH_SEGMENTATION"
                 fi
+
+                # Define inputs
+                SEGMENTATION_MAN=$MAN_SEGMENTATION_DIR/${sub}/anat/${sub}_DC_FLAIR_label4.nii.gz
                 
                 # Define outputs
-                SEGMENTATION_MAN=$MAN_SEGMENTATION_DIR/${sub}/anat/${sub}_DC_FLAIR_label3.nii.gz
                 JSON_FILE_dice=$ALGORITHM_OUT_DIR/${sub}_ses-${SESSION}_desc-diceindex_desc-${ALGORITHM}${thresh}.txt
                 JSON_FILE_jaccard=$ALGORITHM_OUT_DIR/${sub}_ses-${SESSION}_desc-jaccard_desc-${ALGORITHM}${thresh}.txt
                 FALSE_POSITIVE=$ALGORITHM_OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-masked_desc-falsepositive_desc-${ALGORITHM}${thresh}.nii.gz
@@ -259,7 +261,7 @@ for sub in $(ls $MAN_SEGMENTATION_DIR/sub-* -d | xargs -n 1 basename); do
                 [ $ALGORITHM2 == "LOCATE" ] && MASKTWO_name=""
 
                 # Define inputs
-                SEGMENTATION_MAN=$MAN_SEGMENTATION_DIR/${sub}/anat/${sub}_DC_FLAIR_label3.nii.gz
+                SEGMENTATION_MAN=$MAN_SEGMENTATION_DIR/${sub}/anat/${sub}_DC_FLAIR_label4.nii.gz
 
                 # Define outputs
                 COMBINATION=$ALGORITHM_OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM1}${MASKONE_name}X${ALGORITHM2}${MASKTWO_name}.nii.gz
