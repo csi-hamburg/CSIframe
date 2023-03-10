@@ -15,7 +15,7 @@ set -x
 
 # Define subject specific temporary directory on $SCRATCH_DIR
 export TMP_DIR=$SCRATCH_DIR/$1/tmp;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
-TMP_IN=$TMP_DIR/input;                 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN/moving $TMP_IN/target $TMP_IN/transform $TMP_IN/lesion_mask $TMP_IN/lesion_mask_inv
+TMP_IN=$TMP_DIR/input;                 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN/moving $TMP_IN/target $TMP_IN/transform $TMP_IN/mask $TMP_IN/mask_inv
 TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 ###################################################################################################################
@@ -36,7 +36,7 @@ singularity_mrtrix3="singularity run --cleanenv --userns \
 MOVING_DIR=$DATA_DIR/registration/$REGISTRATION_TASK/moving
 TARGET_DIR=$DATA_DIR/registration/$REGISTRATION_TASK/target
 TRANSFORM_DIR=$DATA_DIR/registration/$REGISTRATION_TASK/transform
-LESION_DIR=$DATA_DIR/registration/$REGISTRATION_TASK/lesion_mask
+MASK_DIR=$DATA_DIR/registration/$REGISTRATION_TASK/mask
 
 # To make I/O more efficient read/write outputs from/to $SCRATCH
 [ -d $MOVING_DIR ] && cp -rfL $MOVING_DIR/${1}* $TMP_IN/moving || echo "No moving images found"
@@ -61,8 +61,8 @@ else
 fi
 
 
-[ -d $TRANSFORM_DIR ] && cp -rfL $TRANSFORM_DIR/${1}* $TMP_IN/transform || echo "No transform images found"
-[ -d $LESION_DIR ] && cp -rfL $LESION_DIR/${1}* $TMP_IN/lesion_mask || echo "No lesion images found"
+
+
 
 # Pipeline execution
 ##################################
@@ -71,20 +71,42 @@ fi
 
 MOVING=$(find $TMP_IN/moving -name *${1}* -type f)
 TARGET=$(find $TMP_IN/target -name *${1}* -type f)
-[ -d $TRANSFORM_DIR ] && TRANSFORM=$(find $TMP_IN/transform -name *${1}* -type f)
+
+
+if [ $TEMPLATE_WARP == moving ]; then
+    pushd $TMP_IN/moving
+    MOVING=$(find $TMP_IN/moving -name * -type f)
+    popd
+elif [ $TEMPLATE_WARP == target ]; then
+    pushd $TMP_IN/target
+    TARGET=$(find $TMP_IN/target -name * -type f)
+    popd
+fi
 
 MOVING_IN_CONTAINER=$(sed "s|$TMP_IN|/tmp_in|g" <<< $MOVING)
 TARGET_IN_CONTAINER=$(sed "s|$TMP_IN|/tmp_in|g" <<< $TARGET)
-[ -d $TRANSFORM_DIR ] && TRANSFORM_IN_CONTAINER=$(sed "s|$TMP_IN|/tmp_in|g" <<< $TRANSFORM)
 
-if [ $LESION_MASKING == y ]; then
-    LESION=$(find $TMP_IN/lesion_mask -name *${1}* -type f)
-    LESION_IN_CONTAINER=$(sed "s|$TMP_IN|/tmp_in|g" <<< $LESION)
-    $singularity_mrtrix3 mrcalc $LESION_IN_CONTAINER -neg 1 -add /tmp_out/lesion_mask_inv/${1}.nii.gz
-    LESION_INV=$(find $TMP_IN/lesion_mask_inv -name *${1}* -type f)
-    LESION_INV_IN_CONTAINER=$(sed "s|$TMP_IN|/tmp_in|g" <<< $LESION_INV)
-    LESION_FLAG="-x NULL,$LESION_INV_IN_CONTAINER"
+if [ $REGISTRATION_METHOD == ants_apply_transform ]; then
+    [ -d $TRANSFORM_DIR ] && cp -rfL $TRANSFORM_DIR/${1}* $TMP_IN/transform || echo "No transform images found"
+    TRANSFORM=$(find $TMP_IN/transform -name *${1}* -type f)
+    TRANSFORM_IN_CONTAINER=$(sed "s|$TMP_IN|/tmp_in|g" <<< $TRANSFORM)
 fi
+
+if [ $MASKING == y ]; then
+    [ -d $MASK_DIR ] && cp -rfL $MASK_DIR/${1}* $TMP_IN/mask || echo "No mask images found"
+    MASK=$(find $TMP_IN/mask -name *${1}* -type f)
+    MASK_IN_CONTAINER=$(sed "s|$TMP_IN|/tmp_in|g" <<< $MASK)
+    MASK_FLAG="-x NULL,$MASK_IN_CONTAINER"
+
+    if [ $LESION_MASKING == y ]; then
+        [ ! -d $TMP_IN/mask_inv ] && mkdir -p $TMP_IN/mask_inv
+        $singularity_mrtrix3 mrcalc $MASK_IN_CONTAINER -neg 1 -add /tmp_in/mask_inv/${1}.nii.gz -force
+        MASK_INV=$(find $TMP_IN/mask_inv -name *${1}* -type f)
+        MASK_INV_IN_CONTAINER=$(sed "s|$TMP_IN|/tmp_in|g" <<< $MASK_INV)
+        MASK_FLAG="-x NULL,$MASK_INV_IN_CONTAINER"
+    fi
+fi
+
 
 
 # Define command
@@ -98,7 +120,7 @@ if [ $REGISTRATION_METHOD == ants_rigid ]; then
         -o /tmp_out/${1} \
         -t r \
         -n $OMP_NTHREADS \
-        $LESION_FLAG
+        $MASK_FLAG
 
     "
 elif [ $REGISTRATION_METHOD == ants_affine ]; then
@@ -110,7 +132,7 @@ elif [ $REGISTRATION_METHOD == ants_affine ]; then
         -o /tmp_out/${1} \
         -t a \
         -n $OMP_NTHREADS \
-        $LESION_FLAG
+        $MASK_FLAG
     "
 elif [ $REGISTRATION_METHOD == ants_syn ]; then
     CMD="
@@ -121,15 +143,15 @@ elif [ $REGISTRATION_METHOD == ants_syn ]; then
         -o /tmp_out/${1} \
         -t s \
         -n $OMP_NTHREADS \
-        $LESION_FLAG
+        $MASK_FLAG
     "
 elif [[ $REGISTRATION_METHOD == ants_apply_transform ]]; then
 
     CMD="
         $singularity_mrtrix3 antsApplyTransforms \
         -d 3 -i $MOVING_IN_CONTAINER \
-        -r $TARGET_IN_CONTAINER \ 
-        -o /tmp_out/${1} \
+        -r $TARGET_IN_CONTAINER \
+        -o /tmp_out/${1}.nii.gz \
         -n $INTERPOLATION \
         -t $TRANSFORM_IN_CONTAINER \
         -v
@@ -146,7 +168,7 @@ fi
 eval $CMD
 
 # Copy outputs to $DATA_DIR
-[ $LESION_MASKING == y ] && REGISTRAION_METHOD=${REGISTRATION_METHOD}_lesion_masked
+[ $LESION_MASKING == y ] && REGISTRATION_METHOD=${REGISTRATION_METHOD}_lesion_masked
 OUTPUT_DIR=$DATA_DIR/registration/$REGISTRATION_TASK/output/$REGISTRATION_METHOD/$1
 [ ! -d  $OUTPUT_DIR ] && mkdir -p $OUTPUT_DIR
 cp -ruvf $TMP_OUT/* $OUTPUT_DIR
