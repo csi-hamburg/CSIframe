@@ -661,6 +661,7 @@ elif [ $PIPELINE == "wmh" ];then
 
 	fi
 
+
 elif [ $PIPELINE == "lesionanalysis" ];then
 	
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
@@ -764,12 +765,16 @@ elif [ $PIPELINE == "statistics" ];then
 
 	fi
 
-elif [ $PIPELINE == "pvs" ];then
+elif [ $PIPELINE == "pvs_frangi" ];then
 
 	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
 	partition_default="std"
-	batch_time_default="1-00:00:00"
+	batch_time_default="01:00:00"
+
+	echo "Which ANALYSIS PART do you want to perform? currently available are: postproc"
+	read ANALYSIS_PART
+	export PIPELINE_SUFFIX=_${ANALYSIS_PART}
 
 elif [ $PIPELINE == "registration" ];then
 
