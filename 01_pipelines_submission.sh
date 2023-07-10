@@ -661,6 +661,7 @@ elif [ $PIPELINE == "wmh" ];then
 
 	fi
 
+
 elif [ $PIPELINE == "lesionanalysis" ];then
 	
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
@@ -750,26 +751,53 @@ elif [ $PIPELINE == "statistics" ];then
 
 	elif [ $STAT_METHOD == tfce_tbss ];then
 	
-	export SUBJS_PER_NODE=$subj_array_length
-	export ANALYSIS_LEVEL=group
-	batch_time_default="1-00:00:00"
-	partition_default="big"
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time_default="1-00:00:00"
+		partition_default="big"
 
 	elif [ $STAT_METHOD == nbs ];then
 	
-	export SUBJS_PER_NODE=$subj_array_length
-	export ANALYSIS_LEVEL=group
-	batch_time_default="1-00:00:00"
-	partition_default="std"
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time_default="1-00:00:00"
+		partition_default="std"
 
 	fi
 
-elif [ $PIPELINE == "pvs" ];then
+elif [ $PIPELINE == "pvs_frangi" ] ;then
 
-	export SUBJS_PER_NODE=16
+	echo "Which ANALYSIS PART do you want to perform? currently available are: postproc, summary"
+	read ANALYSIS_PART
+	export PIPELINE_SUFFIX=_${ANALYSIS_PART}
+
+	if [ $ANALYSIS_PART == postproc ];then
+
+		export ANALYSIS_LEVEL=subject
+		export SUBJS_PER_NODE=120
+		partition_default="std"
+		batch_time_default="01:00:00"
+
+	elif [ $ANALYSIS_PART == summary ];then
+
+		export ANALYSIS_LEVEL=group
+		export SUBJS_PER_NODE=$subj_array_length
+		partition_default="std"
+		batch_time_default="00:10:00"
+		export sublist=${subj_array[@]}
+
+	fi
+
+elif [ $PIPELINE == "pvs_rorpo" ] ;then
+
+	export SUBJS_PER_NODE=120
 	export ANALYSIS_LEVEL=subject
 	partition_default="std"
-	batch_time_default="1-00:00:00"
+	batch_time_default="01:00:00"
+
+	echo "Which ANALYSIS PART do you want to perform? currently available are: postproc"
+	read ANALYSIS_PART
+	export PIPELINE_SUFFIX=_${ANALYSIS_PART}
 
 elif [ $PIPELINE == "registration" ];then
 
