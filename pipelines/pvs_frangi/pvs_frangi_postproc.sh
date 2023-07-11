@@ -113,16 +113,16 @@ rm $threshold
 $singularity_mrtrix /bin/bash -c "$CMD_SEGMENTATION_TO_MNI"
 $singularity_fsl /bin/bash -c "$CMD_EXCLUDE_WMH_MIDBRAIN; $CMD_EXCLUDE_WMH_CSO; $CMD_EXCLUDE_WMH_BG"
 
-#$singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS -V) > $PVS_vol"
+$singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS -V) > $PVS_vol"
 [ ! -f $SEGMENTATION_PVS ] && echo "na na" > $PVS_vol
 $singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_Midbrain -V) > $PVS_vol_midbrain"
 [ ! -f $SEGMENTATION_PVS_Midbrain ] && echo "na na" > $PVS_vol_midbrain
-$singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_CSO -V) > $PVS_vol_midbrain"
-[ ! -f $SEGMENTATION_PVS_CSO ] && echo "na na" > $PVS_vol_midbrain
-$singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_Midbrain -V) > $PVS_vol_midbrain"
-[ ! -f $SEGMENTATION_PVS_Midbrain ] && echo "na na" > $PVS_vol_midbrain
+$singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_CSO -V) > $PVS_vol_cso"
+[ ! -f $SEGMENTATION_PVS_CSO ] && echo "na na" > $PVS_vol_cso
+$singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_Midbrain -V) > $PVS_vol_bg"
+[ ! -f $SEGMENTATION_PVS_Midbrain ] && echo "na na" > $PVS_vol_bg
 
-#$singularity_fsl /bin/bash -c "$(echo cluster --in=$SEGMENTATION_PVS --thresh=1) > $PVS_count"
+$singularity_fsl /bin/bash -c "$(echo cluster --in=$SEGMENTATION_PVS --thresh=1) > $PVS_count"
 echo $(cat $PVS_count | head -2 | tail -1 | cut -c1-4) > $PVS_count
 [ ! -f $SEGMENTATION_PVS ] && echo "na na" > $PVS_count
 $singularity_fsl /bin/bash -c "$(echo cluster --in=$SEGMENTATION_PVS_Midbrain --thresh=1) > $PVS_count_midbrain"
