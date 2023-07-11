@@ -108,13 +108,13 @@ CMD_EXCLUDE_WMH_BG="fslmaths $MASK1_THRESH -add $MASK4_THRESH -sub $SEGMENTATION
 CMD_SEGMENTATION_TO_MNI="antsApplyTransforms -d 3 -i $SEGMENTATION_PVS -r $MNI_TEMPLATE -t $T1_TO_MNI_WARP -o $SEGMENTATION_PVS_MNI"
 
 # Execute
-#$singularity_fsl /bin/bash -c "$CMD_THRESH_MASK_1; $CMD_THRESH_MASK_2; $CMD_THRESH_MASK_3; $CMD_THRESH_MASK_4; $CMD_THRESH_MASK_5; $CMD_ADD_ALL_MASKS; $CMD_EXCLUDE_WMH"
-#rm $threshold
-#$singularity_mrtrix /bin/bash -c "$CMD_SEGMENTATION_TO_MNI"
+$singularity_fsl /bin/bash -c "$CMD_THRESH_MASK_1; $CMD_THRESH_MASK_2; $CMD_THRESH_MASK_3; $CMD_THRESH_MASK_4; $CMD_THRESH_MASK_5; $CMD_ADD_ALL_MASKS; $CMD_EXCLUDE_WMH"
+rm $threshold
+$singularity_mrtrix /bin/bash -c "$CMD_SEGMENTATION_TO_MNI"
 $singularity_fsl /bin/bash -c "$CMD_EXCLUDE_WMH_MIDBRAIN; $CMD_EXCLUDE_WMH_CSO; $CMD_EXCLUDE_WMH_BG"
 
 #$singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS -V) > $PVS_vol"
-#[ ! -f $SEGMENTATION_PVS ] && echo "na na" > $PVS_vol
+[ ! -f $SEGMENTATION_PVS ] && echo "na na" > $PVS_vol
 $singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_Midbrain -V) > $PVS_vol_midbrain"
 [ ! -f $SEGMENTATION_PVS_Midbrain ] && echo "na na" > $PVS_vol_midbrain
 $singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_CSO -V) > $PVS_vol_midbrain"
@@ -123,8 +123,8 @@ $singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_Midbrain -V) > 
 [ ! -f $SEGMENTATION_PVS_Midbrain ] && echo "na na" > $PVS_vol_midbrain
 
 #$singularity_fsl /bin/bash -c "$(echo cluster --in=$SEGMENTATION_PVS --thresh=1) > $PVS_count"
-#echo $(cat $PVS_count | head -2 | tail -1 | cut -c1-4) > $PVS_count
-#[ ! -f $SEGMENTATION_PVS ] && echo "na na" > $PVS_count
+echo $(cat $PVS_count | head -2 | tail -1 | cut -c1-4) > $PVS_count
+[ ! -f $SEGMENTATION_PVS ] && echo "na na" > $PVS_count
 $singularity_fsl /bin/bash -c "$(echo cluster --in=$SEGMENTATION_PVS_Midbrain --thresh=1) > $PVS_count_midbrain"
 echo $(cat $PVS_count_midbrain | head -2 | tail -1 | cut -c1-4) > $PVS_count_midbrain
 [ ! -f $SEGMENTATION_PVS_Midbrain ] && echo "na na" > $PVS_count_midbrain
