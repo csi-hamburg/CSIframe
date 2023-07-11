@@ -78,10 +78,19 @@ MASK2_THRESH=$OUT_DIR/${1}_ses-1_PVS_LeftCSO_NAWM_thresh.nii.gz
 MASK3_THRESH=$OUT_DIR/${1}_ses-1_PVS_Midbrain_NAWM_thresh.nii.gz
 MASK4_THRESH=$OUT_DIR/${1}_ses-1_PVS_RightBG_NAWM_thresh.nii.gz
 MASK5_THRESH=$OUT_DIR/${1}_ses-1_PVS_RightCSO_NAWM_thresh.nii.gz
+SEGMENTATION_PVS_CSO=$OUT_DIR/${1}_ses-1_space-T1_desc-pvs_desc-cso_mask.nii.gz
+SEGMENTATION_PVS_Midbrain=$OUT_DIR/${1}_ses-1_space-T1_desc-pvs_desc-midbrain_mask.nii.gz
+SEGMENTATION_PVS_BG=$OUT_DIR/${1}_ses-1_space-T1_desc-pvs_desc-bg_mask.nii.gz
 SEGMENTATION_PVS=$OUT_DIR/${1}_ses-1_space-T1_desc-pvs_mask.nii.gz
 SEGMENTATION_PVS_MNI=$OUT_DIR/${1}_ses-1_space-MNI_desc-pvs_mask.nii.gz
 PVS_vol=$DERIVATIVE_dir/${1}_ses-1_pvsvolume.csv
 PVS_count=$DERIVATIVE_dir/${1}_ses-1_pvscount.csv
+PVS_vol_midbrain=$DERIVATIVE_dir/${1}_ses-1_desc-midbrain_pvsvolume.csv
+PVS_count_midbrain=$DERIVATIVE_dir/${1}_ses-1_desc-midbrain_pvscount.csv
+PVS_vol_cso=$DERIVATIVE_dir/${1}_ses-1_desc-cso_pvsvolume.csv
+PVS_count_cso=$DERIVATIVE_dir/${1}_ses-1_desc-cso_pvscount.csv
+PVS_vol_bg=$DERIVATIVE_dir/${1}_ses-1_desc-bg_pvsvolume.csv
+PVS_count_bg=$DERIVATIVE_dir/${1}_ses-1_desc-bg_pvscount.csv
 threshold=$DERIVATIVE_dir/${1}_thresh.csv
 
 # Define commands 
@@ -93,17 +102,35 @@ CMD_THRESH_MASK_4="fslmaths $MASK4 -sub $(cat $threshold | sed 's/\s.*$//') -bin
 CMD_THRESH_MASK_5="fslmaths $MASK5 -sub $(cat $threshold | sed 's/\s.*$//') -bin $MASK5_THRESH"
 CMD_ADD_ALL_MASKS="fslmaths $MASK1_THRESH -add $MASK2_THRESH -add $MASK3_THRESH -add $MASK4_THRESH -add $MASK5_THRESH -bin $SEGMENTATION_PVS"
 CMD_EXCLUDE_WMH="fslmaths $SEGMENTATION_PVS -sub $SEGMENTATION_WMH -thr 0 -bin $SEGMENTATION_PVS"
+CMD_EXCLUDE_WMH_MIDBRAIN="fslmaths $MASK3_THRESH -sub $SEGMENTATION_WMH -thr 0 -bin $SEGMENTATION_PVS_Midbrain"
+CMD_EXCLUDE_WMH_CSO="fslmaths $MASK2_THRESH -add $MASK5_THRESH -sub $SEGMENTATION_WMH -thr 0 -bin $SEGMENTATION_PVS_CSO"
+CMD_EXCLUDE_WMH_BG="fslmaths $MASK1_THRESH -add $MASK4_THRESH -sub $SEGMENTATION_WMH -thr 0 -bin $SEGMENTATION_PVS_BG"
 CMD_SEGMENTATION_TO_MNI="antsApplyTransforms -d 3 -i $SEGMENTATION_PVS -r $MNI_TEMPLATE -t $T1_TO_MNI_WARP -o $SEGMENTATION_PVS_MNI"
 
 # Execute
-$singularity_fsl /bin/bash -c "$CMD_THRESH_MASK_1; $CMD_THRESH_MASK_2; $CMD_THRESH_MASK_3; $CMD_THRESH_MASK_4; $CMD_THRESH_MASK_5; $CMD_ADD_ALL_MASKS; $CMD_EXCLUDE_WMH"
-rm $threshold
-$singularity_mrtrix /bin/bash -c "$CMD_SEGMENTATION_TO_MNI"
+#$singularity_fsl /bin/bash -c "$CMD_THRESH_MASK_1; $CMD_THRESH_MASK_2; $CMD_THRESH_MASK_3; $CMD_THRESH_MASK_4; $CMD_THRESH_MASK_5; $CMD_ADD_ALL_MASKS; $CMD_EXCLUDE_WMH"
+#rm $threshold
+#$singularity_mrtrix /bin/bash -c "$CMD_SEGMENTATION_TO_MNI"
+$singularity_fsl /bin/bash -c "$CMD_EXCLUDE_WMH_MIDBRAIN; $CMD_EXCLUDE_WMH_CSO; $CMD_EXCLUDE_WMH_BG"
 
-$singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS -V) > $PVS_vol"
-[ ! -f $SEGMENTATION_PVS ] && echo "na na" > $PVS_vol
+#$singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS -V) > $PVS_vol"
+#[ ! -f $SEGMENTATION_PVS ] && echo "na na" > $PVS_vol
+$singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_Midbrain -V) > $PVS_vol_midbrain"
+[ ! -f $SEGMENTATION_PVS_Midbrain ] && echo "na na" > $PVS_vol_midbrain
+$singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_CSO -V) > $PVS_vol_midbrain"
+[ ! -f $SEGMENTATION_PVS_CSO ] && echo "na na" > $PVS_vol_midbrain
+$singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_Midbrain -V) > $PVS_vol_midbrain"
+[ ! -f $SEGMENTATION_PVS_Midbrain ] && echo "na na" > $PVS_vol_midbrain
 
-$singularity_fsl /bin/bash -c "$(echo cluster --in=$SEGMENTATION_PVS --thresh=1) > $PVS_count"
-echo $(cat $PVS_count | head -2 | tail -1 | cut -c1-4) > $PVS_count
-[ ! -f $SEGMENTATION_PVS ] && echo "na na" > $PVS_count
-
+#$singularity_fsl /bin/bash -c "$(echo cluster --in=$SEGMENTATION_PVS --thresh=1) > $PVS_count"
+#echo $(cat $PVS_count | head -2 | tail -1 | cut -c1-4) > $PVS_count
+#[ ! -f $SEGMENTATION_PVS ] && echo "na na" > $PVS_count
+$singularity_fsl /bin/bash -c "$(echo cluster --in=$SEGMENTATION_PVS_Midbrain --thresh=1) > $PVS_count_midbrain"
+echo $(cat $PVS_count_midbrain | head -2 | tail -1 | cut -c1-4) > $PVS_count_midbrain
+[ ! -f $SEGMENTATION_PVS_Midbrain ] && echo "na na" > $PVS_count_midbrain
+$singularity_fsl /bin/bash -c "$(echo cluster --in=$SEGMENTATION_PVS_CSO --thresh=1) > $PVS_count_cso"
+echo $(cat $PVS_count_cso | head -2 | tail -1 | cut -c1-4) > $PVS_count_cso
+[ ! -f $SEGMENTATION_PVS_CSO ] && echo "na na" > $PVS_count_cso
+$singularity_fsl /bin/bash -c "$(echo cluster --in=$SEGMENTATION_PVS_BG --thresh=1) > $PVS_count_bg"
+echo $(cat $PVS_count_bg | head -2 | tail -1 | cut -c1-4) > $PVS_count_bg
+[ ! -f $SEGMENTATION_PVS_BG ] && echo "na na" > $PVS_count_bg
