@@ -243,6 +243,24 @@ elif [ $PIPELINE == "xcpengine" ];then
 	echo "Choose from" $(ls $CODE_DIR/pipelines/xcpengine/fc-*.dsn | xargs -n 1 basename)
 	read MODIFIER; export MODIFIER
 
+elif [ $PIPELINE == "hippunfold" ];then
+	
+	export SUBJS_PER_NODE=16
+	export ANALYSIS_LEVEL=subject
+	batch_time_default="04:00:00"
+	partition_default="std"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Please enter which T1w shall serve as input to Hippunfold (raw_bids, qsiprep, fmriprep). Default is 'raw_bids'"
+	read INPUT_T1_HIPPUNFOLD; export INPUT_T1_HIPPUNFOLD
+
+	[ -z $INPUT_T1_HIPPUNFOLD ] && export INPUT_T1_HIPPUNFOLD="raw_bids"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '--skip_preproc'"
+	read MODIFIER; export MODIFIER
+	
+
 elif [ $PIPELINE == "freewater" ];then
 
 	export SUBJS_PER_NODE=8
