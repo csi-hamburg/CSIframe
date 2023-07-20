@@ -50,19 +50,22 @@ singularity_hippunfold="singularity run --userns \
 # Pipeline execution
 ##################################
 
+export SINGULARITY_BINDPATH=/data:/data
 export SINGULARITYENV_XDG_CACHE_HOME=/tmp
-#export SINGULARITYENV_SNAKEMAKE_OUTPUT_CACHE=/tmp
+export SINGULARITYENV_HIPPUNFOLD_CACHE_DIR=/tmp
 
 # Define command
 CMD="
    $singularity_hippunfold \
-   /tmp_in /tmp_out/hippunfold participant \
+   /tmp_in data participant \
    --participant-label ${1#sub-*} \
    --modality T1w \
    --atlas bigbrain \
    --force-output \
-   -p \
-   --cores $SLURM_CPUS_PER_TASK
+   --cores $SLURM_CPUS_PER_TASK \
+   --np \
+   --debug-dag \
+   --keep-work
 "
 
 [ ! -z $MODIFIER ] && CMD="${CMD} $MODIFIER"
