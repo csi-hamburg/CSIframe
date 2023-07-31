@@ -119,8 +119,8 @@ $singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_Midbrain -V) > 
 [ ! -f $SEGMENTATION_PVS_Midbrain ] && echo "na na" > $PVS_vol_midbrain
 $singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_CSO -V) > $PVS_vol_cso"
 [ ! -f $SEGMENTATION_PVS_CSO ] && echo "na na" > $PVS_vol_cso
-$singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_Midbrain -V) > $PVS_vol_bg"
-[ ! -f $SEGMENTATION_PVS_Midbrain ] && echo "na na" > $PVS_vol_bg
+$singularity_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_BG -V) > $PVS_vol_bg"
+[ ! -f $SEGMENTATION_PVS_BG ] && echo "na na" > $PVS_vol_bg
 
 $singularity_fsl /bin/bash -c "$(echo cluster --in=$SEGMENTATION_PVS --thresh=1) > $PVS_count"
 echo $(cat $PVS_count | head -2 | tail -1 | cut -c1-4) > $PVS_count
