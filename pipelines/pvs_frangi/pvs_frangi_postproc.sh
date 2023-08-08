@@ -6,7 +6,6 @@
 # Pipeline specific dependencies:                                                                                 
 #   [pipelines which need to be run first]                                                                        
 #       - fmriprep
-#       - wmh                                                                                                   
 #   [container]                                                                                                   
 #       - fsl 
 #       - mrtrix
@@ -71,7 +70,6 @@ MASK4=$OUT_DIR/${1}_ses-1_PVS_RightBG_NAWM.nii.gz
 MASK5=$OUT_DIR/${1}_ses-1_PVS_RightCSO_NAWM.nii.gz
 MNI_TEMPLATE=$ENV_DIR/standard/tpl-MNI152NLin2009cAsym_res-01_desc-brain_T1w.nii.gz
 T1_TO_MNI_WARP=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_from-T1w_to-MNI152NLin2009cAsym_mode-image_xfm.h5
-SEGMENTATION_WMH=$DATA_DIR/wmh/$1/ses-${SESSION}/anat/LOCATE/${1}_ses-${SESSION}_space-T1_desc-masked_desc-wmh_desc-LOCATE_mask.nii.gz
 T1=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-preproc_T1w.nii.gz
 MANUAL_MASK=$SOURCE_dir/manual_mask_aqueduct_posterior_ventricles.nii.gz
 MNI_TO_T1_WARP=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_from-MNI152NLin2009cAsym_to-T1w_mode-image_xfm.h5
@@ -107,16 +105,15 @@ CMD_THRESH_MASK_3="fslmaths $MASK3 -sub $(cat $threshold | sed 's/\s.*$//') -bin
 CMD_THRESH_MASK_4="fslmaths $MASK4 -sub $(cat $threshold | sed 's/\s.*$//') -bin $MASK4_THRESH"
 CMD_THRESH_MASK_5="fslmaths $MASK5 -sub $(cat $threshold | sed 's/\s.*$//') -bin $MASK5_THRESH"
 CMD_ADD_ALL_MASKS="fslmaths $MASK1_THRESH -add $MASK2_THRESH -add $MASK3_THRESH -add $MASK4_THRESH -add $MASK5_THRESH -bin $SEGMENTATION_PVS"
-CMD_EXCLUDE_WMH="fslmaths $SEGMENTATION_PVS -sub $SEGMENTATION_WMH -thr 0 -bin $SEGMENTATION_PVS"
 CMD_EXCLUDE_MANUALMASK="fslmaths $SEGMENTATION_PVS -sub $MANUAL_MASK_INDIVIDUAL -thr 0 -bin $SEGMENTATION_PVS"
-CMD_EXCLUDE_WMH_MIDBRAIN="fslmaths $MASK3_THRESH -sub $SEGMENTATION_WMH -thr 0 -bin $SEGMENTATION_PVS_Midbrain"
-CMD_EXCLUDE_WMH_CSO="fslmaths $MASK2_THRESH -add $MASK5_THRESH -sub $SEGMENTATION_WMH -thr 0 -bin $SEGMENTATION_PVS_CSO"
-CMD_EXCLUDE_WMH_BG="fslmaths $MASK1_THRESH -add $MASK4_THRESH -sub $SEGMENTATION_WMH -thr 0 -bin $SEGMENTATION_PVS_BG"
+CMD_EXCLUDE_MANUAL_MIDBRAIN="fslmaths $MASK3_THRESH -sub $MANUAL_MASK_INDIVIDUAL -thr 0 -bin $SEGMENTATION_PVS_Midbrain"
+CMD_EXCLUDE_MANUAL_CSO="fslmaths $MASK2_THRESH -add $MASK5_THRESH -sub $MANUAL_MASK_INDIVIDUAL -thr 0 -bin $SEGMENTATION_PVS_CSO"
+CMD_EXCLUDE_MANUAL_BG="fslmaths $MASK1_THRESH -add $MASK4_THRESH -sub $MANUAL_MASK_INDIVIDUAL -thr 0 -bin $SEGMENTATION_PVS_BG"
 CMD_SEGMENTATION_TO_MNI="antsApplyTransforms -d 3 -i $SEGMENTATION_PVS -r $MNI_TEMPLATE -t $T1_TO_MNI_WARP -n NearestNeighbor -o $SEGMENTATION_PVS_MNI"
 
 # Execute
 $singularity_mrtrix /bin/bash -c "$CMD_REGISTER_MANUAL_MASK"
-$singularity_fsl /bin/bash -c "$CMD_THRESH_MASK_1; $CMD_THRESH_MASK_2; $CMD_THRESH_MASK_3; $CMD_THRESH_MASK_4; $CMD_THRESH_MASK_5; $CMD_ADD_ALL_MASKS; $CMD_EXCLUDE_WMH; $CMD_EXCLUDE_MANUALMASK; $CMD_EXCLUDE_WMH_MIDBRAIN; $CMD_EXCLUDE_WMH_CSO; $CMD_EXCLUDE_WMH_BG"
+$singularity_fsl /bin/bash -c "$CMD_THRESH_MASK_1; $CMD_THRESH_MASK_2; $CMD_THRESH_MASK_3; $CMD_THRESH_MASK_4; $CMD_THRESH_MASK_5; $CMD_ADD_ALL_MASKS; $CMD_EXCLUDE_MANUALMASK; $CMD_EXCLUDE_MANUAL_MIDBRAIN; $CMD_EXCLUDE_MANUAL_CSO; $CMD_EXCLUDE_MANUAL_BG"
 rm $threshold
 $singularity_mrtrix /bin/bash -c "$CMD_SEGMENTATION_TO_MNI"
 
