@@ -21,7 +21,7 @@ ulimit -c 0
 DERIVATIVE_dir=$DATA_DIR/$PIPELINE/derivatives
 [ ! -d $DERIVATIVE_dir ] && mkdir -p $DERIVATIVE_dir
 
-echo "subject pvs_count pvs_volume" > $DERIVATIVE_dir/pvs_frangi_summary.csv
+echo "subject pvs_count pvs_volume bg_pvs_count bg_pvs_volume cso_pvs_count cso_pvs_volume midbrain_pvs_count midbrain_pvs_volume" > $DERIVATIVE_dir/pvs_frangi_summary.csv
 
 for sub in $sublist; do  
 
@@ -41,7 +41,13 @@ for sub in $sublist; do
 
         echo $sub | tr '\n' ' ' >> $DERIVATIVE_dir/pvs_frangi_summary.csv
         cat $DERIVATIVE_dir/${sub}_ses-1_pvscount.csv | awk '{print $1}' | tr '\n' ' ' >> $DERIVATIVE_dir/pvs_frangi_summary.csv
-        cat $DERIVATIVE_dir/${sub}_ses-1_pvsvolume.csv | awk '{print $2}' >> $DERIVATIVE_dir/pvs_frangi_summary.csv 
+        cat $DERIVATIVE_dir/${sub}_ses-1_pvsvolume.csv | awk '{print $2}' | tr '\n' ' ' >> $DERIVATIVE_dir/pvs_frangi_summary.csv 
+        cat $DERIVATIVE_dir/${sub}_ses-1_desc-bg_pvscount.csv | awk '{print $1}' | tr '\n' ' ' >> $DERIVATIVE_dir/pvs_frangi_summary.csv 
+        cat $DERIVATIVE_dir/${sub}_ses-1_desc-bg_pvsvolume.csv | awk '{print $2}' | tr '\n' ' ' >> $DERIVATIVE_dir/pvs_frangi_summary.csv 
+        cat $DERIVATIVE_dir/${sub}_ses-1_desc-cso_pvscount.csv | awk '{print $1}' | tr '\n' ' ' >> $DERIVATIVE_dir/pvs_frangi_summary.csv 
+        cat $DERIVATIVE_dir/${sub}_ses-1_desc-cso_pvsvolume.csv | awk '{print $2}' | tr '\n' ' ' >> $DERIVATIVE_dir/pvs_frangi_summary.csv 
+        cat $DERIVATIVE_dir/${sub}_ses-1_desc-midbrain_pvscount.csv | awk '{print $1}' | tr '\n' ' ' >> $DERIVATIVE_dir/pvs_frangi_summary.csv 
+        cat $DERIVATIVE_dir/${sub}_ses-1_desc-midbrain_pvsvolume.csv | awk '{print $2}' >> $DERIVATIVE_dir/pvs_frangi_summary.csv 
 
     fi
     
