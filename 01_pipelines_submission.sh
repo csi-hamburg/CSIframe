@@ -152,7 +152,7 @@ elif [ $PIPELINE == "smriprep" ];then
 elif [ $PIPELINE == "freesurfer" ];then
 	
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-	echo "Which pipeline level do you want to perform? (reconall/sub2avg/long)"
+	echo "Which pipeline level do you want to perform? (reconall/sub2avg/long/brainstemseg)"
 	echo "For default ('reconall') leave empty"
 
 	read FS_LEVEL; export FS_LEVEL
@@ -179,6 +179,16 @@ elif [ $PIPELINE == "freesurfer" ];then
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="1-00:00:00"
 		partition_default="std"
+
+	elif [ $FS_LEVEL == brainstemseg ];then
+
+		echo "For brainstem segmentation 'reconall' needs to be run first. <Enter> to proceed."
+		read
+		export SUBJS_PER_NODE=8
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="08:00:00"
+		partition_default="std"
+
 
 	fi
 
