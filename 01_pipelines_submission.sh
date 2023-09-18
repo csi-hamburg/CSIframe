@@ -257,7 +257,7 @@ elif [ $PIPELINE == "hippunfold" ];then
 	[ -z $INPUT_T1_HIPPUNFOLD ] && export INPUT_T1_HIPPUNFOLD="raw_bids"
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '--skip_preproc'"
+	echo "Choose additional arguments you want to provide to hippunfold call; e.g. '--skip_preproc'"
 	read MODIFIER; export MODIFIER
 	
 
@@ -452,7 +452,7 @@ elif [ $PIPELINE == "psmd" ];then
 
 elif [ $PIPELINE == "obseg" ];then
 	
-	export SUBJS_PER_NODE=1
+	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="03:00:00"
 	partition_default="std"

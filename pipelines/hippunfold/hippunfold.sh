@@ -16,6 +16,8 @@
 
 # Get verbose outputs
 set -x
+module unload env
+module load env/2022Q1-gcc-openmpi
 
 # Define subject specific temporary directory on $SCRATCH_DIR
 export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
@@ -50,28 +52,28 @@ singularity_hippunfold="singularity run --userns \
 # Pipeline execution
 ##################################
 
-export SINGULARITY_BINDPATH=/data:/data
+#export SINGULARITY_BINDPATH=$TMP_DIR:/data
 export SINGULARITYENV_XDG_CACHE_HOME=/tmp
-export SINGULARITYENV_HIPPUNFOLD_CACHE_DIR=/tmp
+#export SINGULARITYENV_HIPPUNFOLD_CACHE_DIR=/tmp
 
 # Define command
 CMD="
    $singularity_hippunfold \
-   /tmp_in data participant \
+   /tmp_in /tmp_out/ participant \
    --participant-label ${1#sub-*} \
    --modality T1w \
    --atlas bigbrain \
    --force-output \
-   --cores $SLURM_CPUS_PER_TASK \
-   --np \
-   --debug-dag \
-   --keep-work
+   --cores $SLURM_CPUS_PER_TASK
 "
 
 [ ! -z $MODIFIER ] && CMD="${CMD} $MODIFIER"
 
 # Execute command
+#pushd $TMP_DIR
+echo $PWD
 eval $CMD
+#popd
 
 # Copy outputs to $DATA_DIR
 cp -ruvf $TMP_OUT/hippunfold $DATA_DIR
