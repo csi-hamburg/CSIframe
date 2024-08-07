@@ -106,9 +106,24 @@ elif [ $PIPELINE == "nice" ];then
 	echo "Currently available: FLAIR"
 	read ORIG_SPACE; export ORIG_SPACE
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Which standard space would you like to use?"
+	echo "Currently available: 'brainder' or 'miplab'. Note, when choosing brainder, ROI extraction for vascular territories will be performed."
+	read TEMP_SPACE; export TEMP_SPACE
+
 	export SUBJS_PER_NODE=8
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="06:00:00"
+	partition_default="std"
+
+elif [ $PIPELINE == "arctic" ];then
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Note: ASLprep needs to be run first for preprocessing of T1w images."
+
+	export SUBJS_PER_NODE=8
+	export ANALYSIS_LEVEL=subject
+	batch_time_default="02:00:00"
 	partition_default="std"
 
 elif [ $PIPELINE == "qsiprep" ];then
@@ -152,7 +167,7 @@ elif [ $PIPELINE == "smriprep" ];then
 elif [ $PIPELINE == "freesurfer" ];then
 	
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-	echo "Which pipeline level do you want to perform? (reconall/sub2avg/long)"
+	echo "Which pipeline level do you want to perform? (reconall/sub2avg/long/brainstemseg)"
 	echo "For default ('reconall') leave empty"
 
 	read FS_LEVEL; export FS_LEVEL
@@ -179,6 +194,16 @@ elif [ $PIPELINE == "freesurfer" ];then
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="1-00:00:00"
 		partition_default="std"
+
+	elif [ $FS_LEVEL == brainstemseg ];then
+
+		echo "For brainstem segmentation 'reconall' needs to be run first. <Enter> to proceed."
+		read
+		export SUBJS_PER_NODE=8
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="08:00:00"
+		partition_default="std"
+
 
 	fi
 
