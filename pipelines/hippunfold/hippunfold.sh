@@ -30,7 +30,7 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 ##################################
 
 # Singularity container version and command
-container_hippunfold=hippunfold-1.2.0
+container_hippunfold=hippunfold-1.4.0
 singularity_hippunfold="singularity run --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
@@ -63,6 +63,7 @@ CMD="
    --participant-label ${1#sub-*} \
    --modality T1w \
    --atlas bigbrain \
+   --output-density $HIPPUNFOLD_OUTPUT_DENSITY \
    --force-output \
    --cores $SLURM_CPUS_PER_TASK
 "

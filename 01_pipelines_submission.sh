@@ -257,6 +257,12 @@ elif [ $PIPELINE == "hippunfold" ];then
 	[ -z $INPUT_T1_HIPPUNFOLD ] && export INPUT_T1_HIPPUNFOLD="raw_bids"
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Please enter which surface density you want to compute (0p5mm, 1mm, 2mm). Default is '0p5mm'"
+	read HIPPUNFOLD_OUTPUT_DENSITY; export HIPPUNFOLD_OUTPUT_DENSITY
+
+	[ -z $HIPPUNFOLD_OUTPUT_DENSITY ] && export HIPPUNFOLD_OUTPUT_DENSITY="0p5mm"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
 	echo "Choose additional arguments you want to provide to hippunfold call; e.g. '--skip_preproc'"
 	read MODIFIER; export MODIFIER
 	

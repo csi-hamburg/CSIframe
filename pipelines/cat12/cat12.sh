@@ -76,7 +76,7 @@ LH_THICKNESS=surf/lh.thickness.T1
 
 
 # Define commands
-CMD_CONVERT="mrconvert $T1_orig /tmp_out/T1.nii -force"
+CMD_CONVERT="mrconvert $T1_orig /tmp_out/T1.nii -force && cp $CODE_DIR/pipelines/cat12/Schaefer2018_400Parcels_7Networks_order_Tian_Subcortex_S1_MNI152NLin6Asym_1mm.* /tmp_out/"
 CMD_SEGMENT="cat_standalone.sh -b $CAT_CODE_DIR/cat_standalone_segment.txt /tmp_out/T1.nii"
 CMD_SMOOTH="cat_standalone.sh -b $CAT_CODE_DIR/cat_standalone_smooth.txt -a1 "[6 6 6]" -a2 "'s6'" /tmp_out/$GM_SEGMENTS"
 CMD_RESAMPLE_LH_CONTE="cat_standalone.sh -b $CAT_CODE_DIR/cat_standalone_resample.txt -a1 "12" -a2 "1" /tmp_out/$LH_THICKNESS"
