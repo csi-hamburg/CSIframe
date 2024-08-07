@@ -38,7 +38,7 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 # Define environment
 ####################
 ENV_DIR=$PROJ_DIR/envs
-container_heudiconv=heudiconv-1.1.6 
+container_heudiconv=heudiconv-0.9.0  
 container_pydeface=pydeface-2.0.0
 container_csiminiconda=miniconda-csi
 container_fsl=fsl-6.0.3

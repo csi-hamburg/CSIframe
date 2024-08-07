@@ -1,6 +1,22 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-#!/bin/bash
+###################################################################################################################
+# Olfactory bulb segmentation with olfsegnet (https://github.com/Deep-MI/olf-bulb-segmentation)                   #
+#                                                                                                                 #
+# Internal documentation:                                                                                         #
+#   https://github.com/csi-hamburg/CSIframe/wiki/Olfactory-bulb-segmentation                                      #
+#                                                                                                                 #
+# Pipeline specific dependencies:                                                                                 #
+#   [pipelines which need to be run first]                                                                        #
+#       - bidsify                                                                                                 #
+#   [container]                                                                                                   #
+#       - olsegnet_cpu-latest.sif                                                                                 #
+#                                                                                                                 #
+# Author: Marvin Petersen (m-petersen)                                                                            #
+###################################################################################################################
+
+# Get verbose outputs
+set -x
 
 # Set output directory
 OUT_DIR=data/obseg/

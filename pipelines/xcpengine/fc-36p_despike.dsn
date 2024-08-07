@@ -33,7 +33,7 @@
 ###################################################################
 
 analysis=fc_$(whoami)
-design=/work/fatx405/projects/CSI_HCHS/code/pipelines/xcpengine/fc-36p_spkreg.dsn
+design=/work/fatx405/projects/CSI_HCHS/code/pipelines/xcpengine/fc-36p_despike.dsn
 sequence=anatomical
 standard=MNI%2x2x2
 
@@ -67,9 +67,8 @@ confound2_past[2]=0
 confound2_dx[2]=1
 confound2_sq[2]=2
 confound2_custom[2]=
-confound2_censor[2]=1
+confound2_censor[2]=0
 confound2_censor_contig[2]=0
-confound2_framewise[2]=fds:0.08,dv:2
 confound2_rerun[2]=1
 confound2_cleanup[2]=1
 
@@ -92,7 +91,7 @@ regress_usan[3]=default
 regress_usan_space[3]=
 regress_rerun[3]=0
 regress_cleanup[3]=1
-regress_process[3]=DMT-TMP-REG
+regress_process[3]=DMT-DSP-TMP-REG
 
 ###################################################################
 # 4 FCON

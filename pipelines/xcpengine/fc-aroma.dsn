@@ -33,15 +33,15 @@
 ###################################################################
 
 analysis=fc_$(whoami)
-design=/work/fatx405/projects/CSI_TEST/code/pipelines/xcpengine/fc-aroma.dsn
-sequence=fc-rest
+design=/work/fatx405/projects/CSI_HCHS/code/pipelines/xcpengine/fc-aroma.dsn
+sequence=anatomical
 standard=MNI%2x2x2
 
 ###################################################################
 # PIPELINE
 ###################################################################
 
-pipeline=prestats,confound2,regress,fcon,reho,alff,roiquant,norm,qcfc
+pipeline=prestats,confound2,regress,fcon #,reho,alff,roiquant,norm,qcfc
 
 ###################################################################
 # 1 PRESTATS
