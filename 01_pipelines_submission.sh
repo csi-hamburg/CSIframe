@@ -106,6 +106,11 @@ elif [ $PIPELINE == "nice" ];then
 	echo "Currently available: FLAIR"
 	read ORIG_SPACE; export ORIG_SPACE
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Which standard space would you like to use?"
+	echo "Currently available: 'brainder' or 'miplab'. Note, when choosing brainder, ROI extraction for vascular territories will be performed."
+	read TEMP_SPACE; export TEMP_SPACE
+
 	export SUBJS_PER_NODE=8
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="06:00:00"

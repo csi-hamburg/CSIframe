@@ -37,8 +37,8 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
 # Define environment
 ####################
-ENV_DIR=$PROJ_DIR/_envs
-container_heudiconv=heudiconv-0.9.0  
+ENV_DIR=$PROJ_DIR/envs
+container_heudiconv=heudiconv-1.1.6 
 container_pydeface=pydeface-2.0.0
 container_csiminiconda=miniconda-csi
 container_fsl=fsl-6.0.3
@@ -105,8 +105,20 @@ for SESSION in $SESSIONS; do
       # Command
       #########################
 
+      # CMD_HEUDICONV="
+      # heudiconv \
+      # --dicom_dir_template /dcm/{subject}/ses-{session}.tar.gz\
+      # --subjects $1 \
+      # --ses $SESSION \
+      # --bids notop \
+      # --heuristic /code/pipelines/bidsify/$HEURISTIC\
+      # --converter dcm2niix \
+      # --minmeta \
+      # --overwrite\
+      # --grouping all \
+      # --outdir /bids"
+
       CMD_HEUDICONV="
-      heudiconv \
       --dicom_dir_template /dcm/{subject}/ses-{session}.tar.gz\
       --subjects $1 \
       --ses $SESSION \
