@@ -30,7 +30,7 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 ##################################
 
 # Singularity container version and command
-container_qsiprep=qsiprep-0.15.3
+container_qsiprep=qsiprep-0.16.0RC3
 singularity_qsiprep="singularity run --cleanenv --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \

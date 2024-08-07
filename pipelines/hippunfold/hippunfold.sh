@@ -1,22 +1,23 @@
 #!/usr/bin/env bash
 
 ###################################################################################################################
-# fMRI preprocessing (https://fmriprep.org/en/stable/)                                                            #
+# Hippocampus volumetry and surface reconstruction (https://hippunfold.readthedocs.io/en/latest/index.html)       #
 #                                                                                                                 #
 # Internal documentation:                                                                                         #
-#   https://github.com/csi-hamburg/hummel_processing/wiki/Functional-MRI-Preprocessing                            #
 #                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [pipelines which need to be run first]                                                                        #
-#       - none                                                                                                    #
+#       - qsiprep                                                                                                 #
 #   [container]                                                                                                   #
-#       - fmriprep-21.0.2.sif                                                                                     #
+#       - hippunfold-1.2.0                                                                                        #
 #                                                                                                                 #
 # Author: Marvin Petersen (m-petersen)                                                                            #
 ###################################################################################################################
 
 # Get verbose outputs
 set -x
+module unload env
+module load env/2022Q1-gcc-openmpi
 
 # Define subject specific temporary directory on $SCRATCH_DIR
 export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
@@ -29,48 +30,50 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 ##################################
 
 # Singularity container version and command
-container_fmriprep=fmriprep-21.0.2
-singularity_fmriprep="singularity run --cleanenv --userns \
+container_hippunfold=hippunfold-1.2.0
+singularity_hippunfold="singularity run --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR/:/tmp \
     -B $TMP_IN:/tmp_in \
     -B $TMP_OUT:/tmp_out \
-    $ENV_DIR/$container_fmriprep" 
+    $ENV_DIR/$container_hippunfold" 
 
-# To make I/O more efficient read/write outputs from/to scratch #
-[ -d $TMP_IN ] && cp -rf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
-[ -d $TMP_OUT ] && mkdir -p $TMP_OUT/freesurfer
-[ ! -f $DATA_DIR/freesurfer/$1/stats/aseg.stats ] && rm -rf $DATA_DIR/freesurfer/$1 || cp -rf $DATA_DIR/freesurfer/$1 $TMP_OUT/freesurfer
-[ ! -d $DATA_DIR/fmriprep ] && mkdir -p $DATA_DIR/fmriprep
+# To make I/O more efficient read/write outputs from/to $SCRATCH
+[ -d $TMP_IN ] && cp -rf $BIDS_DIR/dataset_description.json $TMP_IN
+[ ! -d $TMP_IN/$1/anat ] && mkdir -p $TMP_IN/$1/anat || rm -rf $TMP_IN/$1/anat/*
+
+[ $INPUT_T1_HIPPUNFOLD == "qsiprep" ] && cp -rf $PROJ_DIR/data/qsiprep/$1/anat/${1}_desc-preproc_T1w.nii.gz $TMP_IN/$1/anat/${1}_ses-${SESSION}_T1w.nii.gz
+[ $INPUT_T1_HIPPUNFOLD == "fmriprep" ] && cp -rf $PROJ_DIR/data/fmriprep/$1/ses-${SESSION}/anat/${1}_desc-preproc_T1w.nii.gz $TMP_IN/$1/anat/${1}_ses-${SESSION}_T1w.nii.gz
+[ $INPUT_T1_HIPPUNFOLD == "raw_bids" ] && cp -rf $PROJ_DIR/data/raw_bids/$1/ses-${SESSION}/anat/*T1w.nii.gz $TMP_IN/$1/anat/${1}_ses-${SESSION}_T1w.nii.gz
+
+[ -d $TMP_OUT ] && mkdir -p $TMP_OUT/hippunfold
 
 # Pipeline execution
 ##################################
 
+#export SINGULARITY_BINDPATH=$TMP_DIR:/data
+export SINGULARITYENV_XDG_CACHE_HOME=/tmp
+#export SINGULARITYENV_HIPPUNFOLD_CACHE_DIR=/tmp
+
 # Define command
 CMD="
-   $singularity_fmriprep \
-   /tmp_in /tmp_out participant \
-   -w /tmp \
-   --participant-label $1 \
-   --output-spaces $OUTPUT_SPACES \
-   --nthreads $SLURM_CPUS_PER_TASK \
-   --omp-nthreads $OMP_NTHREADS \
-   --mem-mb $MEM_MB \
-   --stop-on-first-crash \
-   --ignore t2w \
-   --fs-subjects-dir /tmp_out/freesurfer \
-   --use-aroma \
-   --cifti-output 91k \
-   --random-seed 12345 \
-   --notrack \
-   --skip_bids_validation \
-   --fs-license-file envs/freesurfer_license.txt"
-[ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
+   $singularity_hippunfold \
+   /tmp_in /tmp_out/ participant \
+   --participant-label ${1#sub-*} \
+   --modality T1w \
+   --atlas bigbrain \
+   --force-output \
+   --cores $SLURM_CPUS_PER_TASK
+"
+
+[ ! -z $MODIFIER ] && CMD="${CMD} $MODIFIER"
 
 # Execute command
+#pushd $TMP_DIR
+echo $PWD
 eval $CMD
+#popd
 
 # Copy outputs to $DATA_DIR
-cp -ruvf $TMP_OUT/freesurfer $DATA_DIR
-cp -ruvf $TMP_OUT/sub-* $DATA_DIR/fmriprep
+cp -ruvf $TMP_OUT/hippunfold $DATA_DIR

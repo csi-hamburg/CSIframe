@@ -106,6 +106,11 @@ elif [ $PIPELINE == "nice" ];then
 	echo "Currently available: FLAIR"
 	read ORIG_SPACE; export ORIG_SPACE
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Which standard space would you like to use?"
+	echo "Currently available: 'brainder' or 'miplab'. Note, when choosing brainder, ROI extraction for vascular territories will be performed."
+	read TEMP_SPACE; export TEMP_SPACE
+
 	export SUBJS_PER_NODE=8
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="06:00:00"
@@ -162,7 +167,7 @@ elif [ $PIPELINE == "smriprep" ];then
 elif [ $PIPELINE == "freesurfer" ];then
 	
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-	echo "Which pipeline level do you want to perform? (reconall/sub2avg/long)"
+	echo "Which pipeline level do you want to perform? (reconall/sub2avg/long/brainstemseg)"
 	echo "For default ('reconall') leave empty"
 
 	read FS_LEVEL; export FS_LEVEL
@@ -190,12 +195,22 @@ elif [ $PIPELINE == "freesurfer" ];then
 		batch_time_default="1-00:00:00"
 		partition_default="std"
 
+	elif [ $FS_LEVEL == brainstemseg ];then
+
+		echo "For brainstem segmentation 'reconall' needs to be run first. <Enter> to proceed."
+		read
+		export SUBJS_PER_NODE=8
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="08:00:00"
+		partition_default="std"
+
+
 	fi
 
 elif [ $PIPELINE == "mriqc" ];then
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-	echo "Choose between participant and group level anaylsis (participant/group)." 
+	echo "Choose between participant and group level analysis (participant/group)." 
 	echo "Please make sure participant level is finished before running group level analysis."
 	read MRIQC_LEVEL; export MRIQC_LEVEL
 
@@ -244,14 +259,32 @@ elif [ $PIPELINE == "aslprep" ]; then
 
 elif [ $PIPELINE == "xcpengine" ];then
 	
-	export SUBJS_PER_NODE=8
+	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
-	batch_time_default="16:00:00"
+	batch_time_default="05:00:00"
 	partition_default="std"
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-	echo "Which xcpengine subanalysis do you want to use? (fc_36pspkreg/fc_aromagsr/struc)"
+	echo "Choose from" $(ls $CODE_DIR/pipelines/xcpengine/fc-*.dsn | xargs -n 1 basename)
 	read MODIFIER; export MODIFIER
+
+elif [ $PIPELINE == "hippunfold" ];then
+	
+	export SUBJS_PER_NODE=16
+	export ANALYSIS_LEVEL=subject
+	batch_time_default="04:00:00"
+	partition_default="std"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Please enter which T1w shall serve as input to Hippunfold (raw_bids, qsiprep, fmriprep). Default is 'raw_bids'"
+	read INPUT_T1_HIPPUNFOLD; export INPUT_T1_HIPPUNFOLD
+
+	[ -z $INPUT_T1_HIPPUNFOLD ] && export INPUT_T1_HIPPUNFOLD="raw_bids"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Choose additional arguments you want to provide to hippunfold call; e.g. '--skip_preproc'"
+	read MODIFIER; export MODIFIER
+	
 
 elif [ $PIPELINE == "freewater" ];then
 
@@ -444,7 +477,7 @@ elif [ $PIPELINE == "psmd" ];then
 
 elif [ $PIPELINE == "obseg" ];then
 	
-	export SUBJS_PER_NODE=1
+	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="03:00:00"
 	partition_default="std"
@@ -671,6 +704,7 @@ elif [ $PIPELINE == "wmh" ];then
 
 	fi
 
+
 elif [ $PIPELINE == "lesionanalysis" ];then
 	
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
@@ -760,19 +794,53 @@ elif [ $PIPELINE == "statistics" ];then
 
 	elif [ $STAT_METHOD == tfce_tbss ];then
 	
-	export SUBJS_PER_NODE=$subj_array_length
-	export ANALYSIS_LEVEL=group
-	batch_time_default="1-00:00:00"
-	partition_default="big"
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time_default="1-00:00:00"
+		partition_default="big"
 
 	elif [ $STAT_METHOD == nbs ];then
 	
-	export SUBJS_PER_NODE=$subj_array_length
-	export ANALYSIS_LEVEL=group
-	batch_time_default="1-00:00:00"
-	partition_default="std"
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time_default="1-00:00:00"
+		partition_default="std"
 
 	fi
+
+elif [ $PIPELINE == "pvs_frangi" ] ;then
+
+	echo "Which ANALYSIS PART do you want to perform? currently available are: postproc, summary"
+	read ANALYSIS_PART
+	export PIPELINE_SUFFIX=_${ANALYSIS_PART}
+
+	if [ $ANALYSIS_PART == postproc ];then
+
+		export ANALYSIS_LEVEL=subject
+		export SUBJS_PER_NODE=120
+		partition_default="std"
+		batch_time_default="01:00:00"
+
+	elif [ $ANALYSIS_PART == summary ];then
+
+		export ANALYSIS_LEVEL=group
+		export SUBJS_PER_NODE=$subj_array_length
+		partition_default="std"
+		batch_time_default="00:10:00"
+		export sublist=${subj_array[@]}
+
+	fi
+
+elif [ $PIPELINE == "pvs_rorpo" ] ;then
+
+	export SUBJS_PER_NODE=120
+	export ANALYSIS_LEVEL=subject
+	partition_default="std"
+	batch_time_default="01:00:00"
+
+	echo "Which ANALYSIS PART do you want to perform? currently available are: postproc"
+	read ANALYSIS_PART
+	export PIPELINE_SUFFIX=_${ANALYSIS_PART}
 
 elif [ $PIPELINE == "registration" ];then
 
@@ -785,6 +853,7 @@ elif [ $PIPELINE == "registration" ];then
 	echo $(ls $DATA_DIR/registration/* -d -1 | xargs -n 1 basename | sort | uniq ) | tr " " "\n"
 	read REGISTRATION_TASK; export REGISTRATION_TASK
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
 	echo "Please make sure that registration/moving/ and registration/target/ are present in the task directory."
 	echo "These should contain moving and target files starting with the subject id (sub-XYZ_...) or"
 	echo "a single template image (e.g. an MNI template)."
@@ -792,9 +861,32 @@ elif [ $PIPELINE == "registration" ];then
 	echo "Press enter to continue."
 	read CHECK
 
-	echo "Do you want to lesion mask the registration? (y/n)"
-	echo "Please make sure that the lesion_mask/ is present in the task directory containing the lesions to mask during registration."
-	read LESION_MASKING; export LESION_MASKING
+	# echo "Is a template the moving or target image? (n/moving/target)"
+	# echo "Given make sure that template is single file in moving/ or target"
+	# read TEMPLATE_WARP; export TEMPLATE_WARP
+
+	# echo "Do you want to lesion mask the registration? (y/n)"
+	# echo "Please make sure that the lesion_mask/ is present in the task directory containing the lesions to mask during registration."
+	# read LESION_MASKING; export LESION_MASKING
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Is a template the moving or target image? (n/moving/target); Default: n"
+	echo "Given that make sure that template is single file in moving/ or target"
+	read TEMPLATE_WARP; export TEMPLATE_WARP
+	[ -z $TEMPLATE_WARP ] && TEMPLATE_WARP="n"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Do you want to mask the registration? (y/n); Default: n"
+	echo "Please make sure that the mask/ is present in the task directory defining the regions to consider during registration."
+	read MASKING; export MASKING
+	[ -z $MASKING ] && MASKING="n"
+
+	if [ $MASKING == y ];then
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+		echo "Is the mask a lesion mask to exclude from registration? (y/n); Default: y"
+		read LESION_MASKING; export LESION_MASKING
+		[ -z $LESION_MASKING ] && LESION_MASKING="y"
+	fi
 
 	if [ $# != 0 ];then
 		subj_array=($@)
@@ -806,21 +898,21 @@ elif [ $PIPELINE == "registration" ];then
 	fi
 
 	if [ $REGISTRATION_METHOD == ants_rigid ];then
-		export SUBJS_PER_NODE=32
+		export SUBJS_PER_NODE=128
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="01:00:00"
 		partition_default="std"
 
 	elif [ $REGISTRATION_METHOD == ants_affine ];then
-		export SUBJS_PER_NODE=16
+		export SUBJS_PER_NODE=128
 		export ANALYSIS_LEVEL=subject
-		batch_time_default="01:00:00"
+		batch_time_default="02:00:00"
 		partition_default="std"
 	
 	elif [ $REGISTRATION_METHOD == ants_syn ];then
-		export SUBJS_PER_NODE=8
+		export SUBJS_PER_NODE=64
 		export ANALYSIS_LEVEL=subject
-		batch_time_default="02:00:00"
+		batch_time_default="24:00:00"
 		partition_default="std"
 
 	elif [ $REGISTRATION_METHOD == ants_apply_transform ];then

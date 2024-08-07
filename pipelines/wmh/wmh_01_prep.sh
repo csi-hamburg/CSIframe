@@ -152,7 +152,7 @@ CMD_FLAIR_BRAIN_IN_MNI="antsApplyTransforms -d 3 -i $FLAIR_BRAIN -r $MNI_TEMPLAT
 
 # convert T1 / FLAIR in nii for lpa/lga
 CMD_convert_T1="mri_convert $T1_IN_FLAIR $T1_IN_FLAIR_nii"
-CMD_convert_FLAIR="mri_convert $FLAIR $FLAIR_nii"
+CMD_convert_FLAIR="mri_convert $FLAIR $FLAIRnii"
 
 # Execute 
 $singularity_fsl /bin/bash -c "$CMD_T1_EXTRACT_BRAIN"
