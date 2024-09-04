@@ -122,6 +122,16 @@ elif [ $PIPELINE == "nice" ];then
 	batch_time_default="06:00:00"
 	partition_default="std"
 
+elif [ $PIPELINE == "arctic" ];then
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Note: ASLprep needs to be run first for preprocessing of T1w images."
+
+	export SUBJS_PER_NODE=8
+	export ANALYSIS_LEVEL=subject
+	batch_time_default="02:00:00"
+	partition_default="std"
+
 elif [ $PIPELINE == "qsiprep" ];then
 	
 	# Mind limitation by /scratch and memory capacity (23gb temporary files, 15gb max RAM usage)
@@ -276,6 +286,12 @@ elif [ $PIPELINE == "hippunfold" ];then
 	read INPUT_T1_HIPPUNFOLD; export INPUT_T1_HIPPUNFOLD
 
 	[ -z $INPUT_T1_HIPPUNFOLD ] && export INPUT_T1_HIPPUNFOLD="raw_bids"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Please enter which surface density you want to compute (0p5mm, 1mm, 2mm). Default is '0p5mm'"
+	read HIPPUNFOLD_OUTPUT_DENSITY; export HIPPUNFOLD_OUTPUT_DENSITY
+
+	[ -z $HIPPUNFOLD_OUTPUT_DENSITY ] && export HIPPUNFOLD_OUTPUT_DENSITY="0p5mm"
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
 	echo "Choose additional arguments you want to provide to hippunfold call; e.g. '--skip_preproc'"
