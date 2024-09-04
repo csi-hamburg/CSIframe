@@ -99,12 +99,18 @@ elif [ $PIPELINE == "nice" ];then
 	echo "Please provide the name of directory (in DATA_DIR) containing lesion masks."
 	echo "Choose from:"
 	ls -1 $DATA_DIR
-	read MODIFIER; export MODIFIER
+	read LESION_DIR; export LESION_DIR
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Please provide the space of original lesion segmentation"
 	echo "Currently available: FLAIR"
 	read ORIG_SPACE; export ORIG_SPACE
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Would you like to perform tissue fate analysis (longitudinal processing)?"
+	echo "This only works if you have chosen ses-1 in this submission."
+	echo "Type in 'yes' or 'no' to proceed."
+	read MODIFIER; export MODIFIER
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Which standard space would you like to use?"
