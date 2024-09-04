@@ -125,13 +125,21 @@ elif [ $PIPELINE == "qsiprep" ];then
 	read $OUTPUT_RESOLUTION; [ -z $OUTPUT_RESOLUTION ] && export OUTPUT_RESOLUTION=2
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-	echo "Which reconstruction pipeline do you want to apply after preprocessing? (mrtrix_singleshell_ss3t_ACT-hsvs, mrtrix_multishell_msmt_ACT-hsvs)"
+	echo "Which reconstruction pipeline do you want to apply after preprocessing? (mrtrix_singleshell_ss3t_ACT-hsvs, mrtrix_multishell_msmt_ACT-hsvs, amico_noddi, pyafq_tractometry, mrtrix_multishell_msmt_pyafq_tractometry)"
 	echo "Leave empty if you want to use none"
 	read RECON; export RECON
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-	echo "Choose additional arguments you want to provide to qsiprep call; e.g. '--dwi-only'"
+	echo "Choose additional arguments you want to provide to qsiprep call; e.g. '--dwi-only --use-syn-sdc --force-syn'"
 	read MODIFIER; export MODIFIER
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Do you want to perform AMICO NODDI in addition to qsiprep call? (y, leave empty if no)'"
+	read APPLY_NODDI; export APPLY_NODDI
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Do you want to perform pyafq_tractometry in addition to qsiprep call? (pyafq_tractometry, mrtrix_multishell_msmt_pyafq_tractometry, leave empty if no)'"
+	read APPLY_PYAFQ; export APPLY_PYAFQ
 
 elif [ $PIPELINE == "smriprep" ];then
 	
@@ -224,7 +232,8 @@ elif [ $PIPELINE == "fmriprep" ];then
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
 	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '--anat-only'"
 	read MODIFIER; export MODIFIER
-	
+	[ $MODIFIER == "--anat-only" ] && export SUBJS_PER_NODE=16
+
 elif [ $PIPELINE == "aslprep" ]; then
 	
 	export SUBJS_PER_NODE=4
@@ -441,9 +450,9 @@ elif [ $PIPELINE == "obseg" ];then
 
 elif [ $PIPELINE == "cat12" ];then
 	
-	export SUBJS_PER_NODE=8
+	export SUBJS_PER_NODE=24
 	export ANALYSIS_LEVEL=subject
-	batch_time_default="08:00:00"
+	batch_time_default="12:00:00"
 	partition_default="std"
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
