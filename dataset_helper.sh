@@ -1,16 +1,18 @@
 #!/bin/bash
 
-
-#################################################################
-# Helper script for dataset setup and common datalad operations
-# Works with absolute paths
-# Script assumes to operate from directory superdataset/code
-#
-# Authors: 
-# Marvin Petersen (m-petersen)
-# Carola Mayer (carlo-may)
-# Felix Naegele (felenae)
-#################################################################
+#################################################################################################
+# Helper script for dataset setup and common datalad operations 								#
+#																							    #										
+# To start a superdataset from scratch, clone CSIframe from github to superdataset/code         #
+# > git clone https://github.com/csi-hamburg/CSIframe.git code									#
+#																						        #											
+# Script assumes to operate from directory superdataset/code and works with absolute paths      #
+#																								#
+# Authors: 																						#		
+# Marvin Petersen (m-petersen)																	#
+# Carola Mayer (carlo-may)																		#
+# Felix Naegele (felenae)																		#
+#################################################################################################
 
 source /sw/batch/init.sh
 module load parallel
@@ -32,9 +34,9 @@ read PIPELINE
 
 # Define location of this very script and its name
 export SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"  # "$0"
-export SCRIPT_NAME="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
+#export SCRIPT_NAME="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
 echo $SCRIPT_DIR
-echo $SCRIPT_NAME
+#echo $SCRIPT_NAME
 export PROJ_DIR=$(realpath $SCRIPT_DIR/../)
 #export PROJ_DIR=$(realpath $SCRIPT_DIR/../../$PROJ_NAME)
 export DATA_DIR=$PROJ_DIR/data
@@ -63,7 +65,7 @@ if [ $PIPELINE == finalize_superdataset ];then
 	# Create code subdataset and insert copy of this script
 	
 	# Clone code from git
-	[ ! -d $PROJ_DIR/code ] && git clone https://github.com/csi-hamburg/CSIframe $PROJ_DIR/code || echo "code/ already exists in superdataset"
+	#[ ! -d $PROJ_DIR/code ] && git clone https://github.com/csi-hamburg/CSIframe $PROJ_DIR/code || echo "code/ already exists in superdataset"
 
 	# Create data directory
 	[ ! -d $PROJ_DIR/data ] && mkdir $PROJ_DIR/data || echo "data/ already exists in superdataset"
@@ -75,22 +77,24 @@ if [ $PIPELINE == finalize_superdataset ];then
 	[ -f $ENV_DIR/standard/dataset_description.json ] && cp $ENV_DIR/standard/dataset_description.json $BIDS_DIR 
 
 	# Clone envs subdataset from source
-	echo "Please provide absolute Path to datalad dataset cloned from https://github.com/csi-hamburg/envs"
+	echo "Please provide absolute Path to envs dir containing singularity containers, templates"
+	echo "Standard location is '/usw/fatx129/envs'"
 	echo "In your superdataset 'envs/' will symlink to this dataset."
 	read ENVS_SOURCE
 
 	ln -rs $ENVS_SOURCE $PROJ_DIR/envs
 
 elif [ $PIPELINE == add_ses_dcm ];then
+
 	## Insert session to single session dcm directory
 	echo "DICOM import requires existence of a session directory, e.g. 'ses-1'"
-	echo "Please provide absolute PATH to directory to DICOMs directory you later want to import"
+	echo "Please provide absolute PATH to DICOMs directory you later want to import"
 	read DICOM_PATH
 	echo "Assumed path containing subject directories with DICOMs is $DICOM_PATH"
-	echo "Assumed structure of this directory is dataset_directory/subject/sequence/DICOMS"
+	echo "Assumed structure of this directory is dicom_directory/subject/sequence/DICOMS"
 	echo "Final structure will be dataset_directory/subject/session/sequence/DICOMS"
 	echo "Before you proceed please make sure that subject directories are the only instances in dataset_directory"
-	echo "Which session to input? e.g. 'ses-1'"
+	echo "Please provide the session name to insert? e.g. 'ses-1'"
 	read ses
 
 	for sub in $(ls $DICOM_PATH);do
@@ -102,10 +106,11 @@ elif [ $PIPELINE == import_dcms ];then
 
 	## Import dicoms from dataset directory and convert them to tarballs
 	echo "Define path containing subject directories with DICOMs"
-	echo "data/dicoms/ subdataset should have been established (add_dcm_subds)"
-	echo "Assumed structure of this directory is dataset_directory/subject/session/sequence/DICOMS"
+	#echo "data/dicoms/ subdataset should have been established (add_dcm_subds)"
+	echo "Assumed structure of this directory is dicom_directory/subject/session/sequence/DICOMS"
 	echo "Before you proceed please make sure that subject directories are the only instances in dataset_directory"
 	read INPUT_PATH
+	
 	OUTPUT_PATH=$DCM_DIR
 
 	[ ! -d $DCM_DIR ] && mkdir $DCM_DIR && echo "$DCM_DIR has been created" || echo "$DCM_DIR exists"
@@ -172,10 +177,9 @@ elif [ $PIPELINE == import_dcms ];then
 				done
 			fi
 		done
-
 	}
-	export -f import_loop
 
+	export -f import_loop
 
 	if [ $INTERACTIVE == interactive ]; then 
 
@@ -197,7 +201,9 @@ elif [ $PIPELINE == import_dcms ];then
 		rm $CODE_DIR/import_dcms.sh
 
 	else
+
 		echo "$INTERACTIVE not available mode";
+
 	fi
  
 
@@ -256,7 +262,7 @@ elif [ $PIPELINE == import_subdataset ];then
 
 elif [ $PIPELINE == 'convert_containers' ];then
 
-	# Add singularity containers from env to project root
+	# Convert singularity containers ins envs to sandboxes
 	
 	echo "Please provide space-separated list of container image names to you want to convert to sandboxes; e.g. 'fmriprep-20.2.1.sif qsiprep-0.13.0.sif'"
 	echo "Available container images are: $(ls $ENV_DIR)."
@@ -267,7 +273,7 @@ elif [ $PIPELINE == 'convert_containers' ];then
 
 	for container in $container_list;do
 		echo "Converting $container to sandbox"
-		datalad get -d $ENV_DIR $ENV_DIR/$container
+		#datalad get -d $ENV_DIR $ENV_DIR/$container
 		singularity build --sandbox $ENV_DIR/${container%.*} $ENV_DIR/$container
 	done
 
@@ -294,8 +300,6 @@ elif [ $PIPELINE == missing_outputs ];then
 
 	if [ $file_or_subdir == subdir ];then
 
-
-
 		for ds in ${subds[@]};do
 			pushd $DATA_DIR/$subds
 			diff -q $DATA_DIR/$template_dir . | grep "Only in ${DATA_DIR}/${template_dir}: sub-" | cut -d' ' -f 4 > $out_file 
@@ -309,14 +313,14 @@ elif [ $PIPELINE == missing_outputs ];then
 		read search
 
 		for ds in ${subds[@]};do
-		pushd $DATA_DIR/$ds
+			pushd $DATA_DIR/$ds
 			arr_search=($(find $DATA_DIR/$ds -type f | grep $search | grep sub | cut -d'/' -f 8))
 			arr_template=($(ls $DATA_DIR/$template_dir/sub-*/ -d | rev | cut -d '/' -f 2 | rev))
 			echo "#####################################"
 			echo ${arr_search[@]} ${arr_template[@]} | tr ' ' '\n' | sort | uniq -u
 			echo ${arr_search[@]} ${arr_template[@]} | tr ' ' '\n' | sort | uniq -u > $out_file
 			#find . -mindepth 1 -maxdepth 1 -type d '!' -exec test -e "{}/${search}" ';' -print | grep sub | cut -d"/" -f 2 > $out_file
-		popd
+			popd
 		done
 	fi
 
@@ -525,7 +529,9 @@ elif [ $PIPELINE == create_symlinks ]; then
 
 
 else
+
 	echo "$PIPELINE is not supported"
+
 fi
 
 #popd

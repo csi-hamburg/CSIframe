@@ -99,16 +99,37 @@ elif [ $PIPELINE == "nice" ];then
 	echo "Please provide the name of directory (in DATA_DIR) containing lesion masks."
 	echo "Choose from:"
 	ls -1 $DATA_DIR
-	read MODIFIER; export MODIFIER
+	read LESION_DIR; export LESION_DIR
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
 	echo "Please provide the space of original lesion segmentation"
 	echo "Currently available: FLAIR"
 	read ORIG_SPACE; export ORIG_SPACE
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Would you like to perform tissue fate analysis (longitudinal processing)?"
+	echo "This only works if you have chosen ses-1 in this submission."
+	echo "Type in 'yes' or 'no' to proceed."
+	read MODIFIER; export MODIFIER
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Which standard space would you like to use?"
+	echo "Currently available: 'brainder' or 'miplab'. Note, when choosing brainder, ROI extraction for vascular territories will be performed."
+	read TEMP_SPACE; export TEMP_SPACE
+
 	export SUBJS_PER_NODE=8
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="06:00:00"
+	partition_default="std"
+
+elif [ $PIPELINE == "arctic" ];then
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼"	
+	echo "Note: ASLprep needs to be run first for preprocessing of T1w images."
+
+	export SUBJS_PER_NODE=8
+	export ANALYSIS_LEVEL=subject
+	batch_time_default="02:00:00"
 	partition_default="std"
 
 elif [ $PIPELINE == "qsiprep" ];then
@@ -160,7 +181,7 @@ elif [ $PIPELINE == "smriprep" ];then
 elif [ $PIPELINE == "freesurfer" ];then
 	
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-	echo "Which pipeline level do you want to perform? (reconall/sub2avg/long)"
+	echo "Which pipeline level do you want to perform? (reconall/sub2avg/long/brainstemseg)"
 	echo "For default ('reconall') leave empty"
 
 	read FS_LEVEL; export FS_LEVEL
@@ -187,6 +208,16 @@ elif [ $PIPELINE == "freesurfer" ];then
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="1-00:00:00"
 		partition_default="std"
+
+	elif [ $FS_LEVEL == brainstemseg ];then
+
+		echo "For brainstem segmentation 'reconall' needs to be run first. <Enter> to proceed."
+		read
+		export SUBJS_PER_NODE=8
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="08:00:00"
+		partition_default="std"
+
 
 	fi
 
@@ -251,6 +282,30 @@ elif [ $PIPELINE == "xcpengine" ];then
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
 	echo "Choose from" $(ls $CODE_DIR/pipelines/xcpengine/fc-*.dsn | xargs -n 1 basename)
 	read MODIFIER; export MODIFIER
+
+elif [ $PIPELINE == "hippunfold" ];then
+	
+	export SUBJS_PER_NODE=16
+	export ANALYSIS_LEVEL=subject
+	batch_time_default="04:00:00"
+	partition_default="std"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Please enter which T1w shall serve as input to Hippunfold (raw_bids, qsiprep, fmriprep). Default is 'raw_bids'"
+	read INPUT_T1_HIPPUNFOLD; export INPUT_T1_HIPPUNFOLD
+
+	[ -z $INPUT_T1_HIPPUNFOLD ] && export INPUT_T1_HIPPUNFOLD="raw_bids"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Please enter which surface density you want to compute (0p5mm, 1mm, 2mm). Default is '0p5mm'"
+	read HIPPUNFOLD_OUTPUT_DENSITY; export HIPPUNFOLD_OUTPUT_DENSITY
+
+	[ -z $HIPPUNFOLD_OUTPUT_DENSITY ] && export HIPPUNFOLD_OUTPUT_DENSITY="0p5mm"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Choose additional arguments you want to provide to hippunfold call; e.g. '--skip_preproc'"
+	read MODIFIER; export MODIFIER
+	
 
 elif [ $PIPELINE == "freewater" ];then
 
@@ -443,7 +498,7 @@ elif [ $PIPELINE == "psmd" ];then
 
 elif [ $PIPELINE == "obseg" ];then
 	
-	export SUBJS_PER_NODE=1
+	export SUBJS_PER_NODE=16
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="03:00:00"
 	partition_default="std"
@@ -670,6 +725,7 @@ elif [ $PIPELINE == "wmh" ];then
 
 	fi
 
+
 elif [ $PIPELINE == "lesionanalysis" ];then
 	
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
@@ -759,26 +815,53 @@ elif [ $PIPELINE == "statistics" ];then
 
 	elif [ $STAT_METHOD == tfce_tbss ];then
 	
-	export SUBJS_PER_NODE=$subj_array_length
-	export ANALYSIS_LEVEL=group
-	batch_time_default="1-00:00:00"
-	partition_default="big"
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time_default="1-00:00:00"
+		partition_default="big"
 
 	elif [ $STAT_METHOD == nbs ];then
 	
-	export SUBJS_PER_NODE=$subj_array_length
-	export ANALYSIS_LEVEL=group
-	batch_time_default="1-00:00:00"
-	partition_default="std"
+		export SUBJS_PER_NODE=$subj_array_length
+		export ANALYSIS_LEVEL=group
+		batch_time_default="1-00:00:00"
+		partition_default="std"
 
 	fi
 
-elif [ $PIPELINE == "pvs" ];then
+elif [ $PIPELINE == "pvs_frangi" ] ;then
 
-	export SUBJS_PER_NODE=16
+	echo "Which ANALYSIS PART do you want to perform? currently available are: postproc, summary"
+	read ANALYSIS_PART
+	export PIPELINE_SUFFIX=_${ANALYSIS_PART}
+
+	if [ $ANALYSIS_PART == postproc ];then
+
+		export ANALYSIS_LEVEL=subject
+		export SUBJS_PER_NODE=120
+		partition_default="std"
+		batch_time_default="01:00:00"
+
+	elif [ $ANALYSIS_PART == summary ];then
+
+		export ANALYSIS_LEVEL=group
+		export SUBJS_PER_NODE=$subj_array_length
+		partition_default="std"
+		batch_time_default="00:10:00"
+		export sublist=${subj_array[@]}
+
+	fi
+
+elif [ $PIPELINE == "pvs_rorpo" ] ;then
+
+	export SUBJS_PER_NODE=120
 	export ANALYSIS_LEVEL=subject
 	partition_default="std"
-	batch_time_default="1-00:00:00"
+	batch_time_default="01:00:00"
+
+	echo "Which ANALYSIS PART do you want to perform? currently available are: postproc"
+	read ANALYSIS_PART
+	export PIPELINE_SUFFIX=_${ANALYSIS_PART}
 
 elif [ $PIPELINE == "registration" ];then
 
