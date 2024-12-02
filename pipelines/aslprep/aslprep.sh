@@ -7,7 +7,7 @@
 #   [pipelines which need to be run first]                           #
 #       - bidsify                                                    #
 #   [container]                                                      #
-#       - aslprep-0.2.7.sif                                          #
+#       - aslprep-0.7.4.sif                                          #
 ######################################################################
 
 # Get verbose outputs
@@ -23,8 +23,8 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 # Define environment
 ####################
 ENV_DIR=$PROJ_DIR/envs
-container_aslprep=aslprep-0.2.7
-singularity_aslprep="singularity run --cleanenv --userns \
+container_aslprep=aslprep-0.7.4.sif
+apptainer_aslprep="apptainer run --cleanenv --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR/:/tmp \
@@ -44,31 +44,42 @@ singularity_aslprep="singularity run --cleanenv --userns \
 ################
 
 CMD="
-   $singularity_aslprep \
+   $apptainer_aslprep \
    /tmp_in /tmp_out participant \
    --participant-label $1 \
    --work-dir /tmp \
    --fs-license-file envs/freesurfer_license.txt \
    --skip-bids-validation \
-   --nthreads $SLURM_CPUS_PER_TASK \
+   --nthreads $GNU_CPUS_PER_TASK \
    --omp-nthreads $OMP_NTHREADS \
    --mem_mb $MEM_MB \
-   --ignore fieldmaps slicetiming sbref \
-   --output-spaces asl T1w MNI152NLin2009cAsym \
-   --asl2t1w-init register \
-   --asl2t1w-dof 6 \
-   --force-bbr
-   --use-syn-sdc
-   --force-syn
+   --ignore fieldmaps sbref t2w flair fmap-jacobian \
+   --output-spaces $OUTPUT_SPACES \
+   --asl2anat-init t1w \
+   --asl2anat-dof 6 \
+   --force-bbr \
+   --use-syn-sdc \
+   --force-syn \
    --m0_scale 10 \
    --scorescrub \
    --basil \
+   --project-goodvoxels \
    --skull-strip-template OASIS30ANTs \
    --skull-strip-fixed-seed \
    --random-seed 42 \
    --skull-strip-t1w force \
    --notrack \
    --verbose"
+
+if [[ "$MODIFIER" == "use" ]]; then
+    
+    CMD="${CMD} --fs-subjects-dir $DATA_DIR/freesurfer"
+
+elif [[ "$MODIFIER" == "disable" ]]; then
+    
+    CMD="${CMD} --fs-no-reconall"
+
+fi
 
 # Execute command
 #################

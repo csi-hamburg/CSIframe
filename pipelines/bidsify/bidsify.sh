@@ -9,10 +9,10 @@
 #   [pipelines which need to be run first]                                                                        #
 #       - none but make sure that dicoms/sub-XY/ses-XY.tar.gz exists (see dataset_helper.sh)                      #
 #   [containers]                                                                                                  #
-#       - heudiconv-0.9.0.sif                                                                                     #
+#       - heudiconv-1.1.6.sif                                                                                     #
 #       - pydeface-2.0.0.sif                                                                                      #
 #       - csi-miniconda.sif                                                                                       #         
-#       - fsl-6.0.3.sif                                                                                           #
+#       - fsl-6.0.7.13.sif                                                                                        #
 #                                                                                                                 #
 ########                                                                                                          #
 # MIND #                                                                                                          #
@@ -38,12 +38,12 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 # Define environment
 ####################
 ENV_DIR=$PROJ_DIR/envs
-container_heudiconv=heudiconv-0.9.0  
-container_pydeface=pydeface-2.0.0
-container_csiminiconda=miniconda-csi
-container_fsl=fsl-6.0.3
+container_heudiconv=heudiconv-1.1.6.sif  
+container_pydeface=pydeface-2.0.0.sif
+container_csiminiconda=miniconda-csi.sif
+container_fsl=fsl-6.0.7.13.sif
 
-singularity_heudiconv="singularity run --cleanenv --userns \
+apptainer_heudiconv="apptainer run --cleanenv --userns \
    -B $PROJ_DIR \
    -B $(readlink -f $ENV_DIR) \
    -B $TMP_DIR/:/tmp \
@@ -54,7 +54,7 @@ singularity_heudiconv="singularity run --cleanenv --userns \
    -B $DCM_DIR:/dcm \
    $ENV_DIR/$container_heudiconv" 
 
-singularity_pydeface="singularity run --cleanenv --userns \
+apptainer_pydeface="apptainer run --cleanenv --userns \
    -B $PROJ_DIR \
    -B $(readlink -f $ENV_DIR) \
    -B $TMP_DIR/:/tmp \
@@ -62,7 +62,7 @@ singularity_pydeface="singularity run --cleanenv --userns \
    -B $TMP_OUT:/tmp_out \
    $ENV_DIR/$container_pydeface"
 
-singularity_csiminiconda="singularity run --cleanenv --userns \
+apptainer_csiminiconda="apptainer run --cleanenv --userns \
    -B $PROJ_DIR \
    -B $(readlink -f $ENV_DIR) \
    -B $TMP_DIR/:/tmp \
@@ -70,7 +70,7 @@ singularity_csiminiconda="singularity run --cleanenv --userns \
    -B $TMP_OUT:/tmp_out \
    $ENV_DIR/$container_csiminiconda"
 
-singularity_fsl="singularity run --cleanenv --userns \
+apptainer_fsl="apptainer run --cleanenv --userns \
    -B $PROJ_DIR \
    -B $(readlink -f $ENV_DIR) \
    -B $TMP_DIR/:/tmp \
@@ -131,12 +131,12 @@ for SESSION in $SESSIONS; do
       --outdir /bids"
 
       # Execution
-      #########################
+      ########################
 
-      $singularity_heudiconv $CMD_HEUDICONV
+      $apptainer_heudiconv $CMD_HEUDICONV
 
       # Amend permissions for defacing (-> w)
-      [ -d $BIDS_DIR/sub-${1} ] && chmod 770 -R $BIDS_DIR/sub-${1} $BIDS_DIR/.heudiconv
+      [ -d $BIDS_DIR/sub-${1} ] && chmod 777 -R $BIDS_DIR/sub-${1} $BIDS_DIR/.heudiconv
 
 
       if [ $MODIFIER == y ];then
@@ -148,20 +148,23 @@ for SESSION in $SESSIONS; do
          # Input
          #########################   
          T1="$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T1w.nii.gz"
-         T2="$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_T2w.nii.gz"
+         T2_2D="$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_acq-2D_T2w.nii.gz"
+         T2_3D="$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_acq-3D_T2w.nii.gz"
          FLAIR="$BIDS_DIR/sub-${1}/ses-${SESSION}/anat/sub-${1}_ses-${SESSION}_FLAIR.nii.gz"
 
          # Command
          #########################   
          CMD_T1="pydeface $T1 --outfile $T1 --force --verbose"
-         CMD_T2="pydeface $T2 --outfile $T2 --force --verbose"
+         CMD_T2_2D="pydeface $T2_2D --outfile $T2_2D --force --verbose"
+         CMD_T2_3D="pydeface $T2_3D --outfile $T2_3D --force --verbose"
          CMD_FLAIR="pydeface $FLAIR --outfile $FLAIR --force --verbose"
 
          # Execution
          #########################   
-         [ -f $T1 ] && $singularity_pydeface $CMD_T1
-         [ -f $T2 ] && $singularity_pydeface $CMD_T2
-         [ -f $FLAIR ] && $singularity_pydeface $CMD_FLAIR
+         [ -f $T1 ] && $apptainer_pydeface $CMD_T1
+         [ -f $T2_2D ] && $apptainer_pydeface $CMD_T2_2D
+         [ -f $T2_3D ] && $apptainer_pydeface $CMD_T2_3D
+         [ -f $FLAIR ] && $apptainer_pydeface $CMD_FLAIR
 
       fi
 
@@ -196,7 +199,7 @@ for SESSION in $SESSIONS; do
 
       if [ ! -z $(ls $BIDS_DIR/sub-${1}/ses-${SESSION}/perf/sub-${1}_ses-${SESSION}_run-*_asl.nii.gz | head -n 1) ]; then
          
-         $singularity_fsl $CMD_MERGE_ASL
+         $apptainer_fsl $CMD_MERGE_ASL
          
          # Remove unnecessary files
 
@@ -208,7 +211,7 @@ for SESSION in $SESSIONS; do
 
       if [ ! -z $(ls $BIDS_DIR/sub-${1}/ses-${SESSION}/perf/sub-${1}_ses-${SESSION}_run-*_m0scan.nii.gz | head -n 1) ]; then
          
-         $singularity_fsl $CMD_MERGE_M0
+         $apptainer_fsl $CMD_MERGE_M0
 
          # Remove unnecessary files
 
@@ -223,13 +226,15 @@ for SESSION in $SESSIONS; do
 
       [ -d $BIDS_DIR/sub-${1}/ses-${SESSION}/perf ] && chmod 770 -Rv $BIDS_DIR/sub-${1}/ses-${SESSION}/perf
       
-      $singularity_csiminiconda python $PIPELINE_DIR/edit_aslbids.py -s sub-${1} -t ses-${SESSION} -b $BIDS_DIR -j $ENV_DIR/bidsify/$METADATA_EXTRA
-      
+      $apptainer_csiminiconda python $PIPELINE_DIR/edit_aslbids.py -s sub-${1} -t ses-${SESSION} -b $BIDS_DIR -j $ENV_DIR/bidsify/$METADATA_EXTRA
+
       # Edit scans.tsv file to reflect available asl data 
       ###################################################
 
-      $singularity_csiminiconda python $PIPELINE_DIR/handle_scanstsvfile.py $1 $SESSION $BIDS_DIR
+      CMD="python $PIPELINE_DIR/handle_scanstsvfile.py $1 $SESSION $BIDS_DIR"
+      $apptainer_csiminiconda $CMD
 
+   
    fi
 
 done
@@ -239,8 +244,9 @@ done
 ##################################################
 
 CMD="python $CODE_DIR/pipelines/$PIPELINE/handle_metadata.py $1"
-$singularity_csiminiconda $CMD
+$apptainer_csiminiconda $CMD
+
 
 # Clean up
-##########
+#########
 rm -rf $BIDS_DIR/.heudiconv/$1

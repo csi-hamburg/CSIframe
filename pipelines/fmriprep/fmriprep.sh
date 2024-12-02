@@ -8,11 +8,11 @@
 #                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [pipelines which need to be run first]                                                                        #
-#       - none                                                                                                    #
+#       - bidsify                                                                                                 #
 #   [container]                                                                                                   #
-#       - fmriprep-21.0.2.sif                                                                                     #
+#       - fmriprep-24.0.1.sif                                                                                     #
 #                                                                                                                 #
-# Author: Marvin Petersen (m-petersen)                                                                            #
+# Authors: Marvin Petersen (m-petersen), Felix Nägele (naegelef)                                                  #
 ###################################################################################################################
 
 # Get verbose outputs
@@ -29,8 +29,8 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 ##################################
 
 # Singularity container version and command
-container_fmriprep=fmriprep-21.0.2
-singularity_fmriprep="singularity run --cleanenv --userns \
+container_fmriprep=fmriprep-24.0.1.sif
+apptainer_fmriprep="apptainer run --cleanenv --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR/:/tmp \
@@ -49,22 +49,22 @@ singularity_fmriprep="singularity run --cleanenv --userns \
 
 # Define command
 CMD="
-   $singularity_fmriprep \
+   $apptainer_fmriprep \
    /tmp_in /tmp_out participant \
    -w /tmp \
    --participant-label $1 \
-   --output-spaces $OUTPUT_SPACES \
-   --nthreads $SLURM_CPUS_PER_TASK \
+   --skip_bids_validation \
+   --nthreads $GNU_CPUS_PER_TASK \
    --omp-nthreads $OMP_NTHREADS \
    --mem-mb $MEM_MB \
    --stop-on-first-crash \
-   --ignore t2w \
+   --output-spaces $OUTPUT_SPACES \
+   --ignore t2w fieldmaps \
    --fs-subjects-dir /tmp_out/freesurfer \
-   --use-aroma \
+   --use-syn-sdc \
    --cifti-output 91k \
    --random-seed 12345 \
    --notrack \
-   --skip_bids_validation \
    --fs-license-file envs/freesurfer_license.txt"
 [ ! -z $MODIFIER ] && CMD="${CMD} ${MODIFIER}"
 

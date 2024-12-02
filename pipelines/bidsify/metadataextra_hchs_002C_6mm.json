@@ -15,6 +15,7 @@
             "VascularCrushing": false,
             "BackgroundSuppression": true,
             "BackgroundSuppressionNumberPulses": 5,
+            "TotalAcquiredPairs": 7,
             "M0Type": "Separate",
             "M0Scale": 10 } ,
     "m0scan": { "AcquisitionVoxelSize": [1.875,1.875,6],

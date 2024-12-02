@@ -44,7 +44,14 @@ if [ $# != 0 ];then
 	subj_array=($@)
     echo "Processing subject(s) ${subj_array[@]}"
 	sleep 1
+elif [ $# == 0 ] && [ $PIPELINE == "bidsify" ];then
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
+	echo "Reading subjects from $DCM_DIR"
+	subj_array=(${@-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata -e README | xargs -n 1 basename)}) # subjects in data/dicoms
+	subj_array_length=${#subj_array[@]}
 else
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
+	echo "Reading subjects from $BIDS_DIR"
 	subj_array=($(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename))
 	[ -d $BIDS_DIR ] && echo "No subjects as arguments supplied." && echo "Reading subjects from $BIDS_DIR" && sleep 1
 fi
@@ -52,13 +59,27 @@ subj_array_length=${#subj_array[@]}
 
 
 # Empirical job config
+###################################################################################################################
+
+# On Hummel-2 there are thre types of nodes: std, big, gpu
+# std: 2 x 96 cores, 768 GB RAM
+# big: 2 x 96 cores, 2304 GB RAM
+# gpu: 2 x 32 cores, 1152 GB RAM, 8 x NVIDIA H100 80GB GPUs
+#
+# The cluster consists of virtual nodes, which have 8 CPU cores and 32/96/144 GB RAM (std/big/gpu) each.
+# The virtual nodes are used to run jobs, which are submitted to the cluster via the Slurm scheduler.
+# The batch system always allocates full virtual nodes to jobs, i.e., a job requesting 16 cores will be allocated 2 virtual nodes.
+# Therefore, the number of cores requested by a job should be a multiple of 8.
+# Make sure that SUBJS_PER_NODE is a power of two to satisfy sysadmins
+
+# MIGRATION: WORK IN PROGRESS
+#############################
+
+# The old cluster had 16 CPU cores (32 threads) and 64/256 GB RAM per node (std/big). 
+# For Hummel-2 we need to define --cpus-per-task (initial guess: 32/SUBJS_PER_NODE) 
+
 if [ $PIPELINE == "bidsify" ];then
 	
-	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
-	echo "Reading subjects from $DCM_DIR"
-	subj_array=(${@-$(ls $DCM_DIR/* -d -1 | grep -v -e code -e sourcedata -e README | xargs -n 1 basename)}) # subjects in data/dicoms
-	subj_array_length=${#subj_array[@]}
-
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
 	echo "Would you like to run heudiconv or edit ASL output of previous heudiconv run? (heudiconv/asl)"
 	read BIDS_PIPE; export BIDS_PIPE
@@ -75,6 +96,7 @@ if [ $PIPELINE == "bidsify" ];then
 		read MODIFIER; export MODIFIER
 
 		export SUBJS_PER_NODE=16
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="04:00:00"
 		partition_default="std"
@@ -87,6 +109,7 @@ if [ $PIPELINE == "bidsify" ];then
 		read METADATA_EXTRA; export METADATA_EXTRA
 
 		export SUBJS_PER_NODE=16
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="02:00:00"
 		partition_default="std"
@@ -112,6 +135,7 @@ elif [ $PIPELINE == "nice" ];then
 	read TEMP_SPACE; export TEMP_SPACE
 
 	export SUBJS_PER_NODE=8
+	export SLURM_CPUS_PER_TASK=32
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="06:00:00"
 	partition_default="std"
@@ -122,6 +146,7 @@ elif [ $PIPELINE == "arctic" ];then
 	echo "Note: ASLprep needs to be run first for preprocessing of T1w images."
 
 	export SUBJS_PER_NODE=8
+	export SLURM_CPUS_PER_TASK=32
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="02:00:00"
 	partition_default="std"
@@ -130,8 +155,9 @@ elif [ $PIPELINE == "qsiprep" ];then
 	
 	# Mind limitation by /scratch and memory capacity (23gb temporary files, 15gb max RAM usage)
 	export SUBJS_PER_NODE=4
+	export SLURM_CPUS_PER_TASK=32
 	export ANALYSIS_LEVEL=subject
-	batch_time_default="14:00:00"
+	batch_time_default="6:00:00"
 	partition_default="std" # ponder usage of gpu for eddy speed up
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
@@ -139,18 +165,49 @@ elif [ $PIPELINE == "qsiprep" ];then
 	echo "Leave empty if you want to use default (2)"
 	read $OUTPUT_RESOLUTION; [ -z $OUTPUT_RESOLUTION ] && export OUTPUT_RESOLUTION=2
 
-	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-	echo "Which reconstruction pipeline do you want to apply after preprocessing? (mrtrix_singleshell_ss3t_ACT-hsvs, mrtrix_multishell_msmt_ACT-hsvs)"
-	echo "Leave empty if you want to use none"
-	read RECON; export RECON
+	# echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	# echo "Which reconstruction pipeline do you want to apply after preprocessing? (mrtrix_singleshell_ss3t_ACT-hsvs, mrtrix_multishell_msmt_ACT-hsvs)"
+	# echo "Leave empty if you want to use none"
+	# read RECON; export RECON
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
 	echo "Choose additional arguments you want to provide to qsiprep call; e.g. '--dwi-only'"
 	read MODIFIER; export MODIFIER
 
+elif [ $PIPELINE == "qsirecon" ];then
+	
+	# Mind limitation by /scratch and memory capacity (23gb temporary files, 15gb max RAM usage)
+	export SUBJS_PER_NODE=4
+	export SLURM_CPUS_PER_TASK=32
+	export ANALYSIS_LEVEL=subject
+	batch_time_default="14:00:00"
+	partition_default="std" # ponder usage of gpu for eddy speed up
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
+	echo "Important: This pipeline expects qsiprep output!"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
+	echo "Please provide the output resolution used in qsiprep? e.g. '1.3'"
+	read $OUTPUT_RESOLUTION; [ -z $OUTPUT_RESOLUTION ] && export OUTPUT_RESOLUTION=2
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Would you like to reorient preprocessed DWI along with bvec and bval files to FSL standard? (y/n)"
+	read MODIFIER; export MODIFIER
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Which reconstruction pipeline do you want to apply?"
+	echo "Example available reconstruction pipelines (for single[s]/multishell[m], freesurfer needed [y/n]):"
+	echo "		mrtrix_singleshell_ss3t_ACT-hsvs (s,y)"
+	echo "		mrtrix_singleshell_ss3t_noACT (s,n)"
+	echo "		mrtrix_multishell_msmt_ACT-hsvs (m,y)"
+	echo "Check qsiprep online documentation for more options."
+	echo "Leave empty if you want to use none"
+	read RECON; export RECON
+
 elif [ $PIPELINE == "smriprep" ];then
 	
-	export SUBJS_PER_NODE=8 
+	export SUBJS_PER_NODE=8
+	export SLURM_CPUS_PER_TASK=32 
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="23:00:00"
 	partition_default="std"
@@ -177,13 +234,15 @@ elif [ $PIPELINE == "freesurfer" ];then
 	if [ $FS_LEVEL == reconall ];then
 
 		export SUBJS_PER_NODE=4
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="2-00:00:00"
-		partition_default="big"
+		partition_default="std"
 
 	elif [ $FS_LEVEL == sub2avg ];then
 
 		export SUBJS_PER_NODE=16
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="03:00:00"
 		partition_default="std"
@@ -191,6 +250,7 @@ elif [ $PIPELINE == "freesurfer" ];then
 	elif [ $FS_LEVEL == long ];then
 
 		export SUBJS_PER_NODE=4
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="1-00:00:00"
 		partition_default="std"
@@ -200,6 +260,7 @@ elif [ $PIPELINE == "freesurfer" ];then
 		echo "For brainstem segmentation 'reconall' needs to be run first. <Enter> to proceed."
 		read
 		export SUBJS_PER_NODE=8
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="08:00:00"
 		partition_default="std"
@@ -217,6 +278,7 @@ elif [ $PIPELINE == "mriqc" ];then
 	if [ $MRIQC_LEVEL == "participant" ]; then
 
 		export SUBJS_PER_NODE=4
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="24:00:00"
 		partition_default="std"
@@ -224,6 +286,7 @@ elif [ $PIPELINE == "mriqc" ];then
 	elif [ $MRIQC_LEVEL == "group" ]; then
 
 		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=group
 		batch_time_default="01:00:00"
 		partition_default="std"
@@ -233,6 +296,7 @@ elif [ $PIPELINE == "mriqc" ];then
 elif [ $PIPELINE == "fmriprep" ];then
 	
 	export SUBJS_PER_NODE=4
+	export SLURM_CPUS_PER_TASK=32
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="1-00:00:00"
 	partition_default="std"
@@ -244,7 +308,7 @@ elif [ $PIPELINE == "fmriprep" ];then
 	echo "Enter nothing to keep defaults (fsnative fsaverage fsaverage5 MNI152NLin6Asym MNI152NLin2009cAsym T1w func)"
 	read OUTPUT_SPACES; export OUTPUT_SPACES
 
-	[ -z $OUTPUT_SPACES ] && export OUTPUT_SPACES="fsnative fsaverage fsaverage5 MNI152NLin6Asym MNI152NLin2009cAsym T1w func"
+	[ -z $OUTPUT_SPACES ] && export OUTPUT_SPACES="fsnative fsaverage fsaverage5 MNI152NLin6Asym MNI152NLin6Asym:res-2 MNI152NLin2009cAsym T1w func"
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
 	echo "Choose additional arguments you want to provide to fmriprep call; e.g. '--anat-only'"
@@ -253,13 +317,30 @@ elif [ $PIPELINE == "fmriprep" ];then
 elif [ $PIPELINE == "aslprep" ]; then
 	
 	export SUBJS_PER_NODE=4
+	export SLURM_CPUS_PER_TASK=32
 	export ANALYSIS_LEVEL=subject
-	batch_time_default="03:00:00"
+	batch_time_default="08:00:00"
 	partition_default="std"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Choose to either use existing freesurfer output or to disable freesurfer processing. (use/disable)" 
+	read MODIFIER; export MODIFIER
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Please enter specific templates if you want to use them."
+	echo "Choose from tested adult templates (asl T1w fsnative fsaverage fsaverage5 MNI152NLin6Asym MNI152NLin2009cAsym)"
+	echo "or infant templates (MNIPediatricAsym:cohort-1:res-native)"
+	echo "Enter nothing to keep defaults (asl T1w MNI152NLin2009cAsym MNI152NLin6Asym)"
+	echo "Note: fsnative fsaverage fsaverage5 only work when freesurfer output is already available."
+	read OUTPUT_SPACES; export OUTPUT_SPACES
+
+	[ -z $OUTPUT_SPACES ] && export OUTPUT_SPACES="asl T1w MNI152NLin2009cAsym MNI152NLin6Asym"
+
 
 elif [ $PIPELINE == "xcpengine" ];then
 	
 	export SUBJS_PER_NODE=16
+	export SLURM_CPUS_PER_TASK=32
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="05:00:00"
 	partition_default="std"
@@ -271,6 +352,7 @@ elif [ $PIPELINE == "xcpengine" ];then
 elif [ $PIPELINE == "hippunfold" ];then
 	
 	export SUBJS_PER_NODE=16
+	export SLURM_CPUS_PER_TASK=32
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="04:00:00"
 	partition_default="std"
@@ -295,6 +377,7 @@ elif [ $PIPELINE == "hippunfold" ];then
 elif [ $PIPELINE == "freewater" ];then
 
 	export SUBJS_PER_NODE=8
+	export SLURM_CPUS_PER_TASK=32
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="06:00:00"
 	partition_default="std"
@@ -318,6 +401,7 @@ elif [ $PIPELINE == "tbss" ];then
 	if [ $TBSS_LEVEL == 1 ]; then
 
 		export SUBJS_PER_NODE=16
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="02:00:00"
 		partition_default="std"
@@ -325,6 +409,7 @@ elif [ $PIPELINE == "tbss" ];then
 	elif [ $TBSS_LEVEL == 2 ]; then
 
 		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=group
 		batch_time_default="02:00:00"
 		partition_default="std"
@@ -332,6 +417,7 @@ elif [ $PIPELINE == "tbss" ];then
 	elif [ $TBSS_LEVEL == 3 ]; then
 
 		export SUBJS_PER_NODE=16
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="04:00:00"
 		partition_default="std"
@@ -346,6 +432,7 @@ elif [ $PIPELINE == "tbss" ];then
 		read TBSS_MERGE_LIST; export TBSS_MERGE_LIST
 
 		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=group
 		batch_time_default="4:00:00"
 		partition_default="std"
@@ -362,13 +449,15 @@ elif [ $PIPELINE == "fba" ];then
 	if [ $FBA_LEVEL == 1 ];then
 		
 		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=64
 		export ANALYSIS_LEVEL=group
 		batch_time_default="03-00:00:00"
-		partition_default="stl"
+		partition_default="std"
 
 	elif [ $FBA_LEVEL == 2 ];then
 		
 		export SUBJS_PER_NODE=4
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="24:00:00"
 		partition_default="std"
@@ -376,23 +465,26 @@ elif [ $PIPELINE == "fba" ];then
 	elif [ $FBA_LEVEL == 3 ];then
 		
 		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=64
 		export ANALYSIS_LEVEL=group
 		batch_time_default="03-00:00:00"
-		partition_default="stl"
+		partition_default="std"
 
 	elif [ $FBA_LEVEL == 4 ];then
 		
 		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=64
 		export ANALYSIS_LEVEL=group
 		batch_time_default="07-00:00:00"
-		partition_default="big"
+		partition_default="std"
 
 	elif [ $FBA_LEVEL == 5 ];then
 		
 		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=64
 		export ANALYSIS_LEVEL=group
 		batch_time_default="03-00:00:00"
-		partition_default="stl"
+		partition_default="std"
 	
 	elif [ $FBA_LEVEL == 6 ];then
 
@@ -404,6 +496,7 @@ elif [ $PIPELINE == "fba" ];then
 		if [ $ROI_LEVEL == "subject" ]; then
 
 			export SUBJS_PER_NODE=32
+			export SLURM_CPUS_PER_TASK=32
 			export ANALYSIS_LEVEL=subject
 			batch_time_default="02:00:00"
 			partition_default="std"
@@ -411,6 +504,7 @@ elif [ $PIPELINE == "fba" ];then
 		elif [ $ROI_LEVEL == "group" ]; then
 			
 			export SUBJS_PER_NODE=$subj_array_length
+			export SLURM_CPUS_PER_TASK=32
 			export ANALYSIS_LEVEL=group
 			batch_time_default="02:00:00"
 			partition_default="std"
@@ -438,6 +532,7 @@ elif [ $PIPELINE == "connectomics" ];then
 	fi
 
 	export SUBJS_PER_NODE=$subj_array_length
+	export SLURM_CPUS_PER_TASK=32
 	export ANALYSIS_LEVEL=group
 	batch_time_default="1-00:00:00"
 	partition_default="std"
@@ -464,6 +559,7 @@ elif [ $PIPELINE == "psmd" ];then
 	if [ $PSMD_LEVEL == "subject" ]; then
 		
 		export SUBJS_PER_NODE=8
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="03:00:00"
 		partition_default="std"
@@ -471,6 +567,7 @@ elif [ $PIPELINE == "psmd" ];then
 	elif [ $PSMD_LEVEL == "group" ];then
 		
 		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=group
 		batch_time_default="00:30:00"
 		partition_default="std"
@@ -484,6 +581,7 @@ elif [ $PIPELINE == "psmd" ];then
 elif [ $PIPELINE == "obseg" ];then
 	
 	export SUBJS_PER_NODE=16
+	export SLURM_CPUS_PER_TASK=32
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="03:00:00"
 	partition_default="std"
@@ -491,6 +589,7 @@ elif [ $PIPELINE == "obseg" ];then
 elif [ $PIPELINE == "cat12" ];then
 	
 	export SUBJS_PER_NODE=8
+	export SLURM_CPUS_PER_TASK=32
 	export ANALYSIS_LEVEL=subject
 	batch_time_default="08:00:00"
 	partition_default="std"
@@ -503,6 +602,7 @@ elif [ $PIPELINE == "cat12" ];then
 elif [ $PIPELINE == "wmh" ];then
 	
 	export SUBJS_PER_NODE=16
+	export SLURM_CPUS_PER_TASK=32
 	export ANALYSIS_LEVEL=subject
 	partition_default="std"
 
@@ -514,6 +614,7 @@ elif [ $PIPELINE == "wmh" ];then
 
 		batch_time_default="08:00:00"
 		export SUBJS_PER_NODE=32
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 
 	elif [ $WMH_LEVEL == "02_segment" ]; then
@@ -525,6 +626,7 @@ elif [ $PIPELINE == "wmh" ];then
 
 			batch_time_default="03:30:00"
 			export SUBJS_PER_NODE=8
+			export SLURM_CPUS_PER_TASK=32
 
 			echo "this algorithm does not recommend any bias-correction. Automatically set to NO."
 			BIASCORR=n; export BIASCORR
@@ -533,6 +635,7 @@ elif [ $PIPELINE == "wmh" ];then
 
 			batch_time_default="01:00:00"
 			export SUBJS_PER_NODE=8
+			export SLURM_CPUS_PER_TASK=32
 
 			echo "this algorithm does not recommend any bias-correction. Automatically set to NO."
 			BIASCORR=n; export BIASCORR
@@ -553,12 +656,17 @@ elif [ $PIPELINE == "wmh" ];then
 			read BIANCA_LEVEL; export BIANCA_LEVEL
 
 			[ $BIANCA_LEVEL == training ] && export SUBJS_PER_NODE=$subj_array_length
+			[ $BIANCA_LEVEL == training ] && export SLURM_CPUS_PER_TASK=32
 			[ $BIANCA_LEVEL == training ] && export ANALYSIS_LEVEL=group
 			[ $BIANCA_LEVEL == training ] && batch_time_default="24:00:00"
+
 			[ $BIANCA_LEVEL == validation ] && export SUBJS_PER_NODE=16
+			[ $BIANCA_LEVEL == validation ] && export SLURM_CPUS_PER_TASK=32
 			[ $BIANCA_LEVEL == validation ] && export ANALYSIS_LEVEL=subject
 			[ $BIANCA_LEVEL == validation ] && batch_time_default="05:30:00"
+
 			[ $BIANCA_LEVEL == testing ] && export SUBJS_PER_NODE=16
+			[ $BIANCA_LEVEL == testing ] && export SLURM_CPUS_PER_TASK=32
 			[ $BIANCA_LEVEL == testing ] && export ANALYSIS_LEVEL=subject
 			[ $BIANCA_LEVEL == testing ] && batch_time_default="05:30:00"
 
@@ -574,12 +682,17 @@ elif [ $PIPELINE == "wmh" ];then
 			read LOCATE_LEVEL; export LOCATE_LEVEL
 
 			[ $LOCATE_LEVEL == testing ] && export SUBJS_PER_NODE=16
+			[ $LOCATE_LEVEL == testing ] && export SLURM_CPUS_PER_TASK=32
 			[ $LOCATE_LEVEL == testing ] && export ANALYSIS_LEVEL=subject
 			[ $LOCATE_LEVEL == testing ] && batch_time_default="05:00:00"
+
 			[ $LOCATE_LEVEL == training ] && export SUBJS_PER_NODE=$subj_array_length
+			[ $LOCATE_LEVEL == training ] && export SLURM_CPUS_PER_TASK=32
 			[ $LOCATE_LEVEL == training ] && export ANALYSIS_LEVEL=group
 			[ $LOCATE_LEVEL == training ] && batch_time_default="2-00:00:00"
+
 			[ $LOCATE_LEVEL == validation ] && export SUBJS_PER_NODE=$subj_array_length
+			[ $LOCATE_LEVEL == validation ] && export SLURM_CPUS_PER_TASK=32
 			[ $LOCATE_LEVEL == validation ] && export ANALYSIS_LEVEL=group
 			[ $LOCATE_LEVEL == validation ] && batch_time_default="2-00:00:00"
 			
@@ -602,7 +715,8 @@ elif [ $PIPELINE == "wmh" ];then
 	elif [ $WMH_LEVEL == "04_postproc_define_subs" ]; then 
 
 		INTERACTIVE==y
-		SUBJS_PER_NODE=100 # DO NOT CHANGE !
+		export SUBJS_PER_NODE=100 # DO NOT CHANGE !
+		export SLURM_CPUS_PER_TASK=32
 		length=($(ls $BIDS_DIR/sub-* -d | xargs -n 1 basename | wc -l))
 		number_of_scripts=$(echo "scale=2; $length/$SUBJS_PER_NODE" | bc)
 		number_of_scripts_rounded=$(echo $number_of_scripts | awk '{print ($0-int($0)>0)?int($0)+1:int($0)}')
@@ -622,6 +736,7 @@ elif [ $PIPELINE == "wmh" ];then
 
 		export sublist=${subj_array[@]}
 		export SUBJS_PER_NODE=100 # DO NOT CHANGE!
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=group
 		batch_time_default="2-00:00:00"
 
@@ -635,6 +750,7 @@ elif [ $PIPELINE == "wmh" ];then
 	elif [ $WMH_LEVEL == "eval" ]; then 
 
 		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=group
 		batch_time_default="01:00:00"
 
@@ -648,6 +764,7 @@ elif [ $PIPELINE == "wmh" ];then
 		read ANALYSIS_LEVEL; export ANALYSIS_LEVEL
 
 		export SUBJS_PER_NODE=8
+		export SLURM_CPUS_PER_TASK=32
 		batch_time_default="01:00:00"
 		[ $ANALYSIS_LEVEL == "group" ] && export SUBJS_PER_NODE=$subj_array_length
 
@@ -676,6 +793,7 @@ elif [ $PIPELINE == "wmh" ];then
 		fi
 
 		export ANALYSIS_LEVEL=group
+		export SLURM_CPUS_PER_TASK=32
 		[ $ALGORITHM_COMBI == "single" ] && batch_time_default="01:00:00"
 		[ $ALGORITHM_COMBI == "multiple" ] && batch_time_default="02:30:00"
 		export SUBJS_PER_NODE=8
@@ -707,6 +825,7 @@ elif [ $PIPELINE == "wmh" ];then
 		export ANALYSIS_LEVEL=group
 		batch_time_default="06:00:00"
 		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=32
 
 	fi
 
@@ -746,6 +865,7 @@ elif [ $PIPELINE == "lesionanalysis" ];then
 		read ANAT_PREPROC; export ANAT_PREPROC
 
 		export SUBJS_PER_NODE=16
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="01:00:00"
 		partition_default="std"
@@ -759,6 +879,7 @@ elif [ $PIPELINE == "lesionanalysis" ];then
 		if [ $ANALYSIS_LEVEL == "subject" ]; then
 
 			export SUBJS_PER_NODE=16
+			export SLURM_CPUS_PER_TASK=32
 			export ANALYSIS_LEVEL=subject
 			batch_time_default="01:00:00"
 			partition_default="std"
@@ -794,20 +915,23 @@ elif [ $PIPELINE == "statistics" ];then
 	if [ $STAT_METHOD == cfe ];then
 		
 		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=64
 		export ANALYSIS_LEVEL=group
 		batch_time_default="3-00:00:00"
-		partition_default="big"
+		partition_default="std"
 
 	elif [ $STAT_METHOD == tfce_tbss ];then
 	
 		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=64
 		export ANALYSIS_LEVEL=group
 		batch_time_default="1-00:00:00"
-		partition_default="big"
+		partition_default="std"
 
 	elif [ $STAT_METHOD == nbs ];then
 	
 		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=64
 		export ANALYSIS_LEVEL=group
 		batch_time_default="1-00:00:00"
 		partition_default="std"
@@ -823,6 +947,7 @@ elif [ $PIPELINE == "pvs_frangi" ] ;then
 	if [ $ANALYSIS_PART == postproc ];then
 
 		export ANALYSIS_LEVEL=subject
+		export SLURM_CPUS_PER_TASK=16
 		export SUBJS_PER_NODE=120
 		partition_default="std"
 		batch_time_default="01:00:00"
@@ -830,6 +955,7 @@ elif [ $PIPELINE == "pvs_frangi" ] ;then
 	elif [ $ANALYSIS_PART == summary ];then
 
 		export ANALYSIS_LEVEL=group
+		export SLURM_CPUS_PER_TASK=8
 		export SUBJS_PER_NODE=$subj_array_length
 		partition_default="std"
 		batch_time_default="00:10:00"
@@ -840,6 +966,7 @@ elif [ $PIPELINE == "pvs_frangi" ] ;then
 elif [ $PIPELINE == "pvs_rorpo" ] ;then
 
 	export SUBJS_PER_NODE=120
+	export SLURM_CPUS_PER_TASK=16
 	export ANALYSIS_LEVEL=subject
 	partition_default="std"
 	batch_time_default="01:00:00"
@@ -905,24 +1032,28 @@ elif [ $PIPELINE == "registration" ];then
 
 	if [ $REGISTRATION_METHOD == ants_rigid ];then
 		export SUBJS_PER_NODE=128
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="01:00:00"
 		partition_default="std"
 
 	elif [ $REGISTRATION_METHOD == ants_affine ];then
 		export SUBJS_PER_NODE=128
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="02:00:00"
 		partition_default="std"
 	
 	elif [ $REGISTRATION_METHOD == ants_syn ];then
 		export SUBJS_PER_NODE=64
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="24:00:00"
 		partition_default="std"
 
 	elif [ $REGISTRATION_METHOD == ants_apply_transform ];then
 		export SUBJS_PER_NODE=8
+		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
 		batch_time_default="02:00:00"
 		partition_default="std"
@@ -991,7 +1122,9 @@ for batch in $(seq $batch_amount);do
 
 	    CMD="sbatch --job-name ${PIPELINE}${PIPELINE_SUFFIX} \
 	        --time ${batch_time} \
-	        --partition $partition $optional_slurm_flags \
+	        --partition $partition \
+			--ntasks=1 \
+			--cpus-per-task=$SLURM_CPUS_PER_TASK $optional_slurm_flags \
 	        --output $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).out" \
 	        --error $CODE_DIR/log/"%A-${PIPELINE}-$ITER-$(date +%d%m%Y).err" \
 	    	$SCRIPT_PATH "${subj_batch_array[@]}""
