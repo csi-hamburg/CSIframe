@@ -12,8 +12,8 @@
 #   [pipelines which need to be run first]                                                       #
 #       - qsiprep                                                                                #
 #   [container]                                                                                  #
-#       - fsl-6.0.3                                                                              #
-#       - mrtrix3-3.0.2                                                                          #
+#       - fsl-6.0.7.13.sif                                                                       #      
+#       - ants-2.5.4.sif                                                                         #
 ##################################################################################################
 
 # Get verbose outputs
@@ -29,20 +29,28 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 # Define environment
 ####################
 
-container_mrtrix3=mrtrix3-3.0.2      
+# container_mrtrix3=mrtrix3-3.0.2      
 
-singularity_mrtrix3="singularity run --cleanenv --userns \
-    -B .
+# apptainer_mrtrix3="apptainer run --cleanenv --userns \
+#     -B .
+#     -B $PROJ_DIR \
+#     -B $(readlink -f $ENV_DIR) \
+#     -B $TMP_DIR \
+#     -B $TMP_IN \
+#     -B $TMP_OUT \
+#     $ENV_DIR/$container_mrtrix3" 
+
+container_ants=ants-2.5.4.sif      
+apptainer_ants="apptainer run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR \
     -B $TMP_IN \
     -B $TMP_OUT \
-    $ENV_DIR/$container_mrtrix3" 
+    $ENV_DIR/$container_ants" 
 
-container_fsl=fsl-6.0.3
-singularity_fsl="singularity run --cleanenv --no-home --userns \
-    -B .
+container_fsl=fsl-6.0.7.13.sif
+apptainer_fsl="apptainer run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR \
@@ -75,39 +83,27 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
 
     fi
 
-    # Define input data
-    ###################
+    # Define input
+    ##############
 
-    INPUT_DWI=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.nii.gz
-    INPUT_DWI_MIF=$TMP_OUT/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.mif
-    INPUT_MASK=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-brain_mask.nii.gz
-    INPUT_BVEC_BVAL=$DATA_DIR/qsiprep/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi.b
-    INPUT_BVEC=$TMP_OUT/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi_desc-mrconvert.bvec
-    INPUT_BVAL=$TMP_OUT/${1}_ses-${SESSION}_acq-AP_space-T1w_desc-preproc_dwi_desc-mrconvert.bval
-    
-    # Convert bvals and bvecs from .b (mrtrix format) to .bval and .bvec (fsl format)
-    #################################################################################
-
-    CMD_CONVERT="mrconvert \
-        -force \
-        -grad $INPUT_BVEC_BVAL \
-        -export_grad_fsl $INPUT_BVEC $INPUT_BVAL \
-        $INPUT_DWI $INPUT_DWI_MIF"
-
-    $singularity_mrtrix3 $CMD_CONVERT
+    INPUT_DWI=$DATA_DIR/qsirecon-FSL/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_dir-AP_space-T1w_desc-preproc_dwi.nii.gz
+    INPUT_MASK=$DATA_DIR/qsirecon-FSL/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_dir-AP_space-T1w_desc-preproc_dwimap.nii.gz
+    INPUT_BVAL=$DATA_DIR/qsirecon-FSL/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_dir-AP_space-T1w_desc-preproc_dwi.bval
+    INPUT_BVEC=$DATA_DIR/qsirecon-FSL/$1/ses-${SESSION}/dwi/${1}_ses-${SESSION}_dir-AP_space-T1w_desc-preproc_dwi.bvec
 
     # Fit DTI model
     ###############
 
     CMD_FIT="dtifit -k $INPUT_DWI -o $TMP_OUT/temp-DTI -m $INPUT_MASK -r $INPUT_BVEC -b $INPUT_BVAL"
 
-    $singularity_fsl $CMD_FIT
+    $apptainer_fsl $CMD_FIT
 
     # Run TBSS 1 preproc
     ####################
 
     FA_IMAGE=$TMP_OUT/temp-DTI_FA.nii.gz
-    MD_IMAGE=$TMP_OUT/temp-DTI_MD.nii.gz
+    
+    ls $TMP_OUT
 
     mkdir $TMP_OUT/tbss
     cp -v $FA_IMAGE $TMP_OUT/tbss
@@ -115,7 +111,7 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
     pushd $TMP_OUT/tbss
     tbssfile=$(ls)
 
-    $singularity_fsl tbss_1_preproc $tbssfile
+    $apptainer_fsl tbss_1_preproc $tbssfile
 
     # Run TBSS 2 reg / ANTs registration
     ####################################
@@ -149,21 +145,18 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
         --convergence [ 10000x111110x11110x100, 1e-08, 10 ] \
         --smoothing-sigmas 3.0x2.0x1.0x0.0vox \
         --shrink-factors 8x4x2x1 \
-        --use-estimate-learning-rate-once 1 \
         --use-histogram-matching 1 \
         --transform Affine[ 0.1 ] \
         --metric MI[ $FA_MNI_TARGET, $FA, 1, 32, Regular, 0.25 ] \
         --convergence [ 10000x111110x11110x100, 1e-08, 10 ] \
         --smoothing-sigmas 3.0x2.0x1.0x0.0vox \
         --shrink-factors 8x4x2x1 \
-        --use-estimate-learning-rate-once 1 \
         --use-histogram-matching 1 \
         --transform SyN[ 0.2, 3.0, 0.0 ] \
         --metric CC[ $FA_MNI_TARGET, $FA, 1, 4 ] \
         --convergence [ 100x50x30x20, 1e-08, 10 ] \
         --smoothing-sigmas 3.0x2.0x1.0x0.0vox \
         --shrink-factors 8x4x2x1 \
-        --use-estimate-learning-rate-once 1 \
         --use-histogram-matching 1 -v \
         --winsorize-image-intensities [ 0.005, 0.995 ] \
         --write-composite-transform 1"
@@ -177,8 +170,8 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
 
     # Execute commands
 
-    $singularity_mrtrix3 $CMD_FA2MNI
-    $singularity_mrtrix3 $CMD_MD2MNI
+    $apptainer_ants $CMD_FA2MNI
+    $apptainer_ants $CMD_MD2MNI
 
     # Run TBSS 3 postreg
     ####################
@@ -189,22 +182,22 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
     pushd $TMP_OUT/tbss/stats
 
     echo "creating valid mask and mean FA"
-    $singularity_fsl fslmaths all_FA -max 0 -Tmin -bin mean_FA_mask -odt char
-    $singularity_fsl fslmaths all_FA -mas mean_FA_mask all_FA
-    $singularity_fsl fslmaths all_FA -Tmean mean_FA
+    $apptainer_fsl fslmaths all_FA -max 0 -Tmin -bin mean_FA_mask -odt char
+    $apptainer_fsl fslmaths all_FA -mas mean_FA_mask all_FA
+    $apptainer_fsl fslmaths all_FA -Tmean mean_FA
 
     echo "creating skeleton"
-    $singularity_fsl fslmaths $ENV_DIR/standard/FMRIB58_FA_1mm -mas mean_FA_mask mean_FA
-    $singularity_fsl fslmaths mean_FA -bin mean_FA_mask
-    $singularity_fsl fslmaths all_FA -mas mean_FA_mask all_FA
-    $singularity_fsl imcp $ENV_DIR/standard/FMRIB58_FA-skeleton_1mm mean_FA_skeleton
+    $apptainer_fsl fslmaths $ENV_DIR/standard/FMRIB58_FA_1mm -mas mean_FA_mask mean_FA
+    $apptainer_fsl fslmaths mean_FA -bin mean_FA_mask
+    $apptainer_fsl fslmaths all_FA -mas mean_FA_mask all_FA
+    $apptainer_fsl imcp $ENV_DIR/standard/FMRIB58_FA-skeleton_1mm mean_FA_skeleton
 
     popd
 
     # Run TBSS 4 prestats
     #####################
 
-    $singularity_fsl tbss_4_prestats 0.2
+    $apptainer_fsl tbss_4_prestats 0.2
 
     # Run TBSS NonFA
     ################
@@ -227,36 +220,36 @@ if [ $ANALYSIS_LEVEL == "subject" ]; then
             -p 0.2 mean_FA_skeleton_mask_dst $ENV_DIR/standard/LowerCingulum_1mm all_FA all_MD_skeletonised \
             -a all_MD"
 
-    $singularity_fsl $CMD_MASK
-    $singularity_fsl $CMD_PROJ
+    $apptainer_fsl $CMD_MASK
+    $apptainer_fsl $CMD_PROJ
 
     # Histogram analysis
     ####################
     
     SKELETON_MASK=$PIPELINE_DIR/skeleton_mask_2019.nii.gz
     
-    $singularity_fsl fslmaths all_MD_skeletonised.nii.gz -mas $SKELETON_MASK -mul 1000000 MD_skeletonised_masked.nii.gz
+    $apptainer_fsl fslmaths all_MD_skeletonised.nii.gz -mas $SKELETON_MASK -mul 1000000 MD_skeletonised_masked.nii.gz
     mdskel=MD_skeletonised_masked.nii.gz
 
     # Whole brain metrics
       
-    a=`$singularity_fsl fslstats $mdskel -P 95 | tail -n 1`
-    b=`$singularity_fsl fslstats $mdskel -P 5 | tail -n 1`
+    a=`$apptainer_fsl fslstats $mdskel -P 95 | tail -n 1`
+    b=`$apptainer_fsl fslstats $mdskel -P 5 | tail -n 1`
     psmd_global=`echo - | awk "{print ( ${a} - ${b} ) / 1000000 }" | sed 's/,/./'`
 
     # Left and right hemisphere metrics
 
-    $singularity_fsl fslmaths $mdskel -roi  0 90 0 -1 0 -1 0 -1 MD_skeletonised_masked_R.nii.gz
-    $singularity_fsl fslmaths $mdskel -roi 91 90 0 -1 0 -1 0 -1 MD_skeletonised_masked_L.nii.gz
+    $apptainer_fsl fslmaths $mdskel -roi  0 90 0 -1 0 -1 0 -1 MD_skeletonised_masked_R.nii.gz
+    $apptainer_fsl fslmaths $mdskel -roi 91 90 0 -1 0 -1 0 -1 MD_skeletonised_masked_L.nii.gz
 
     mdskel=MD_skeletonised_masked_L.nii.gz
-    a=`$singularity_fsl fslstats $mdskel -P 95 | tail -n 1`
-    b=`$singularity_fsl fslstats $mdskel -P 5 | tail -n 1`
+    a=`$apptainer_fsl fslstats $mdskel -P 95 | tail -n 1`
+    b=`$apptainer_fsl fslstats $mdskel -P 5 | tail -n 1`
     psmdL=`echo - | awk "{print ( ${a} - ${b} ) / 1000000 }" | sed 's/,/./'`
 
     mdskel=MD_skeletonised_masked_R.nii.gz
-    a=`$singularity_fsl fslstats $mdskel -P 95 | tail -n 1`
-    b=`$singularity_fsl fslstats $mdskel -P 5 | tail -n 1`
+    a=`$apptainer_fsl fslstats $mdskel -P 95 | tail -n 1`
+    b=`$apptainer_fsl fslstats $mdskel -P 5 | tail -n 1`
     psmdR=`echo - | awk "{print ( ${a} - ${b} ) / 1000000 }" | sed 's/,/./'`
 
     popd
