@@ -34,7 +34,6 @@ apptainer_aslprep="apptainer run --cleanenv --userns \
 
 # To make I/O more efficient read/write outputs from/to $SCRATCH
 [ -d $TMP_IN ] && cp -rvf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
-[ -d $TMP_OUT ] && mkdir -p $TMP_OUT/aslprep
 
 ###########
 # ASLprep #
@@ -57,13 +56,11 @@ CMD="
    --output-spaces $OUTPUT_SPACES \
    --asl2anat-init t1w \
    --asl2anat-dof 6 \
-   --force-bbr \
-   --use-syn-sdc \
-   --force-syn \
    --m0_scale 10 \
    --scorescrub \
    --basil \
    --project-goodvoxels \
+   --cifti-output \
    --skull-strip-template OASIS30ANTs \
    --skull-strip-fixed-seed \
    --random-seed 42 \
@@ -89,4 +86,5 @@ eval $CMD
 # Copy outputs to $DATA_DIR
 ###########################
 
-cp -ruvf $TMP_OUT/aslprep $DATA_DIR/
+[ ! -d $DATA_DIR/aslprep ] && mkdir $DATA_DIR/aslprep
+cp -ruvf $TMP_OUT/* $DATA_DIR/aslprep
