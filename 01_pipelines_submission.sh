@@ -540,21 +540,8 @@ elif [ $PIPELINE == "connectomics" ];then
 elif [ $PIPELINE == "psmd" ];then
 	
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-	echo "Which PSMD pipeline would you like to run? (miac/csi)"
-	read PSMD_PIPE; export PSMD_PIPE
-	export PIPELINE_SUFFIX=_${PSMD_PIPE}
-
-	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
 	echo "On which level you like to run the PSMD pipeline? (subject/group). Subject level needs to be run first."
 	read PSMD_LEVEL; export PSMD_LEVEL
-
-	if [ $PSMD_PIPE == miac ]; then
-
-		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-		echo "Which input data do you want to use? (preprocessed/fitted)"
-		read MODIFIER; export MODIFIER
-	
-	fi
 
 	if [ $PSMD_LEVEL == "subject" ]; then
 		
@@ -681,13 +668,8 @@ elif [ $PIPELINE == "wmh" ];then
 			In addition: please run training before you start validation or testing."
 			read LOCATE_LEVEL; export LOCATE_LEVEL
 
-			[ $LOCATE_LEVEL == testing ] && export SUBJS_PER_NODE=16
-			[ $LOCATE_LEVEL == testing ] && export SLURM_CPUS_PER_TASK=32
-			[ $LOCATE_LEVEL == testing ] && export ANALYSIS_LEVEL=subject
-			[ $LOCATE_LEVEL == testing ] && batch_time_default="05:00:00"
-
 			[ $LOCATE_LEVEL == training ] && export SUBJS_PER_NODE=$subj_array_length
-			[ $LOCATE_LEVEL == training ] && export SLURM_CPUS_PER_TASK=32
+			[ $LOCATE_LEVEL == training ] && export SLURM_CPUS_PER_TASK=64
 			[ $LOCATE_LEVEL == training ] && export ANALYSIS_LEVEL=group
 			[ $LOCATE_LEVEL == training ] && batch_time_default="2-00:00:00"
 
@@ -696,6 +678,10 @@ elif [ $PIPELINE == "wmh" ];then
 			[ $LOCATE_LEVEL == validation ] && export ANALYSIS_LEVEL=group
 			[ $LOCATE_LEVEL == validation ] && batch_time_default="2-00:00:00"
 			
+			[ $LOCATE_LEVEL == testing ] && export SUBJS_PER_NODE=16
+			[ $LOCATE_LEVEL == testing ] && export SLURM_CPUS_PER_TASK=32
+			[ $LOCATE_LEVEL == testing ] && export ANALYSIS_LEVEL=subject
+			[ $LOCATE_LEVEL == testing ] && batch_time_default="05:00:00"
 
 		fi
 
@@ -938,13 +924,15 @@ elif [ $PIPELINE == "statistics" ];then
 
 	fi
 
-elif [ $PIPELINE == "pvs_frangi" ] ;then
+elif [ $PIPELINE == "pvs" ] ;then
 
-	echo "Which ANALYSIS PART do you want to perform? currently available are: postproc, summary"
-	read ANALYSIS_PART
-	export PIPELINE_SUFFIX=_${ANALYSIS_PART}
+	echo "Do you want to perform the pipeline on the subject or group level? (subject/group)"
+	echo "Note: subject level needs to be run first. It will perform postprocessing on the subject level."
+	echo "Note: group level will perform the summary statistics."
 
-	if [ $ANALYSIS_PART == postproc ];then
+	read ANALYSIS_LEVEL; export ANALYSIS_LEVEL
+
+	if [ $ANALYSIS_LEVEL == subject ];then
 
 		export ANALYSIS_LEVEL=subject
 		export SLURM_CPUS_PER_TASK=16
@@ -952,7 +940,7 @@ elif [ $PIPELINE == "pvs_frangi" ] ;then
 		partition_default="std"
 		batch_time_default="01:00:00"
 
-	elif [ $ANALYSIS_PART == summary ];then
+	elif [ $ANALYSIS_PART == group ];then
 
 		export ANALYSIS_LEVEL=group
 		export SLURM_CPUS_PER_TASK=8
@@ -962,18 +950,6 @@ elif [ $PIPELINE == "pvs_frangi" ] ;then
 		export sublist=${subj_array[@]}
 
 	fi
-
-elif [ $PIPELINE == "pvs_rorpo" ] ;then
-
-	export SUBJS_PER_NODE=120
-	export SLURM_CPUS_PER_TASK=16
-	export ANALYSIS_LEVEL=subject
-	partition_default="std"
-	batch_time_default="01:00:00"
-
-	echo "Which ANALYSIS PART do you want to perform? currently available are: postproc"
-	read ANALYSIS_PART
-	export PIPELINE_SUFFIX=_${ANALYSIS_PART}
 
 elif [ $PIPELINE == "registration" ];then
 
