@@ -325,3 +325,8 @@ $apptainer_ants $CMD_RDt2MNI
 $apptainer_ants $CMD_MD2MNI
 $apptainer_ants $CMD_MDt2MNI
 $apptainer_ants $CMD_FW2MNI
+
+# Clean up temporary directory
+##############################
+
+rm -rf $FW_OUTPUT_DIR/${1}_tmp
