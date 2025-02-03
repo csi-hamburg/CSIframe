@@ -105,19 +105,6 @@ for SESSION in $SESSIONS; do
       # Command
       #########################
 
-      # CMD_HEUDICONV="
-      # heudiconv \
-      # --dicom_dir_template /dcm/{subject}/ses-{session}.tar.gz\
-      # --subjects $1 \
-      # --ses $SESSION \
-      # --bids notop \
-      # --heuristic /code/pipelines/bidsify/$HEURISTIC\
-      # --converter dcm2niix \
-      # --minmeta \
-      # --overwrite\
-      # --grouping all \
-      # --outdir /bids"
-
       CMD_HEUDICONV="
       --dicom_dir_template /dcm/{subject}/ses-{session}.tar.gz\
       --subjects $1 \
