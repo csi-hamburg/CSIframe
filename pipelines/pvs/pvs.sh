@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
 ###################################################################################################################
-# PVS segmentation based on the published paper by Sepehrband et al. with slight adaptations (see github wiki for details) 
-#                                                                                                                 
-# Pipeline specific dependencies:                                                                                 
-#   [pipelines which need to be run first]                                                                        
-#       - fmriprep
-#       - freesurfer
-#       - wmh                                                                                                   
-#   [container]                                                                                                   
-#       - freesurfer
-#       - fsl
-#       - mrtrix
-#                                                                           
+# Postprocessing of PVS segmentation output.                                                                      #
+# This includes thresholding of masks and extraction of individual volumes / counts.                              #
+#                                                                                                                 #
+# Pipeline specific dependencies:                                                                                 #
+#   [pipelines which need to be run first]                                                                        #
+#       - fmriprep (for freesurfer output)                                                                        #
+#       - fmriprep (for anat preprocessing incl. spatial normalization)                                           #
+#   [container]                                                                                                   #
+#       - pvsseg-4.0.sif                                                                                          #      
+#       - fsl-6.0.7.13.sif                                                                                        #      
+#       - ants-2.5.4.sif                                                                                          #
+#                                                                                                                 #
 ###################################################################################################################
 
 # Get verbose outputs
@@ -27,21 +27,20 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 ###################################################################################################################
 
 # Pipeline-specific environment
-##################################
+###############################
 
-# Singularity container version and command
-container_freesurfer=freesurfer-7.1.1
-singularity_freesurfer="singularity run --cleanenv --userns \
+# apptainer container version and command
+container_pvsseg=pvsseg-4.0.sif      
+apptainer_pvsseg="apptainer run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
-    -B $ENV_DIR/freesurfer_license.txt:/opt/$container_freesurfer/license.txt
     -B $TMP_DIR/:/tmp \
     -B $TMP_IN:/tmp_in \
     -B $TMP_OUT:/tmp_out \
-    $ENV_DIR/$container_freesurfer" 
+    $ENV_DIR/$container_pvsseg"
 
-container_fsl=fsl-6.0.3
-singularity_fsl="singularity run --cleanenv --userns \
+container_fsl=fsl-6.0.7.13.sif
+apptainer_fsl="apptainer run --cleanenv --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR/:/tmp \
@@ -49,68 +48,198 @@ singularity_fsl="singularity run --cleanenv --userns \
     -B $TMP_OUT:/tmp_out \
     $ENV_DIR/$container_fsl" 
 
-container_mrtrix=mrtrix3-3.0.2
-singularity_mrtrix="singularity run --cleanenv --userns \
+container_ants=ants-2.5.4.sif      
+apptainer_ants="apptainer run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR/:/tmp \
     -B $TMP_IN:/tmp_in \
     -B $TMP_OUT:/tmp_out \
-    $ENV_DIR/$container_mrtrix" 
+    $ENV_DIR/$container_ants"
 
-# Set output directories
-OUT_DIR=$DATA_DIR/$PIPELINE/$1/ses-${SESSION}/anat/test_without77
-[ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
+# # To make I/O more efficient read/write outputs from/to $SCRATCH
+# [ -d $TMP_IN ] && mkdir -p $TMP_IN/fmriprep/$1/ses-${SESSION}/anat/ $TMP_IN/freesurfer
+# [ -f $DATA_DIR/freesurfer/$1/stats/aseg.stats ] && cp -rvf $DATA_DIR/freesurfer/$1 $TMP_IN/freesurfer
+# if [ -d $DATA_DIR/fmriprep/$1 ]; then
+#     ANAT_TO_MNI_WARP=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_from-${ORIG_SPACE}_to-MNI152NLin2009cAsym_mode-image_xfm.h5
+#     ANAT=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-preproc_${ORIG_SPACE}.nii.gz
+#     MNI_TO_ANAT_WARP=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_from-MNI152NLin2009cAsym_to-${ORIG_SPACE}_mode-image_xfm.h5
+#     cp -v $ANAT $TMP_IN/fmriprep/$1/ses-${SESSION}/anat/
+#     cp -v $ANAT_TO_MNI_WARP $TMP_IN/fmriprep/$1/ses-${SESSION}/anat/
+#     cp -v $MNI_TO_ANAT_WARP $TMP_IN/fmriprep/$1/ses-${SESSION}/anat/
+# fi
 
-# To make I/O more efficient read/write outputs from/to $SCRATCH
-[ -d $TMP_IN ] && cp -rf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
-[ -d $TMP_OUT ] && mkdir -p $TMP_OUT/pvs $TMP_OUT/pvs
+######################
+# Pipeline execution #
+######################
 
-# $MRTRIX_TMPFILE_DIR should be big and writable
-export MRTRIX_TMPFILE_DIR=/tmp
+if [ $ANALYSIS_LEVEL = "subject" ]; then
+    
+    ###################################################################################################################
+    #                                           Part A - PVS segementation                                            #
+    ###################################################################################################################
 
-# Pipeline execution
-##################################
-# Define inputs
-T1_image=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-preproc_T1w.nii.gz
-brain_mask=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-brain_mask.nii.gz
-TEMPLATE_native=$DATA_DIR/freesurfer/$1/mri/rawavg.mgz
-ASEG_freesurfer=$DATA_DIR/freesurfer/$1/mri/aseg.mgz
-WMMASK_T1=$DATA_DIR/wmh/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_space-T1_desc-wm_mask.nii.gz 
-wmh_mask=$DATA_DIR/wmh/$1/ses-${SESSION}/anat/LOCATE/${1}_ses-${SESSION}_space-T1_desc-masked_desc-wmh_desc-LOCATE_mask.nii.gz
-total_mask=$OUT_DIR/../${1}_ses-${SESSION}_space-T1_desc-finalfiltering_mask.nii.gz
-corrected_T1=$OUT_DIR/../${1}_ses-${SESSION}_space-T1_desc-preproc_desc-Riciandenoised_T1w.nii.gz
+    # Set up paths
+    ##############
+   
+    PVS_DIR=$DATA_DIR/$PIPELINE/$1/ses-${SESSION}/anat/pvs 
+    [ ! -d $PVS_DIR ] && mkdir -p $PVS_DIR
+    
+    # 1. Segmentation
+    ###################################################################################################################
 
-# Define outputs
-ASEG_native=/tmp/${1}_ses-${SESSION}_space-T1_aseg.mgz
-ASEG_nii=/tmp/${1}_ses-${SESSION}_space-T1_aseg.nii.gz
-FREESURFER_WMH=/tmp/${1}_ses-${SESSION}_space-T1_desc-freesurferwmh_mask.nii.gz
-total_mask_new=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-finalfiltering_mask.nii.gz
-vesselness_map_T1=$OUT_DIR/${1}_ses-${SESSION}_space-T1_vesselnessmap.nii.gz
-vesselness_map_T1_filtered=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-thresholded_vesselnessmap.nii.gz
-vesselness_map_T1_filtered_sized=$OUT_DIR/${1}_ses-${SESSION}_space-T1_desc-thresholded_desc-filtered_vesselnessmap.nii.gz
+    # Define input
+    ##############
 
-# Define commands
-CREATE_WM_MASK_1="mri_label2vol --seg $ASEG_freesurfer --temp $TEMPLATE_native --o $ASEG_native --regheader $ASEG_freesurfer"
-CREATE_WM_MASK_2="mri_convert $ASEG_native $ASEG_nii"
-CREATE_WM_MASK_11="fslmaths $ASEG_nii -thr 77 -uthr 77 -dilM -bin $FREESURFER_WMH"
-CREATE_WM_MASK_12="fslmaths $total_mask -sub $FREESURFER_WMH -bin $total_mask_new"
-# -> -> -> now follows the QIT command, see below in execute
-THRESHOLD_VM="fslmaths $vesselness_map_T1 -thr 0.0023 -bin $vesselness_map_T1_filtered"
-FILTER_VM="fslmaths $vesselness_map_T1_filtered -sub $wmh_mask -thr 1 -bin $vesselness_map_T1_filtered"
-CLUSTER_VM="cluster --in=$vesselness_map_T1_filtered --thresh=0.1 --connectivity=6 --osize=$vesselness_map_T1_filtered_sized"
-THRESHOLD_CLUSTER_VM="fslmaths $vesselness_map_T1_filtered_sized -thr 5 -bin $vesselness_map_T1_filtered_sized"
+    CONFIG_FILE=$CODE_DIR/pipelines/$PIPELINE/pvs_config.m
 
-# Execute
-## 1. PART COMMANDS
-$singularity_freesurfer /bin/bash -c "$CREATE_WM_MASK_1; $CREATE_WM_MASK_2"
-$singularity_fsl /bin/bash -c "$CREATE_WM_MASK_11; $CREATE_WM_MASK_12"
-$singularity_mrtrix /bin/bash -c "$DENOISING"
-## QIT
-qitdir=/work/bax0929/software/qit-build-linux-latest
-export qitdir
-PATH=${qitdir}/bin:${PATH}
-export qitdir PATH
-qit VolumeFilterFrangi --input $corrected_T1 --mask $total_mask_new --dark --output $vesselness_map_T1
-# 2. PART COMMANDS
-$singularity_fsl /bin/bash -c "$THRESHOLD_VM; $FILTER_VM; $CLUSTER_VM; $THRESHOLD_CLUSTER_VM"
+    # Define command
+    ################
+
+    CMD_SEGMENTATION="$apptainer_pvsseg ConfigScript $CONFIG_FILE SubjectID $1 SessionID $SESSION"
+
+    # Execute command
+    #################
+    
+    eval $CMD_SEGMENTATION
+
+    # 2. Postprocessing
+    ###################################################################################################################
+
+    # Define inputs
+    ###############
+
+    MANUAL_MASK=$ENV_DIR/standard/pvsseg_manual_mask_aqueduct_posterior_ventricles.nii.gz
+    MASK1=$PVS_DIR/${1}_ses-${SESSION}_PVS_LeftBG_NAWM.nii.gz
+    MASK2=$PVS_DIR/${1}_ses-${SESSION}_PVS_LeftCSO_NAWM.nii.gz
+    MASK3=$PVS_DIR/${1}_ses-${SESSION}_PVS_Midbrain_NAWM.nii.gz
+    MASK4=$PVS_DIR/${1}_ses-${SESSION}_PVS_RightBG_NAWM.nii.gz
+    MASK5=$PVS_DIR/${1}_ses-${SESSION}_PVS_RightCSO_NAWM.nii.gz
+    
+    MNI_TEMPLATE=$ENV_DIR/standard/tpl-MNI152NLin2009cAsym_res-01_${ORIG_SPACE}.nii.gz
+    ANAT_TO_MNI_WARP=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_from-${ORIG_SPACE}_to-MNI152NLin2009cAsym_mode-image_xfm.h5
+    ANAT=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-preproc_${ORIG_SPACE}.nii.gz
+    MNI_TO_ANAT_WARP=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_from-MNI152NLin2009cAsym_to-${ORIG_SPACE}_mode-image_xfm.h5
+
+    # Define outputs
+    ################
+
+    MASK1_THRESH=$PVS_DIR/${1}_ses-${SESSION}_space-${ORIG_SPACE}_label-leftbg_desc-pvs_mask.nii.gz
+    MASK2_THRESH=$PVS_DIR/${1}_ses-${SESSION}_space-${ORIG_SPACE}_label-leftcso_desc-pvs_mask.nii.gz
+    MASK3_THRESH=$PVS_DIR/${1}_ses-${SESSION}_space-${ORIG_SPACE}_label-midbrain_desc-pvs_mask.nii.gz
+    MASK4_THRESH=$PVS_DIR/${1}_ses-${SESSION}_space-${ORIG_SPACE}_label-rightbg_desc-pvs_mask.nii.gz
+    MASK5_THRESH=$PVS_DIR/${1}_ses-${SESSION}_space-${ORIG_SPACE}_label-rightcso_desc-pvs_mask.nii.gz
+    SEGMENTATION_PVS_CSO=$PVS_DIR/${1}_ses-${SESSION}_space-${ORIG_SPACE}_label-cso_desc-pvs_mask.nii.gz
+    SEGMENTATION_PVS_Midbrain=$PVS_DIR/${1}_ses-${SESSION}_space-${ORIG_SPACE}_label-midbrain_desc-pvs_mask.nii.gz
+    SEGMENTATION_PVS_BG=$PVS_DIR/${1}_ses-${SESSION}_space-${ORIG_SPACE}_label-bg_desc-pvs_mask.nii.gz
+    SEGMENTATION_PVS=$PVS_DIR/${1}_ses-${SESSION}_space-${ORIG_SPACE}_desc-pvs_mask.nii.gz
+    SEGMENTATION_PVS_MNI=$PVS_DIR/${1}_ses-${SESSION}_space-MNI152NLin2009cAsym_desc-pvs_mask.nii.gz
+    MANUAL_MASK_INDIVIDUAL=$PVS_DIR/${1}_ses-${SESSION}_space-${ORIG_SPACE}_desc-aqueductposteriorventricles_desc-manual_mask.nii.gz
+
+    PVS_vol=$PVS_DIR/${1}_ses-${SESSION}_pvsvolume.csv
+    PVS_count=$PVS_DIR/${1}_ses-${SESSION}_pvscount.csv
+    PVS_vol_midbrain=$PVS_DIR/${1}_ses-${SESSION}_desc-midbrain_pvsvolume.csv
+    PVS_count_midbrain=$PVS_DIR/${1}_ses-${SESSION}_desc-midbrain_pvscount.csv
+    PVS_vol_cso=$PVS_DIR/${1}_ses-${SESSION}_desc-cso_pvsvolume.csv
+    PVS_count_cso=$PVS_DIR/${1}_ses-${SESSION}_desc-cso_pvscount.csv
+    PVS_vol_bg=$PVS_DIR/${1}_ses-${SESSION}_desc-bg_pvsvolume.csv
+    PVS_count_bg=$PVS_DIR/${1}_ses-${SESSION}_desc-bg_pvscount.csv
+    threshold=$PVS_DIR/${1}_ses-${SESSION}_thresh.csv
+
+    # Define commands
+    #################
+
+    CMD_REGISTER_MANUAL_MASK="antsApplyTransforms -d 3 -i $MANUAL_MASK -r $ANAT -t $MNI_TO_ANAT_WARP -n NearestNeighbor -o $MANUAL_MASK_INDIVIDUAL"
+    $apptainer_fsl /bin/bash -c "$(echo fslstats $MASK1 -r) > $threshold"
+    CMD_THRESH_MASK_1="fslmaths $MASK1 -sub $(cat $threshold | sed 's/\s.*$//') -bin $MASK1_THRESH"
+    CMD_THRESH_MASK_2="fslmaths $MASK2 -sub $(cat $threshold | sed 's/\s.*$//') -bin $MASK2_THRESH"
+    CMD_THRESH_MASK_3="fslmaths $MASK3 -sub $(cat $threshold | sed 's/\s.*$//') -bin $MASK3_THRESH"
+    CMD_THRESH_MASK_4="fslmaths $MASK4 -sub $(cat $threshold | sed 's/\s.*$//') -bin $MASK4_THRESH"
+    CMD_THRESH_MASK_5="fslmaths $MASK5 -sub $(cat $threshold | sed 's/\s.*$//') -bin $MASK5_THRESH"
+    CMD_ADD_ALL_MASKS="fslmaths $MASK1_THRESH -add $MASK2_THRESH -add $MASK3_THRESH -add $MASK4_THRESH -add $MASK5_THRESH -bin $SEGMENTATION_PVS"
+    CMD_EXCLUDE_MANUALMASK="fslmaths $SEGMENTATION_PVS -sub $MANUAL_MASK_INDIVIDUAL -thr 0 -bin $SEGMENTATION_PVS"
+    CMD_EXCLUDE_MANUAL_MIDBRAIN="fslmaths $MASK3_THRESH -sub $MANUAL_MASK_INDIVIDUAL -thr 0 -bin $SEGMENTATION_PVS_Midbrain"
+    CMD_EXCLUDE_MANUAL_CSO="fslmaths $MASK2_THRESH -add $MASK5_THRESH -sub $MANUAL_MASK_INDIVIDUAL -thr 0 -bin $SEGMENTATION_PVS_CSO"
+    CMD_EXCLUDE_MANUAL_BG="fslmaths $MASK1_THRESH -add $MASK4_THRESH -sub $MANUAL_MASK_INDIVIDUAL -thr 0 -bin $SEGMENTATION_PVS_BG"
+    CMD_SEGMENTATION_TO_MNI="antsApplyTransforms -d 3 -i $SEGMENTATION_PVS -r $MNI_TEMPLATE -t $ANAT_TO_MNI_WARP -n NearestNeighbor -o $SEGMENTATION_PVS_MNI"
+
+    # Execute commands
+    ##################
+
+    $apptainer_ants /bin/bash -c "$CMD_REGISTER_MANUAL_MASK"
+    $apptainer_fsl /bin/bash -c "$CMD_THRESH_MASK_1; $CMD_THRESH_MASK_2; $CMD_THRESH_MASK_3; $CMD_THRESH_MASK_4; $CMD_THRESH_MASK_5; $CMD_ADD_ALL_MASKS; $CMD_EXCLUDE_MANUALMASK; $CMD_EXCLUDE_MANUAL_MIDBRAIN; $CMD_EXCLUDE_MANUAL_CSO; $CMD_EXCLUDE_MANUAL_BG"
+    #rm $threshold
+    $apptainer_ants /bin/bash -c "$CMD_SEGMENTATION_TO_MNI"
+
+    $apptainer_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS -V) > $PVS_vol"
+    [ ! -f $SEGMENTATION_PVS ] && echo "na na" > $PVS_vol
+    $apptainer_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_Midbrain -V) > $PVS_vol_midbrain"
+    [ ! -f $SEGMENTATION_PVS_Midbrain ] && echo "na na" > $PVS_vol_midbrain
+    $apptainer_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_CSO -V) > $PVS_vol_cso"
+    [ ! -f $SEGMENTATION_PVS_CSO ] && echo "na na" > $PVS_vol_cso
+    $apptainer_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION_PVS_BG -V) > $PVS_vol_bg"
+    [ ! -f $SEGMENTATION_PVS_BG ] && echo "na na" > $PVS_vol_bg
+
+    $apptainer_fsl fsl-cluster --in=$SEGMENTATION_PVS --thresh=1 > $PVS_count
+    echo $(cat $PVS_count | head -2 | tail -1 | awk '{print $1}') > $PVS_count
+    [ ! -f $SEGMENTATION_PVS ] && echo "na na" > $PVS_count
+    [ $(cat $PVS_count) == "Cluster" ] && echo "0" > $PVS_count
+
+    $apptainer_fsl fsl-cluster --in=$SEGMENTATION_PVS_Midbrain --thresh=1 > $PVS_count_midbrain
+    echo $(cat $PVS_count_midbrain | head -2 | tail -1 | awk '{print $1}') > $PVS_count_midbrain
+    [ ! -f $SEGMENTATION_PVS_Midbrain ] && echo "na na" > $PVS_count_midbrain
+    [ $(cat $PVS_count_midbrain) == "Cluster" ] && echo "0" > $PVS_count_midbrain
+
+    $apptainer_fsl fsl-cluster --in=$SEGMENTATION_PVS_CSO --thresh=1 > $PVS_count_cso
+    echo $(cat $PVS_count_cso | head -2 | tail -1 | awk '{print $1}') > $PVS_count_cso
+    [ ! -f $SEGMENTATION_PVS_CSO ] && echo "na na" > $PVS_count_cso
+    [ $(cat $PVS_count_cso) == "Cluster" ] && echo "0" > $PVS_count_cso
+
+    $apptainer_fsl fsl-cluster --in=$SEGMENTATION_PVS_BG --thresh=1 > $PVS_count_bg
+    echo $(cat $PVS_count_bg | head -2 | tail -1 | awk '{print $1}') > $PVS_count_bg
+    [ ! -f $SEGMENTATION_PVS_BG ] && echo "na na" > $PVS_count_bg
+    [ $(cat $PVS_count_bg) == "Cluster" ] && echo "0" > $PVS_count_bg
+
+elif [ $ANALYSIS_LEVEL = "group" ]; then
+
+    ###############################
+    # Part B - summary statistics #
+    ###############################
+
+    # Set up output directory
+    #########################
+    
+    PVS_DIR=$DATA_DIR/$PIPELINE/$1/ses-${SESSION}/anat/pvs 
+    DERIVATIVE_DIR=$DATA_DIR/$PIPELINE/derivatives/ses-${SESSION}/anat
+    [ ! -d $DERIVATIVE_DIR ] && mkdir -p $DERIVATIVE_DIR
+
+    # Set up output file
+    #####################
+
+    echo "sub_id pvs_count pvs_volume bg_pvs_count bg_pvs_volume cso_pvs_count cso_pvs_volume midbrain_pvs_count midbrain_pvs_volume" > $DERIVATIVE_DIR/pvs_ses-${SESSION}_summary.csv
+
+    for sub in $sublist; do  
+
+        # Set subject-specific output directories
+        PVS_DIR=$DATA_DIR/$PIPELINE/$sub/ses-${SESSION}/anat/pvs
+
+        ###################################################################################################################
+        # Pipeline execution
+        ###################################################################################################################
+
+        if [ -f $PVS_DIR/${sub}_ses-${SESSION}_pvscount.csv ]; then 
+
+            echo $sub | tr '\n' ' ' >> $DERIVATIVE_DIR/pvs_ses-${SESSION}_summary.csv
+            cat $PVS_DIR/${sub}_ses-${SESSION}_pvscount.csv | awk '{print $1}' | tr '\n' ' ' >> $DERIVATIVE_DIR/pvs_ses-${SESSION}_summary.csv
+            cat $PVS_DIR/${sub}_ses-${SESSION}_pvsvolume.csv | awk '{print $2}' | tr '\n' ' ' >> $DERIVATIVE_DIR/pvs_ses-${SESSION}_summary.csv 
+            cat $PVS_DIR/${sub}_ses-${SESSION}_desc-bg_pvscount.csv | awk '{print $1}' | tr '\n' ' ' >> $DERIVATIVE_DIR/pvs_ses-${SESSION}_summary.csv 
+            cat $PVS_DIR/${sub}_ses-${SESSION}_desc-bg_pvsvolume.csv | awk '{print $2}' | tr '\n' ' ' >> $DERIVATIVE_DIR/pvs_ses-${SESSION}_summary.csv 
+            cat $PVS_DIR/${sub}_ses-${SESSION}_desc-cso_pvscount.csv | awk '{print $1}' | tr '\n' ' ' >> $DERIVATIVE_DIR/pvs_ses-${SESSION}_summary.csv 
+            cat $PVS_DIR/${sub}_ses-${SESSION}_desc-cso_pvsvolume.csv | awk '{print $2}' | tr '\n' ' ' >> $DERIVATIVE_DIR/pvs_ses-${SESSION}_summary.csv 
+            cat $PVS_DIR/${sub}_ses-${SESSION}_desc-midbrain_pvscount.csv | awk '{print $1}' | tr '\n' ' ' >> $DERIVATIVE_DIR/pvs_ses-${SESSION}_summary.csv 
+            cat $PVS_DIR/${sub}_ses-${SESSION}_desc-midbrain_pvsvolume.csv | awk '{print $2}' >> $DERIVATIVE_DIR/pvs_ses-${SESSION}_summary.csv 
+
+        fi
+        
+    done
+fi
