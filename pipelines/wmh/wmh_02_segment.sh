@@ -12,7 +12,6 @@
 #       - fsl-6.0.7.13.sif                                                                                        #      
 #       - ants-2.5.4.sif                                                                                          #
 #       - freesurfer-7.4.1.sif                                                                                    #
-#       - antsrnet.sif                                                                                            #
 #                                                                                                                 #
 ###################################################################################################################
 
@@ -49,15 +48,6 @@ apptainer_fsl="apptainer run --cleanenv --userns \
     -B $TMP_OUT \
     $ENV_DIR/$container_fsl" 
 
-container_antsrnet=antsrnet
-apptainer_antsrnet="apptainer run --cleanenv --userns \
-    -B $PROJ_DIR \
-    -B $(readlink -f $ENV_DIR) \
-    -B $TMP_DIR/:/tmp \
-    -B $TMP_IN \
-    -B $TMP_OUT \
-    $ENV_DIR/$container_antsrnet" 
-
 # Set output directories
 OUT_DIR=$TMP_OUT/$PIPELINE/$1/ses-${SESSION}/anat/
 [ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
@@ -83,8 +73,6 @@ if [ -d $DATA_DIR/fmriprep/$1 ]; then
     cp -v $T1_MASK $TMP_IN/fmriprep/$1/ses-${SESSION}/anat/
     cp -v $T1_TO_MNI_WARP $TMP_IN/fmriprep/$1/ses-${SESSION}/anat/
 fi
-
-[ -d $TMP_OUT ] && mkdir -p $OUT_DIR
 
 ###################################################################################################################
 #                                               Pipeline execution                                                #                              
@@ -499,3 +487,6 @@ elif [ $ALGORITHM == "LOCATE" ]; then
     fi
 
 fi
+
+# Copy outputs to $DATA_DIR
+cp -ruvf $TMP_OUT/$PIPELINE $DATA_DIR
