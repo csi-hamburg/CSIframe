@@ -592,8 +592,9 @@ elif [ $PIPELINE == "wmh" ];then
 	export SLURM_CPUS_PER_TASK=32
 	export ANALYSIS_LEVEL=subject
 	partition_default="std"
-
-	echo "Which ANALYSIS PART do you want to perform? currently available are: 01_prep / 02_segment / 03_combine / 04_postproc_define_subs / 04_postproc / eval / determine_thresh / threshold_finder_01 / threshold_finder_02 "
+	
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
+	echo "Which ANALYSIS PART do you want to perform? currently available are: 01_prep / 02_segment / 04_postproc_define_subs / 04_postproc / eval / determine_thresh / threshold_finder_01 / threshold_finder_02 "
 	read WMH_LEVEL
 	export PIPELINE_SUFFIX=_${WMH_LEVEL}
 
@@ -605,24 +606,27 @@ elif [ $PIPELINE == "wmh" ];then
 		export ANALYSIS_LEVEL=subject
 
 	elif [ $WMH_LEVEL == "02_segment" ]; then
-	
-		echo "Which segmentation algorithm do you want to use? (bianca / locate)"
-		echo "Note:'locate' needs 'bianca' output."
+
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
+		echo "Which segmentation algorithm do you want to use? (BIANCA / LOCATE)"
+		echo "Note:'LOCATE' needs 'BIANCA' output."
 		read ALGORITHM; export ALGORITHM
 
-		if [ $ALGORITHM == "bianca" ]; then
-
-			echo "Because the data are training data, no bias correction happened. Automatically set to NO."
+		if [ $ALGORITHM == "BIANCA" ]; then
+			
+			echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
+			echo "Because the data are training data, no bias correction happened. Bias correction is automatically set to NO."
 			BIASCORR=n; export BIASCORR
 
-			echo "Do you want to train, validate or test? ( training / validation / testing ) \
-			Note: for training, you need manual masks. For testing and validation you need a classifier created during training."
+			echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
+			echo "Do you want to train, validate or test? ( training / validation / testing )"
+			echo "Note: for training, you need manual masks. For testing and validation you need a classifier created during training."
 			read BIANCA_LEVEL; export BIANCA_LEVEL
 
 			[ $BIANCA_LEVEL == training ] && export SUBJS_PER_NODE=$subj_array_length
 			[ $BIANCA_LEVEL == training ] && export SLURM_CPUS_PER_TASK=32
 			[ $BIANCA_LEVEL == training ] && export ANALYSIS_LEVEL=group
-			[ $BIANCA_LEVEL == training ] && batch_time_default="24:00:00"
+			[ $BIANCA_LEVEL == training ] && batch_time_default="12:00:00"
 
 			[ $BIANCA_LEVEL == validation ] && export SUBJS_PER_NODE=16
 			[ $BIANCA_LEVEL == validation ] && export SLURM_CPUS_PER_TASK=32
@@ -630,19 +634,20 @@ elif [ $PIPELINE == "wmh" ];then
 			[ $BIANCA_LEVEL == validation ] && batch_time_default="05:30:00"
 
 			[ $BIANCA_LEVEL == testing ] && export SUBJS_PER_NODE=16
-			[ $BIANCA_LEVEL == testing ] && export SLURM_CPUS_PER_TASK=32
+			[ $BIANCA_LEVEL == testing ] && export SLURM_CPUS_PER_TASK=64
 			[ $BIANCA_LEVEL == testing ] && export ANALYSIS_LEVEL=subject
 			[ $BIANCA_LEVEL == testing ] && batch_time_default="05:30:00"
 
-		elif [ $ALGORITHM == "locate" ]; then
+		elif [ $ALGORITHM == "LOCATE" ]; then
 
-			batch_time_default="00:30:00"
-			echo "Because the data are training data, no bias correction happened. Automatically set to NO."
+			echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
+			echo "Because the data are training data, no bias correction happened. Bias correction is automatically set to NO."
 			BIASCORR=n; export BIASCORR
 
-			echo "Do you want to train, validate or test? ( training / validation / testing ) \
-			Note: for training, you need manual masks. For testing and validation you need a classifier created during training.
-			In addition: please run training before you start validation or testing."
+			echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
+			echo "Do you want to train, validate or test? ( training / validation / testing )"
+			echo "Note: for training, you need manual masks. For testing and validation you need a classifier created during training."
+			echo "In addition: please run training before you start validation or testing."
 			read LOCATE_LEVEL; export LOCATE_LEVEL
 
 			[ $LOCATE_LEVEL == training ] && export SUBJS_PER_NODE=$subj_array_length
@@ -651,29 +656,16 @@ elif [ $PIPELINE == "wmh" ];then
 			[ $LOCATE_LEVEL == training ] && batch_time_default="2-00:00:00"
 
 			[ $LOCATE_LEVEL == validation ] && export SUBJS_PER_NODE=$subj_array_length
-			[ $LOCATE_LEVEL == validation ] && export SLURM_CPUS_PER_TASK=32
+			[ $LOCATE_LEVEL == validation ] && export SLURM_CPUS_PER_TASK=64
 			[ $LOCATE_LEVEL == validation ] && export ANALYSIS_LEVEL=group
 			[ $LOCATE_LEVEL == validation ] && batch_time_default="2-00:00:00"
 			
 			[ $LOCATE_LEVEL == testing ] && export SUBJS_PER_NODE=16
-			[ $LOCATE_LEVEL == testing ] && export SLURM_CPUS_PER_TASK=32
+			[ $LOCATE_LEVEL == testing ] && export SLURM_CPUS_PER_TASK=64
 			[ $LOCATE_LEVEL == testing ] && export ANALYSIS_LEVEL=subject
 			[ $LOCATE_LEVEL == testing ] && batch_time_default="05:00:00"
 
 		fi
-
-	elif [ $WMH_LEVEL == "03_combine" ]; then
-
-		batch_time_default="00:02:00"
-	
-		echo "this script combines the segmented masks of different algorithms."
-		echo "which is the first algorithm? currently available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
-		read ALGORITHM1; export ALGORITHM1
-
-		echo "which is the second algorithm? please do not name the same algorithm twice. available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
-		read ALGORITHM2; export ALGORITHM2
-		
-		[ $ALGORITHM1 == $ALGORITHM2 ] && echo "$ALGORITHM1 == $ALGORITHM2 ... stupid" && exit 1
 
 	elif [ $WMH_LEVEL == "04_postproc_define_subs" ]; then 
 
@@ -920,10 +912,10 @@ elif [ $PIPELINE == "pvs" ] ;then
 		read ORIG_SPACE; export ORIG_SPACE
 
 		export ANALYSIS_LEVEL=subject
-		export SLURM_CPUS_PER_TASK=32
+		export SLURM_CPUS_PER_TASK=64
 		export SUBJS_PER_NODE=16
 		partition_default="std"
-		batch_time_default="01:00:00"
+		batch_time_default="06:00:00"
 
 	elif [ $ANALYSIS_LEVEL == group ];then
 
