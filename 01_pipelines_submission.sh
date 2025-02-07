@@ -271,11 +271,11 @@ elif [ $PIPELINE == "freesurfer" ];then
 elif [ $PIPELINE == "mriqc" ];then
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
-	echo "Choose between participant and group level analysis (participant/group)." 
+	echo "Choose between subject and group level analysis (subject/group)." 
 	echo "Please make sure participant level is finished before running group level analysis."
-	read MRIQC_LEVEL; export MRIQC_LEVEL
+	read ANALYSIS_LEVEL; export ANALYSIS_LEVEL
 
-	if [ $MRIQC_LEVEL == "participant" ]; then
+	if [ $ANALYSIS_LEVEL == "subject" ]; then
 
 		export SUBJS_PER_NODE=4
 		export SLURM_CPUS_PER_TASK=32
@@ -283,7 +283,7 @@ elif [ $PIPELINE == "mriqc" ];then
 		batch_time_default="24:00:00"
 		partition_default="std"
 
-	elif [ $MRIQC_LEVEL == "group" ]; then
+	elif [ $ANALYSIS_LEVEL == "group" ]; then
 
 		export SUBJS_PER_NODE=$subj_array_length
 		export SLURM_CPUS_PER_TASK=32
@@ -351,11 +351,27 @@ elif [ $PIPELINE == "xcpengine" ];then
 
 elif [ $PIPELINE == "hippunfold" ];then
 	
-	export SUBJS_PER_NODE=16
-	export SLURM_CPUS_PER_TASK=32
-	export ANALYSIS_LEVEL=subject
-	batch_time_default="04:00:00"
-	partition_default="std"
+    echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
+    echo "Please choose the analysis level (subject, group). Default is 'subject'."
+    read ANALYSIS_LEVEL; export ANALYSIS_LEVEL
+
+    [ -z "$ANALYSIS_LEVEL" ] && export ANALYSIS_LEVEL="subject"
+	
+	if [ $ANALYSIS_LEVEL == "subject" ]; then
+	
+		export SUBJS_PER_NODE=4
+		export SLURM_CPUS_PER_TASK=32
+		batch_time_default="04:00:00"
+		partition_default="std"
+	
+	elif [ $ANALYSIS_LEVEL == "group" ]; then
+		
+		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=32
+		batch_time_default="02:00:00"
+		partition_default="std"
+	
+	fi
 
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
 	echo "Please enter which T1w shall serve as input to Hippunfold (raw_bids, qsiprep, fmriprep). Default is 'raw_bids'"
@@ -373,7 +389,6 @@ elif [ $PIPELINE == "hippunfold" ];then
 	echo "Choose additional arguments you want to provide to hippunfold call; e.g. '--skip_preproc'"
 	read MODIFIER; export MODIFIER
 	
-
 elif [ $PIPELINE == "freewater" ];then
 
 	export SUBJS_PER_NODE=8
