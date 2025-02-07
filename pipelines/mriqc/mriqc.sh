@@ -7,7 +7,7 @@
 #   [pipelines which need to be run first]                                                                        #
 #       - none                                                                                                    #
 #   [container]                                                                                                   #
-#       - mriqc-0.16.1.sif                                                                                        #
+#       - mriqc-24.0.2.sif                                                                                        #
 ###################################################################################################################
 
 # Get verbose outputs
@@ -23,9 +23,9 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 # Pipeline-specific environment
 ##################################
 
-# Singularity container version and command
-container_mriqc=mriqc-0.16.1
-singularity_mriqc="singularity run --cleanenv --userns \
+# Apptainer container version and command
+container_mriqc=mriqc-24.0.2.sif
+apptainer_mriqc="apptainer run --cleanenv --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR/:/tmp \
@@ -34,35 +34,37 @@ singularity_mriqc="singularity run --cleanenv --userns \
     $ENV_DIR/$container_mriqc" 
 
 
-if [ $MRIQC_LEVEL == "participant" ]; then
+if [ $ANALYSIS_LEVEL == "subject" ]; then
 
-    TMP_IN=$TMP_DIR/input
-    [ ! -d $TMP_IN ] && mkdir -p $TMP_IN && cp -rf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
+    cp -rf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN 
 
     CMD="
-    $singularity_mriqc \
+    $apptainer_mriqc \
         /tmp_in data/mriqc participant \
-        -w /tmp \
+        --work-dir /tmp \
         --participant-label $1 \
         --modalities T1w T2w bold \
         --no-sub \
-        --mem_gb $MEM_GB \
-        --ica \
+        --notrack \
+        --mem-gb $MEM_GB \
         --float32 \
-        --nprocs $SLURM_CPUS_PER_TASK"
+        --nprocs $GNU_CPUS_PER_TASK \
+        --omp-nthreads $OMP_NTHREADS"
     $CMD
 
-elif [ $MRIQC_LEVEL == "group" ]; then
+elif [ $ANALYSIS_LEVEL == "group" ]; then
+
     CMD="
-    $singularity_mriqc \
+    $apptainer_mriqc \
         data/raw_bids data/mriqc group \
-        -w /tmp \
+        --work-dir /tmp \
         --modalities T1w T2w bold \
         --no-sub \
-        --mem_gb $MEM_GB \
-        --ica \
+        --notrack \
+        --mem-gb $MEM_GB \
         --float32 \
-        --nprocs $SLURM_CPUS_PER_TASK"
+        --nprocs $GNU_CPUS_PER_TASK \
+        --omp-nthreads $OMP_NTHREADS"
     $CMD
 
 fi
