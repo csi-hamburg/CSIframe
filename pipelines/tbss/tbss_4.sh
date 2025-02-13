@@ -16,10 +16,10 @@
 #       - tbss_2                                                              #
 #       - tbss_3                                                              #
 #   [containers and code]                                                     #
-#       - fsl-6.0.3                                                           #
+#       - fsl-6.0.7.13.sif                                                    #
 #       - stats.py                                                            #
 #       - report.py                                                           #
-#       - csi-miniconda                                                       #  
+#       - csi-miniconda.sif                                                   #  
 ###############################################################################
 
 # Get verbose outputs
@@ -35,10 +35,10 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 # Setup environment
 ###################
 
-module load singularity
+module load apptainer
 
-container_fsl=fsl-6.0.3
-singularity_fsl="singularity run --cleanenv --no-home --userns \
+container_fsl=fsl-6.0.7.13.sif
+apptainer_fsl="apptainer run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR \
@@ -46,8 +46,8 @@ singularity_fsl="singularity run --cleanenv --no-home --userns \
     -B $TMP_OUT \
     $ENV_DIR/$container_fsl"
 
-container_miniconda=miniconda-csi
-singularity_miniconda="singularity run --cleanenv --no-home --userns \
+container_miniconda=miniconda-csi.sif
+apptainer_miniconda="apptainer run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR \
@@ -199,7 +199,7 @@ for MOD in $(echo $MODALITIES); do
                 
                 # Execute commands for batch
 
-                $singularity_fsl $CMD_MERGE_INTERMEDIATE
+                $apptainer_fsl $CMD_MERGE_INTERMEDIATE
 
                 # Increase START by subj_per_batch
 
@@ -216,7 +216,7 @@ for MOD in $(echo $MODALITIES); do
 
             # Command
 
-            $singularity_fsl fslmerge \
+            $apptainer_fsl fslmerge \
                 -t $MOD_SKEL_MERGED \
                 $TMP_OUT/batch-*_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
             
@@ -224,7 +224,7 @@ for MOD in $(echo $MODALITIES); do
 
             MOD_SKEL_MERGED=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
 
-            $singularity_fsl fslmerge \
+            $apptainer_fsl fslmerge \
                 -t $MOD_SKEL_MERGED \
                 $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*desc-skeleton*${MOD}.nii.gz
         
@@ -288,7 +288,7 @@ for MOD in $(echo $MODALITIES); do
                 
                 # Execute commands for batch
 
-                $singularity_fsl $CMD_MERGE_INTERMEDIATE
+                $apptainer_fsl $CMD_MERGE_INTERMEDIATE
 
                 # Increase START by subj_per_batch
 
@@ -305,13 +305,13 @@ for MOD in $(echo $MODALITIES); do
 
             # Command
 
-            $singularity_fsl fslmerge \
+            $apptainer_fsl fslmerge \
                 -t $MOD_SKEL_MERGED \
                 $TMP_OUT/batch-*_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
             
         else
 
-            $singularity_fsl fslmerge \
+            $apptainer_fsl fslmerge \
                 -t $MOD_SKEL_MERGED \
                 $(cat $MERGE_LIST_MOD)
         fi
@@ -403,7 +403,7 @@ if [ $TBSS_PIPELINE == "fixel" ]; then
         
         # Command 
 
-        $singularity_miniconda python $PIPELINE_DIR/stats.py "" $MOD $CSV $HISTFIG $BOXFIG
+        $apptainer_miniconda python $PIPELINE_DIR/stats.py "" $MOD $CSV $HISTFIG $BOXFIG
 
     done
 
@@ -435,7 +435,7 @@ if [ $TBSS_PIPELINE == "fixel" ]; then
 
         REPORT=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_${MODALITY}_report.html
 
-        $singularity_miniconda python $PIPELINE_DIR/report.py $TBSS_DIR $SESSION $SPACE $MODALITY $HISTFIG $BOXFIG $REPORT
+        $apptainer_miniconda python $PIPELINE_DIR/report.py $TBSS_DIR $SESSION $SPACE $MODALITY $HISTFIG $BOXFIG $REPORT
 
     done
 
@@ -457,7 +457,7 @@ elif [ $TBSS_PIPELINE == "mni" ]; then
 
         # Command
 
-        $singularity_miniconda python $PIPELINE_DIR/stats.py $TBSS_PIPELINE $MOD $CSV $HISTFIG $BOXFIG
+        $apptainer_miniconda python $PIPELINE_DIR/stats.py $TBSS_PIPELINE $MOD $CSV $HISTFIG $BOXFIG
 
     done
 
@@ -485,7 +485,7 @@ elif [ $TBSS_PIPELINE == "mni" ]; then
 
         REPORT=$DER_DIR/sub-${TBSS_MERGE_LIST}_ses-${SESSION}_space-${SPACE}_${MODALITY}_report.html
 
-        $singularity_miniconda python $PIPELINE_DIR/report.py $TBSS_DIR $SESSION $SPACE $MODALITY $HISTFIG $BOXFIG $REPORT
+        $apptainer_miniconda python $PIPELINE_DIR/report.py $TBSS_DIR $SESSION $SPACE $MODALITY $HISTFIG $BOXFIG $REPORT
 
     done
 

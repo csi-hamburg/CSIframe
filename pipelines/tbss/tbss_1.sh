@@ -13,8 +13,8 @@
 #       - freewater                                                           #
 #       - fba (only for fixel branch)                                         #
 #   [containers]                                                              #
-#       - fsl-6.0.3                                                           #  
-#       - mrtrix3-3.0.2 (only for fixel branch)                               #
+#       - fsl-6.0.7.13.sif                                                    #  
+#       - ants-2.5.4.sif                                                      #
 ###############################################################################
 
 # Get verbose outputs
@@ -30,20 +30,20 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 # Setup environment
 ###################
 
-module load singularity
-container_fsl=fsl-6.0.3
-container_mrtrix3=mrtrix3-3.0.2      
-export SINGULARITYENV_MRTRIX_TMPFILE_DIR=$TMP_DIR
+module load apptainer
+container_fsl=fsl-6.0.7.13.sif
+container_ants=ants-2.5.4.sif     
+export APPTAINERENV_MRTRIX_TMPFILE_DIR=$TMP_DIR
 
-singularity_mrtrix3="singularity run --cleanenv --no-home --userns \
+apptainer_ants="apptainer run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR/:/tmp \
     -B $TMP_IN:/tmp_in \
     -B $TMP_OUT:/tmp_out \
-    $ENV_DIR/$container_mrtrix3" 
+    $ENV_DIR/$container_ants" 
 
-singularity_fsl="singularity run --cleanenv --no-home --userns \
+apptainer_fsl="apptainer run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR/:/tmp \
@@ -184,7 +184,6 @@ if [ $TBSS_PIPELINE == "mni" ]; then
             --convergence [ 10000x111110x11110x100, 1e-08, 10 ] \
             --smoothing-sigmas 3.0x2.0x1.0x0.0vox \
             --shrink-factors 8x4x2x1 \
-            --use-estimate-learning-rate-once 1 \
             --use-histogram-matching 1 \
             --transform Affine[ 0.1 ] \
             --metric MI[ $FA_MNI_TARGET, $FA, 1, 32, Regular, 0.25 ] \
@@ -198,7 +197,6 @@ if [ $TBSS_PIPELINE == "mni" ]; then
             --convergence [ 100x50x30x20, 1e-08, 10 ] \
             --smoothing-sigmas 3.0x2.0x1.0x0.0vox \
             --shrink-factors 8x4x2x1 \
-            --use-estimate-learning-rate-once 1 \
             --use-histogram-matching 1 -v \
             --winsorize-image-intensities [ 0.005, 0.995 ] \
             --write-composite-transform 1
@@ -270,15 +268,15 @@ if [ $TBSS_PIPELINE == "mni" ]; then
 
         # Execution
     
-        $singularity_mrtrix3 $CMD_FA2MNI
-        $singularity_mrtrix3 $CMD_FAt2MNI
-        $singularity_mrtrix3 $CMD_AD2MNI
-        $singularity_mrtrix3 $CMD_ADt2MNI
-        $singularity_mrtrix3 $CMD_RD2MNI
-        $singularity_mrtrix3 $CMD_RDt2MNI
-        $singularity_mrtrix3 $CMD_MD2MNI
-        $singularity_mrtrix3 $CMD_MDt2MNI
-        $singularity_mrtrix3 $CMD_FW2MNI
+        $apptainer_ants $CMD_FA2MNI
+        $apptainer_ants $CMD_FAt2MNI
+        $apptainer_ants $CMD_AD2MNI
+        $apptainer_ants $CMD_ADt2MNI
+        $apptainer_ants $CMD_RD2MNI
+        $apptainer_ants $CMD_RDt2MNI
+        $apptainer_ants $CMD_MD2MNI
+        $apptainer_ants $CMD_MDt2MNI
+        $apptainer_ants $CMD_FW2MNI
 
         # Erode and zero end slices
         ###########################
@@ -346,11 +344,11 @@ fi
 
 for MOD in $(echo $MODALITIES); do
 
-    X=`$singularity_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim1 | tail -n 1`; let X="$X-2"
-    Y=`$singularity_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim2 | tail -n 1`; let Y="$Y-2"
-    Z=`$singularity_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim3 | tail -n 1`; let Z="$Z-2"
+    X=`$apptainer_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim1 | tail -n 1`; let X="$X-2"
+    Y=`$apptainer_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim2 | tail -n 1`; let Y="$Y-2"
+    Z=`$apptainer_fsl fslval $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} dim3 | tail -n 1`; let Z="$Z-2"
         
-    $singularity_fsl fslmaths \
+    $apptainer_fsl fslmaths \
         $INPUT_DIR/${1}_ses-${SESSION}_space-${SPACE}_${MOD} \
         -min 1 -ero -roi 1 $X 1 $Y 1 $Z 0 1 \
         $TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-eroded_${MOD}

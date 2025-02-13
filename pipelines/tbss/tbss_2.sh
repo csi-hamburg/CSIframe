@@ -14,8 +14,8 @@
 #       - fba (only for fixel branch)                                         #
 #       - tbss_1                                                              #
 #   [container]                                                               #
-#       - fsl-6.0.3                                                           #
-#       - mrtrix3-3.0.2                                                       #  
+#       - fsl-6.0.7.13.sif                                                    #
+#       - mrtrix3-3.0.4.sif                                                   #  
 ###############################################################################
 
 # Get verbose outputs
@@ -31,12 +31,11 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 # Setup environment
 ###################
 
-module load singularity
-container_fsl=fsl-6.0.3     
-container_mrtrix3=mrtrix3-3.0.2
+module load apptainer
+container_fsl=fsl-6.0.7.13.sif     
+container_mrtrix3=mrtrix3-3.0.4.sif
 
-singularity_fsl="singularity run --cleanenv --userns \
-    -B . \
+apptainer_fsl="apptainer run --cleanenv --userns \
     -B $PROJ_DIR \
     -B $SCRATCH_DIR:/tmp \
     -B $(readlink -f $ENV_DIR) \
@@ -45,7 +44,7 @@ singularity_fsl="singularity run --cleanenv --userns \
     -B $TMP_OUT \
     $ENV_DIR/$container_fsl"
 
-singularity_mrtrix3="singularity run --cleanenv --userns \
+apptainer_mrtrix3="apptainer run --cleanenv --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR \
@@ -176,11 +175,11 @@ if [ $subj_array_length -gt 700 ]; then
         
         # Execute commands for batch
 
-        $singularity_fsl $CMD_MERGE_INTERMEDIATE
-        $singularity_fsl $CMD_MAX0_INTERMEDIATE
-        $singularity_fsl $CMD_MAX0_MIN_INTERMEDIATE
-        $singularity_fsl $CMD_BIN_INTERMEDIATE
-        $singularity_mrtrix3 $CMD_SUM
+        $apptainer_fsl $CMD_MERGE_INTERMEDIATE
+        $apptainer_fsl $CMD_MAX0_INTERMEDIATE
+        $apptainer_fsl $CMD_MAX0_MIN_INTERMEDIATE
+        $apptainer_fsl $CMD_BIN_INTERMEDIATE
+        $apptainer_mrtrix3 $CMD_SUM
 
         # Increase START by subj_per_batch
 
@@ -188,7 +187,7 @@ if [ $subj_array_length -gt 700 ]; then
 
         # Add number of subjects to subject count
 
-        subject_count_batch=`$singularity_fsl $CMD_NUM | tail -n 1`
+        subject_count_batch=`$apptainer_fsl $CMD_NUM | tail -n 1`
         export subject_count=$(($subject_count + $subject_count_batch))
 
     done
@@ -222,10 +221,10 @@ if [ $subj_array_length -gt 700 ]; then
 
     # Execute command
 
-    $singularity_fsl $CMD_MERGE_MASK
-    $singularity_fsl $CMD_Tmin_MASK
-    $singularity_mrtrix3 $CMD_FA_SUM
-    $singularity_fsl $CMD_MEAN_FA
+    $apptainer_fsl $CMD_MERGE_MASK
+    $apptainer_fsl $CMD_Tmin_MASK
+    $apptainer_mrtrix3 $CMD_FA_SUM
+    $apptainer_fsl $CMD_MEAN_FA
 
 else
 
@@ -238,7 +237,7 @@ else
 
     FA_MERGED=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-DTINoNeg_FA
 
-    $singularity_fsl fslmerge -t $FA_MERGED $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*_desc-eroded_desc-DTINoNeg_FA.nii.gz
+    $apptainer_fsl fslmerge -t $FA_MERGED $TBSS_DIR/sub-*/ses-${SESSION}/dwi/*_desc-eroded_desc-DTINoNeg_FA.nii.gz
 
     echo ""
     echo "Creating valid mask and mean FA ..."
@@ -259,7 +258,7 @@ else
 
     # Execute command
 
-    $singularity_fsl /bin/bash -c "$CMD_MEAN"
+    $apptainer_fsl /bin/bash -c "$CMD_MEAN"
 
 fi
 
@@ -269,7 +268,7 @@ echo ""
 
 MEAN_FA_SKEL=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-mean_desc-DTINoNeg_FA
 
-$singularity_fsl tbss_skeleton -i $FA_MEAN -o $MEAN_FA_SKEL
+$apptainer_fsl tbss_skeleton -i $FA_MEAN -o $MEAN_FA_SKEL
 
 echo "###################################################################################################"
 echo "# Consider viewing mean_FA_skeleton to check whether the default or set threshold needs changing! #"
@@ -292,7 +291,7 @@ echo ""
 
 SKELETON_MASK=$DER_DIR/sub-all_ses-${SESSION}_space-${SPACE}_desc-skeleton_desc-meanFA_mask
 
-$singularity_fsl fslmaths $MEAN_FA_SKEL -thr $thresh -bin $SKELETON_MASK
+$apptainer_fsl fslmaths $MEAN_FA_SKEL -thr $thresh -bin $SKELETON_MASK
 
 echo ""
 echo "Creating skeleton distancemap ..."
@@ -311,7 +310,7 @@ CMD_DIST="
         -i $SKEL_DIST \
         -o $SKEL_DIST"
 
-$singularity_fsl /bin/bash -c "$CMD_DIST"
+$apptainer_fsl /bin/bash -c "$CMD_DIST"
 
 ########################################################################################
 # Create ROI masks of JHU ICBM-DTI-81 white-matter labels atlas for MNI branch of TBSS #
@@ -327,7 +326,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
         ROI=`sed -n ${index}p $CODE_DIR/pipelines/tbss/JHU-ICBM-LUT.txt | awk '{print $2}'`
 
         # Input atlas
-        ATLAS=/opt/$container_fsl/data/atlases/JHU/JHU-ICBM-labels-1mm.nii.gz
+        ATLAS=/opt/fsl/data/atlases/JHU/JHU-ICBM-labels-1mm.nii.gz
 
         # Output ROI mask
         JHU_ROI=$DER_DIR/JHU/atlas-JHU-ICBM-DTI-81_label-${ROI}.nii.gz
@@ -339,7 +338,7 @@ if [ $TBSS_PIPELINE == "mni" ]; then
             -bin \
             $JHU_ROI"
 
-        $singularity_fsl $CMD_ROI
+        $apptainer_fsl $CMD_ROI
 
     done
 
