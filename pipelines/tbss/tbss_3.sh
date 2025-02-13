@@ -15,9 +15,9 @@
 #       - tbss_1                                                              #
 #       - tbss_2                                                              #
 #   [container and code]                                                      #
-#       - fsl-6.0.3                                                           #
+#       - fsl-6.0.7.13.sif                                                    #
 #       - overlay.py                                                          #
-#       - miniconda-csi                                                       #  
+#       - miniconda-csi.sif                                                   #  
 ###############################################################################
 
 # Get verbose outputs
@@ -36,10 +36,10 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 # Setup environment
 ###################
 
-module load singularity
+module load apptainer
 
-container_fsl=fsl-6.0.3
-singularity_fsl="singularity run --cleanenv --no-home --userns \
+container_fsl=fsl-6.0.7.13.sif
+apptainer_fsl="apptainer run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR \
@@ -47,8 +47,8 @@ singularity_fsl="singularity run --cleanenv --no-home --userns \
     -B $TMP_OUT \
     $ENV_DIR/$container_fsl"
 
-container_miniconda=miniconda-csi
-singularity_miniconda="singularity run --cleanenv --no-home --userns \
+container_miniconda=miniconda-csi.sif
+apptainer_miniconda="apptainer run --cleanenv --no-home --userns \
     -B $PROJ_DIR \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR \
@@ -151,8 +151,8 @@ CMD_PROJ_FA="
     -i $FA_MEAN \
     -p $thresh $SKEL_DIST $ENV_DIR/standard/LowerCingulum_1mm.nii.gz $FA_MASKED $FA_SKEL"
 
-$singularity_fsl $CMD_MASK_FA	
-$singularity_fsl $CMD_PROJ_FA
+$apptainer_fsl $CMD_MASK_FA	
+$apptainer_fsl $CMD_PROJ_FA
 
 # Mask individual preprocessed diffusion metrics maps with mean_FA_mask and project onto FA skeleton based on FA projection
 ###########################################################################################################################
@@ -183,8 +183,8 @@ for MOD in $(echo $MODALITIES); do
             -p $thresh $SKEL_DIST $ENV_DIR/standard/LowerCingulum_1mm.nii.gz $FA_MASKED $MOD_SKEL \
             -a $MOD_MASKED"
         
-    $singularity_fsl $CMD_MASK
-    $singularity_fsl $CMD_PROJ
+    $apptainer_fsl $CMD_MASK
+    $apptainer_fsl $CMD_PROJ
 
 done
 
@@ -222,7 +222,7 @@ for MOD in $(echo $MODALITIES); do
 
     OVERLAY=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}_overlay.png
 
-    $singularity_miniconda python $PIPELINE_DIR/overlay.py $MOD_MASKED $MOD_SKEL $OVERLAY
+    $apptainer_miniconda python $PIPELINE_DIR/overlay.py $MOD_MASKED $MOD_SKEL $OVERLAY
 
 done
 
@@ -293,8 +293,8 @@ tbssmni_UNC-L_mean_FW,tbssmni_TAP-R_mean_FW,tbssmni_TAP-L_mean_FW,tbssmni_skelet
             CMD_ROI="fslmaths $JHU_ROI -mul $MOD_SKEL $MOD_SKEL_ROI"
             CMD_ROI_MEAN="fslstats $MOD_SKEL_ROI -M"
 
-            $singularity_fsl $CMD_ROI
-            mean_roi=`$singularity_fsl $CMD_ROI_MEAN | tail -n 1`
+            $apptainer_fsl $CMD_ROI
+            mean_roi=`$apptainer_fsl $CMD_ROI_MEAN | tail -n 1`
             echo -n "$mean_roi," >> $ROI_CSV
                 
         done
@@ -302,7 +302,7 @@ tbssmni_UNC-L_mean_FW,tbssmni_TAP-R_mean_FW,tbssmni_TAP-L_mean_FW,tbssmni_skelet
         # Calculate mean across entire skeleton
 
         CMD_MEAN="fslstats $MOD_SKEL -M"
-        mean=`$singularity_fsl $CMD_MEAN | tail -n 1`
+        mean=`$apptainer_fsl $CMD_MEAN | tail -n 1`
         echo -n "$mean," >> $ROI_CSV
 
     done
@@ -325,8 +325,8 @@ tbssmni_UNC-L_mean_FW,tbssmni_TAP-R_mean_FW,tbssmni_TAP-L_mean_FW,tbssmni_skelet
         CMD_ROI="fslmaths $JHU_ROI -mul $MOD_SKEL $MOD_SKEL_ROI"
         CMD_ROI_MEAN="fslstats $MOD_SKEL_ROI -M"
 
-        $singularity_fsl $CMD_ROI
-        mean_roi=`$singularity_fsl $CMD_ROI_MEAN | tail -n 1`
+        $apptainer_fsl $CMD_ROI
+        mean_roi=`$apptainer_fsl $CMD_ROI_MEAN | tail -n 1`
         echo -n "$mean_roi," >> $ROI_CSV
     
     done
@@ -335,7 +335,7 @@ tbssmni_UNC-L_mean_FW,tbssmni_TAP-R_mean_FW,tbssmni_TAP-L_mean_FW,tbssmni_skelet
         # Calculate mean across entire skeleton
 
         CMD_MEAN="fslstats $MOD_SKEL -M"
-        mean=`$singularity_fsl $CMD_MEAN | tail -n 1`
+        mean=`$apptainer_fsl $CMD_MEAN | tail -n 1`
         echo "$mean" >> $ROI_CSV
 
 elif [ $TBSS_PIPELINE == "fixel" ]; then
@@ -368,7 +368,7 @@ tbss_skeleton_mean_logfc,tbss_skeleton_mean_complexity" > $MEAN_CSV
         MOD_SKEL=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
             
         CMD_MEAN="fslstats $MOD_SKEL -M"
-        mean=`$singularity_fsl $CMD_MEAN | tail -n 1`
+        mean=`$apptainer_fsl $CMD_MEAN | tail -n 1`
 
         if [ $mean == "https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence" ]; then
 
@@ -390,7 +390,7 @@ tbss_skeleton_mean_logfc,tbss_skeleton_mean_complexity" > $MEAN_CSV
     MOD_SKEL=$TBSS_SUBDIR/${1}_ses-${SESSION}_space-${SPACE}_desc-skeleton_${MOD}.nii.gz
 
     CMD_MEAN="fslstats $MOD_SKEL -M"
-    mean=`$singularity_fsl $CMD_MEAN | tail -n 1`
+    mean=`$apptainer_fsl $CMD_MEAN | tail -n 1`
 
     if [ $mean == "https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Licence" ]; then
 
