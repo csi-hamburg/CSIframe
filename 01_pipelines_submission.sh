@@ -236,7 +236,7 @@ elif [ $PIPELINE == "freesurfer" ];then
 		export SUBJS_PER_NODE=4
 		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
-		batch_time_default="2-00:00:00"
+		batch_time_default="04:00:00"
 		partition_default="std"
 
 	elif [ $FS_LEVEL == sub2avg ];then
@@ -252,7 +252,7 @@ elif [ $PIPELINE == "freesurfer" ];then
 		export SUBJS_PER_NODE=4
 		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
-		batch_time_default="1-00:00:00"
+		batch_time_default="05:00:00"
 		partition_default="std"
 
 	elif [ $FS_LEVEL == brainstemseg ];then
@@ -590,16 +590,35 @@ elif [ $PIPELINE == "obseg" ];then
 
 elif [ $PIPELINE == "cat12" ];then
 	
-	export SUBJS_PER_NODE=8
-	export SLURM_CPUS_PER_TASK=32
-	export ANALYSIS_LEVEL=subject
-	batch_time_default="08:00:00"
-	partition_default="std"
-
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
-	echo "Which cat pipeline do you want to perform? Leave empty for core or type 'sub2standard'."
-	read CAT_PIPE; export CAT_PIPE
-	[ -z $CAT_PIPE ] && export PIPELINE_SUFFIX="" || export PIPELINE_SUFFIX=_${CAT_PIPE}
+	echo "Would you like to run the pipeline on the subject or group level? (subject/group)."
+	echo "Please specify. Subject level needs to be run first."
+	read ANALYSIS_LEVEL; export ANALYSIS_LEVEL
+
+	# echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
+	# echo "Which cat pipeline do you want to perform? Leave empty for core or type 'sub2standard'."
+	# read CAT_PIPE; export CAT_PIPE
+	# [ -z $CAT_PIPE ] && export PIPELINE_SUFFIX="" || export PIPELINE_SUFFIX=_${CAT_PIPE}
+
+	if [ $ANALYSIS_LEVEL == "subject" ]; then
+
+		export SUBJS_PER_NODE=8
+		export SLURM_CPUS_PER_TASK=32
+		batch_time_default="04:00:00"
+		partition_default="std"
+	
+	elif [ $ANALYSIS_LEVEL == "group" ]; then
+
+		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=32
+		batch_time_default="01:00:00"
+		partition_default="std"
+
+	else
+
+	 	echo "$ANALYSIS_LEVEL for $PIPELINE pipeline not supported."
+	 	exit 0
+	fi
 
 elif [ $PIPELINE == "wmh" ];then
 	
