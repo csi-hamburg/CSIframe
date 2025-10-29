@@ -265,8 +265,43 @@ elif [ $PIPELINE == "freesurfer" ];then
 		batch_time_default="08:00:00"
 		partition_default="std"
 
-
 	fi
+
+elif [ $PIPELINE == "mind" ]; then
+
+    echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
+    echo "Which parcellation scheme would you like to use? (aparc Schaefer2018_100Parcels_7Networks_order Schaefer2018_400Parcels_7Networks_order etc.)"
+    echo "For default (aparc) leave empty" 
+
+    read mind_parcellation
+    export PARCELLATION="$mind_parcellation"
+	[ -z "$PARCELLATION" ] && export PARCELLATION="aparc"
+
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
+	echo "Would you like to compute normalized global graph metrics? (y/n)"
+	echo "For default (n) leave empty"
+
+	read global_network_metrics
+	export GRAPH_METRICS="$global_network_metrics"
+	[ -z "$GRAPH_METRICS" ] && export GRAPH_METRICS="n"
+
+	if [ "$GRAPH_METRICS" == "y" ]; then
+		
+		export SUBJS_PER_NODE=24
+		export SLURM_CPUS_PER_TASK=8
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="05:00:00"
+		partition_default="std"
+	
+	else
+
+		export SUBJS_PER_NODE=24
+		export SLURM_CPUS_PER_TASK=8
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="01:00:00"
+		partition_default="std"
+
+	fi	
 
 elif [ $PIPELINE == "mriqc" ];then
 
@@ -277,10 +312,10 @@ elif [ $PIPELINE == "mriqc" ];then
 
 	if [ $ANALYSIS_LEVEL == "subject" ]; then
 
-		export SUBJS_PER_NODE=4
+		export SUBJS_PER_NODE=8
 		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
-		batch_time_default="24:00:00"
+		batch_time_default="04:00:00"
 		partition_default="std"
 
 	elif [ $ANALYSIS_LEVEL == "group" ]; then
@@ -426,7 +461,7 @@ elif [ $PIPELINE == "tbss" ];then
 		export SUBJS_PER_NODE=$subj_array_length
 		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=group
-		batch_time_default="02:00:00"
+		batch_time_default="06:00:00"
 		partition_default="std"
 
 	elif [ $TBSS_LEVEL == 3 ]; then
@@ -590,103 +625,160 @@ elif [ $PIPELINE == "obseg" ];then
 
 elif [ $PIPELINE == "cat12" ];then
 	
-	export SUBJS_PER_NODE=8
-	export SLURM_CPUS_PER_TASK=32
-	export ANALYSIS_LEVEL=subject
-	batch_time_default="08:00:00"
-	partition_default="std"
-
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
-	echo "Which cat pipeline do you want to perform? Leave empty for core or type 'sub2standard'."
-	read CAT_PIPE; export CAT_PIPE
-	[ -z $CAT_PIPE ] && export PIPELINE_SUFFIX="" || export PIPELINE_SUFFIX=_${CAT_PIPE}
+	echo "Would you like to run the pipeline on the subject or group level? (subject/group)."
+	echo "Please specify. Subject level needs to be run first."
+	read ANALYSIS_LEVEL; export ANALYSIS_LEVEL
+
+	# echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
+	# echo "Which cat pipeline do you want to perform? Leave empty for core or type 'sub2standard'."
+	# read CAT_PIPE; export CAT_PIPE
+	# [ -z $CAT_PIPE ] && export PIPELINE_SUFFIX="" || export PIPELINE_SUFFIX=_${CAT_PIPE}
+
+	if [ $ANALYSIS_LEVEL == "subject" ]; then
+
+		export SUBJS_PER_NODE=8
+		export SLURM_CPUS_PER_TASK=32
+		batch_time_default="04:00:00"
+		partition_default="std"
+	
+	elif [ $ANALYSIS_LEVEL == "group" ]; then
+
+		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=32
+		batch_time_default="01:00:00"
+		partition_default="std"
+
+	else
+
+	 	echo "$ANALYSIS_LEVEL for $PIPELINE pipeline not supported."
+	 	exit 0
+	fi
 
 elif [ $PIPELINE == "wmh" ];then
 	
-	export SUBJS_PER_NODE=16
-	export SLURM_CPUS_PER_TASK=32
-	export ANALYSIS_LEVEL=subject
-	partition_default="std"
-	
 	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
-	echo "Which ANALYSIS PART do you want to perform? currently available are: 01_prep / 02_segment / 04_postproc_define_subs / 04_postproc / eval / determine_thresh / threshold_finder_01 / threshold_finder_02 "
+	echo "Which ANALYSIS PART do you want to perform? currently available are: 01_prep / 02_segment / 03_postproc / 04_eval"
+	echo "Note: they need to be run in order"
 	read WMH_LEVEL
 	export PIPELINE_SUFFIX=_${WMH_LEVEL}
 
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
+	echo "Would you like to clean up unnecessary files after the pipeline has finished? (clean/keep)"
+	echo "Default is 'keep'"
+	read MODIFIER; export MODIFIER
+
+	[ -z $MODIFIER ] && export MODIFIER="keep"
+
 	if [ $WMH_LEVEL == "01_prep" ]; then
 
-		batch_time_default="08:00:00"
 		export SUBJS_PER_NODE=32
 		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=subject
+		batch_time_default="08:00:00"
+		partition_default="std"
+
 
 	elif [ $WMH_LEVEL == "02_segment" ]; then
 
 		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
-		echo "Which segmentation algorithm do you want to use? (BIANCA / LOCATE)"
-		echo "Note:'LOCATE' needs 'BIANCA' output."
+		echo "Which step of the segmentation do you want to run? ('BIANCA' / 'LOCATE')"
+		echo "Note: 'BIANCA' needs to be run before 'LOCATE'."
 		read ALGORITHM; export ALGORITHM
 
 		if [ $ALGORITHM == "BIANCA" ]; then
 			
-			echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
-			echo "Because the data are training data, no bias correction happened. Bias correction is automatically set to NO."
-			BIASCORR=n; export BIASCORR
-
 			echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
-			echo "Do you want to train, validate or test? ( training / validation / testing )"
-			echo "Note: for training, you need manual masks. For testing and validation you need a classifier created during training."
+			echo "Do you want to train, validate or test? ( 'training' / 'validation' / 'testing' )"
+			echo "Run in the following order: training -> validation -> testing"
+			echo "Note: for training, you need manual masks. Adapt 02_segment.sh to specify the correct paths."
 			read BIANCA_LEVEL; export BIANCA_LEVEL
 
 			[ $BIANCA_LEVEL == training ] && export SUBJS_PER_NODE=$subj_array_length
 			[ $BIANCA_LEVEL == training ] && export SLURM_CPUS_PER_TASK=32
 			[ $BIANCA_LEVEL == training ] && export ANALYSIS_LEVEL=group
 			[ $BIANCA_LEVEL == training ] && batch_time_default="12:00:00"
+			[ $BIANCA_LEVEL == training ] && partition_default="std"
 
 			[ $BIANCA_LEVEL == validation ] && export SUBJS_PER_NODE=16
 			[ $BIANCA_LEVEL == validation ] && export SLURM_CPUS_PER_TASK=32
 			[ $BIANCA_LEVEL == validation ] && export ANALYSIS_LEVEL=subject
 			[ $BIANCA_LEVEL == validation ] && batch_time_default="05:30:00"
+			[ $BIANCA_LEVEL == validation ] && partition_default="std"
 
 			[ $BIANCA_LEVEL == testing ] && export SUBJS_PER_NODE=16
 			[ $BIANCA_LEVEL == testing ] && export SLURM_CPUS_PER_TASK=64
 			[ $BIANCA_LEVEL == testing ] && export ANALYSIS_LEVEL=subject
 			[ $BIANCA_LEVEL == testing ] && batch_time_default="05:30:00"
+			[ $BIANCA_LEVEL == testing ] && partition_default="std"
+
 
 		elif [ $ALGORITHM == "LOCATE" ]; then
 
-			echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
-			echo "Because the data are training data, no bias correction happened. Bias correction is automatically set to NO."
-			BIASCORR=n; export BIASCORR
-
 			echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"		
-			echo "Do you want to train, validate or test? ( training / validation / testing )"
-			echo "Note: for training, you need manual masks. For testing and validation you need a classifier created during training."
-			echo "In addition: please run training before you start validation or testing."
+			echo "Do you want to train, validate or test? ( 'training' / 'validation' / 'testing' )"
+			echo "Run in the following order: training -> validation -> testing"
+			echo "Note: for training, you need manual masks. Adapt 02_segment.sh to specify the correct paths."
 			read LOCATE_LEVEL; export LOCATE_LEVEL
 
 			[ $LOCATE_LEVEL == training ] && export SUBJS_PER_NODE=$subj_array_length
 			[ $LOCATE_LEVEL == training ] && export SLURM_CPUS_PER_TASK=64
 			[ $LOCATE_LEVEL == training ] && export ANALYSIS_LEVEL=group
 			[ $LOCATE_LEVEL == training ] && batch_time_default="2-00:00:00"
+			[ $LOCATE_LEVEL == training ] && partition_default="std"
 
 			[ $LOCATE_LEVEL == validation ] && export SUBJS_PER_NODE=$subj_array_length
 			[ $LOCATE_LEVEL == validation ] && export SLURM_CPUS_PER_TASK=64
 			[ $LOCATE_LEVEL == validation ] && export ANALYSIS_LEVEL=group
 			[ $LOCATE_LEVEL == validation ] && batch_time_default="2-00:00:00"
+			[ $LOCATE_LEVEL == validation ] && partition_default="std"
 			
 			[ $LOCATE_LEVEL == testing ] && export SUBJS_PER_NODE=16
 			[ $LOCATE_LEVEL == testing ] && export SLURM_CPUS_PER_TASK=64
 			[ $LOCATE_LEVEL == testing ] && export ANALYSIS_LEVEL=subject
 			[ $LOCATE_LEVEL == testing ] && batch_time_default="05:00:00"
+			[ $LOCATE_LEVEL == testing ] && partition_default="std"
 
 		fi
 
-	elif [ $WMH_LEVEL == "04_postproc_define_subs" ]; then 
+	elif [ $WMH_LEVEL == "03_postproc" ]; then 
 
-		INTERACTIVE==y
-		export SUBJS_PER_NODE=100 # DO NOT CHANGE !
+		export SUBJS_PER_NODE=16 
 		export SLURM_CPUS_PER_TASK=32
+		export ANALYSIS_LEVEL=subject
+		batch_time_default="02:00:00"
+		partition_default="std"
+		
+		export ALGORITHM="LOCATE"
+		
+	elif [ $WMH_LEVEL == "04_eval" ]; then 
+
+		export SUBJS_PER_NODE=$subj_array_length
+		export SLURM_CPUS_PER_TASK=32
+		export ANALYSIS_LEVEL=group
+		batch_time_default="01:00:00"
+		partition_default="std"
+
+		echo "Info: this script evaluates the segmentation accuracy of BIANCA-LOCATE as compared with manual segmentations."
+		export ALGORITHM="LOCATE"
+
+	fi
+
+elif [ $PIPELINE == "wmhdisco" ];then
+
+	echo "This pipeline has not been implemented."
+	exit 0
+	
+	echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+	echo "Note: Processing requires data transfer of large .tck files between an S3 bucket and the cluster."
+	echo "Therefore, only 100 subjects can be submitted at once."
+	echo "Would you like to create subject lists for subsequent job submission or submit the job now?"
+	echo "Choose between 'lists' and 'submit'"
+	read MODIFIER; export MODIFIER
+
+	if [ $MODIFIER == "lists" ]; then 
+
+		export SUBJS_PER_NODE=100 # DO NOT CHANGE !
 		length=($(ls $BIDS_DIR/sub-* -d | xargs -n 1 basename | wc -l))
 		number_of_scripts=$(echo "scale=2; $length/$SUBJS_PER_NODE" | bc)
 		number_of_scripts_rounded=$(echo $number_of_scripts | awk '{print ($0-int($0)>0)?int($0)+1:int($0)}')
@@ -699,106 +791,32 @@ elif [ $PIPELINE == "wmh" ];then
     		[ $start != 1 ] && echo $(ls $BIDS_DIR/sub-* -d -1 | xargs -n 1 basename | head -n $start | tail -n $SUBJS_PER_NODE) > $DERIVATIVE_dir/sublist_${num}.csv
 
 		done
+		
+		echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"	
+		echo "Subject lists have been created in $DERIVATIVE_dir"
+		echo "Exiting ..."
+		
+		exit 0
 
-		exit 1
-
-	elif [ $WMH_LEVEL == "04_postproc" ]; then 
+	
+	elif [ $MODIFIER == "submit" ]; then 
 
 		export sublist=${subj_array[@]}
+		export ALGORITHM="LOCATE"
+		
 		export SUBJS_PER_NODE=100 # DO NOT CHANGE!
 		export SLURM_CPUS_PER_TASK=32
 		export ANALYSIS_LEVEL=group
 		batch_time_default="2-00:00:00"
 
-		[ $subj_array_length -gt $SUBJS_PER_NODE ] && echo "please define a subject list! subject lists are in $PIPELINE/derivatives or can be created with the option: 04_postproc_define_subs"
-		[ $subj_array_length -gt $SUBJS_PER_NODE ] && exit 1
-
-		echo "Which algorithm do you want to evaluate?"
-		#echo "Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
-		read ALGORITHM; export ALGORITHM
-		
-	elif [ $WMH_LEVEL == "eval" ]; then 
-
-		export SUBJS_PER_NODE=$subj_array_length
-		export SLURM_CPUS_PER_TASK=32
-		export ANALYSIS_LEVEL=group
-		batch_time_default="01:00:00"
-
-		echo "This script evaluates the segmented masks of different algorithms."
-		echo "Which algorithm do you want to evaluate? Choose from: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
-		read ALGORITHM; export ALGORITHM
-
-	elif [ $WMH_LEVEL == "determine_thresh" ]; then 
-
-		echo "which analysis level you want to perform? possible answers: subject / group. Please execute subject before group. Thx!"
-		read ANALYSIS_LEVEL; export ANALYSIS_LEVEL
-
-		export SUBJS_PER_NODE=8
-		export SLURM_CPUS_PER_TASK=32
-		batch_time_default="01:00:00"
-		[ $ANALYSIS_LEVEL == "group" ] && export SUBJS_PER_NODE=$subj_array_length
-
-	elif [ $WMH_LEVEL == "threshold_finder_01" ]; then 
-
-		echo "Do you want to threshold masks of a single algorithm (then answer with 'single'), or do you want to threshold combined masks or multiple algorithms (then answer with 'multiple')?"
-		read ALGORITHM_COMBI; export ALGORITHM_COMBI
-
-		if [ $ALGORITHM_COMBI == "multiple" ]; then 
-
-			echo "which is the first algorithm?"
-			#"currently available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
-			read ALGORITHM1; export ALGORITHM1
-
-			echo "which is the second algorithm? please do not name the same algorithm twice." 
-			#"available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
-			read ALGORITHM2; export ALGORITHM2
-		
-			[ $ALGORITHM1 == $ALGORITHM2 ] && echo "$ALGORITHM1 == $ALGORITHM2 ... stupid" && exit 1
-
-		elif [ $ALGORITHM_COMBI == "single" ]; then 
-
-			echo "which algorithm do you want to find a threshold for? currently available: antsrnet / antsrnetbias / bianca / lga / lpa / samseg ."
-			read ALGORITHM; export ALGORITHM
-
+		if [ $subj_array_length -gt $SUBJS_PER_NODE ]; then
+			
+			echo "Please limit the submission to 100 subjects at a time."
+			echo "Exiting ..."
+			exit 1
 		fi
-
-		export ANALYSIS_LEVEL=group
-		export SLURM_CPUS_PER_TASK=32
-		[ $ALGORITHM_COMBI == "single" ] && batch_time_default="01:00:00"
-		[ $ALGORITHM_COMBI == "multiple" ] && batch_time_default="02:30:00"
-		export SUBJS_PER_NODE=8
-
-	elif [ $WMH_LEVEL == "threshold_finder_02" ]; then 
-
-		echo "Do you want to threshold masks of a single algorithm (then answer with 'single'), or do you want to threshold combined masks or multiple algorithms (then answer with 'multiple')?"
-		read ALGORITHM_COMBI; export ALGORITHM_COMBI
-
-		if [ $ALGORITHM_COMBI == "multiple" ]; then 
-
-			echo "which is the first algorithm?"
-			#"currently available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
-			read ALGORITHM1; export ALGORITHM1
-
-			echo "which is the second algorithm? please do not name the same algorithm twice. "
-			#"available: $(ls $DATA_DIR/$PIPELINE/sub-*/ses-$SESSION/anat/*/ -d | xargs -n 1 basename | sort | uniq)"
-			read ALGORITHM2; export ALGORITHM2
-		
-			[ $ALGORITHM1 == $ALGORITHM2 ] && echo "$ALGORITHM1 == $ALGORITHM2 ... stupid" && exit 1
-
-		elif [ $ALGORITHM_COMBI == "single" ]; then 
-
-			echo "which algorithm do you want to find a threshold for? currently available: antsrnet / antsrnetbias / bianca / lga / lpa / samseg ."
-			read ALGORITHM; export ALGORITHM
-
-		fi
-
-		export ANALYSIS_LEVEL=group
-		batch_time_default="06:00:00"
-		export SUBJS_PER_NODE=$subj_array_length
-		export SLURM_CPUS_PER_TASK=32
 
 	fi
-
 
 elif [ $PIPELINE == "lesionanalysis" ];then
 	

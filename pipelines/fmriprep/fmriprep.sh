@@ -59,7 +59,7 @@ CMD="
    --mem-mb $MEM_MB \
    --stop-on-first-crash \
    --output-spaces $OUTPUT_SPACES \
-   --ignore t2w fieldmaps \
+   --ignore t2w fieldmaps flair\
    --fs-subjects-dir /tmp_out/freesurfer \
    --use-syn-sdc \
    --cifti-output 91k \

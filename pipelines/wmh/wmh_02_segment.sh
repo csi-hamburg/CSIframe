@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
 
 ###################################################################################################################
-# Preprocessing of FLAIR and T1 and creation of input files for WMH segmentation                                  #
+# Segmentation of White Matter Hyperintensities using BIANCA and LOCATE algorithms                                #
 #                                                                                                                 #
 # Pipeline specific dependencies:                                                                                 #
 #   [pipelines which need to be run first]                                                                        #
-#       - wmh_01_prep in wmh                                                                                      #
 #       - fmriprep                                                                                                #
-#       - freesurfer (if not run in fmriprep)                                                                     #                            
+#       - freesurfer (if not run in fmriprep)                                                                     #
+#       - wmh_01_prep in wmh                                                                                      #
 #   [container]                                                                                                   #
 #       - fsl-6.0.7.13.sif                                                                                        #      
-#       - ants-2.5.4.sif                                                                                          #
-#       - freesurfer-7.4.1.sif                                                                                    #
+#       - locate.sif                                                                                              #
 #                                                                                                                 #
 ###################################################################################################################
 
@@ -20,7 +19,7 @@ set -x
 ulimit -c 0
 
 # Define subject specific temporary directory on $SCRATCH_DIR
-export TMP_DIR=$SCRATCH_DIR/$1/tmp/;   [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
+export TMP_DIR=$SCRATCH_DIR/$1/tmp;           [ ! -d $TMP_DIR ] && mkdir -p $TMP_DIR
 TMP_IN=$TMP_DIR/input;                 [ ! -d $TMP_IN ] && mkdir -p $TMP_IN
 TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 
@@ -29,56 +28,30 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 # Pipeline-specific environment
 ##################################
 
-# apptainer container version and command
-container_freesurfer=freesurfer-7.4.1.sif
-apptainer_freesurfer="apptainer run --cleanenv --userns \
-    -B $PROJ_DIR \
-    -B $(readlink -f $ENV_DIR) \
-    -B $TMP_DIR/:/tmp \
-    -B $TMP_IN \
-    -B $TMP_OUT \
-    $ENV_DIR/$container_freesurfer" 
-
+# Apptainer container version and command
 container_fsl=fsl-6.0.7.13.sif
 apptainer_fsl="apptainer run --cleanenv --userns \
     -B $PROJ_DIR/../ \
     -B $(readlink -f $ENV_DIR) \
     -B $TMP_DIR/:/tmp \
-    -B $TMP_IN \
-    -B $TMP_OUT \
-    $ENV_DIR/$container_fsl" 
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
+    $ENV_DIR/$container_fsl"
 
-# Set output directories
-OUT_DIR=$TMP_OUT/$PIPELINE/$1/ses-${SESSION}/anat/
-[ ! -d $OUT_DIR ] && mkdir -p $OUT_DIR
-
-[ $BIASCORR == y ] && ALGORITHM_OUT_DIR=$OUT_DIR/${ALGORITHM}bias/
-[ $BIASCORR == n ] && ALGORITHM_OUT_DIR=$OUT_DIR/${ALGORITHM}/
-[ ! -d $ALGORITHM_OUT_DIR ] && mkdir -p $ALGORITHM_OUT_DIR
-
-DERIVATIVE_dir=$DATA_DIR/$PIPELINE/derivatives
-[ ! -d $DERIVATIVE_dir ] && mkdir -p $DERIVATIVE_dir
-
-# To make I/O more efficient read/write outputs from/to $SCRATCH
-[ -d $TMP_IN ] && mkdir -p $TMP_IN/raw_bids && cp -rf $BIDS_DIR/$1 $BIDS_DIR/dataset_description.json $TMP_IN/raw_bids
-[ -f $DATA_DIR/freesurfer/$1/stats/aseg.stats ] && mkdir -p $TMP_IN/freesurfer && cp -rf $DATA_DIR/freesurfer/$1 $TMP_IN/freesurfer
-[ -d $DATA_DIR/$PIPELINE/$1/ses-${SESSION}/anat ] && cp -rf $DATA_DIR/$PIPELINE/$1/ses-${SESSION}/anat/* $OUT_DIR
-
-if [ -d $DATA_DIR/fmriprep/$1 ]; then
-    T1=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-preproc_T1w.nii.gz
-    T1_MASK=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_desc-brain_mask.nii.gz
-    T1_TO_MNI_WARP=$DATA_DIR/fmriprep/$1/ses-${SESSION}/anat/${1}_ses-${SESSION}_from-T1w_to-MNI152NLin2009cAsym_mode-image_xfm.h5
-    mkdir -p $TMP_IN/fmriprep/$1/ses-${SESSION}/anat/
-    cp -v $T1 $TMP_IN/fmriprep/$1/ses-${SESSION}/anat/
-    cp -v $T1_MASK $TMP_IN/fmriprep/$1/ses-${SESSION}/anat/
-    cp -v $T1_TO_MNI_WARP $TMP_IN/fmriprep/$1/ses-${SESSION}/anat/
-fi
+container_locate=locate.sif
+apptainer_locate="apptainer run --cleanenv --userns \
+    -B $PROJ_DIR/../ \
+    -B $(readlink -f $ENV_DIR) \
+    -B $TMP_DIR/:/tmp \
+    -B $TMP_IN:/tmp_in \
+    -B $TMP_OUT:/tmp_out \
+    $ENV_DIR/$container_locate"
 
 ###################################################################################################################
 #                                               Pipeline execution                                                #                              
 ###################################################################################################################
 
-if [ $ALGORITHM == "bianca" ]; then
+if [ $ALGORITHM == "BIANCA" ]; then
 
     ##################
     # Part A: BIANCA #
@@ -98,24 +71,21 @@ if [ $ALGORITHM == "bianca" ]; then
 
         for sub in $(ls $DATA_DIR/$PIPELINE/sub-* -d | xargs -n 1 basename); do
 
-            OUT_DIR=$TMP_OUT/$PIPELINE/$sub/ses-${SESSION}/anat/
-            [ $BIASCORR == y ] && ALGORITHM_OUT_DIR=$OUT_DIR/${ALGORITHM}bias/
-            [ $BIASCORR == n ] && ALGORITHM_OUT_DIR=$OUT_DIR/${ALGORITHM}/
+            # Set up output directories
+            ###########################
+
+            OUT_DIR=$DATA_DIR/$PIPELINE/$sub/ses-${SESSION}/anat/
+            [ ! -d $OUT_DIR ] && echo "Necessary input data are not available. Note: 01_prep needs to be run first. Exiting ..." && exit 1
+            ALGORITHM_OUT_DIR=$OUT_DIR/${ALGORITHM}/
             [ ! -d $ALGORITHM_OUT_DIR ] && mkdir -p $ALGORITHM_OUT_DIR
 
             [[ $(ls -A $MAN_SEGMENTATION_DIR/${sub}) ]] && SUB_GROUP=training || SUB_GROUP=testing
 
             if [ $SUB_GROUP == "training" ]; then
 
-                # Set threshold as determined with wmh_determine_thresh.sh
-                ##########################################################
-
-                threshold=0.8
-
                 # Define inputs
                 ###############
 
-                BRAINWITHOUTRIBBON_MASK_FLAIR=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-brainwithoutribbon_mask.nii.gz
                 MNI_TEMPLATE=$ENV_DIR/standard/tpl-MNI152NLin2009cAsym_res-01_desc-brain_T1w.nii.gz
                 FLAIR_BRAIN=$OUT_DIR/${sub}_ses-${SESSION}_desc-brain_FLAIR.nii.gz
                 T1_IN_FLAIR=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii.gz
@@ -125,19 +95,14 @@ if [ $ALGORITHM == "bianca" ]; then
                 ################
 
                 MASTERFILE=$TRAINING_DIR/masterfile.txt
-                SEGMENTATION_raw=$ALGORITHM_OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_raw.nii.gz
                 FLAIR_IN_MNI_FLIRT=/tmp/${sub}_ses-${SESSION}_space-MNI152NLin2009cAsym_desc-brain_FLAIR.nii.gz
                 FLAIR_TO_MNI_WARP_FLIRT=$OUT_DIR/${sub}_ses-${SESSION}_from-FLAIR_to-MNI152NLin2009cAsym_flirtwarp.txt
                 CLASSIFIER=$TRAINING_DIR/classifierdata
-                SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_sized.nii.gz
-                SEGMENTATION=$ALGORITHM_OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
-                SEGMENTATION_FILTERED=$ALGORITHM_OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
                 
                 # Define commands
                 #################
 
                 CMD_FLIRT_FLAIR_TO_MNI="flirt -in $FLAIR_BRAIN -ref $MNI_TEMPLATE -out $FLAIR_IN_MNI_FLIRT -omat $FLAIR_TO_MNI_WARP_FLIRT"
-                CMD_BIANCA="bianca --singlefile=$MASTERFILE --brainmaskfeaturenum=1 --querysubjectnum=1 --trainingnums=all --featuresubset=1,2 --matfeaturenum=3 --labelfeaturenum=4 --trainingpts=2000 --nonlespts=10000 --selectpts=noborder -v --saveclassifierdata=$CLASSIFIER --patch3D --patchsizes=3,3,3"
 
                 # Execute commands
                 ##################
@@ -154,6 +119,7 @@ if [ $ALGORITHM == "bianca" ]; then
         # Execute bianca
         ################
 
+        CMD_BIANCA="bianca --singlefile=$MASTERFILE --brainmaskfeaturenum=1 --querysubjectnum=1 --trainingnums=all --featuresubset=1,2 --matfeaturenum=3 --labelfeaturenum=4 --trainingpts=2000 --nonlespts=10000 --selectpts=noborder -v --saveclassifierdata=$CLASSIFIER --patch3D --patchsizes=3,3,3"
         $apptainer_fsl /bin/bash -c "$CMD_BIANCA"
     
     elif [ $BIANCA_LEVEL == "validation" ]; then
@@ -162,17 +128,24 @@ if [ $ALGORITHM == "bianca" ]; then
 
         if [ $SUB_GROUP == "training" ]; then  
             
-            # Set threshold as determined with wmh_determine_thresh.sh
-            ##########################################################
+            # Check if training data is available
+            #####################################
+            
+            TRAINING_DIR=$DATA_DIR/$PIPELINE/sourcedata/bianca_training
+            [ ! -d $TRAINING_DIR ] && echo "No training data found. Please run bianca training first." && exit 1
 
-            threshold=0.8
+            # Set output directories
+            #########################
+
+            OUT_DIR=$DATA_DIR/$PIPELINE/$1/ses-${SESSION}/anat/
+            [ ! -d $OUT_DIR ] && echo "Necessary input data are not available. Note: 01_prep needs to be run first. Exiting ..." && exit 1
+
+            ALGORITHM_OUT_DIR=$OUT_DIR/${ALGORITHM}/
+            [ ! -d $ALGORITHM_OUT_DIR ] && mkdir -p $ALGORITHM_OUT_DIR
 
             # Define inputs
             ###############
 
-            TRAINING_DIR=$DATA_DIR/$PIPELINE/sourcedata/bianca_training
-            [ ! -d $TRAINING_DIR ] && echo "No training data found. Please run bianca training first." && exit 1
-            
             BRAINWITHOUTRIBBON_MASK_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brainwithoutribbon_mask.nii.gz
             FLAIR_BRAIN=$OUT_DIR/${1}_ses-${SESSION}_desc-brain_FLAIR.nii.gz
             T1_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii.gz
@@ -186,25 +159,18 @@ if [ $ALGORITHM == "bianca" ]; then
             ###############
 
             SEGMENTATION_raw=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_raw.nii.gz
-            SEGMENTATION_masked=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-maskednothresh_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
-            SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-maskednothresh_desc-wmh_desc-${ALGORITHM}_mask_sized.nii.gz
-            SEGMENTATION=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
 
-            # Define commands
-            #################
+            # Define command
+            ################
 
             CMD_BIANCA_leaveoneout="bianca --singlefile=$MASTERFILE --brainmaskfeaturenum=1 --querysubjectnum=$subjectline --featuresubset=1,2 --matfeaturenum=3 --trainingpts=2000 --nonlespts=10000 --selectpts=noborder -o $SEGMENTATION_raw -v --loadclassifierdata=$CLASSIFIER --patch3D --patchsizes=3,3,3"
-            CMD_MASKING_GAME="fslmaths $SEGMENTATION_raw -mul $BRAINWITHOUTRIBBON_MASK_FLAIR $SEGMENTATION_masked"
-            CMD_threshold_segmentation="cluster --in=$SEGMENTATION_masked --thresh=0.1 --connectivity=6 --osize=$SEGMENTATION_sized"
-            CMD_thresholdcluster_segmentation="fslmaths $SEGMENTATION_sized -thr 5 -bin $SEGMENTATION"
-            
 
             if [ -f $FLAIR_BRAIN ] && [ -f $T1_IN_FLAIR ] && [ -f $FLAIR_TO_MNI_WARP_FLIRT ] && [ -f $SEGMENTATION_MAN ] ; then  
 
-                # Execute commands
-                ##################
+                # Execute command
+                #################
 
-                $apptainer_fsl /bin/bash -c "$CMD_BIANCA_leaveoneout; $CMD_MASKING_GAME; $CMD_threshold_segmentation; $CMD_thresholdcluster_segmentation"
+                $apptainer_fsl /bin/bash -c "$CMD_BIANCA_leaveoneout"
 
             fi
 
@@ -216,14 +182,21 @@ if [ $ALGORITHM == "bianca" ]; then
 
         if [ $SUB_GROUP == "testing" ]; then
 
+            # Check if training data is available
+            #####################################
+
             TRAINING_DIR=$DATA_DIR/$PIPELINE/sourcedata/bianca_training
             [ ! -d $TRAINING_DIR ] && echo "No training data found. Please run bianca training first." && exit 1
 
-            # Set threshold as determined with wmh_determine_thresh.sh
-            ##########################################################
+            # Set output directories
+            #########################
+            
+            OUT_DIR=$DATA_DIR/$PIPELINE/$1/ses-${SESSION}/anat/
+            [ ! -d $OUT_DIR ] && echo "Necessary input data are not available. Note: 01_prep needs to be run first. Exiting ..." && exit 1
 
-            threshold=0.8
-
+            ALGORITHM_OUT_DIR=$OUT_DIR/${ALGORITHM}/
+            [ ! -d $ALGORITHM_OUT_DIR ] && mkdir -p $ALGORITHM_OUT_DIR
+          
             # Define inputs
             ###############
 
@@ -237,25 +210,17 @@ if [ $ALGORITHM == "bianca" ]; then
             # Define outputs
             ################
 
-            FLAIR_IN_MNI_FLIRT=/tmp/${sub}_ses-${SESSION}_space-MNI152NLin2009cAsym_desc-brain_FLAIR.nii.gz
+            FLAIR_IN_MNI_FLIRT=/tmp/${1}_ses-${SESSION}_space-MNI152NLin2009cAsym_desc-brain_FLAIR.nii.gz
             FLAIR_TO_MNI_WARP_FLIRT=$OUT_DIR/${1}_ses-${SESSION}_from-FLAIR_to-MNI152NLin2009cAsym_flirtwarp.txt
             MASTERFILE=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_masterfile.txt
-            SEGMENTATION_raw=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_raw.nii.gz
-            SEGMENTATION_masked=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-maskednothresh_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
-            SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-maskednothresh_desc-wmh_desc-${ALGORITHM}_mask_sized.nii.gz
-            SEGMENTATION=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
-            
+            SEGMENTATION_raw=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-${ALGORITHM}_mask_raw.nii.gz           
 
             # Define commands
             #################
 
             CMD_FLIRT_FLAIR_TO_MNI="flirt -in $FLAIR_BRAIN -ref $MNI_TEMPLATE -out $FLAIR_IN_MNI_FLIRT -omat $FLAIR_TO_MNI_WARP_FLIRT"
             CMD_BIANCA="bianca --singlefile=$MASTERFILE --brainmaskfeaturenum=1 --querysubjectnum=1 --featuresubset=1,2 --matfeaturenum=3 -o $SEGMENTATION_raw -v --loadclassifierdata=$CLASSIFIER --patch3D --patchsizes=3,3,3"
-            CMD_MASKING_GAME="fslmaths $SEGMENTATION -mul $BRAINWITHOUTRIBBON_MASK_FLAIR $SEGMENTATION_masked"
-            CMD_threshold_segmentation="cluster --in=$SEGMENTATION_masked --thresh=$threshold --connectivity=6 --osize=$SEGMENTATION_sized"
-            CMD_thresholdcluster_segmentation="fslmaths $SEGMENTATION_sized -thr 5 -bin $SEGMENTATION"
-            
-            
+
             # Execute commands
             ##################
 
@@ -264,7 +229,6 @@ if [ $ALGORITHM == "bianca" ]; then
                 echo "$FLAIR_BRAIN $T1_IN_FLAIR $FLAIR_TO_MNI_WARP_FLIRT" > $MASTERFILE 
             fi
             $apptainer_fsl /bin/bash -c "$CMD_BIANCA" 
-            $apptainer_fsl /bin/bash -c "$CMD_MASKING_GAME; $CMD_threshold_segmentation; $CMD_thresholdcluster_segmentation"
 
         fi
 
@@ -276,18 +240,13 @@ elif [ $ALGORITHM == "LOCATE" ]; then
     # Part B: LOCATE #
     ##################
 
-    # Note: it is best to run this locally. It takes more than maximum batch time to run
+    # Note: You may need to run training locally, as run time can be very long.
 
     # Set up environment
     ####################
-
-    source $FSLDIR
-    module load matlab
-
-    LOCATE_installation=$ENV_DIR/LOCATE-BIANCA
-    export LOCATE_installation
     
     TRAINING_DIR=$DATA_DIR/$PIPELINE/sourcedata/bianca_training
+    MAN_SEGMENTATION_DIR=$DATA_DIR/$PIPELINE/sourcedata/manual_segmentations/
 
     LOCATE_working_dir=$DATA_DIR/$PIPELINE/sourcedata/MyLOCATE
     [ ! -d $LOCATE_working_dir ] && mkdir -p $LOCATE_working_dir
@@ -295,23 +254,21 @@ elif [ $ALGORITHM == "LOCATE" ]; then
     [ ! -d $LOCATE_training_dir ] && mkdir -p $LOCATE_training_dir
     export LOCATE_training_dir
 
-    MAN_SEGMENTATION_DIR=$DATA_DIR/$PIPELINE/sourcedata/manual_segmentations/
     
     if [ $LOCATE_LEVEL == "training" ]; then
 
         for sub in $(ls $DATA_DIR/$PIPELINE/sub-* -d | xargs -n 1 basename); do
 
+            # Set up output directories
+            ###########################
+
+            OUT_DIR=$DATA_DIR/$PIPELINE/$sub/ses-${SESSION}/anat/
+            ALGORITHM_OUT_DIR=$OUT_DIR/${ALGORITHM}/
+            [ ! -d $ALGORITHM_OUT_DIR ] && mkdir $ALGORITHM_OUT_DIR
+
             [[ $(ls -A $MAN_SEGMENTATION_DIR/$sub) ]] && SUB_GROUP=training || SUB_GROUP=testing
 
             if [ $SUB_GROUP == "training" ]; then
-
-                # Set up output directories
-                ###########################
-
-                OUT_DIR=$TMP_OUT/$PIPELINE/$sub/ses-${SESSION}/anat/
-                [ $BIASCORR == y ] && ALGORITHM_OUT_DIR=$OUT_DIR/${ALGORITHM}bias/
-                [ $BIASCORR == n ] && ALGORITHM_OUT_DIR=$OUT_DIR/${ALGORITHM}/
-                [ ! -d $ALGORITHM_OUT_DIR ] && mkdir $ALGORITHM_OUT_DIR
 
                 # Define inputs
                 ###############
@@ -324,7 +281,7 @@ elif [ $ALGORITHM == "LOCATE" ]; then
                 MANUAL_MASK_LOCATE=$LOCATE_training_dir/${sub}_manualmask.nii.gz
                 DISTANCEMAP=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_distancemap.nii.gz
                 DISTANCEMAP_LOCATE=$LOCATE_training_dir/${sub}_ventdistmap.nii.gz
-                SEGMENTATION_raw=$OUT_DIR/bianca/${sub}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-bianca_mask_raw.nii.gz
+                SEGMENTATION_raw=$OUT_DIR/BIANCA/${sub}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-BIANCA_mask_raw.nii.gz
                 SEGMENTATION_raw_LOCATE=$LOCATE_training_dir/${sub}_BIANCA_LPM.nii.gz
                 T1_MASK_IN_FLAIR=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
                 BRAINMASK_LOCATE=$LOCATE_training_dir/${sub}_brainmask.nii.gz
@@ -332,13 +289,13 @@ elif [ $ALGORITHM == "LOCATE" ]; then
 
                 if [ -f $FLAIR_BRAIN ] && [ -f $T1_IN_FLAIR ] && [ -f $SEGMENTATION_MAN ] && [ -f $DISTANCEMAP ] && [ -f $SEGMENTATION_raw ] && [ -f $T1_MASK_IN_FLAIR ]; then
                 
-                    cp $FLAIR_BRAIN $FLAIR_LOCATE
-                    cp $T1_IN_FLAIR $T1_LOCATE
-                    cp $SEGMENTATION_MAN $MANUAL_MASK_LOCATE
-                    cp $DISTANCEMAP $DISTANCEMAP_LOCATE
-                    cp $SEGMENTATION_raw $SEGMENTATION_raw_LOCATE
-                    cp $T1_MASK_IN_FLAIR $BRAINMASK_LOCATE
-                    cp $T1_MASK_IN_FLAIR $BIANCAMASK_LOCATE
+                    cp -ruvf $FLAIR_BRAIN $FLAIR_LOCATE
+                    cp -ruvf $T1_IN_FLAIR $T1_LOCATE
+                    cp -ruvf $SEGMENTATION_MAN $MANUAL_MASK_LOCATE
+                    cp -ruvf $DISTANCEMAP $DISTANCEMAP_LOCATE
+                    cp -ruvf $SEGMENTATION_raw $SEGMENTATION_raw_LOCATE
+                    cp -ruvf $T1_MASK_IN_FLAIR $BRAINMASK_LOCATE
+                    cp -ruvf $T1_MASK_IN_FLAIR $BIANCAMASK_LOCATE
 
                 # else we will not copy any of the files into the LOCATE directory because LOCATE cannot handle incomplete data of subjects, throws an error and stops
 
@@ -348,11 +305,28 @@ elif [ $ALGORITHM == "LOCATE" ]; then
             
         done
 
-        matlab -nosplash -nodesktop -nojvm -batch "addpath(genpath('$LOCATE_installation')); LOCATE_training('$LOCATE_training_dir'); quit"            
+        # Define and execute locate command
+        ###################################
+
+        # locate.sif contains compiled LOCATE-BIANCA matlab code and an FSL installation
+        # Running the container invokes this matlab function: locate(mode, training_dir, testing_dir)
+        # mode: 'train'  / 'validate' / 'test'
+        # training_dir: directory containing training data
+        # testing_dir: directory containing testing data
+        # USAGE
+        ## when 'train' is selected, LOCATE will train with data contained in 'training_dir'.
+        ## when 'validate' is selected, LOCATE will perform leave-one-out validation on the training data in 'training_dir'.
+        ## when 'test' is selected, LOCATE will perform testing on the testing data in 'testing_dir'.
+        ### requires definition of 'testing_dir' and 'training_dir'
+
+        $apptainer_locate train $LOCATE_training_dir 
 
     elif [ $LOCATE_LEVEL == "validation" ]; then
 
-        matlab -nosplash -nodesktop -nojvm -batch "addpath(genpath('$LOCATE_installation')); LOCATE_LOO_testing('$LOCATE_training_dir'); quit"
+        # Define and execute locate command
+        ###################################
+        
+        $apptainer_locate validate $LOCATE_training_dir 
 
         # output are all files in $LOCATE_training_dir/LOCATE_LOO_results_directory
 
@@ -365,9 +339,8 @@ elif [ $ALGORITHM == "LOCATE" ]; then
                 # Set up output directories
                 ###########################
 
-                OUT_DIR=$TMP_OUT/$PIPELINE/$sub/ses-${SESSION}/anat/
-                [ $BIASCORR == y ] && ALGORITHM_OUT_DIR=$OUT_DIR/${ALGORITHM}bias/
-                [ $BIASCORR == n ] && ALGORITHM_OUT_DIR=$OUT_DIR/${ALGORITHM}/
+                OUT_DIR=$DATA_DIR/$PIPELINE/$sub/ses-${SESSION}/anat/
+                ALGORITHM_OUT_DIR=$OUT_DIR/${ALGORITHM}/
                 [ ! -d $ALGORITHM_OUT_DIR ] && mkdir $ALGORITHM_OUT_DIR
 
                 # Define outputs
@@ -383,13 +356,12 @@ elif [ $ALGORITHM == "LOCATE" ]; then
                 SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-maskednothresh_desc-wmh_desc-${ALGORITHM}_mask_sized.nii.gz
                 SEGMENTATION=$ALGORITHM_OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
                 BRAINWITHOUTRIBBON_MASK_FLAIR=$OUT_DIR/${sub}_ses-${SESSION}_space-FLAIR_desc-brainwithoutribbon_mask.nii.gz
-                WMH_VOLUME_FILE=$ALGORITHM_OUT_DIR/${sub}_ses-1_${ALGORITHM}_wmhvolume.csv
 
                 # Define commands
                 #################
 
                 CMD_MASKING_GAME="fslmaths $SEGMENTATION_NOTHRESH -mul $BRAINWITHOUTRIBBON_MASK_FLAIR $SEGMENTATION_masked"
-                CMD_threshold_segmentation="cluster --in=$SEGMENTATION_masked --thresh=0.1 --connectivity=6 --osize=$SEGMENTATION_sized"
+                CMD_threshold_segmentation="fsl-cluster --in=$SEGMENTATION_masked --thresh=0.1 --connectivity=6 --osize=$SEGMENTATION_sized"
                 CMD_thresholdcluster_segmentation="fslmaths $SEGMENTATION_sized -thr 5 -bin $SEGMENTATION"
                 
                 # Execute commands
@@ -399,8 +371,15 @@ elif [ $ALGORITHM == "LOCATE" ]; then
                 cp $INDEXMAP_LOCATE $INDEXMAP
                 cp $THRESHOLDSMAP_LOCATE $THRESHOLDSMAP
                 $apptainer_fsl /bin/bash -c "$CMD_MASKING_GAME; $CMD_threshold_segmentation; $CMD_thresholdcluster_segmentation"
-                $apptainer_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION -V) > $WMH_VOLUME_FILE"
-                [ ! -f $SEGMENTATION ] && echo "na na" > $WMH_VOLUME_FILE
+
+                # Clean up
+                ##########
+                
+                if [ $MODIFIER == "clean" ]; then
+
+                    rm $LOCATE_training_dir/LOCATE_LOO_results_directory/*
+                    rm $SEGMENTATION_NOTHRESH $SEGMENTATION_masked $SEGMENTATION_sized 
+                fi
 
             fi
 
@@ -414,12 +393,15 @@ elif [ $ALGORITHM == "LOCATE" ]; then
             
             # Set up output directories
             ###########################
+            OUT_DIR=$DATA_DIR/$PIPELINE/$1/ses-${SESSION}/anat/
+            ALGORITHM_OUT_DIR=$OUT_DIR/${ALGORITHM}/
+            [ ! -d $ALGORITHM_OUT_DIR ] && mkdir $ALGORITHM_OUT_DIR
 
             LOCATE_testing_dir=$LOCATE_working_dir/LOO_testing_imgs/$1
             [ ! -d $LOCATE_testing_dir ] && mkdir -p $LOCATE_testing_dir
             export LOCATE_testing_dir
             [ ! -d $LOCATE_testing_dir/LOCATE_results_directory ] && mkdir $LOCATE_testing_dir/LOCATE_results_directory
-
+                        
             # Define inputs
             ###############
 
@@ -429,7 +411,7 @@ elif [ $ALGORITHM == "LOCATE" ]; then
             T1_LOCATE=$LOCATE_testing_dir/${1}_feature_T1.nii.gz
             DISTANCEMAP=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_distancemap.nii.gz
             DISTANCEMAP_LOCATE=$LOCATE_testing_dir/${1}_ventdistmap.nii.gz
-            SEGMENTATION_raw=$OUT_DIR/bianca/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-bianca_mask_raw.nii.gz
+            SEGMENTATION_raw=$OUT_DIR/BIANCA/${1}_ses-${SESSION}_space-FLAIR_desc-wmh_desc-BIANCA_mask_raw.nii.gz
             SEGMENTATION_raw_LOCATE=$LOCATE_testing_dir/${1}_BIANCA_LPM.nii.gz
             T1_MASK_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
             BRAINMASK_LOCATE=$LOCATE_testing_dir/${1}_brainmask.nii.gz
@@ -448,45 +430,44 @@ elif [ $ALGORITHM == "LOCATE" ]; then
             SEGMENTATION_masked=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-maskednothresh_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
             SEGMENTATION_sized=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-maskednothresh_desc-wmh_desc-${ALGORITHM}_mask_sized.nii.gz
             SEGMENTATION=$ALGORITHM_OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-masked_desc-wmh_desc-${ALGORITHM}_mask.nii.gz
-            WMH_VOLUME_FILE=$ALGORITHM_OUT_DIR/${1}_ses-1_${ALGORITHM}_wmhvolume.csv
 
             # Define commands
             #################
 
             CMD_MASKING_GAME="fslmaths $SEGMENTATION_NOTHRESH -mul $BRAINWITHOUTRIBBON_MASK_FLAIR $SEGMENTATION_masked"
-            CMD_threshold_segmentation="cluster --in=$SEGMENTATION_masked --thresh=0.1 --connectivity=6 --osize=$SEGMENTATION_sized"
+            CMD_threshold_segmentation="fsl-cluster --in=$SEGMENTATION_masked --thresh=0.1 --connectivity=6 --osize=$SEGMENTATION_sized"
             CMD_thresholdcluster_segmentation="fslmaths $SEGMENTATION_sized -thr 5 -bin $SEGMENTATION"            
             
-
             # Execute commands
             ##################
             
             if [ ! -f $SEGMENTATION_LOCATE ] && [ -f $FLAIR_BRAIN ] && [ -f $T1_IN_FLAIR ] && [ -f $DISTANCEMAP ] && [ -f $SEGMENTATION_raw ] && [ -f $T1_MASK_IN_FLAIR ]; then
                 
-                cp $FLAIR_BRAIN $FLAIR_LOCATE
-                cp $T1_IN_FLAIR $T1_LOCATE
-                cp $DISTANCEMAP $DISTANCEMAP_LOCATE
-                cp $SEGMENTATION_raw $SEGMENTATION_raw_LOCATE
-                cp $T1_MASK_IN_FLAIR $BRAINMASK_LOCATE
-                cp $T1_MASK_IN_FLAIR $BIANCAMASK_LOCATE
+                cp -ruvf $FLAIR_BRAIN $FLAIR_LOCATE
+                cp -ruvf $T1_IN_FLAIR $T1_LOCATE
+                cp -ruvf $DISTANCEMAP $DISTANCEMAP_LOCATE
+                cp -ruvf $SEGMENTATION_raw $SEGMENTATION_raw_LOCATE
+                cp -ruvf $T1_MASK_IN_FLAIR $BRAINMASK_LOCATE
+                cp -ruvf $T1_MASK_IN_FLAIR $BIANCAMASK_LOCATE
 
                 # else we will not copy any of the files into the LOCATE directory because LOCATE cannot handle incomplete data of subjects, throws an error and stops
 
             fi
 
-            [ ! -f $SEGMENTATION_LOCATE ] && matlab -nosplash -nodesktop -nojvm -batch "addpath(genpath('$LOCATE_installation')); addpath(genpath('$LOCATE_installation/MATLAB')); setenv( 'FSLDIR', '$FSLDIR' ); setenv('PATH', [getenv('PATH'),':$FSLDIR/bin']); LOCATE_testing('$LOCATE_testing_dir', '$LOCATE_training_dir'); quit"
+            [ ! -f $SEGMENTATION_LOCATE ] && $apptainer_locate test $LOCATE_training_dir $LOCATE_testing_dir
             cp $SEGMENTATION_LOCATE $SEGMENTATION_NOTHRESH
             cp $INDEXMAP_LOCATE $INDEXMAP
             cp $THRESHOLDSMAP_LOCATE $THRESHOLDSMAP
             $apptainer_fsl /bin/bash -c "$CMD_MASKING_GAME; $CMD_threshold_segmentation; $CMD_thresholdcluster_segmentation"
-            $apptainer_fsl /bin/bash -c "$(echo fslstats $SEGMENTATION -V) > $WMH_VOLUME_FILE"
-            [ ! -f $SEGMENTATION ] && echo "na na" > $WMH_VOLUME_FILE
+
+            if [ $MODIFIER == "clean" ]; then
+
+                rm -rvf $LOCATE_testing_dir/*
+                rm -rvf $SEGMENTATION_NOTHRESH $SEGMENTATION_masked $SEGMENTATION_sized 
+            fi
 
         fi
 
     fi
 
 fi
-
-# Copy outputs to $DATA_DIR
-cp -ruvf $TMP_OUT/$PIPELINE $DATA_DIR

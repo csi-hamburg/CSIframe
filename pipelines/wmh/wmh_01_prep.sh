@@ -28,7 +28,7 @@ TMP_OUT=$TMP_DIR/output;               [ ! -d $TMP_OUT ] && mkdir -p $TMP_OUT
 # Pipeline-specific environment
 ##################################
 
-# apptainer container version and command
+# Apptainer container version and command
 container_freesurfer=freesurfer-7.4.1.sif
 apptainer_freesurfer="apptainer run --cleanenv --userns \
     -B $PROJ_DIR \
@@ -37,8 +37,6 @@ apptainer_freesurfer="apptainer run --cleanenv --userns \
     -B $TMP_IN \
     -B $TMP_OUT \
     $ENV_DIR/$container_freesurfer" 
-
-#( cp -ruvfL $ENV_DIR/freesurfer_license.txt $ENV_DIR/$FREESURFER_CONTAINER/opt/$FREESURFER_VERSION/.license )
 
 container_fsl=fsl-6.0.7.13.sif
 apptainer_fsl="apptainer run --cleanenv --userns \
@@ -98,7 +96,6 @@ T1_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii.gz
 T1_TO_FLAIR_WARP_pre=$OUT_DIR/${1}_ses-${SESSION}_from-T1w_to-FLAIR_
 T1_TO_FLAIR_WARP=$OUT_DIR/${1}_ses-${SESSION}_from-T1w_to-FLAIR_Composite.h5
 T1_MASK_IN_FLAIR=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-brain_mask.nii.gz
-T1_IN_FLAIR_nii=$OUT_DIR/${1}_ses-${SESSION}_space-FLAIR_desc-preproc_T1w.nii
 FLAIR_TO_T1_WARP=$OUT_DIR/${1}_ses-${SESSION}_from-T1w_to-FLAIR_InverseComposite.h5
 FLAIR_nii=$OUT_DIR/${1}_ses-${SESSION}_FLAIR.nii
 FLAIR_BIASCORR=$OUT_DIR/${1}_ses-${SESSION}_desc-biascorr_FLAIR.nii.gz
@@ -155,10 +152,6 @@ CMD_FLAIR_BRAIN_BIASCORR_IN_MNI="antsApplyTransforms -d 3 -i $FLAIR_BRAIN_BIASCO
 CMD_FLAIR_BIASCORR_IN_MNI="antsApplyTransforms -d 3 -i $FLAIR_BIASCORR -r $MNI_TEMPLATE_SKULL -o $FLAIR_BIASCORR_IN_MNI -t $FLAIR_TO_T1_WARP -t $T1_TO_MNI_WARP"
 CMD_FLAIR_BRAIN_IN_MNI="antsApplyTransforms -d 3 -i $FLAIR_BRAIN -r $MNI_TEMPLATE -o $FLAIR_BRAIN_IN_MNI -t $FLAIR_TO_T1_WARP -t $T1_TO_MNI_WARP"
 
-# # Convert T1 / FLAIR in nii for lpa/lga
-# CMD_convert_T1="mri_convert $T1_IN_FLAIR $T1_IN_FLAIR_nii"
-# CMD_convert_FLAIR="mri_convert $FLAIR $FLAIRnii"
-
 # Execute commands
 ################## 
 
@@ -178,14 +171,12 @@ if [ ! -f $FLAIR_BRAIN_IN_MNI ]; then
         $CMD_FLAIR_BRAIN_BIASCORR_IN_MNI;\
         $CMD_FLAIR_BIASCORR_IN_MNI;\
         $CMD_FLAIR_BRAIN_IN_MNI"
-    #$apptainer_freesurfer /bin/bash -c "$CMD_convert_T1; $CMD_convert_FLAIR"
-
 fi
 
 
-###############################################################################################################################################################
-# The ultimate masking game - create wm masks for filtering of segmentations
-###############################################################################################################################################################
+###################################################################################################################
+#                   The ultimate masking game - create wm masks for filtering of segmentations                    #
+###################################################################################################################
 
 # Define inputs
 ###############
@@ -300,9 +291,9 @@ $apptainer_fsl /bin/bash -c "
 $apptainer_ants /bin/bash -c "$CMD_final_mask_in_FLAIR"
 $apptainer_fsl /bin/bash -c "$CMD_BINARIZE_FINAL_MASK_FLAIR"
 
-###############################################################################################################################################################
-# register output of masking game to T1 and MNI
-###############################################################################################################################################################
+###################################################################################################################
+#                                  Register output of masking game to T1 and MNI space#                           # 
+###################################################################################################################
 
 # Define inputs
 ###############
@@ -355,9 +346,9 @@ $apptainer_fsl /bin/bash -c "
     $CMD_BINARIZE_VENTRICLEMASK_MNI;\
     $CMD_BINARIZE_BRAINMASK_MNI"
 
-###############################################################################################################################################################
-# create distancemap in FLAIR, T1 and MNI space
-###############################################################################################################################################################
+###################################################################################################################
+#                                   Create distancemap in FLAIR, T1 and MNI space                                 #
+###################################################################################################################
 
 # Define inputs
 ###############
@@ -422,8 +413,8 @@ $apptainer_fsl /bin/bash -c "
     $CMD_make_peri_beautiful_T1;\
     $CMD_threshold_distancemap_T1"
 
-###############################################################################################################################################################
-# Save output to $DATA_DIR
-###############################################################################################################################################################
+###################################################################################################################
+#                                               Save output to $DATA_DIR                                          #
+###################################################################################################################
 
 [ -d $TMP_OUT ] && cp -rf $TMP_OUT/$PIPELINE/* $DATA_DIR/$PIPELINE/

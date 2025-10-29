@@ -1,8 +1,8 @@
 % Patient folder
-OutputFolder='/beegfs/g/thomalla/bao4990/CSI_FRAME/data/pvs';
+OutputFolder='/beegfs/g/thomalla/bao4990/CSI_HCHS17000/data/pvs';
 
 % Dataset folder
-dataset_path='/beegfs/g/thomalla/bao4990/CSI_FRAME/data/fmriprep';
+dataset_path='/beegfs/g/thomalla/bao4990/CSI_HCHS17000/data/fmriprep';
 
 % Reference Image (Brain Segmentation Reference) choose higher resolved
 options.SegmentationReferenceImage='T1w';
