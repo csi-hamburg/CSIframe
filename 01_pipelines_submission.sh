@@ -29,8 +29,8 @@ export PIPELINE_SUFFIX=""
 
 # Define session to process
 echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
-if [[ "aslprep elan_registration fmriprep mriqc qsiprep smriprep statistics" == *"$PIPELINE"* ]]; then
-	echo "aslprep, elan_registration, fmriprep, mriqc, qsiprep, smriprep and statistics do not require session input"
+if [[ "aslprep ariadne_registration elan_registration fmriprep mriqc qsiprep smriprep statistics" == *"$PIPELINE"* ]]; then
+	echo "aslprep, ariadne_registration, elan_registration, fmriprep, mriqc, qsiprep, smriprep and statistics do not require session input"
 else 
 	echo "Which session do you want to process? (e.g., for ses-1 type '1')"
 	[ -d $BIDS_DIR ] && echo "Choose from: $(ls $DATA_DIR/raw_bids/sub-*/* -d | xargs -n 1 basename | sort | uniq | cut -d "-" -f 2 | tr '\n' ' ') $([[ "bidsify freesurfer" == *"$PIPELINE"* ]] && echo -e "all")"
@@ -1049,7 +1049,64 @@ elif [ $PIPELINE == "registration" ];then
 
 	fi
 
-elif [ $PIPELINE == "elan_registration" ];then
+elif [ $PIPELINE == "ariadne_registration" ];then
+	echo "ENV_DIR: $ENV_DIR"
+    
+    echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
+    echo "ARIADNE Lesion Mask Registration to MNI Space"
+    
+    echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
+    echo "BIDS dataset root directory?"
+    echo "Default: $DATA_DIR/rawbids"
+    read BIDS_ROOT
+    [ -z $BIDS_ROOT ] && export BIDS_ROOT="$DATA_DIR/raw_bids"
+    export BIDS_ROOT
+    
+    # Override subject discovery for ELAN dataset
+    if [ $# != 0 ];then
+        # Use command-line arguments as subject IDs
+        subj_array=($@)
+        echo "Processing subject(s) ${subj_array[@]}"
+    else
+        # Discover subjects from BIDS_ROOT (handles sub-XXX-YYY pattern)
+        subj_array=($(ls ${BIDS_ROOT}/sub-* -d -1 2>/dev/null | xargs -n 1 basename))
+        
+        if [ ${#subj_array[@]} -eq 0 ]; then
+            echo "ERROR: No subjects found in $BIDS_ROOT"
+            exit 1
+        fi
+        
+        echo "Found ${#subj_array[@]} subjects in $BIDS_ROOT"
+    fi
+    
+    # Convert subject IDs to lesion mask paths
+    lesion_mask_array=()
+    for subj in "${subj_array[@]}"; do
+        # Find all lesion masks for this subject
+        masks=($(find ${BIDS_ROOT}/derivatives/lesion_masks/${subj} -name "*_dseg.nii.gz" 2>/dev/null | sort))
+        lesion_mask_array+=("${masks[@]}")
+    done
+    
+    if [ ${#lesion_mask_array[@]} -eq 0 ]; then
+        echo "ERROR: No lesion masks found for specified subjects"
+        echo "Searched in: ${BIDS_ROOT}/derivatives/lesion_masks/"
+        echo "Subjects: ${subj_array[@]}"
+        exit 1
+    fi
+    
+    # Replace subj_array with lesion mask paths
+    subj_array=("${lesion_mask_array[@]}")
+    subj_array_length=${#subj_array[@]}
+    
+    echo "Found $subj_array_length lesion masks to process"
+    
+    # Resource allocation
+    export SUBJS_PER_NODE=12       # One mask per job (true parallelism)
+	export SLURM_CPUS_PER_TASK=16
+    export ANALYSIS_LEVEL=subject
+    batch_time_default="02:00:00"
+    partition_default="std"
+    elif [ $PIPELINE == "elan_registration" ];then
 	echo "ENV_DIR: $ENV_DIR"
     
     echo "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️"
@@ -1106,7 +1163,7 @@ elif [ $PIPELINE == "elan_registration" ];then
     export ANALYSIS_LEVEL=subject
     batch_time_default="02:00:00"
     partition_default="std"
-    
+
 else
 	
 	echo "Pipeline $PIPELINE not supported"
